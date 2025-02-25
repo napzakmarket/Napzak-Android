@@ -1,4 +1,4 @@
-package com.napzak.market.ui.theme
+package com.napzak.market.designsystem.theme
 
 import android.app.Activity
 import android.os.Build

@@ -1,4 +1,4 @@
-package com.napzak.market.ui.theme
+package com.napzak.market.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
