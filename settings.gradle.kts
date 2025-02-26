@@ -32,14 +32,14 @@ include(
     ":core:util",
 )
 include(
-    "feature:main",
-    "feature:domain",
-)
-include(
     ":data:remote",
     ":data:local",
     ":data:dummy",
 )
 include(
     ":domain:dummy",
+)
+include(
+    "feature:main",
+    "feature:dummy",
 )
