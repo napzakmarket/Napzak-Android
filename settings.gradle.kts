@@ -25,8 +25,21 @@ dependencyResolutionManagement {
 rootProject.name = "NapzakMarket"
 include(
     ":app",
+)
+include(
     ":core:common",
     ":core:designsystem",
     ":core:util",
 )
-include(":feature:main")
+include(
+    "feature:main",
+    "feature:domain",
+)
+include(
+    ":data:remote",
+    ":data:local",
+    ":data:dummy",
+)
+include(
+    ":domain:dummy",
+)
