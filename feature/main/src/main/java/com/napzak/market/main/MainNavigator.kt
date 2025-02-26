@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.napzak.market.dummy.navigation.Dummy
 
 class MainNavigator(
     val navController: NavHostController,

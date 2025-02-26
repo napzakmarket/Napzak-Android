@@ -9,7 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import com.napzak.market.dummy.navigation.dummyGraph
 import com.napzak.market.main.component.MainBottomBar
 import kotlinx.collections.immutable.toImmutableList
 
@@ -60,8 +60,6 @@ private fun MainNavHost(
         navController = navigator.navController,
         startDestination = navigator.startDestination
     ) {
-        composable<Dummy> {
-            // TODO: Dummy 추가
-        }
+        dummyGraph(modifier = modifier)
     }
 }

@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.napzak.market.common.navigation.MainTabRoute
 import com.napzak.market.common.navigation.Route
-import kotlinx.serialization.Serializable
+import com.napzak.market.dummy.navigation.Dummy
 
 // TODO: 구현 시작 시 수정
 enum class MainTab(
@@ -38,7 +38,3 @@ enum class MainTab(
         }
     }
 }
-
-// TODO: 더미 추가 후 삭제
-@Serializable
-data object Dummy: MainTabRoute
