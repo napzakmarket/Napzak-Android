@@ -1,18 +1,15 @@
 package com.napzak.market.buildlogic.convention
 
-import com.android.build.api.dsl.ApplicationExtension
 import com.napzak.market.buildlogic.dsl.androidApplicationExtension
 import com.napzak.market.buildlogic.dsl.configureAndroidLibrary
 import com.napzak.market.buildlogic.dsl.libs
 import com.napzak.market.buildlogic.dsl.version
 import com.napzak.market.buildlogic.primitive.CommonAndroidPlugin
-import com.napzak.market.buildlogic.primitive.HiltPlugin
 import com.napzak.market.buildlogic.primitive.KotlinPlugin
 import com.napzak.market.buildlogic.primitive.TestPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.getByType
 
 class ApplicationPlugin : Plugin<Project> {
     override fun apply(target: Project) {

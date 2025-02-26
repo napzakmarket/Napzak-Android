@@ -1,4 +1,3 @@
-import com.napzak.market.buildlogic.dsl.implementation
 import java.util.Properties
 
 plugins {
