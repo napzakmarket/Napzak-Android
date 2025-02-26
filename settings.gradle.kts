@@ -13,6 +13,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -22,7 +23,10 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "NapzakMarket"
-include(":app")
-include(":core:common")
-include(":core:designsystem")
-include(":core:util")
+include(
+    ":app",
+    ":core:common",
+    ":core:designsystem",
+    ":core:util",
+)
+include(":feature:main")
