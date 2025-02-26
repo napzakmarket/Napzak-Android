@@ -66,5 +66,10 @@ gradlePlugin {
             id = "com.napzak.market.buildlogic.convention.feature"
             implementationClass = "com.napzak.market.buildlogic.convention.FeaturePlugin"
         }
+
+        register("com.napzak.market.buildlogic.convention.KotlinJvmPlugin") {
+            id = "com.napzak.market.buildlogic.convention.kotlin"
+            implementationClass = "com.napzak.market.buildlogic.convention.KotlinJvmPlugin"
+        }
     }
 }
