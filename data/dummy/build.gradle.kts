@@ -12,6 +12,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.data.remote)
     implementation(projects.domain.dummy)
     implementation(libs.timber)
 }
