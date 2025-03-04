@@ -16,7 +16,7 @@ data class GetUserListResponse(
     @SerialName("data")
     val data: List<UserData>?,
     @SerialName("support")
-    val support: Support?
+    val support: Support?,
 ) {
     @Serializable
     data class UserData(
