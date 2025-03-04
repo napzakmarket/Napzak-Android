@@ -1,4 +1,4 @@
-package com.napzak.market.util
+package com.napzak.market.util.common
 
 import java.text.DecimalFormat
 

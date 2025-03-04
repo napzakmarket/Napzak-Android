@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.napzak.market.main.MainTab
-import com.napzak.market.util.NoRippleInteractionSource
+import com.napzak.market.util.android.NoRippleInteractionSource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
