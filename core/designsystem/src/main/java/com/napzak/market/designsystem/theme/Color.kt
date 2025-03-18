@@ -26,12 +26,12 @@ val red = Color(0xFFEF4849)
 val green = Color(0xFF1BD368)
 
 // Transparency
-val purpleAlpha = Color(0xB37534FF)
-val blackAlpha = Color(0xB31A1A1A)
-val lightPurpleAlpha = Color(0xB3F1EAFF)
+val transP500 = Color(0xB37534FF)
+val transBlack = Color(0xB31A1A1A)
+val transP100 = Color(0xB3F1EAFF)
 
 // Gradient
-val whiteGrad = Color(0x00FFFFFF)
+val gradWhite = Color(0x00FFFFFF)
 
 @Stable
 class NapzakMarketColors(
@@ -48,10 +48,10 @@ class NapzakMarketColors(
     white: Color,
     red: Color,
     green: Color,
-    purpleAlpha: Color,
-    blackAlpha: Color,
-    lightPurpleAlpha: Color,
-    whiteGrad: Color,
+    transP500: Color,
+    transBlack: Color,
+    transP100: Color,
+    gradWhite: Color,
     isLight: Boolean
 ) {
     var purple500 by mutableStateOf(purple500)
@@ -80,13 +80,13 @@ class NapzakMarketColors(
         private set
     var green by mutableStateOf(green)
         private set
-    var purpleAlpha by mutableStateOf(purpleAlpha)
+    var transP500 by mutableStateOf(transP500)
         private set
-    var blackAlpha by mutableStateOf(blackAlpha)
+    var transBlack by mutableStateOf(transBlack)
         private set
-    var lightPurpleAlpha by mutableStateOf(lightPurpleAlpha)
+    var transP100 by mutableStateOf(transP100)
         private set
-    var whiteGrad by mutableStateOf(whiteGrad)
+    var gradWhite by mutableStateOf(gradWhite)
         private set
     var isLight by mutableStateOf(isLight)
 
@@ -104,10 +104,10 @@ class NapzakMarketColors(
         white,
         red,
         green,
-        purpleAlpha,
-        blackAlpha,
-        lightPurpleAlpha,
-        whiteGrad,
+        transP500,
+        transBlack,
+        transP100,
+        gradWhite,
         isLight
     )
 
@@ -125,10 +125,10 @@ class NapzakMarketColors(
         white = other.white
         red = other.red
         green = other.green
-        purpleAlpha = other.purpleAlpha
-        blackAlpha = other.blackAlpha
-        lightPurpleAlpha = other.lightPurpleAlpha
-        whiteGrad = other.whiteGrad
+        transP500 = other.transP500
+        transBlack = other.transBlack
+        transP100 = other.transP100
+        gradWhite = other.gradWhite
         isLight = other.isLight
     }
 }
@@ -147,10 +147,10 @@ fun NapzakMarketLightColors(
     White: Color = white,
     Red: Color = red,
     Green: Color = green,
-    PurpleAlpha: Color = purpleAlpha,
-    BlackAlpha: Color = blackAlpha,
-    LightPurpleAlpha: Color = lightPurpleAlpha,
-    WhiteGrad: Color = whiteGrad,
+    TransP500: Color = transP500,
+    TransBlack: Color = transBlack,
+    TransP100: Color = transP100,
+    GradWhite: Color = gradWhite,
 ) = NapzakMarketColors(
     Purple500,
     Purple200,
@@ -165,9 +165,9 @@ fun NapzakMarketLightColors(
     White,
     Red,
     Green,
-    PurpleAlpha,
-    BlackAlpha,
-    LightPurpleAlpha,
-    WhiteGrad,
+    TransP500,
+    TransBlack,
+    TransP100,
+    GradWhite,
     isLight = true
 )
