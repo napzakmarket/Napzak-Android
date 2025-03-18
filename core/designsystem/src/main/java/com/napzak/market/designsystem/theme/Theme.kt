@@ -22,7 +22,7 @@ private val LocalNapzakMarketTypography = staticCompositionLocalOf<NapzakMarketT
     error("No NapzakTypography provided")
 }
 
-object NapzakTheme {
+object NapzakMarketTheme {
     val colors: NapzakMarketColors
         @Composable
         @ReadOnlyComposable
