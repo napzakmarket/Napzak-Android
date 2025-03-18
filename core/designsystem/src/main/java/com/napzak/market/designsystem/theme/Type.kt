@@ -1,5 +1,7 @@
 package com.napzak.market.designsystem.theme
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -10,6 +12,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -38,6 +41,8 @@ class NapzakMarketTypography(
     caption12sb: TextStyle,
     caption12m: TextStyle,
     caption12r: TextStyle,
+    caption10sb: TextStyle,
+    caption10r: TextStyle,
 ) {
     var title22b by mutableStateOf(title22b)
         private set
@@ -71,6 +76,10 @@ class NapzakMarketTypography(
         private set
     var caption12r by mutableStateOf(caption12r)
         private set
+    var caption10sb by mutableStateOf(caption10sb)
+        private set
+    var caption10r by mutableStateOf(caption10r)
+        private set
 
     fun copy(
         title22b: TextStyle = this.title22b,
@@ -89,6 +98,8 @@ class NapzakMarketTypography(
         caption12sb: TextStyle = this.caption12sb,
         caption12m: TextStyle = this.caption12m,
         caption12r: TextStyle = this.caption12r,
+        caption10sb: TextStyle = this.caption10sb,
+        caption10r: TextStyle = this.caption10r,
     ): NapzakMarketTypography = NapzakMarketTypography(
         title22b,
         title20b,
@@ -106,6 +117,8 @@ class NapzakMarketTypography(
         caption12sb,
         caption12m,
         caption12r,
+        caption10sb,
+        caption10r,
     )
 
     fun update(other: NapzakMarketTypography) {
@@ -125,6 +138,8 @@ class NapzakMarketTypography(
         caption12sb = other.caption12sb
         caption12m = other.caption12m
         caption12r = other.caption12r
+        caption10sb = other.caption10sb
+        caption10r = other.caption10r
     }
 }
 
@@ -205,11 +220,100 @@ fun NapzakMarketTypography(): NapzakMarketTypography {
         ),
         caption12m = NapzakMarketTextStyle(
             fontFamily = PretendardMedium,
-            fontSize = 10.sp
+            fontSize = 12.sp
         ),
         caption12r = NapzakMarketTextStyle(
             fontFamily = PretendardRegular,
             fontSize = 12.sp
         ),
+        caption10sb = NapzakMarketTextStyle(
+            fontFamily = PretendardSemiBold,
+            fontSize = 10.sp
+        ),
+        caption10r = NapzakMarketTextStyle(
+            fontFamily = PretendardRegular,
+            fontSize = 10.sp
+        ),
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NapzakMarketTypographyPreview() {
+    NapzakMarketTheme {
+        Column {
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.title22b
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.title20b
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.title20sb
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.title18b
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.title18sb
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.title18m
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.body16b
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.body16sb
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.body16m
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.body16r
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.body14b
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.body14sb
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.body14r
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.caption12sb
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.caption12m
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.caption12r
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.caption10sb
+            )
+            Text(
+                "NapzakMarketTheme",
+                style = NapzakMarketTheme.typography.caption10r
+            )
+        }
+    }
 }
