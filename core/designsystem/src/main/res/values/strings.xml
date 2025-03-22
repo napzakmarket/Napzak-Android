@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--ProductItem-->
+    <string name="production_item_price">%s원</string>
+    <string name="production_item_sell">팔아요</string>
+    <string name="production_item_buy">구해요</string>
+    <string name="production_item_price_suggestion">가격제시</string>
+</resources>
