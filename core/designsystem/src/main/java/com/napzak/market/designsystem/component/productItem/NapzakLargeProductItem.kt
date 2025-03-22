@@ -1,4 +1,4 @@
-package com.napzak.market.designsystem.component.item
+package com.napzak.market.designsystem.component.productItem
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
