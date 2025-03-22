@@ -19,6 +19,7 @@ val gray300 = Color(0xFF7F7F7F)
 val gray200 = Color(0xFFBCBCBC)
 val gray100 = Color(0xFFD9D9D9)
 val gray50 = Color(0xFFF5F5F5)
+val gray10 = Color(0xFFFAFAFA)
 val white = Color(0xFFFFFFFF)
 
 // State
@@ -33,6 +34,10 @@ val transP100 = Color(0xB3F1EAFF)
 // Gradient
 val gradWhite = Color(0x00FFFFFF)
 
+// Etc
+val kakaoYellow = Color(0xFFFBE902)
+val kakaoBrown = Color(0xFF3E2B2F)
+
 @Stable
 class NapzakMarketColors(
     purple500: Color,
@@ -45,6 +50,7 @@ class NapzakMarketColors(
     gray200: Color,
     gray100: Color,
     gray50: Color,
+    gray10: Color,
     white: Color,
     red: Color,
     green: Color,
@@ -52,6 +58,8 @@ class NapzakMarketColors(
     transBlack: Color,
     transP100: Color,
     gradWhite: Color,
+    kakaoYellow: Color,
+    kakaoBrown: Color,
     isLight: Boolean
 ) {
     var purple500 by mutableStateOf(purple500)
@@ -74,6 +82,8 @@ class NapzakMarketColors(
         private set
     var gray50 by mutableStateOf(gray50)
         private set
+    var gray10 by mutableStateOf(gray10)
+        private set
     var white by mutableStateOf(white)
         private set
     var red by mutableStateOf(red)
@@ -88,6 +98,10 @@ class NapzakMarketColors(
         private set
     var gradWhite by mutableStateOf(gradWhite)
         private set
+    var kakaoYellow by mutableStateOf(kakaoYellow)
+        private set
+    var kakaoBrown by mutableStateOf(kakaoBrown)
+        private set
     var isLight by mutableStateOf(isLight)
 
     fun copy(): NapzakMarketColors = NapzakMarketColors(
@@ -101,6 +115,7 @@ class NapzakMarketColors(
         gray200,
         gray100,
         gray50,
+        gray10,
         white,
         red,
         green,
@@ -108,6 +123,8 @@ class NapzakMarketColors(
         transBlack,
         transP100,
         gradWhite,
+        kakaoYellow,
+        kakaoBrown,
         isLight
     )
 
@@ -122,6 +139,7 @@ class NapzakMarketColors(
         gray200 = other.gray200
         gray100 = other.gray100
         gray50 = other.gray50
+        gray10 = other.gray10
         white = other.white
         red = other.red
         green = other.green
@@ -129,6 +147,8 @@ class NapzakMarketColors(
         transBlack = other.transBlack
         transP100 = other.transP100
         gradWhite = other.gradWhite
+        kakaoYellow = other.kakaoYellow
+        kakaoBrown = other.kakaoBrown
         isLight = other.isLight
     }
 }
@@ -144,6 +164,7 @@ fun NapzakMarketLightColors(
     Gray200: Color = gray200,
     Gray100: Color = gray100,
     Gray50: Color = gray50,
+    Gray10: Color = gray10,
     White: Color = white,
     Red: Color = red,
     Green: Color = green,
@@ -151,6 +172,8 @@ fun NapzakMarketLightColors(
     TransBlack: Color = transBlack,
     TransP100: Color = transP100,
     GradWhite: Color = gradWhite,
+    KakaoYellow: Color = kakaoYellow,
+    KakaoBrown: Color = kakaoBrown,
 ) = NapzakMarketColors(
     Purple500,
     Purple200,
@@ -162,6 +185,7 @@ fun NapzakMarketLightColors(
     Gray200,
     Gray100,
     Gray50,
+    Gray10,
     White,
     Red,
     Green,
@@ -169,5 +193,7 @@ fun NapzakMarketLightColors(
     TransBlack,
     TransP100,
     GradWhite,
+    KakaoYellow,
+    KakaoBrown,
     isLight = true
 )
