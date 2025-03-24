@@ -77,9 +77,9 @@ fun GenreChipButtonGroup(
                 label = ANIMATION_LABEL,
                 transitionSpec = {
                     slideIntoContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Down
+                        towards = AnimatedContentTransitionScope.SlideDirection.Down,
                     ) togetherWith slideOutOfContainer(
-                        AnimatedContentTransitionScope.SlideDirection.Up
+                        towards = AnimatedContentTransitionScope.SlideDirection.Up,
                     )
                 },
             ) { hasGenre ->
@@ -100,11 +100,10 @@ fun GenreChipButtonGroup(
                                     .background(color = backgroundColor)
                                     .padding(vertical = 3.dp)
                                     .clip(CircleShape)
-                                    .clickable(onClick = onResetClick)
+                                    .clickable(onClick = onResetClick),
                             )
 
                             Spacer(modifier = Modifier.width(5.dp))
-
                         }
 
                         itemsIndexed(
@@ -174,7 +173,7 @@ private fun RemovableGenreChip(
         Icon(
             imageVector = ImageVector.vectorResource(ic_cancel_genre_10),
             contentDescription = null,
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
         )
     }
 }
