@@ -112,7 +112,6 @@ private fun IconText(
             imageVector = imageVector,
             contentDescription = null,
             tint = Color.Unspecified,
-            modifier = Modifier.padding(start = 2.dp),
         )
         Text(
             text = text,
