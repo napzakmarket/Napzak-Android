@@ -38,17 +38,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.designsystem.R
 import com.napzak.market.designsystem.R.drawable.ic_product_buy_complete
 import com.napzak.market.designsystem.R.drawable.ic_product_reservation
 import com.napzak.market.designsystem.R.drawable.ic_product_sell_complete
 import com.napzak.market.designsystem.R.string.production_item_buy
-import com.napzak.market.designsystem.R.string.production_item_complete_buy
-import com.napzak.market.designsystem.R.string.production_item_complete_sell
 import com.napzak.market.designsystem.R.string.production_item_price
 import com.napzak.market.designsystem.R.string.production_item_price_suggestion
 import com.napzak.market.designsystem.R.string.production_item_sell
-import com.napzak.market.designsystem.component.productItem.type.ProductItemTradeStatus
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.util.android.throttledNoRippleClickable
 
@@ -82,7 +80,7 @@ fun NapzakLargeProductItem(
     isLiked: Boolean,
     isMyItem: Boolean,
     isSellElseBuy: Boolean,
-    tradeStatus: ProductItemTradeStatus,
+    tradeStatus: TradeStatusType,
     isSuggestionAllowed: Boolean,
     onLikeClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -171,7 +169,7 @@ private fun ItemImageGroup(
     isMyItem: Boolean,
     isSellElseBuy: Boolean,
     isSuggestionAllowed: Boolean,
-    tradeStatus: ProductItemTradeStatus,
+    tradeStatus: TradeStatusType,
     onLikeClick: () -> Unit,
     modifier: Modifier = Modifier,
     placeholderColor: Color = NapzakMarketTheme.colors.gray200,
@@ -196,7 +194,6 @@ private fun ItemImageGroup(
         )
 
         TradeStatusImage(
-            isSellElseBuy = isSellElseBuy,
             tradeStatus = tradeStatus,
             shape = imageShape,
             modifier = Modifier
@@ -225,58 +222,32 @@ private fun ItemImageGroup(
 
 @Composable
 private fun TradeStatusImage(
-    isSellElseBuy: Boolean,
-    tradeStatus: ProductItemTradeStatus,
+    tradeStatus: TradeStatusType,
     shape: RoundedCornerShape,
     modifier: Modifier = Modifier,
 ) {
-    val colorScheme = NapzakMarketTheme.colors
-    val context = LocalContext.current
-    val (image, color, text) = remember {
-        when (tradeStatus) {
-            ProductItemTradeStatus.Reserved -> {
-                Triple(
-                    ic_product_reservation,
-                    colorScheme.transBlack,
-                    context.getString(tradeStatus.text)
-                )
-            }
-
-            ProductItemTradeStatus.Sold -> {
-                if (isSellElseBuy) {
-                    Triple(
-                        ic_product_sell_complete,
-                        colorScheme.transBlack,
-                        context.getString(tradeStatus.text, context.getString(production_item_complete_sell)),
-                    )
-                } else {
-                    Triple(
-                        ic_product_buy_complete,
-                        colorScheme.transBlack,
-                        context.getString(tradeStatus.text, context.getString(production_item_complete_buy)),
-                    )
-                }
-            }
-
-            else -> {
-                Triple(null, null, null)
-            }
+    if (tradeStatus != TradeStatusType.OnSale) {
+        val image = when(tradeStatus) {
+            TradeStatusType.Reserved -> ic_product_reservation
+            TradeStatusType.Sold -> ic_product_sell_complete
+            TradeStatusType.Bought -> ic_product_buy_complete
+            else -> null
         }
-    }
 
-    if (image != null && color != null && text != null) {
         Column(
-            modifier.background(color = color, shape = shape),
+            modifier.background(color = NapzakMarketTheme.colors.transBlack, shape = shape),
             verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Image(
-                imageVector = ImageVector.vectorResource(id = image),
-                contentDescription = null,
-            )
+            if(image != null) {
+                Image(
+                    imageVector = ImageVector.vectorResource(id = image),
+                    contentDescription = null,
+                )
+            }
 
             Text(
-                text = text,
+                text = tradeStatus.label,
                 style = NapzakMarketTheme.typography.body14b,
                 color = NapzakMarketTheme.colors.white,
             )
@@ -419,7 +390,7 @@ private fun LargeProductItemPreview() {
                     isMyItem = false,
                     isSellElseBuy = true,
                     isSuggestionAllowed = false,
-                    tradeStatus = ProductItemTradeStatus.OnSale,
+                    tradeStatus = TradeStatusType.OnSale,
                     onLikeClick = { isLiked1 = !isLiked1 },
                     modifier = Modifier.weight(1f),
                 )
@@ -436,7 +407,7 @@ private fun LargeProductItemPreview() {
                     isMyItem = false,
                     isSellElseBuy = false,
                     isSuggestionAllowed = true,
-                    tradeStatus = ProductItemTradeStatus.Sold,
+                    tradeStatus = TradeStatusType.Sold,
                     onLikeClick = { isLiked2 = !isLiked2 },
                     modifier = Modifier.weight(1f),
                 )
@@ -460,7 +431,7 @@ private fun LargeProductItemPreview() {
                     isMyItem = false,
                     isSellElseBuy = false,
                     isSuggestionAllowed = false,
-                    tradeStatus = ProductItemTradeStatus.Sold,
+                    tradeStatus = TradeStatusType.Sold,
                     onLikeClick = { isLiked1 = !isLiked1 },
                     modifier = Modifier.weight(1f),
                 )
@@ -477,7 +448,7 @@ private fun LargeProductItemPreview() {
                     isMyItem = false,
                     isSellElseBuy = false,
                     isSuggestionAllowed = true,
-                    tradeStatus = ProductItemTradeStatus.Reserved,
+                    tradeStatus = TradeStatusType.Reserved,
                     onLikeClick = { isLiked2 = !isLiked2 },
                     modifier = Modifier.weight(1f),
                 )
