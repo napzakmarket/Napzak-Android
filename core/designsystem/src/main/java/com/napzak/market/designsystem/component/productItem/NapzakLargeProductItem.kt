@@ -1,28 +1,56 @@
 package com.napzak.market.designsystem.component.productItem
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.napzak.market.designsystem.R
+import com.napzak.market.designsystem.R.drawable.ic_product_buy_complete
+import com.napzak.market.designsystem.R.drawable.ic_product_reservation
+import com.napzak.market.designsystem.R.drawable.ic_product_sell_complete
+import com.napzak.market.designsystem.R.string.production_item_buy
+import com.napzak.market.designsystem.R.string.production_item_complete_buy
+import com.napzak.market.designsystem.R.string.production_item_complete_sell
+import com.napzak.market.designsystem.R.string.production_item_price
+import com.napzak.market.designsystem.R.string.production_item_price_suggestion
+import com.napzak.market.designsystem.R.string.production_item_sell
+import com.napzak.market.designsystem.component.productItem.type.ProductItemTradeStatus
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.util.android.throttledNoRippleClickable
 
 /**
  * 상품 아이템 (Thumbnail-Big)
@@ -38,6 +66,7 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
  * @param isMyItem 내 상품 여부
  * @param isSellElseBuy 팔아요 여부 (true: 팔아요, false: 구해요)
  * @param isSuggestionAllowed 가격제시 여부
+ * @param tradeStatus 거래 상태 (판매중, 판매/구매 완료, 예약중)
  * @param onLikeClick 좋아요 클릭 이벤트
  */
 
@@ -53,22 +82,59 @@ fun NapzakLargeProductItem(
     isLiked: Boolean,
     isMyItem: Boolean,
     isSellElseBuy: Boolean,
+    tradeStatus: ProductItemTradeStatus,
     isSuggestionAllowed: Boolean,
     onLikeClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
-        NapzakProductItem(
-            title = title,
-            genre = genre,
-            price = price,
+    Column(
+        modifier = modifier.semantics(
+            mergeDescendants = true,
+            properties = {
+                contentDescription = title
+            }
+        ),
+    ) {
+        ItemImageGroup(
             imgUrl = imgUrl,
             isLiked = isLiked,
             isMyItem = isMyItem,
             isSellElseBuy = isSellElseBuy,
             isSuggestionAllowed = isSuggestionAllowed,
+            tradeStatus = tradeStatus,
             onLikeClick = onLikeClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f),
         )
+
+        Text(
+            text = genre,
+            style = NapzakMarketTheme.typography.caption12r,
+            color = NapzakMarketTheme.colors.gray500,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            modifier = Modifier.padding(top = 6.dp),
+        )
+
+        Text(
+            text = title,
+            style = NapzakMarketTheme.typography.body14sb,
+            color = NapzakMarketTheme.colors.gray500,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            modifier = Modifier.padding(top = 2.dp),
+        )
+
+        Text(
+            text = stringResource(production_item_price, price),
+            style = NapzakMarketTheme.typography.body16b,
+            color = NapzakMarketTheme.colors.gray500,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            modifier = Modifier.padding(top = 6.dp),
+        )
+
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -96,6 +162,207 @@ fun NapzakLargeProductItem(
             )
         }
     }
+}
+
+@Composable
+private fun ItemImageGroup(
+    imgUrl: String,
+    isLiked: Boolean,
+    isMyItem: Boolean,
+    isSellElseBuy: Boolean,
+    isSuggestionAllowed: Boolean,
+    tradeStatus: ProductItemTradeStatus,
+    onLikeClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    placeholderColor: Color = NapzakMarketTheme.colors.gray200,
+) {
+    val context = LocalContext.current
+    val imageShape = RoundedCornerShape(3.dp)
+
+    Box(modifier = modifier) {
+        AsyncImage(
+            model = ImageRequest
+                .Builder(context)
+                .data(imgUrl)
+                .build(),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .matchParentSize()
+                .background(
+                    color = placeholderColor,
+                    shape = imageShape,
+                ),
+        )
+
+        TradeStatusImage(
+            isSellElseBuy = isSellElseBuy,
+            tradeStatus = tradeStatus,
+            shape = imageShape,
+            modifier = Modifier
+                .matchParentSize()
+        )
+
+        TypeTag(
+            isSuggestionAllowed = isSuggestionAllowed,
+            isSellElseBuy = isSellElseBuy,
+            modifier = Modifier
+                .align(Alignment.BottomStart),
+        )
+
+
+        if (!isMyItem) {
+            LikeButton(
+                isLiked = isLiked,
+                onLikeClick = onLikeClick,
+                modifier = Modifier
+                    .padding(5.dp)
+                    .align(Alignment.BottomEnd),
+            )
+        }
+    }
+}
+
+@Composable
+private fun TradeStatusImage(
+    isSellElseBuy: Boolean,
+    tradeStatus: ProductItemTradeStatus,
+    shape: RoundedCornerShape,
+    modifier: Modifier = Modifier,
+) {
+    val colorScheme = NapzakMarketTheme.colors
+    val context = LocalContext.current
+    val (image, color, text) = remember {
+        when (tradeStatus) {
+            ProductItemTradeStatus.Reserved -> {
+                Triple(
+                    ic_product_reservation,
+                    colorScheme.transBlack,
+                    context.getString(tradeStatus.text)
+                )
+            }
+
+            ProductItemTradeStatus.Sold -> {
+                if (isSellElseBuy) {
+                    Triple(
+                        ic_product_sell_complete,
+                        colorScheme.transBlack,
+                        context.getString(tradeStatus.text, context.getString(production_item_complete_sell)),
+                    )
+                } else {
+                    Triple(
+                        ic_product_buy_complete,
+                        colorScheme.transBlack,
+                        context.getString(tradeStatus.text, context.getString(production_item_complete_buy)),
+                    )
+                }
+            }
+
+            else -> {
+                Triple(null, null, null)
+            }
+        }
+    }
+
+    if (image != null && color != null && text != null) {
+        Column(
+            modifier.background(color = color, shape = shape),
+            verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Image(
+                imageVector = ImageVector.vectorResource(id = image),
+                contentDescription = null,
+            )
+
+            Text(
+                text = text,
+                style = NapzakMarketTheme.typography.body14b,
+                color = NapzakMarketTheme.colors.white,
+            )
+        }
+    }
+}
+
+@Composable
+private fun TypeTag(
+    isSellElseBuy: Boolean,
+    isSuggestionAllowed: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val textRes = if (isSellElseBuy) production_item_sell else production_item_buy
+    val contentColor = NapzakMarketTheme.colors.white
+    val containerColor = if (isSellElseBuy) NapzakMarketTheme.colors.transP500
+    else NapzakMarketTheme.colors.transBlack
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        modifier = modifier,
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(width = 40.dp, height = 20.dp)
+                .background(
+                    color = containerColor,
+                    shape = RoundedCornerShape(topEnd = 3.dp, bottomStart = 3.dp),
+                ),
+        ) {
+            Text(
+                text = stringResource(textRes),
+                style = NapzakMarketTheme.typography.caption10sb,
+                color = contentColor,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier,
+            )
+        }
+
+        if (isSuggestionAllowed) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(width = 50.dp, height = 20.dp)
+                    .background(
+                        color = NapzakMarketTheme.colors.transP100,
+                        shape = RoundedCornerShape(topEnd = 3.dp, topStart = 3.dp),
+                    ),
+            ) {
+                Text(
+                    text = stringResource(production_item_price_suggestion),
+                    style = NapzakMarketTheme.typography.caption10sb,
+                    color = NapzakMarketTheme.colors.purple500,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun LikeButton(
+    isLiked: Boolean,
+    onLikeClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val coroutineScope = rememberCoroutineScope()
+
+    val imageVector = if (isLiked) R.drawable.ic_heart_filled_14
+    else R.drawable.ic_heart_unfilled_16
+
+    Icon(
+        imageVector = ImageVector.vectorResource(imageVector),
+        contentDescription = null,
+        tint = Color.Unspecified,
+        modifier = modifier
+            .clearAndSetSemantics { role = Role.Button }
+            .throttledNoRippleClickable(
+                coroutineScope = coroutineScope,
+                onClick = onLikeClick,
+            ),
+    )
 }
 
 @Composable
@@ -131,43 +398,90 @@ private fun LargeProductItemPreview() {
         var isLiked1 by remember { mutableStateOf(false) }
         var isLiked2 by remember { mutableStateOf(false) }
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(20.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 27.dp),
+        Column(
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            NapzakLargeProductItem(
-                genre = "은혼",
-                title = "은혼 긴토키 히지카타 룩업",
-                imgUrl = "",
-                price = "125,000",
-                createdDate = "1일 전",
-                reviewCount = "999+",
-                likeCount = "999+",
-                isLiked = isLiked1,
-                isMyItem = false,
-                isSellElseBuy = true,
-                isSuggestionAllowed = false,
-                onLikeClick = { isLiked1 = !isLiked1 },
-                modifier = Modifier.weight(1f),
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 27.dp),
+            ) {
+                NapzakLargeProductItem(
+                    genre = "은혼",
+                    title = "은혼 긴토키 히지카타 룩업",
+                    imgUrl = "",
+                    price = "125,000",
+                    createdDate = "1일 전",
+                    reviewCount = "999+",
+                    likeCount = "999+",
+                    isLiked = isLiked1,
+                    isMyItem = false,
+                    isSellElseBuy = true,
+                    isSuggestionAllowed = false,
+                    tradeStatus = ProductItemTradeStatus.OnSale,
+                    onLikeClick = { isLiked1 = !isLiked1 },
+                    modifier = Modifier.weight(1f),
+                )
 
-            NapzakLargeProductItem(
-                genre = "은혼",
-                title = "은혼 긴토키 히지카타 룩업",
-                imgUrl = "",
-                price = "125,000",
-                createdDate = "1일 전",
-                reviewCount = "999+",
-                likeCount = "999+",
-                isLiked = isLiked2,
-                isMyItem = false,
-                isSellElseBuy = false,
-                isSuggestionAllowed = true,
-                onLikeClick = { isLiked2 = !isLiked2 },
-                modifier = Modifier.weight(1f),
-            )
+                NapzakLargeProductItem(
+                    genre = "은혼",
+                    title = "은혼 긴토키 히지카타 룩업",
+                    imgUrl = "",
+                    price = "125,000",
+                    createdDate = "1일 전",
+                    reviewCount = "999+",
+                    likeCount = "999+",
+                    isLiked = isLiked2,
+                    isMyItem = false,
+                    isSellElseBuy = false,
+                    isSuggestionAllowed = true,
+                    tradeStatus = ProductItemTradeStatus.Sold,
+                    onLikeClick = { isLiked2 = !isLiked2 },
+                    modifier = Modifier.weight(1f),
+                )
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 27.dp),
+            ) {
+                NapzakLargeProductItem(
+                    genre = "은혼",
+                    title = "은혼 긴토키 히지카타 룩업",
+                    imgUrl = "",
+                    price = "125,000",
+                    createdDate = "1일 전",
+                    reviewCount = "999+",
+                    likeCount = "999+",
+                    isLiked = isLiked1,
+                    isMyItem = false,
+                    isSellElseBuy = false,
+                    isSuggestionAllowed = false,
+                    tradeStatus = ProductItemTradeStatus.Sold,
+                    onLikeClick = { isLiked1 = !isLiked1 },
+                    modifier = Modifier.weight(1f),
+                )
+
+                NapzakLargeProductItem(
+                    genre = "은혼",
+                    title = "은혼 긴토키 히지카타 룩업",
+                    imgUrl = "",
+                    price = "125,000",
+                    createdDate = "1일 전",
+                    reviewCount = "999+",
+                    likeCount = "999+",
+                    isLiked = isLiked2,
+                    isMyItem = false,
+                    isSellElseBuy = false,
+                    isSuggestionAllowed = true,
+                    tradeStatus = ProductItemTradeStatus.Reserved,
+                    onLikeClick = { isLiked2 = !isLiked2 },
+                    modifier = Modifier.weight(1f),
+                )
+            }
         }
     }
 }

@@ -58,7 +58,7 @@ import com.napzak.market.designsystem.R.string.production_item_price_suggestion
  * @param onLikeClick 좋아요 클릭 이벤트
  */
 @Composable
-fun NapzakProductItem(
+fun NapzakSmallProductItem(
     title: String,
     genre: String,
     price: String,
@@ -96,7 +96,7 @@ fun NapzakProductItem(
             color = NapzakMarketTheme.colors.gray500,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
-            modifier = Modifier.padding(top = 6.dp),
+            modifier = Modifier.padding(top = 5.dp),
         )
 
         Text(
@@ -105,7 +105,7 @@ fun NapzakProductItem(
             color = NapzakMarketTheme.colors.gray500,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
-            modifier = Modifier.padding(top = 4.dp),
+            modifier = Modifier.padding(top = 2.dp),
         )
 
         Text(
@@ -114,7 +114,7 @@ fun NapzakProductItem(
             color = NapzakMarketTheme.colors.gray500,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
-            modifier = Modifier.padding(top = 4.dp),
+            modifier = Modifier.padding(top = 2.dp),
         )
     }
 }
@@ -251,11 +251,11 @@ private fun LikeButton(
 
 @Preview(showBackground = true)
 @Composable
-private fun ProductItemPreview() {
+private fun SmallProductItemPreview() {
     NapzakMarketTheme {
         var isLiked by remember { mutableStateOf(false) }
 
-        NapzakProductItem(
+        NapzakSmallProductItem(
             genre = "은혼",
             title = "은혼 긴토키 히지카타 룩업",
             imgUrl = "",
