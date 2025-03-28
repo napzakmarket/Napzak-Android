@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
@@ -45,6 +46,7 @@ fun NapzakDefaultTextField(
     onSearchAction: () -> Unit? = {},
     hintTextColor: Color = NapzakMarketTheme.colors.gray200,
     isSingleLined: Boolean = true,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     suffix: @Composable (() -> Unit)? = null,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     contentAlignment: Alignment = Alignment.CenterStart,
@@ -62,6 +64,7 @@ fun NapzakDefaultTextField(
             onSearch = { onSearchAction() },
         ),
         singleLine = isSingleLined,
+        visualTransformation = visualTransformation,
         modifier = modifier,
         decorationBox = { innerTextField ->
             Row(

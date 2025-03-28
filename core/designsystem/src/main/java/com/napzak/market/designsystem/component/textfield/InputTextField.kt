@@ -21,10 +21,12 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.util.android.priceSeparatorTransformation
 
 private const val BLANK = ""
 
@@ -52,6 +54,7 @@ fun InputTextField(
     imeAction: ImeAction = ImeAction.Done,
     onDoneAction: () -> Unit? = {},
     isSingleLined: Boolean = true,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     suffix: @Composable (() -> Unit)? = null,
     paddingValues: PaddingValues = PaddingValues(14.dp, 16.dp, 14.dp, 16.dp),
     contentAlignment: Alignment = Alignment.CenterStart,
@@ -74,6 +77,7 @@ fun InputTextField(
         onDoneAction = onDoneAction,
         hintTextStyle = hintTextStyle.copy(color = hintTextColor),
         isSingleLined = isSingleLined,
+        visualTransformation = visualTransformation,
         suffix = suffix,
         verticalAlignment = Alignment.Top,
         contentAlignment = contentAlignment,
@@ -140,6 +144,7 @@ private fun PriceInputTexFieldPreview() {
             isSingleLined = false,
             keyboardType = KeyboardType.Number,
             contentAlignment = Alignment.CenterEnd,
+            visualTransformation = priceSeparatorTransformation(),
             suffix = {
                 Text(
                     text = "원",
