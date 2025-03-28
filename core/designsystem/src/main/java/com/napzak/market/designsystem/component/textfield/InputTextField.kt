@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,7 +48,9 @@ fun InputTextField(
     hintTextStyle: TextStyle = NapzakMarketTheme.typography.body14sb,
     hintTextColor: Color = NapzakMarketTheme.colors.gray200,
     keyboardType: KeyboardType = KeyboardType.Text,
-    isSingleLined: Boolean = false,
+    imeAction: ImeAction = ImeAction.Done,
+    onDoneAction: () -> Unit? = {},
+    isSingleLined: Boolean = true,
     isError: Boolean = false,
     suffix: @Composable (() -> Unit)? = null,
     paddingValues: PaddingValues = PaddingValues(14.dp, 16.dp, 14.dp, 16.dp),
@@ -56,8 +59,6 @@ fun InputTextField(
 ) {
     val borderColor = if (isError) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray100
     val textColor = if (isError) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray500
-    val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
 
     NapzakDefaultTextField(
         text = text,
@@ -71,10 +72,8 @@ fun InputTextField(
         textStyle = textStyle.copy(textAlign = textAlign),
         textColor = textColor,
         keyboardType = keyboardType,
-        onDoneAction = {
-            focusManager.clearFocus()
-            keyboardController?.hide()
-        },
+        imeAction = imeAction,
+        onDoneAction = onDoneAction,
         hintTextStyle = hintTextStyle.copy(color = hintTextColor),
         isSingleLined = isSingleLined,
         suffix = suffix,
@@ -85,16 +84,40 @@ fun InputTextField(
 
 @Preview
 @Composable
-private fun InputTexFieldPreview() {
+private fun TitleInputTexFieldPreview() {
     NapzakMarketTheme {
+        val focusManager = LocalFocusManager.current
+        val keyboardController = LocalSoftwareKeyboardController.current
+
         var text by remember { mutableStateOf("") }
         InputTextField(
             text = text,
             onTextChange = { text = it },
             hint = "정확한 상품명을 포함하면 거래 확률이 올라가요",
+            onDoneAction = {
+                focusManager.clearFocus()
+                keyboardController?.hide()
+            }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ContentInputTexFieldPreview() {
+    NapzakMarketTheme {
+        var text by remember { mutableStateOf("") }
+
+        InputTextField(
+            text = text,
+            onTextChange = { text = it },
+            hint = "자세히 작성하면 더 빠르고 원활한 거래를 할 수 있어요\n" +
+                    "예) 상품 상태, 한정판 여부, 네고 가능 여부 등",
             modifier = Modifier.height(136.dp),
             isSingleLined = false,
             isError = text.length > 10,
+            imeAction = ImeAction.Default,
+            contentAlignment = Alignment.TopStart
         )
     }
 }
@@ -103,7 +126,10 @@ private fun InputTexFieldPreview() {
 @Composable
 private fun PriceInputTexFieldPreview() {
     NapzakMarketTheme {
+        val focusManager = LocalFocusManager.current
+        val keyboardController = LocalSoftwareKeyboardController.current
         var text by remember { mutableStateOf("") }
+
         InputTextField(
             text = text,
             onTextChange = { text = it },
@@ -119,7 +145,11 @@ private fun PriceInputTexFieldPreview() {
                 )
             },
             paddingValues = PaddingValues(14.dp, 16.dp, 0.dp, 16.dp),
-            textAlign = TextAlign.End
+            textAlign = TextAlign.End,
+            onDoneAction = {
+                focusManager.clearFocus()
+                keyboardController?.hide()
+            }
         )
     }
 }
