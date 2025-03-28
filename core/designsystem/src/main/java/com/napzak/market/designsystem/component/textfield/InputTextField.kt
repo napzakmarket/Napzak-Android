@@ -16,7 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,6 +46,7 @@ fun InputTextField(
     textStyle: TextStyle = NapzakMarketTheme.typography.body14r,
     hintTextStyle: TextStyle = NapzakMarketTheme.typography.body14sb,
     hintTextColor: Color = NapzakMarketTheme.colors.gray200,
+    keyboardType: KeyboardType = KeyboardType.Text,
     isSingleLined: Boolean = false,
     isError: Boolean = false,
     suffix: @Composable (() -> Unit)? = null,
@@ -52,6 +56,8 @@ fun InputTextField(
 ) {
     val borderColor = if (isError) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray100
     val textColor = if (isError) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray500
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     NapzakDefaultTextField(
         text = text,
@@ -64,6 +70,11 @@ fun InputTextField(
         hint = hint,
         textStyle = textStyle.copy(textAlign = textAlign),
         textColor = textColor,
+        keyboardType = keyboardType,
+        onDoneAction = {
+            focusManager.clearFocus()
+            keyboardController?.hide()
+        },
         hintTextStyle = hintTextStyle.copy(color = hintTextColor),
         isSingleLined = isSingleLined,
         suffix = suffix,
@@ -98,16 +109,17 @@ private fun PriceInputTexFieldPreview() {
             onTextChange = { text = it },
             hint = BLANK,
             isSingleLined = false,
-            isError = text.length > 10,
+            keyboardType = KeyboardType.Number,
             contentAlignment = Alignment.CenterEnd,
             suffix = {
                 Text(
                     text = "원",
                     style = NapzakMarketTheme.typography.body14r.copy(color = NapzakMarketTheme.colors.gray200),
-                    modifier = Modifier.padding(end = 14.dp)
+                    modifier = Modifier.padding(start = 4.dp, end = 14.dp)
                 )
             },
             paddingValues = PaddingValues(14.dp, 16.dp, 0.dp, 16.dp),
+            textAlign = TextAlign.End
         )
     }
 }

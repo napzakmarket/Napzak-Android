@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,6 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
@@ -35,6 +39,10 @@ fun NapzakDefaultTextField(
     hintTextStyle: TextStyle,
     modifier: Modifier = Modifier,
     textColor: Color = NapzakMarketTheme.colors.gray500,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    imeAction: ImeAction = ImeAction.Done,
+    onDoneAction: () -> Unit? = {},
+    onSearchAction: () -> Unit? = {},
     hintTextColor: Color = NapzakMarketTheme.colors.gray200,
     isSingleLined: Boolean = true,
     suffix: @Composable (() -> Unit)? = null,
@@ -45,6 +53,14 @@ fun NapzakDefaultTextField(
         value = text,
         onValueChange = onTextChange,
         textStyle = textStyle.copy(color = textColor),
+        keyboardOptions = KeyboardOptions(
+            imeAction = imeAction,
+            keyboardType = keyboardType,
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = { onDoneAction() },
+            onSearch = { onSearchAction() },
+        ),
         singleLine = isSingleLined,
         modifier = modifier,
         decorationBox = { innerTextField ->

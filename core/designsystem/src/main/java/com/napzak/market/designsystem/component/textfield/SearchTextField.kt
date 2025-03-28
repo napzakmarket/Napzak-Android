@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R
@@ -39,6 +40,7 @@ fun SearchTextField(
     onTextChange: (String) -> Unit,
     hint: String,
     onResetClick: () -> Unit,
+    onSearchClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -55,6 +57,8 @@ fun SearchTextField(
                 .clip(RoundedCornerShape(14.dp))
                 .background(NapzakMarketTheme.colors.gray50)
                 .padding(16.dp, 13.dp, 0.dp, 13.dp),
+            onSearchAction = onSearchClick,
+            imeAction = ImeAction.Search,
             suffix = {
                 Row(
                     modifier = Modifier
@@ -66,15 +70,18 @@ fun SearchTextField(
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_cancel_search_12),
                             contentDescription = null,
+                            modifier = Modifier
+                                .noRippleClickable(onResetClick),
                             tint = Color.Unspecified,
-                            modifier = Modifier.noRippleClickable(onResetClick)
                         )
                     }
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_search_12),
                         contentDescription = null,
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                            .noRippleClickable(onSearchClick),
                         tint = Color.Unspecified,
-                        modifier = Modifier.padding(start = 10.dp),
                     )
                 }
             }
@@ -93,6 +100,7 @@ private fun SearchTextFieldPreview() {
             hint = "어떤 상품을 찾고 계신가요?",
             onResetClick = { searchText = "" },
             modifier = Modifier.fillMaxWidth(),
+            onSearchClick = {}
         )
     }
 }
