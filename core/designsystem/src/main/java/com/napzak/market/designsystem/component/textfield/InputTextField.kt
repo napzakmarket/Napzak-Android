@@ -35,7 +35,6 @@ private const val BLANK = ""
  * @param onTextChange: 입력 값 변경
  * @param hint: 힌트
  * @param isSingleLined: single / multi line
- * @param isError
  * @param suffix
  */
 @Composable
@@ -45,20 +44,19 @@ fun InputTextField(
     modifier: Modifier = Modifier,
     hint: String = BLANK,
     textStyle: TextStyle = NapzakMarketTheme.typography.body14r,
+    textColor: Color = NapzakMarketTheme.colors.gray500,
     hintTextStyle: TextStyle = NapzakMarketTheme.typography.body14sb,
     hintTextColor: Color = NapzakMarketTheme.colors.gray200,
+    borderColor: Color = NapzakMarketTheme.colors.gray100,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Done,
     onDoneAction: () -> Unit? = {},
     isSingleLined: Boolean = true,
-    isError: Boolean = false,
     suffix: @Composable (() -> Unit)? = null,
     paddingValues: PaddingValues = PaddingValues(14.dp, 16.dp, 14.dp, 16.dp),
     contentAlignment: Alignment = Alignment.CenterStart,
     textAlign: TextAlign = TextAlign.Start
 ) {
-    val borderColor = if (isError) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray100
-    val textColor = if (isError) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray500
 
     NapzakDefaultTextField(
         text = text,
@@ -115,7 +113,6 @@ private fun ContentInputTexFieldPreview() {
                     "예) 상품 상태, 한정판 여부, 네고 가능 여부 등",
             modifier = Modifier.height(136.dp),
             isSingleLined = false,
-            isError = text.length > 10,
             imeAction = ImeAction.Default,
             contentAlignment = Alignment.TopStart
         )
@@ -129,18 +126,24 @@ private fun PriceInputTexFieldPreview() {
         val focusManager = LocalFocusManager.current
         val keyboardController = LocalSoftwareKeyboardController.current
         var text by remember { mutableStateOf("") }
+        var isError = if (text.length > 4) true else false
+        val borderColor = if (isError) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray100
+        val textColor = if (isError) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray500
+        val hintColor = if (isError) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray200
 
         InputTextField(
             text = text,
             onTextChange = { text = it },
             hint = BLANK,
+            textColor = textColor,
+            borderColor = borderColor,
             isSingleLined = false,
             keyboardType = KeyboardType.Number,
             contentAlignment = Alignment.CenterEnd,
             suffix = {
                 Text(
                     text = "원",
-                    style = NapzakMarketTheme.typography.body14r.copy(color = NapzakMarketTheme.colors.gray200),
+                    style = NapzakMarketTheme.typography.body14r.copy(color = hintColor),
                     modifier = Modifier.padding(start = 4.dp, end = 14.dp)
                 )
             },
