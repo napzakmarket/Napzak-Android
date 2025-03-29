@@ -49,7 +49,7 @@ fun HeartClickSnackBar(
                 contentDescription = stringResource(id = R.string.heart_click_snackbar_icon_description),
                 tint = Color.Unspecified,
             )
-            Spacer(modifier = Modifier.width(2.5.dp))
+            Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = message,
                 style = NapzakMarketTheme.typography.caption12sb,
