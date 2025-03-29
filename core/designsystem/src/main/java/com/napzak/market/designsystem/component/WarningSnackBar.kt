@@ -37,9 +37,9 @@ fun WarningSnackBar(
                 color = NapzakMarketTheme.colors.white.copy(alpha = 0.5f),
             )
             .border(
-                width = 0.92.dp,
+                width = 1.dp,
                 color = NapzakMarketTheme.colors.red,
-                shape = RoundedCornerShape(50.96.dp),
+                shape = RoundedCornerShape(50.dp),
             )
             .padding(
                 horizontal = 15.dp,
