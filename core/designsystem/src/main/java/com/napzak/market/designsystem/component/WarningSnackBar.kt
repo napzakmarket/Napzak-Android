@@ -56,7 +56,7 @@ fun WarningSnackBar(
                 tint = Color.Unspecified,
                 modifier = Modifier.size(12.dp),
                 )
-            Spacer(modifier = Modifier.width(1.5.dp))
+            Spacer(modifier = Modifier.width(3.dp))
             Text(
                 text = message,
                 style = NapzakMarketTheme.typography.caption12sb,
