@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -49,7 +48,6 @@ fun HeartClickSnackBar(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_heartclick_snackbar_12),
                 contentDescription = stringResource(id = R.string.heart_click_snackbar_icon_description),
                 tint = Color.Unspecified,
-                modifier = Modifier.size(12.dp),
             )
             Spacer(modifier = Modifier.width(2.5.dp))
             Text(
