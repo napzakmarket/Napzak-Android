@@ -34,7 +34,7 @@ fun HeartClickSnackBar(
         modifier = modifier
             .background(
                 color = NapzakMarketTheme.colors.purple500,
-                shape = RoundedCornerShape(50.96.dp),
+                shape = RoundedCornerShape(50.dp),
                 )
             .padding(
                 horizontal = 23.dp,
