@@ -28,8 +28,6 @@ fun HeartClickSnackBar(
     message: String,
     modifier: Modifier = Modifier,
 ) {
-    val colors = NapzakMarketTheme.colors
-    val typography = NapzakMarketTheme.typography
 
     Box(
         contentAlignment = Alignment.Center,
@@ -56,7 +54,7 @@ fun HeartClickSnackBar(
             Spacer(modifier = Modifier.width(2.5.dp))
             Text(
                 text = message,
-                style = typography.caption12sb,
+                style = NapzakMarketTheme.typography.caption12sb,
                 color = NapzakMarketTheme.colors.white,
             )
         }

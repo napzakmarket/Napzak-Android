@@ -29,8 +29,6 @@ fun WarningSnackBar(
     message: String,
     modifier: Modifier = Modifier,
 ) {
-    val colors = NapzakMarketTheme.colors
-    val typography = NapzakMarketTheme.typography
 
     Box(
         contentAlignment = Alignment.Center,
@@ -61,7 +59,7 @@ fun WarningSnackBar(
             Spacer(modifier = Modifier.width(1.5.dp))
             Text(
                 text = message,
-                style = typography.caption12sb,
+                style = NapzakMarketTheme.typography.caption12sb,
                 color = NapzakMarketTheme.colors.red,
             )
         }
