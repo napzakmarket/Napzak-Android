@@ -1,19 +1,4 @@
 <resources>
     <string name="app_name">NapzakMarket</string>
 
-    <!-- CommonSnackBar -->
-    <string name="snackbar_reserve_message">상품 상태를 “예약중”으로 변경하였습니다.</string>
-    <string name="snackbar_sell_message">상품 상태를 “판매중”으로 변경하였습니다.</string>
-    <string name="snackbar_soldout_message">상품 상태를 “판매완료”로 변경하였습니다.</string>
-    <string name="snackbar_deleted_message">상품이 삭제되었습니다.</string>
-
-
-    <!-- WarningSnackBar -->
-    <string name="warning_snackbar_icon_description">경고 아이콘</string>
-    <string name="warning_snackbar_genre_limit_message">관심 장르는 최대 7개까지만 고를 수 있어요</string>
-
-    <!-- HeartClickSnackBar -->
-    <string name="heart_click_snackbar_icon_description">하트 클릭 아이콘</string>
-    <string name="heart_click_snackbar_message">찜한 상품에 추가되었어요!</string>
-
 </resources>

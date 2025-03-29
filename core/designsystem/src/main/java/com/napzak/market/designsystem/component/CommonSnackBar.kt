@@ -1,4 +1,4 @@
-package com.napzak.market.snackbar
+package com.napzak.market.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +24,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.R
+import com.napzak.market.designsystem.R
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
 /**
