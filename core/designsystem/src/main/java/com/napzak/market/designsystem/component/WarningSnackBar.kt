@@ -34,7 +34,7 @@ fun WarningSnackBar(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .background(
-                color = NapzakMarketTheme.colors.white.copy(alpha = 0.5f),
+                color = NapzakMarketTheme.colors.transWhite
             )
             .border(
                 width = 1.dp,
