@@ -47,6 +47,7 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 private const val MAX_TEXT_LENGTH = 5
 private const val CHIP_ANIMATION_DURATION = 200
 private const val ANIMATION_LABEL = "genre_chip_group"
+private const val ELLIPSIS = "..."
 
 /**
  * 장르칩 목록을 관리하는 그룹 컴포넌트입니다. 장르를 클릭하여 삭제하거나 초기화 버튼을 누르는 기능을 제공합니다.
@@ -138,9 +139,8 @@ private fun RemovableGenreChip(
 ) {
     val shape = RoundedCornerShape(50)
     val genreText = remember(text) {
-        if (text.length > MAX_TEXT_LENGTH) {
-            text.substring(0, MAX_TEXT_LENGTH) + "..."
-        } else text
+        if (text.length > MAX_TEXT_LENGTH) text.substring(0, MAX_TEXT_LENGTH) + ELLIPSIS
+        else text
     }
 
     Row(
