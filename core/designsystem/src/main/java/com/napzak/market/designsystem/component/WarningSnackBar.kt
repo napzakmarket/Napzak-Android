@@ -55,7 +55,7 @@ fun WarningSnackBar(
                 contentDescription = stringResource(id = R.string.warning_snackbar_icon_description),
                 tint = Color.Unspecified,
                 modifier = Modifier.size(12.dp),
-                )
+            )
             Spacer(modifier = Modifier.width(3.dp))
             Text(
                 text = message,
