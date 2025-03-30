@@ -6,18 +6,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -26,7 +22,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.util.android.priceSeparatorTransformation
 
 private const val BLANK = ""
 
@@ -50,9 +45,8 @@ fun InputTextField(
     hintTextStyle: TextStyle = NapzakMarketTheme.typography.body14sb,
     hintTextColor: Color = NapzakMarketTheme.colors.gray200,
     borderColor: Color = NapzakMarketTheme.colors.gray100,
-    keyboardType: KeyboardType = KeyboardType.Text,
-    imeAction: ImeAction = ImeAction.Done,
-    onDoneAction: () -> Unit? = {},
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     isSingleLined: Boolean = true,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     suffix: @Composable (() -> Unit)? = null,
@@ -60,7 +54,6 @@ fun InputTextField(
     contentAlignment: Alignment = Alignment.CenterStart,
     textAlign: TextAlign = TextAlign.Start
 ) {
-
     NapzakDefaultTextField(
         text = text,
         onTextChange = onTextChange,
@@ -72,9 +65,8 @@ fun InputTextField(
         hint = hint,
         textStyle = textStyle.copy(textAlign = textAlign),
         textColor = textColor,
-        keyboardType = keyboardType,
-        imeAction = imeAction,
-        onDoneAction = onDoneAction,
+        keyboardActions = keyboardActions,
+        keyboardOptions = keyboardOptions,
         hintTextStyle = hintTextStyle.copy(color = hintTextColor),
         isSingleLined = isSingleLined,
         visualTransformation = visualTransformation,
@@ -88,18 +80,10 @@ fun InputTextField(
 @Composable
 private fun TitleInputTexFieldPreview() {
     NapzakMarketTheme {
-        val focusManager = LocalFocusManager.current
-        val keyboardController = LocalSoftwareKeyboardController.current
-
-        var text by remember { mutableStateOf("") }
         InputTextField(
-            text = text,
-            onTextChange = { text = it },
+            text = "",
+            onTextChange = { },
             hint = "정확한 상품명을 포함하면 거래 확률이 올라가요",
-            onDoneAction = {
-                focusManager.clearFocus()
-                keyboardController?.hide()
-            }
         )
     }
 }
@@ -108,17 +92,13 @@ private fun TitleInputTexFieldPreview() {
 @Composable
 private fun ContentInputTexFieldPreview() {
     NapzakMarketTheme {
-        var text by remember { mutableStateOf("") }
-
         InputTextField(
-            text = text,
-            onTextChange = { text = it },
+            text = "",
+            onTextChange = { },
             hint = "자세히 작성하면 더 빠르고 원활한 거래를 할 수 있어요\n" +
                     "예) 상품 상태, 한정판 여부, 네고 가능 여부 등",
             modifier = Modifier.height(136.dp),
-            isSingleLined = false,
-            imeAction = ImeAction.Default,
-            contentAlignment = Alignment.TopStart
+            contentAlignment = Alignment.TopStart,
         )
     }
 }
@@ -127,37 +107,48 @@ private fun ContentInputTexFieldPreview() {
 @Composable
 private fun PriceInputTexFieldPreview() {
     NapzakMarketTheme {
-        val focusManager = LocalFocusManager.current
-        val keyboardController = LocalSoftwareKeyboardController.current
-        var text by remember { mutableStateOf("") }
-        var isError = if (text.length > 4) true else false
-        val borderColor = if (isError) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray100
-        val textColor = if (isError) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray500
-        val hintColor = if (isError) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray200
-
         InputTextField(
-            text = text,
-            onTextChange = { text = it },
+            text = "",
+            onTextChange = { },
             hint = BLANK,
-            textColor = textColor,
-            borderColor = borderColor,
             isSingleLined = false,
-            keyboardType = KeyboardType.Number,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done,
+            ),
             contentAlignment = Alignment.CenterEnd,
-            visualTransformation = priceSeparatorTransformation(),
             suffix = {
                 Text(
                     text = "원",
-                    style = NapzakMarketTheme.typography.body14r.copy(color = hintColor),
+                    style = NapzakMarketTheme.typography.body14r,
                     modifier = Modifier.padding(start = 4.dp, end = 14.dp)
                 )
             },
             paddingValues = PaddingValues(14.dp, 16.dp, 0.dp, 16.dp),
             textAlign = TextAlign.End,
-            onDoneAction = {
-                focusManager.clearFocus()
-                keyboardController?.hide()
-            }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ReportTextFieldPreview() {
+    NapzakMarketTheme {
+        InputTextField(
+            text = "",
+            onTextChange = { },
+            hint = "어떤 일이 있었나요?\n\n" +
+                    "자세한 설명일수록 빠른 해결에 도움이 됩니다.\n" +
+                    "신고 내용은 비공개로 안전하게 처리되니 안심하세요.\n" +
+                    "안전한 거래 공간을 함께 만들어가요!",
+            modifier = Modifier.height(180.dp),
+            textStyle = NapzakMarketTheme.typography.caption12sb,
+            textColor = NapzakMarketTheme.colors.gray400,
+            hintTextStyle = NapzakMarketTheme.typography.caption12m,
+            borderColor = NapzakMarketTheme.colors.gray200,
+            isSingleLined = false,
+            contentAlignment = Alignment.TopStart,
+            paddingValues = PaddingValues(16.dp)
         )
     }
 }
