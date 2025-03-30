@@ -43,9 +43,9 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 @Composable
 fun CommonSnackBar(
     message: String,
-    backgroundColor: Color,
-    textColor: Color,
-    textStyle: TextStyle,
+    backgroundColor: Color = NapzakMarketTheme.colors.transBlack,
+    textColor: Color = NapzakMarketTheme.colors.white,
+    textStyle: TextStyle = NapzakMarketTheme.typography.body14sb,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
     shape: Shape = RoundedCornerShape(14.dp),
@@ -98,36 +98,24 @@ private fun CommonSnackBarPreview() {
             CommonSnackBar(
                 message = stringResource(id = R.string.snackbar_reserve_message),
                 icon = ImageVector.vectorResource(id = R.drawable.ic_check_snackbar_18),
-                backgroundColor = NapzakMarketTheme.colors.transBlack,
-                textColor = NapzakMarketTheme.colors.white,
-                textStyle = NapzakMarketTheme.typography.body14sb,
                 modifier = snackBarModifier,
             )
 
             CommonSnackBar(
                 message = stringResource(id = R.string.snackbar_sell_message),
                 icon = ImageVector.vectorResource(id = R.drawable.ic_check_snackbar_18),
-                backgroundColor = NapzakMarketTheme.colors.transBlack,
-                textColor = NapzakMarketTheme.colors.white,
-                textStyle = NapzakMarketTheme.typography.body14sb,
                 modifier = snackBarModifier,
             )
 
             CommonSnackBar(
                 message = stringResource(id = R.string.snackbar_soldout_message),
                 icon = ImageVector.vectorResource(id = R.drawable.ic_check_snackbar_18),
-                backgroundColor = NapzakMarketTheme.colors.transBlack,
-                textColor = NapzakMarketTheme.colors.white,
-                textStyle = NapzakMarketTheme.typography.body14sb,
                 modifier = snackBarModifier,
             )
 
             CommonSnackBar(
                 message = stringResource(id = R.string.snackbar_deleted_message),
                 icon = ImageVector.vectorResource(id = R.drawable.ic_delete_snackbar_16),
-                backgroundColor = NapzakMarketTheme.colors.transBlack,
-                textColor = NapzakMarketTheme.colors.white,
-                textStyle = NapzakMarketTheme.typography.body14sb,
                 modifier = snackBarModifier,
             )
         }
