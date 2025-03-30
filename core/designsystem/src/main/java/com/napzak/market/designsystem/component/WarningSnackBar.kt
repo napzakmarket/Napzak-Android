@@ -68,7 +68,7 @@ fun WarningSnackBar(
 
 @Preview(showBackground = true)
 @Composable
-fun WarningSnackBarPreview() {
+private fun WarningSnackBarPreview() {
     NapzakMarketTheme {
         WarningSnackBar(
             message = stringResource(id = R.string.warning_snackbar_genre_limit_message),

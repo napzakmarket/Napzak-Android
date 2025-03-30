@@ -61,7 +61,7 @@ fun HeartClickSnackBar(
 
 @Preview(showBackground = true)
 @Composable
-fun HeartClickSnackBarPreview() {
+private fun HeartClickSnackBarPreview() {
     NapzakMarketTheme {
         HeartClickSnackBar(
             message = stringResource(id = R.string.heart_click_snackbar_message),

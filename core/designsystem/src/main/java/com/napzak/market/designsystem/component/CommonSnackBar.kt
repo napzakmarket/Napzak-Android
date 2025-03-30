@@ -84,7 +84,7 @@ fun CommonSnackBar(
 
 @Preview(showBackground = true)
 @Composable
-fun CommonSnackBarPreview() {
+private fun CommonSnackBarPreview() {
     NapzakMarketTheme {
         Column(
             modifier = Modifier
