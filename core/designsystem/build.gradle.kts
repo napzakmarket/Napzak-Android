@@ -1,3 +1,4 @@
+import com.napzak.market.buildlogic.dsl.implementation
 import com.napzak.market.buildlogic.dsl.setNameSpace
 
 plugins {
@@ -10,6 +11,9 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.util)
+    implementation(projects.core.common)
+
     // Miscellaneous libraries
     implementation(libs.coil.compose)
     implementation(libs.lottie.compose)
