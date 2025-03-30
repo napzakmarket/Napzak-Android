@@ -213,7 +213,7 @@ private fun ItemImageGroup(
                 isLiked = isLiked,
                 onLikeClick = onLikeClick,
                 modifier = Modifier
-                    .padding(5.dp)
+                    .padding(9.dp)
                     .align(Alignment.BottomEnd),
             )
         }
