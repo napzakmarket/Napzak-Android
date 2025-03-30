@@ -43,6 +43,8 @@ import com.napzak.market.designsystem.R
 import com.napzak.market.designsystem.R.drawable.ic_product_buy_complete
 import com.napzak.market.designsystem.R.drawable.ic_product_reservation
 import com.napzak.market.designsystem.R.drawable.ic_product_sell_complete
+import com.napzak.market.designsystem.R.drawable.ic_heart_filled_14
+import com.napzak.market.designsystem.R.drawable.ic_heart_unfilled_16
 import com.napzak.market.designsystem.R.string.production_item_buy
 import com.napzak.market.designsystem.R.string.production_item_price
 import com.napzak.market.designsystem.R.string.production_item_price_suggestion
@@ -320,8 +322,8 @@ private fun LikeButton(
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    val imageVector = if (isLiked) R.drawable.ic_heart_filled_14
-    else R.drawable.ic_heart_unfilled_16
+    val imageVector = if (isLiked) ic_heart_filled_14
+    else ic_heart_unfilled_16
 
     Icon(
         imageVector = ImageVector.vectorResource(imageVector),
