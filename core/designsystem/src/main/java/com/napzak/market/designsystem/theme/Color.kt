@@ -37,7 +37,7 @@ val gradWhite = Color(0x00FFFFFF)
 
 // Etc
 val kakaoYellow = Color(0xFFFEE500)
-val kakaoBrown = Color(0xFF000000)
+val kakaoBlack = Color(0xFF000000)
 
 @Stable
 class NapzakMarketColors(
@@ -61,7 +61,7 @@ class NapzakMarketColors(
     transWhite: Color,
     gradWhite: Color,
     kakaoYellow: Color,
-    kakaoBrown: Color,
+    kakaoBlack: Color,
     isLight: Boolean
 ) {
     var purple500 by mutableStateOf(purple500)
@@ -104,7 +104,7 @@ class NapzakMarketColors(
         private set
     var kakaoYellow by mutableStateOf(kakaoYellow)
         private set
-    var kakaoBrown by mutableStateOf(kakaoBrown)
+    var kakaoBlack by mutableStateOf(kakaoBlack)
         private set
     var isLight by mutableStateOf(isLight)
 
@@ -129,7 +129,7 @@ class NapzakMarketColors(
         transWhite,
         gradWhite,
         kakaoYellow,
-        kakaoBrown,
+        kakaoBlack,
         isLight
     )
 
@@ -154,7 +154,7 @@ class NapzakMarketColors(
         transWhite = other.transWhite
         gradWhite = other.gradWhite
         kakaoYellow = other.kakaoYellow
-        kakaoBrown = other.kakaoBrown
+        kakaoBlack = other.kakaoBlack
         isLight = other.isLight
     }
 }
@@ -180,7 +180,7 @@ fun NapzakMarketLightColors(
     TransWhite: Color = transWhite,
     GradWhite: Color = gradWhite,
     KakaoYellow: Color = kakaoYellow,
-    KakaoBrown: Color = kakaoBrown,
+    KakaoBlack: Color = kakaoBlack,
 ) = NapzakMarketColors(
     Purple500,
     Purple200,
@@ -202,6 +202,6 @@ fun NapzakMarketLightColors(
     TransWhite,
     GradWhite,
     KakaoYellow,
-    KakaoBrown,
+    KakaoBlack,
     isLight = true
 )
