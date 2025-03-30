@@ -52,7 +52,7 @@ fun InputTextField(
     suffix: @Composable (() -> Unit)? = null,
     paddingValues: PaddingValues = PaddingValues(14.dp, 16.dp, 14.dp, 16.dp),
     contentAlignment: Alignment = Alignment.CenterStart,
-    textAlign: TextAlign = TextAlign.Start
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     NapzakDefaultTextField(
         text = text,

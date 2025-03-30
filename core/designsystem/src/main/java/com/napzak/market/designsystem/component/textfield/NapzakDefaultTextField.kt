@@ -54,7 +54,7 @@ fun NapzakDefaultTextField(
     suffix: @Composable (() -> Unit)? = null,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     contentAlignment: Alignment = Alignment.CenterStart,
-    textAlign: TextAlign = TextAlign.Start
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     BasicTextField(
         value = text,
