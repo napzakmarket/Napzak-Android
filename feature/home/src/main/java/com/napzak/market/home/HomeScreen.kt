@@ -92,8 +92,7 @@ private fun HomeScreen(
                     subTitle = stringResource(home_list_customized_sub_title),
                     onProductClick = onProductClick,
                     onLikeClick = onLikeButtonClick,
-                    modifier = Modifier
-                        .padding(start = 20.dp, end = 20.dp, top = 32.dp),
+                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 32.dp),
                 )
 
                 HomeSingleBanner(

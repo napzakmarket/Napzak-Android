@@ -44,13 +44,11 @@ internal fun VerticalGridProducts(
     onProductClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-    ) {
+    Column(modifier = modifier) {
         Text(
             text = title,
             style = NapzakMarketTheme.typography.title18b.copy(
-                color = NapzakMarketTheme.colors.gray500
+                color = NapzakMarketTheme.colors.gray500,
             ),
         )
 
@@ -63,7 +61,7 @@ internal fun VerticalGridProducts(
             Text(
                 text = subTitle,
                 style = NapzakMarketTheme.typography.caption12m.copy(
-                    color = NapzakMarketTheme.colors.gray300
+                    color = NapzakMarketTheme.colors.gray300,
                 ),
             )
 
@@ -77,7 +75,7 @@ internal fun VerticalGridProducts(
                 Text(
                     text = stringResource(home_button_more),
                     style = NapzakMarketTheme.typography.caption12m.copy(
-                        color = NapzakMarketTheme.colors.gray300
+                        color = NapzakMarketTheme.colors.gray300,
                     ),
                 )
 
@@ -117,7 +115,7 @@ internal fun VerticalGridProducts(
                                 onLikeClick = { onLikeClick(id, isInterested) },
                                 modifier = Modifier
                                     .weight(1f)
-                                    .noRippleClickable { onProductClick(id) }
+                                    .noRippleClickable { onProductClick(id) },
                             )
                         }
                     }
@@ -126,7 +124,6 @@ internal fun VerticalGridProducts(
         }
     }
 }
-
 
 @Preview(showBackground = true, heightDp = 1000)
 @Composable
@@ -144,8 +141,7 @@ private fun VerticalGridProductsPreview() {
                     .padding(top = 30.dp)
                     .background(color = NapzakMarketTheme.colors.gray10)
                     .padding(start = 20.dp, end = 20.dp, top = 32.dp, bottom = 20.dp),
-
-                )
+            )
         }
     }
 }

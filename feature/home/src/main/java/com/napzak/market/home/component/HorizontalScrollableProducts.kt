@@ -36,14 +36,14 @@ internal fun HorizontalScrollableProducts(
         Text(
             text = title,
             style = NapzakMarketTheme.typography.title18b.copy(
-                color = NapzakMarketTheme.colors.gray500
+                color = NapzakMarketTheme.colors.gray500,
             ),
         )
 
         Text(
             text = subTitle,
             style = NapzakMarketTheme.typography.caption12m.copy(
-                color = NapzakMarketTheme.colors.gray300
+                color = NapzakMarketTheme.colors.gray300,
             ),
         )
     }
