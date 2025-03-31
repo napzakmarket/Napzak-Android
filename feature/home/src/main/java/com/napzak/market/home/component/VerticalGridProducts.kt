@@ -28,6 +28,8 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.home.R.string.home_button_more
 import com.napzak.market.home.model.Product
 import com.napzak.market.util.android.noRippleClickable
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 private const val GRID_CELL_COUNT = 2
 
@@ -35,7 +37,7 @@ private const val GRID_CELL_COUNT = 2
 internal fun VerticalGridProducts(
     title: String,
     subTitle: String,
-    products: List<Product>,
+    products: ImmutableList<Product>,
     onMoreClick: () -> Unit,
     onLikeClick: (Long, Boolean) -> Unit,
     onProductClick: (Long) -> Unit,
@@ -131,7 +133,7 @@ private fun VerticalGridProductsPreview() {
     NapzakMarketTheme {
         Column {
             VerticalGridProducts(
-                products = Product.mockMixedProduct,
+                products = Product.mockMixedProduct.toImmutableList(),
                 title = "지금 가장 많이 찜한 납작템",
                 subTitle = "놓치면 아쉬운 인기 아이템들을 구경해볼까요?",
                 onLikeClick = { _, _ -> },

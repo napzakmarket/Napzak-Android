@@ -78,7 +78,7 @@ private fun HomeScreen(
                 )
 
                 HorizontalAutoScrolledImages(
-                    images = listOf("", "", "").toImmutableList(),
+                    images = listOf("", "", "").toImmutableList(), // TODO: 이미지 URL 리스트 대체
                     onImageClick = { },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -91,7 +91,7 @@ private fun HomeScreen(
                 )
 
                 HorizontalScrollableProducts(
-                    products = Product.mockMixedProduct.toImmutableList(),
+                    products = Product.mockMixedProduct.toImmutableList(), // TODO: Product 리스트 대체
                     title = stringResource(home_list_customized_title),
                     subTitle = stringResource(home_list_customized_sub_title),
                     onProductClick = onProductClick,
@@ -103,7 +103,7 @@ private fun HomeScreen(
                 )
 
                 VerticalGridProducts(
-                    products = Product.mockMixedProduct,
+                    products = Product.mockMixedProduct.toImmutableList(), // TODO: Product 리스트 대체
                     title = stringResource(home_list_interested_sell_title),
                     subTitle = stringResource(home_list_interested_sell_sub_title),
                     onProductClick = onProductClick,
@@ -113,7 +113,7 @@ private fun HomeScreen(
                 )
 
                 VerticalGridProducts(
-                    products = Product.mockMixedProduct,
+                    products = Product.mockMixedProduct.toImmutableList(), // TODO: Product 리스트 대체
                     title = stringResource(home_list_interested_buy_title),
                     subTitle = stringResource(home_list_interested_buy_sub_title),
                     onProductClick = onProductClick,
