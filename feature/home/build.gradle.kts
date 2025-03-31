@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    setNameSpace("feature.dummy")
+    setNameSpace("feature.home")
 }
 
 dependencies {
