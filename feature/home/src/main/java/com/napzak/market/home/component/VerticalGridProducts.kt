@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
@@ -24,6 +25,7 @@ import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.ic_home_forward
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.feature.home.R.string.home_button_more
 import com.napzak.market.home.model.Product
 import com.napzak.market.util.android.noRippleClickable
 
@@ -41,7 +43,6 @@ internal fun VerticalGridProducts(
 ) {
     Column(
         modifier = modifier
-            .padding(start = 20.dp, end = 20.dp),
     ) {
         Text(
             text = title,
@@ -71,7 +72,7 @@ internal fun VerticalGridProducts(
                     .noRippleClickable { onMoreClick() },
             ) {
                 Text(
-                    text = "자세히 보기",
+                    text = stringResource(home_button_more),
                     style = NapzakMarketTheme.typography.caption12m.copy(
                         color = NapzakMarketTheme.colors.gray300
                     ),

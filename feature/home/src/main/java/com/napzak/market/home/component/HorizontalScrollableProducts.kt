@@ -31,7 +31,7 @@ internal fun HorizontalScrollableProducts(
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(5.dp),
-        modifier = modifier.padding(start = 20.dp, end = 20.dp),
+        modifier = modifier,
     ) {
         Text(
             text = title,
