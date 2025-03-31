@@ -40,11 +40,11 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.designsystem.R
+import com.napzak.market.designsystem.R.drawable.ic_heart_filled_14
+import com.napzak.market.designsystem.R.drawable.ic_heart_unfilled_16
 import com.napzak.market.designsystem.R.drawable.ic_product_buy_complete
 import com.napzak.market.designsystem.R.drawable.ic_product_reservation
 import com.napzak.market.designsystem.R.drawable.ic_product_sell_complete
-import com.napzak.market.designsystem.R.drawable.ic_heart_filled_14
-import com.napzak.market.designsystem.R.drawable.ic_heart_unfilled_16
 import com.napzak.market.designsystem.R.string.production_item_buy
 import com.napzak.market.designsystem.R.string.production_item_price
 import com.napzak.market.designsystem.R.string.production_item_price_suggestion
@@ -228,11 +228,11 @@ private fun TradeStatusImage(
     shape: RoundedCornerShape,
     modifier: Modifier = Modifier,
 ) {
-    if (tradeStatus != TradeStatusType.OnSale) {
+    if (tradeStatus != TradeStatusType.BEFORE_TRADE) {
         val image = when(tradeStatus) {
-            TradeStatusType.Reserved -> ic_product_reservation
-            TradeStatusType.Sold -> ic_product_sell_complete
-            TradeStatusType.Bought -> ic_product_buy_complete
+            TradeStatusType.RESERVED -> ic_product_reservation
+            TradeStatusType.COMPLETED_SELL -> ic_product_sell_complete
+            TradeStatusType.COMPLETED_BUY -> ic_product_buy_complete
             else -> null
         }
 
@@ -392,7 +392,7 @@ private fun LargeProductItemPreview() {
                     isMyItem = false,
                     isSellElseBuy = true,
                     isSuggestionAllowed = false,
-                    tradeStatus = TradeStatusType.OnSale,
+                    tradeStatus = TradeStatusType.BEFORE_TRADE,
                     onLikeClick = { isLiked1 = !isLiked1 },
                     modifier = Modifier.weight(1f),
                 )
@@ -409,7 +409,7 @@ private fun LargeProductItemPreview() {
                     isMyItem = false,
                     isSellElseBuy = false,
                     isSuggestionAllowed = true,
-                    tradeStatus = TradeStatusType.Sold,
+                    tradeStatus = TradeStatusType.COMPLETED_SELL,
                     onLikeClick = { isLiked2 = !isLiked2 },
                     modifier = Modifier.weight(1f),
                 )
@@ -433,7 +433,7 @@ private fun LargeProductItemPreview() {
                     isMyItem = false,
                     isSellElseBuy = false,
                     isSuggestionAllowed = false,
-                    tradeStatus = TradeStatusType.Sold,
+                    tradeStatus = TradeStatusType.COMPLETED_SELL,
                     onLikeClick = { isLiked1 = !isLiked1 },
                     modifier = Modifier.weight(1f),
                 )
@@ -450,7 +450,7 @@ private fun LargeProductItemPreview() {
                     isMyItem = false,
                     isSellElseBuy = false,
                     isSuggestionAllowed = true,
-                    tradeStatus = TradeStatusType.Reserved,
+                    tradeStatus = TradeStatusType.RESERVED,
                     onLikeClick = { isLiked2 = !isLiked2 },
                     modifier = Modifier.weight(1f),
                 )
