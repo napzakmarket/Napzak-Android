@@ -3,14 +3,17 @@ package com.napzak.market.home.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.component.productItem.NapzakSmallProductItem
@@ -19,6 +22,9 @@ import com.napzak.market.home.model.Product
 import com.napzak.market.util.android.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+
+private const val PRODUCT_WIDTH_RATIO = 116 / 360f
+private const val PRODUCT_HEIGHT_RATIO = 116 / 182f
 
 @Composable
 internal fun HorizontalScrollableProducts(
@@ -29,6 +35,7 @@ internal fun HorizontalScrollableProducts(
     onProductClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
     Column(
         verticalArrangement = Arrangement.spacedBy(5.dp),
         modifier = modifier,
@@ -63,6 +70,12 @@ private fun ProductsRow(
     onItemClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp // 화면 가로 크기 (dp 단위)
+    val productWidth = remember(screenWidth) {
+        (screenWidth * PRODUCT_WIDTH_RATIO)
+    }
+
     LazyRow(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -80,7 +93,8 @@ private fun ProductsRow(
                 isSuggestionAllowed = product.isPriceNegotiable,
                 onLikeClick = { onLikeClick(product.id, product.isInterested) },
                 modifier = Modifier
-                    .size(width = 116.dp, height = 182.dp)
+                    .width(productWidth.dp)
+                    .aspectRatio(PRODUCT_HEIGHT_RATIO)
                     .noRippleClickable { onItemClick(product.id) },
             )
         }
