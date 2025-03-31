@@ -30,13 +30,14 @@ val green = Color(0xFF1BD368)
 val transP500 = Color(0xB37534FF)
 val transBlack = Color(0xB31A1A1A)
 val transP100 = Color(0xB3F1EAFF)
+val transWhite = Color(0x80FFFFFF)
 
 // Gradient
 val gradWhite = Color(0x00FFFFFF)
 
 // Etc
-val kakaoYellow = Color(0xFFFBE902)
-val kakaoBrown = Color(0xFF3E2B2F)
+val kakaoYellow = Color(0xFFFEE500)
+val kakaoBlack = Color(0xFF000000)
 
 @Stable
 class NapzakMarketColors(
@@ -57,9 +58,10 @@ class NapzakMarketColors(
     transP500: Color,
     transBlack: Color,
     transP100: Color,
+    transWhite: Color,
     gradWhite: Color,
     kakaoYellow: Color,
-    kakaoBrown: Color,
+    kakaoBlack: Color,
     isLight: Boolean
 ) {
     var purple500 by mutableStateOf(purple500)
@@ -96,11 +98,13 @@ class NapzakMarketColors(
         private set
     var transP100 by mutableStateOf(transP100)
         private set
+    var transWhite by mutableStateOf(transWhite)
+        private set
     var gradWhite by mutableStateOf(gradWhite)
         private set
     var kakaoYellow by mutableStateOf(kakaoYellow)
         private set
-    var kakaoBrown by mutableStateOf(kakaoBrown)
+    var kakaoBlack by mutableStateOf(kakaoBlack)
         private set
     var isLight by mutableStateOf(isLight)
 
@@ -122,9 +126,10 @@ class NapzakMarketColors(
         transP500,
         transBlack,
         transP100,
+        transWhite,
         gradWhite,
         kakaoYellow,
-        kakaoBrown,
+        kakaoBlack,
         isLight
     )
 
@@ -146,9 +151,10 @@ class NapzakMarketColors(
         transP500 = other.transP500
         transBlack = other.transBlack
         transP100 = other.transP100
+        transWhite = other.transWhite
         gradWhite = other.gradWhite
         kakaoYellow = other.kakaoYellow
-        kakaoBrown = other.kakaoBrown
+        kakaoBlack = other.kakaoBlack
         isLight = other.isLight
     }
 }
@@ -171,9 +177,10 @@ fun NapzakMarketLightColors(
     TransP500: Color = transP500,
     TransBlack: Color = transBlack,
     TransP100: Color = transP100,
+    TransWhite: Color = transWhite,
     GradWhite: Color = gradWhite,
     KakaoYellow: Color = kakaoYellow,
-    KakaoBrown: Color = kakaoBrown,
+    KakaoBlack: Color = kakaoBlack,
 ) = NapzakMarketColors(
     Purple500,
     Purple200,
@@ -192,8 +199,9 @@ fun NapzakMarketLightColors(
     TransP500,
     TransBlack,
     TransP100,
+    TransWhite,
     GradWhite,
     KakaoYellow,
-    KakaoBrown,
+    KakaoBlack,
     isLight = true
 )
