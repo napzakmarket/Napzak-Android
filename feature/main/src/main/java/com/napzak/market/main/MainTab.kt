@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.napzak.market.common.navigation.MainTabRoute
 import com.napzak.market.common.navigation.Route
 import com.napzak.market.dummy.navigation.Dummy
+import com.napzak.market.home.navigation.Home
 
 // TODO: 구현 시작 시 수정
 enum class MainTab(
@@ -15,12 +16,12 @@ enum class MainTab(
     val contentDescription: String,
     val route: MainTabRoute,
 ) {
-    DUMMY(
+    HOME(
         icon = Icons.Filled.Home,
-        contentDescription = "더미1",
-        route = Dummy,
+        contentDescription = "홈",
+        route = Home,
     ),
-    DUMMY2(
+    DUMMY(
         icon = Icons.Filled.Search,
         contentDescription = "더미2",
         route = Dummy,
