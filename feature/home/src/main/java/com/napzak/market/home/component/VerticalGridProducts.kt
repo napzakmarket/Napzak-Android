@@ -1,5 +1,6 @@
 package com.napzak.market.home.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -127,7 +128,7 @@ internal fun VerticalGridProducts(
 }
 
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, heightDp = 1000)
 @Composable
 private fun VerticalGridProductsPreview() {
     NapzakMarketTheme {
@@ -140,7 +141,11 @@ private fun VerticalGridProductsPreview() {
                 onProductClick = { },
                 onMoreClick = {},
                 modifier = Modifier
-            )
+                    .padding(top = 30.dp)
+                    .background(color = NapzakMarketTheme.colors.gray10)
+                    .padding(start = 20.dp, end = 20.dp, top = 32.dp, bottom = 20.dp),
+
+                )
         }
     }
 }

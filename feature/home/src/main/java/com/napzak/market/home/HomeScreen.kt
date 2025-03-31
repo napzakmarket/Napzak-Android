@@ -83,11 +83,7 @@ private fun HomeScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(360 / 216f)
-                        .padding(top = 22.dp),
-                )
-
-                HomeSingleBanner(
-                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp),
+                        .padding(top = 20.dp),
                 )
 
                 HorizontalScrollableProducts(
@@ -97,9 +93,11 @@ private fun HomeScreen(
                     onProductClick = onProductClick,
                     onLikeClick = onLikeButtonClick,
                     modifier = Modifier
-                        .padding(top = 30.dp)
-                        .background(NapzakMarketTheme.colors.gray10)
-                        .padding(start = 20.dp, end = 20.dp, top = 32.dp, bottom = 20.dp),
+                        .padding(start = 20.dp, end = 20.dp, top = 32.dp),
+                )
+
+                HomeSingleBanner(
+                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 50.dp),
                 )
 
                 VerticalGridProducts(
@@ -109,7 +107,10 @@ private fun HomeScreen(
                     onProductClick = onProductClick,
                     onLikeClick = onLikeButtonClick,
                     onMoreClick = onMostInterestedSellNavigate,
-                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 40.dp),
+                    modifier = Modifier
+                        .padding(top = 30.dp)
+                        .background(color = NapzakMarketTheme.colors.gray10)
+                        .padding(start = 20.dp, end = 20.dp, top = 32.dp, bottom = 20.dp),
                 )
 
                 VerticalGridProducts(
