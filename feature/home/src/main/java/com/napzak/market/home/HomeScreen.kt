@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.component.textfield.SearchTextField
@@ -84,13 +86,8 @@ private fun HomeScreen(
                         .padding(top = 22.dp),
                 )
 
-                Box(
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp)
-                        .padding(top = 50.dp)
-                        .fillMaxWidth()
-                        .height(110.dp)
-                        .background(NapzakMarketTheme.colors.gray100),
+                HomeSingleBanner(
+                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp),
                 )
 
                 HorizontalScrollableProducts(
@@ -145,6 +142,19 @@ private fun HomeSearchTextField(
         modifier = Modifier
             .noRippleClickable(onClick)
             .then(modifier),
+    )
+}
+
+@Composable
+private fun HomeSingleBanner(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(110.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(color = NapzakMarketTheme.colors.gray100),
     )
 }
 
