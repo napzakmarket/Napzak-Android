@@ -37,15 +37,17 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 internal fun HomeRoute(
     onSearchNavigate: () -> Unit,
-    onExploreNavigate: (/*TODO: 더보기를 눌렀을 때 탐색화면에 전달해야 할 인자 삽입*/) -> Unit,
+    onProductDetailNavigate: (Long) -> Unit,
+    onMostInterestedSellNavigate: () -> Unit,
+    onMostInterestedBuyNavigate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     HomeScreen(
         onSearchTextFieldClick = onSearchNavigate,
-        onProductClick = {},
+        onProductClick = onProductDetailNavigate,
         onLikeButtonClick = { _, _ -> },
-        onMostInterestedSellNavigate = { },
-        onMostInterestedBuyNavigate = { },
+        onMostInterestedSellNavigate = onMostInterestedSellNavigate,
+        onMostInterestedBuyNavigate = onMostInterestedBuyNavigate,
         modifier = modifier,
     )
 }
@@ -67,9 +69,7 @@ private fun HomeScreen(
         ) {
             // TODO: 로고 탑바 추가
 
-            Column(
-                modifier = Modifier.verticalScroll(scrollState)
-            ) {
+            Column(modifier = Modifier.verticalScroll(scrollState)) {
                 HomeSearchTextField(
                     onClick = onSearchTextFieldClick,
                     modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 17.dp),
@@ -90,7 +90,7 @@ private fun HomeScreen(
                         .padding(top = 50.dp)
                         .fillMaxWidth()
                         .height(110.dp)
-                        .background(NapzakMarketTheme.colors.gray100)
+                        .background(NapzakMarketTheme.colors.gray100),
                 )
 
                 HorizontalScrollableProducts(
@@ -144,7 +144,7 @@ private fun HomeSearchTextField(
         onResetClick = {},
         modifier = Modifier
             .noRippleClickable(onClick)
-            .then(modifier)
+            .then(modifier),
     )
 }
 
