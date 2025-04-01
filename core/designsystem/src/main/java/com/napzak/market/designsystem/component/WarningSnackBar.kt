@@ -1,6 +1,7 @@
-package com.napzak.market.snackbar
+package com.napzak.market.designsystem.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -20,11 +21,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.R
+import com.napzak.market.designsystem.R
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.designsystem.R.drawable.ic_warning_snackbar_12
+import com.napzak.market.designsystem.R.string.warning_snackbar_icon_description
 
 @Composable
-fun HeartClickSnackBar(
+fun WarningSnackBar(
     message: String,
     modifier: Modifier = Modifier,
 ) {
@@ -33,12 +36,16 @@ fun HeartClickSnackBar(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .background(
-                color = NapzakMarketTheme.colors.purple500,
-                shape = RoundedCornerShape(50.96.dp),
-                )
+                color = NapzakMarketTheme.colors.transWhite
+            )
+            .border(
+                width = 1.dp,
+                color = NapzakMarketTheme.colors.red,
+                shape = RoundedCornerShape(50.dp),
+            )
             .padding(
-                horizontal = 23.dp,
-                vertical = 9.5.dp,
+                horizontal = 15.dp,
+                vertical = 7.dp,
             )
     ) {
         Row(
@@ -46,16 +53,16 @@ fun HeartClickSnackBar(
             horizontalArrangement = Arrangement.Center,
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_heartclick_snackbar_12),
-                contentDescription = stringResource(id = R.string.heart_click_snackbar_icon_description),
+                imageVector = ImageVector.vectorResource(ic_warning_snackbar_12),
+                contentDescription = stringResource(warning_snackbar_icon_description),
                 tint = Color.Unspecified,
                 modifier = Modifier.size(12.dp),
             )
-            Spacer(modifier = Modifier.width(2.5.dp))
+            Spacer(modifier = Modifier.width(3.dp))
             Text(
                 text = message,
                 style = NapzakMarketTheme.typography.caption12sb,
-                color = NapzakMarketTheme.colors.white,
+                color = NapzakMarketTheme.colors.red,
             )
         }
     }
@@ -63,10 +70,10 @@ fun HeartClickSnackBar(
 
 @Preview(showBackground = true)
 @Composable
-fun HeartClickSnackBarPreview() {
+private fun WarningSnackBarPreview() {
     NapzakMarketTheme {
-        HeartClickSnackBar(
-            message = stringResource(id = R.string.heart_click_snackbar_message),
+        WarningSnackBar(
+            message = stringResource(id = R.string.warning_snackbar_genre_limit_message),
             modifier = Modifier
         )
     }

@@ -16,7 +16,4 @@ dependencies {
 
     implementation(libs.androidx.appcompat)
     implementation(libs.timber)
-    implementation(project(":core:designsystem"))
-    implementation(project(":core:designsystem"))
-    implementation(project(":core:designsystem"))
 }

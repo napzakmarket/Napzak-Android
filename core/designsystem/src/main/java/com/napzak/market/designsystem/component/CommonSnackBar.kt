@@ -1,4 +1,4 @@
-package com.napzak.market.snackbar
+package com.napzak.market.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -24,7 +23,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.R
+import com.napzak.market.designsystem.R
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
 /**
@@ -44,9 +43,9 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 @Composable
 fun CommonSnackBar(
     message: String,
-    backgroundColor: Color,
-    textColor: Color,
-    textStyle: TextStyle,
+    backgroundColor: Color = NapzakMarketTheme.colors.transBlack,
+    textColor: Color = NapzakMarketTheme.colors.white,
+    textStyle: TextStyle = NapzakMarketTheme.typography.body14sb,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
     shape: Shape = RoundedCornerShape(14.dp),
@@ -71,7 +70,6 @@ fun CommonSnackBar(
                     imageVector = icon,
                     contentDescription = null,
                     tint = Color.Unspecified,
-                    modifier = Modifier.size(18.dp),
                 )
                 Spacer(modifier = Modifier.width(5.dp))
             }
@@ -86,7 +84,7 @@ fun CommonSnackBar(
 
 @Preview(showBackground = true)
 @Composable
-fun CommonSnackBarPreview() {
+private fun CommonSnackBarPreview() {
     NapzakMarketTheme {
         Column(
             modifier = Modifier
@@ -100,36 +98,24 @@ fun CommonSnackBarPreview() {
             CommonSnackBar(
                 message = stringResource(id = R.string.snackbar_reserve_message),
                 icon = ImageVector.vectorResource(id = R.drawable.ic_check_snackbar_18),
-                backgroundColor = NapzakMarketTheme.colors.transBlack,
-                textColor = NapzakMarketTheme.colors.white,
-                textStyle = NapzakMarketTheme.typography.body14sb,
                 modifier = snackBarModifier,
             )
 
             CommonSnackBar(
                 message = stringResource(id = R.string.snackbar_sell_message),
                 icon = ImageVector.vectorResource(id = R.drawable.ic_check_snackbar_18),
-                backgroundColor = NapzakMarketTheme.colors.transBlack,
-                textColor = NapzakMarketTheme.colors.white,
-                textStyle = NapzakMarketTheme.typography.body14sb,
                 modifier = snackBarModifier,
             )
 
             CommonSnackBar(
                 message = stringResource(id = R.string.snackbar_soldout_message),
                 icon = ImageVector.vectorResource(id = R.drawable.ic_check_snackbar_18),
-                backgroundColor = NapzakMarketTheme.colors.transBlack,
-                textColor = NapzakMarketTheme.colors.white,
-                textStyle = NapzakMarketTheme.typography.body14sb,
                 modifier = snackBarModifier,
             )
 
             CommonSnackBar(
                 message = stringResource(id = R.string.snackbar_deleted_message),
                 icon = ImageVector.vectorResource(id = R.drawable.ic_delete_snackbar_16),
-                backgroundColor = NapzakMarketTheme.colors.transBlack,
-                textColor = NapzakMarketTheme.colors.white,
-                textStyle = NapzakMarketTheme.typography.body14sb,
                 modifier = snackBarModifier,
             )
         }
