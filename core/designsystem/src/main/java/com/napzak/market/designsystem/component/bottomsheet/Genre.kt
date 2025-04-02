@@ -1,4 +1,4 @@
-package com.napzak.market.common.type
+package com.napzak.market.designsystem.component.bottomsheet
 
 
 // TODO: 추후 버튼 domain으로 변경 예정
