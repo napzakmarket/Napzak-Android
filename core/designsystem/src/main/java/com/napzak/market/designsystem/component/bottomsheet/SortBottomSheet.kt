@@ -82,7 +82,7 @@ fun SortBottomSheet(
 }
 
 @Composable
-fun SortItem(
+private fun SortItem(
     sortType: String,
     isSelected: Boolean,
     onSortItemClick: () -> Unit,
@@ -116,7 +116,7 @@ fun SortItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun SortBottomSheetPreview() {
+private fun SortBottomSheetPreview() {
     val sheetState = rememberModalBottomSheetState()
 
     NapzakMarketTheme {

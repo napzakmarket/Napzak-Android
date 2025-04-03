@@ -76,7 +76,7 @@ fun DragHandleBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun ProductReportBottomSheetPreview() {
+private fun ProductReportBottomSheetPreview() {
     val sheetState = rememberModalBottomSheetState()
 
     NapzakMarketTheme {
@@ -98,7 +98,7 @@ fun ProductReportBottomSheetPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun ProductBottomSheetPreview() {
+private fun ProductBottomSheetPreview() {
     val sheetState = rememberModalBottomSheetState()
 
     NapzakMarketTheme {

@@ -176,7 +176,7 @@ fun GenreSearchBottomSheet(
 }
 
 @Composable
-fun GenreSearchNoticeSection() {
+private fun GenreSearchNoticeSection() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -199,7 +199,7 @@ fun GenreSearchNoticeSection() {
 }
 
 @Composable
-fun GenreList(
+private fun GenreList(
     genreItems: List<Genre>,
     selectedGenreList: List<Genre>,
     onGenreItemClick: (Genre, Boolean) -> Unit,
@@ -233,7 +233,7 @@ fun GenreList(
 }
 
 @Composable
-fun ButtonSection(
+private fun ButtonSection(
     onButtonClick: () -> Unit,
 ) {
     Column(
@@ -254,7 +254,7 @@ fun ButtonSection(
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun GenreSearchBottomSheetPreview() {
+private fun GenreSearchBottomSheetPreview() {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )

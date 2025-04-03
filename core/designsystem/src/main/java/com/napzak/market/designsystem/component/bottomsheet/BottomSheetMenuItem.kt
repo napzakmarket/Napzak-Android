@@ -78,7 +78,7 @@ fun BottomSheetMenuItem(
 
 @Preview
 @Composable
-fun BottomSheetMenuItemPreview() {
+private fun BottomSheetMenuItemPreview() {
     NapzakMarketTheme {
         BottomSheetMenuItem(
             menuIcon = ImageVector.vectorResource(R.drawable.ic_delete_24),
