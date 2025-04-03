@@ -137,9 +137,9 @@ fun GenreSearchBottomSheet(
                             genreNames = selectedGenreList.map(Genre::genreName),
                             contentPaddingValues = PaddingValues(end = 20.dp),
                             onResetClick = { selectedGenreList = emptyList() },
-                            onGenreClick = { genreItem ->
+                            onGenreClick = { genreName ->
                                 selectedGenreList =
-                                    selectedGenreList.filterNot { it.genreName == genreItem }
+                                    selectedGenreList.filterNot { it.genreName == genreName }
                             },
                         )
                     } else {
