@@ -100,8 +100,7 @@ fun GenreSearchBottomSheet(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(color = NapzakMarketTheme.colors.white)
-                        .padding(top = 18.dp)
-                        .padding(horizontal = 20.dp),
+                        .padding(top = 18.dp, start = 20.dp),
                     horizontalAlignment = Alignment.End,
                 ) {
                     Icon(
@@ -112,7 +111,8 @@ fun GenreSearchBottomSheet(
                             .noRippleClickable {
                                 onDismissRequest()
                                 focusManager.clearFocus()
-                            },
+                            }
+                            .padding(end = 18.dp),
                     )
 
                     GenreSearchNoticeSection()
@@ -125,7 +125,9 @@ fun GenreSearchBottomSheet(
                         },
                         hint = stringResource(genre_search_hint),
                         onResetClick = { searchText = "" },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 20.dp),
                         onSearchClick = { onTextChange(searchText) },
                     )
 
