@@ -47,30 +47,28 @@ fun DragHandleBottomSheet(
         shape = RoundedCornerShape(topStart = 31.dp, topEnd = 31.dp),
         containerColor = NapzakMarketTheme.colors.white,
         scrimColor = NapzakMarketTheme.colors.transBlack,
-        dragHandle = null,
+        dragHandle = {
+            Column {
+                Spacer(Modifier.height(17.dp))
+                Box(
+                    modifier = Modifier
+                        .width(42.dp)
+                        .height(2.dp)
+                        .background(
+                            color = NapzakMarketTheme.colors.gray100,
+                            shape = RoundedCornerShape(31)
+                        ),
+                )
+            }
+        },
     ) {
-        Box(
+        Column(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(top = 17.dp)
-                .padding(horizontal = 20.dp),
-            contentAlignment = Alignment.TopCenter,
+                .padding(horizontal = 20.dp)
+                .padding(top = 44.dp),
         ) {
-            Box(
-                modifier = Modifier
-                    .width(42.dp)
-                    .height(2.dp)
-                    .background(
-                        color = NapzakMarketTheme.colors.gray100,
-                        shape = RoundedCornerShape(31)
-                    ),
-            )
-
-            Column(
-                modifier = Modifier.padding(top = 44.dp)
-            ) {
-                bottomSheetContent()
-            }
+            bottomSheetContent()
         }
     }
 }
