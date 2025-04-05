@@ -43,6 +43,9 @@ fun BottomSheetMenuItem(
     isToggleOption: Boolean = false,
     isToggleOpen: Boolean = false,
 ) {
+    val chevronIcon = if (isToggleOpen) ImageVector.vectorResource(ic_up_chevron)
+    else ImageVector.vectorResource(ic_down_chevron)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -67,8 +70,7 @@ fun BottomSheetMenuItem(
 
         if (isToggleOption) {
             Icon(
-                imageVector = if (isToggleOpen) ImageVector.vectorResource(ic_up_chevron)
-                else ImageVector.vectorResource(ic_down_chevron),
+                imageVector = chevronIcon,
                 contentDescription = null,
                 tint = Color.Unspecified,
             )
