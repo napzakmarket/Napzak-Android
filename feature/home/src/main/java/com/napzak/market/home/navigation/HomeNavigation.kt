@@ -16,7 +16,7 @@ fun NavGraphBuilder.homeGraph(
     navigateToProductDetail: (Long) -> Unit,
     navigateToExploreSell: () -> Unit,
     navigateToExploreBuy: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     composable<Home> {
         HomeRoute(
@@ -24,7 +24,7 @@ fun NavGraphBuilder.homeGraph(
             onProductDetailNavigate = navigateToProductDetail,
             onMostInterestedSellNavigate = navigateToExploreSell,
             onMostInterestedBuyNavigate = navigateToExploreBuy,
-            modifier = modifier
+            modifier = modifier,
         )
     }
 }
