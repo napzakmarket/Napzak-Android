@@ -50,7 +50,6 @@ import kotlinx.coroutines.launch
  * @param initialSelectedGenreList 선택한 장르 리스트
  * @param genreItems 하단에 보여지는 장르 리스트
  * @param sheetState BottomSheet 상태
- * @param debounce 검색어 입력 시 실행됨
  * @param onDismissRequest x 버튼 또는 BottomSheet 외의 영역 클릭 시 실행됨
  * @param onTextChange 검색어 입력 시 실행됨
  * @param onButtonClick 적용하기 버튼 클릭 시 실행됨
@@ -62,7 +61,6 @@ fun GenreSearchBottomSheet(
     initialSelectedGenreList: List<Genre>,
     genreItems: List<Genre>,
     sheetState: SheetState,
-    debounce: () -> Unit,
     onDismissRequest: () -> Unit,
     onTextChange: (String) -> Unit,
     onButtonClick: (List<Genre>) -> Unit,
@@ -75,10 +73,7 @@ fun GenreSearchBottomSheet(
         )
     }
 
-    LaunchedEffect(Unit) {
-        debounce()
-        sheetState.expand()
-    }
+    LaunchedEffect(Unit) { sheetState.expand() }
     LaunchedEffect(searchText) { onTextChange(searchText) }
 
     ModalBottomSheet(
@@ -122,7 +117,6 @@ fun GenreSearchBottomSheet(
                         text = searchText,
                         onTextChange = { newSearchText ->
                             searchText = newSearchText
-                            onTextChange(newSearchText)
                         },
                         hint = stringResource(genre_search_hint),
                         onResetClick = { searchText = "" },
@@ -284,7 +278,6 @@ private fun GenreSearchBottomSheetPreview() {
                 Genre(9, "산리오3"),
                 Genre(10, "주술회전3"),
             ),
-            debounce = { },
             onDismissRequest = {
                 coroutineScope.launch { sheetState.hide() }
             },
