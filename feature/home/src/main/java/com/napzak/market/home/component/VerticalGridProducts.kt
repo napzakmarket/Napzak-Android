@@ -70,7 +70,7 @@ internal fun VerticalGridProducts(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier
                     .semantics { role = Role.Button }
-                    .noRippleClickable { onMoreClick() },
+                    .noRippleClickable(onMoreClick),
             ) {
                 Text(
                     text = stringResource(home_button_more),
