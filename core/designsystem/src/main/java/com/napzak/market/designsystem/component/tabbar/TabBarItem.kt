@@ -18,14 +18,23 @@ import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.util.android.noRippleClickable
 
+/**
+ * 탭바에 사용되는 버튼 아이템
+ *
+ * @param tabName 탭명
+ * @param isTabClicked 탭 선택 여부
+ * @param onTabClick 탭 클릭 시 실행됨
+ * @param modifier 수정자
+ */
+
 @Composable
 fun TabBarItem(
     tabName: String,
     isTabClicked: Boolean,
     onTabClick: () -> Unit,
+    modifier: Modifier = Modifier,
     textStyle: TextStyle = if (isTabClicked) NapzakMarketTheme.typography.body14b else NapzakMarketTheme.typography.body14sb,
     textColor: Color = if (isTabClicked) NapzakMarketTheme.colors.purple500 else NapzakMarketTheme.colors.gray200,
-    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
