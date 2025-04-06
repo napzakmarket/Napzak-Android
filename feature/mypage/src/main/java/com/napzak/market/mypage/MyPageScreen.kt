@@ -1,4 +1,4 @@
-package com.napzak.market
+package com.napzak.market.mypage
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
