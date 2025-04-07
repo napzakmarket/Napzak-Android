@@ -69,7 +69,11 @@ fun NapzakCheckedButton(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(start = 10.dp),
+            modifier = Modifier
+                .padding(
+                    vertical = 14.dp,
+                    horizontal = 10.dp,
+                ),
         ) {
             Icon(
                 imageVector = checkIcon,
