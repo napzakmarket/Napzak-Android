@@ -74,7 +74,7 @@ fun MyPageScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(NapzakMarketTheme.colors.white)
+            .background(NapzakMarketTheme.colors.white),
     ) {
         Column(
             modifier = Modifier
@@ -92,7 +92,6 @@ fun MyPageScreen(
             )
 
             Spacer(modifier = Modifier.height(30.dp))
-
 
             Card(
                 modifier = Modifier
@@ -131,32 +130,32 @@ fun MyPageScreen(
                         Text(
                             text = nickname,
                             color = NapzakMarketTheme.colors.purple500,
-                            style = NapzakMarketTheme.typography.body14b
+                            style = NapzakMarketTheme.typography.body14b,
                         )
                         Spacer(modifier = Modifier.height(7.dp))
                         Row {
                             Text(
                                 text = stringResource(sell_label),
                                 color = NapzakMarketTheme.colors.gray500,
-                                style = NapzakMarketTheme.typography.caption12m
+                                style = NapzakMarketTheme.typography.caption12m,
                             )
                             Spacer(modifier = Modifier.width(2.dp))
                             Text(
                                 text = stringResource(sell_count, salesCount),
                                 color = NapzakMarketTheme.colors.gray500,
-                                style = NapzakMarketTheme.typography.caption12sb
+                                style = NapzakMarketTheme.typography.caption12sb,
                             )
                             Spacer(modifier = Modifier.width(14.dp))
                             Text(
                                 text = stringResource(buy_label),
                                 color = NapzakMarketTheme.colors.gray500,
-                                style = NapzakMarketTheme.typography.caption12m
+                                style = NapzakMarketTheme.typography.caption12m,
                             )
                             Spacer(modifier = Modifier.width(2.dp))
                             Text(
                                 text = stringResource(buy_count, purchaseCount),
                                 color = NapzakMarketTheme.colors.gray500,
-                                style = NapzakMarketTheme.typography.caption12sb
+                                style = NapzakMarketTheme.typography.caption12sb,
                             )
                         }
                     }
@@ -178,7 +177,7 @@ fun MyPageScreen(
                 Text(
                     text = stringResource(my_market),
                     style = NapzakMarketTheme.typography.caption12sb,
-                    color = NapzakMarketTheme.colors.gray300
+                    color = NapzakMarketTheme.colors.gray300,
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Icon(
@@ -248,7 +247,7 @@ fun MyPageScreen(
                                                     color = dividerColor,
                                                     start = Offset(size.width, 0f),
                                                     end = Offset(size.width, size.height),
-                                                    strokeWidth = strokeWidth
+                                                    strokeWidth = strokeWidth,
                                                 )
                                             }
                                             if (showBottomBorder) {
@@ -256,23 +255,23 @@ fun MyPageScreen(
                                                     color = dividerColor,
                                                     start = Offset(0f, size.height),
                                                     end = Offset(size.width, size.height),
-                                                    strokeWidth = strokeWidth
+                                                    strokeWidth = strokeWidth,
                                                 )
                                             }
                                         },
-                                    contentAlignment = Alignment.Center
+                                    contentAlignment = Alignment.Center,
                                 ) {
                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                         Icon(
                                             imageVector = ImageVector.vectorResource(id = iconRes),
                                             contentDescription = title,
-                                            tint = Color.Unspecified
+                                            tint = Color.Unspecified,
                                         )
                                         Spacer(modifier = Modifier.height(5.dp))
                                         Text(
                                             text = title,
                                             style = NapzakMarketTheme.typography.caption12sb,
-                                            color = NapzakMarketTheme.colors.gray400
+                                            color = NapzakMarketTheme.colors.gray400,
                                         )
                                     }
                                 }
