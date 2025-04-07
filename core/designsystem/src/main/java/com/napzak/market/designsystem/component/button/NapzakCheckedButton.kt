@@ -23,7 +23,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R
+import com.napzak.market.designsystem.R.drawable.ic_checked_box
+import com.napzak.market.designsystem.R.drawable.ic_unchecked_box
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+
 
 /**
  * 공통 체크 버튼 컴포넌트입니다.
@@ -49,9 +52,9 @@ fun NapzakCheckedButton(
     icon: ImageVector? = null,
 ) {
     val checkIcon = if (checked) {
-        ImageVector.vectorResource(R.drawable.ic_checked_box)
+        ImageVector.vectorResource(ic_checked_box)
     } else {
-        ImageVector.vectorResource(R.drawable.ic_unchecked_box)
+        ImageVector.vectorResource(ic_unchecked_box)
     }
 
     Surface(
