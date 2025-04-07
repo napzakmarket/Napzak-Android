@@ -52,7 +52,7 @@ fun SearchTextField(
         modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
-        DefaultTextField(
+        NapzakDefaultTextField(
             text = text,
             onTextChange = onTextChange,
             hint = hint,

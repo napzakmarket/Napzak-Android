@@ -54,7 +54,7 @@ fun InputTextField(
     contentAlignment: Alignment = Alignment.CenterStart,
     textAlign: TextAlign = TextAlign.Start,
 ) {
-    DefaultTextField(
+    NapzakDefaultTextField(
         text = text,
         onTextChange = onTextChange,
         modifier = modifier

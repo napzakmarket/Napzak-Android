@@ -36,7 +36,7 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
  * @param isSingleLined: single / multi line
  */
 @Composable
-fun DefaultTextField(
+fun NapzakDefaultTextField(
     text: String,
     onTextChange: (String) -> Unit,
     hint: String,
@@ -100,7 +100,7 @@ fun DefaultTextField(
 private fun OnBoardingTextFieldPreview() {
     NapzakMarketTheme {
         var text by remember { mutableStateOf("") }
-        DefaultTextField(
+        NapzakDefaultTextField(
             text = text,
             onTextChange = { text = it },
             hint = "이름을 입력해주세요",
