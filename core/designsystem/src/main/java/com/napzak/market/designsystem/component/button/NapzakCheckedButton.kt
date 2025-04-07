@@ -101,7 +101,7 @@ fun NapzakCheckedButton(
 
 @Preview(showBackground = true)
 @Composable
-fun NapzakCheckItemPreview() {
+private fun NapzakCheckItemPreview() {
     NapzakMarketTheme {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),

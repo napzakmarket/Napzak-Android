@@ -83,7 +83,7 @@ fun NapzakButton(
 
 @Preview(showBackground = true)
 @Composable
-fun NapzakButtonPreview() {
+private fun NapzakButtonPreview() {
     NapzakMarketTheme {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
