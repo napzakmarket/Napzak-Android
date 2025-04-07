@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -59,6 +60,7 @@ fun GenreFilterChip(
             imageVector = ImageVector.vectorResource(ic_down_chevron),
             contentDescription = null,
             tint = textColor,
+            modifier = Modifier.size(width = 7.dp, height = 4.dp)
         )
     }
 }
