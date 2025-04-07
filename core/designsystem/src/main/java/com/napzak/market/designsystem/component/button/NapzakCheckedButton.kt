@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -60,8 +59,7 @@ fun NapzakCheckedButton(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
-            .height(50.dp),
+            .padding(horizontal = 20.dp),
         shape = RoundedCornerShape(14.dp),
         color = backgroundColor,
 
@@ -70,10 +68,7 @@ fun NapzakCheckedButton(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
-                .padding(
-                    vertical = 14.dp,
-                    horizontal = 10.dp,
-                ),
+                .padding(start = 10.dp),
         ) {
             Icon(
                 imageVector = checkIcon,
@@ -87,6 +82,8 @@ fun NapzakCheckedButton(
                 text = text,
                 style = NapzakMarketTheme.typography.body14b,
                 color = NapzakMarketTheme.colors.gray400,
+                modifier = Modifier
+                    .padding(vertical = 14.dp),
             )
             Spacer(modifier = Modifier.weight(1f))
             if (icon != null) {

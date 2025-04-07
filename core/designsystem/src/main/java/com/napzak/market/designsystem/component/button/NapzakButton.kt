@@ -52,11 +52,7 @@ fun NapzakButton(
         onClick = onClick,
         enabled = enabled,
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                vertical = 14.dp,
-                horizontal = 10.dp,
-            ),
+            .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor,
             contentColor = contentColor,
@@ -71,6 +67,8 @@ fun NapzakButton(
                 text = text,
                 style = NapzakMarketTheme.typography.body14b,
                 color = contentColor,
+                modifier = Modifier
+                    .padding(vertical = 8.dp),
             )
             if (icon != null) {
                 Icon(
