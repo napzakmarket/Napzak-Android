@@ -1,0 +1,249 @@
+package com.napzak.market.explore
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.napzak.market.common.type.SortType
+import com.napzak.market.common.type.TradeStatusType
+import com.napzak.market.common.type.TradeType
+import com.napzak.market.designsystem.R.drawable.ic_down_chevron
+import com.napzak.market.designsystem.component.bottomsheet.Genre
+import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
+import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
+import com.napzak.market.designsystem.component.textfield.SearchTextField
+import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.explore.component.BasicFilterChip
+import com.napzak.market.explore.component.GenreFilterChip
+import com.napzak.market.explore.component.GenreNavigationButton
+import com.napzak.market.explore.model.Product
+import com.napzak.market.feature.explore.R.string.explore_search_hint
+import com.napzak.market.feature.explore.R.string.explore_unopened
+import com.napzak.market.feature.explore.R.string.explore_exclude_sold_out
+import com.napzak.market.feature.explore.R.string.explore_product
+import com.napzak.market.feature.explore.R.string.explore_count
+import com.napzak.market.util.android.noRippleClickable
+
+@Composable
+internal fun ExploreRoute(
+    modifier: Modifier = Modifier,
+) {
+    ExploreScreen(
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun ExploreScreen(
+    modifier: Modifier = Modifier,
+) {
+    val genreList = listOf(
+        Genre(0, "산리오"),
+        Genre(1, "주술회전"),
+        Genre(2, "진격의 거인"),
+        Genre(3, "산리오1"),
+        Genre(4, "주술회전1"),
+        Genre(5, "진격의 거인1"),
+    )
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(color = NapzakMarketTheme.colors.white)
+            .padding(top = 54.dp),
+    ) {
+        SearchTextField(
+            text = "",
+            onTextChange = { },
+            hint = stringResource(explore_search_hint),
+            onResetClick = { },
+            onSearchClick = { },
+            modifier = Modifier.padding(horizontal = 20.dp)
+        )
+
+        Spacer(Modifier.height(20.dp))
+
+        TradeTypeTabBar(
+            selectedTab = TradeType.SELL,
+            onTabClicked = { },
+            modifier = Modifier.padding(horizontal = 20.dp)
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = NapzakMarketTheme.colors.gray10)
+                .padding(horizontal = 20.dp)
+                .padding(top = 15.dp, bottom = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            GenreFilterChip(
+                genreList = genreList,
+                onChipClick = { },
+            )
+
+            BasicFilterChip(
+                filterName = stringResource(explore_unopened),
+                isClicked = false,
+                onChipClick = { },
+            )
+
+            BasicFilterChip(
+                filterName = stringResource(explore_exclude_sold_out),
+                isClicked = false,
+                onChipClick = { },
+            )
+        }
+
+        GenreAndProductList(
+            genreList = genreList,
+            productList = Product.mockMixedProduct,
+            sortType = SortType.RECENT,
+            onGenreButtonClick = { },
+            onSortTypeClick = { },
+            onProductClick = { },
+            onLikeButtonClick = { int, value -> },
+        )
+
+    }
+}
+
+@Composable
+private fun GenreAndProductList(
+    genreList: List<Genre>,
+    productList: List<Product>,
+    sortType: SortType,
+    onGenreButtonClick: (Long) -> Unit,
+    onSortTypeClick: () -> Unit,
+    onProductClick: (Long) -> Unit,
+    onLikeButtonClick: (Long, Boolean) -> Unit,
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        horizontalArrangement = Arrangement.spacedBy(20.dp),
+    ) {
+        item(span = { GridItemSpan(maxCurrentLineSpan) }) {
+            Column {
+                if (genreList.isNotEmpty()) {
+                    genreList.forEach { genreItem ->
+                        GenreNavigationButton(
+                            genreName = genreItem.genreName,
+                            onBlockClick = { onGenreButtonClick(genreItem.genreId) },
+                        )
+
+                        Spacer(
+                            Modifier
+                                .fillMaxWidth()
+                                .background(color = NapzakMarketTheme.colors.gray10)
+                                .height(4.dp)
+                        )
+                    }
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, top = 20.dp, end = 20.dp),
+                ) {
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(color = NapzakMarketTheme.colors.gray500)) {
+                                append(stringResource(explore_product))
+                            }
+                            withStyle(style = SpanStyle(color = NapzakMarketTheme.colors.purple500)) {
+                                append(stringResource(explore_count, productList.size))
+                            }
+                        },
+                        style = NapzakMarketTheme.typography.body14sb,
+                    )
+
+                    Spacer(Modifier.weight(1f))
+
+                    Row(
+                        modifier = Modifier.noRippleClickable(onSortTypeClick),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = sortType.label,
+                            style = NapzakMarketTheme.typography.caption12sb,
+                            color = NapzakMarketTheme.colors.gray200,
+                        )
+
+                        Spacer(Modifier.width(3.dp))
+
+                        Icon(
+                            imageVector = ImageVector.vectorResource(ic_down_chevron),
+                            contentDescription = null,
+                            tint = NapzakMarketTheme.colors.gray200,
+                            modifier = Modifier.size(width = 7.dp, height = 4.dp),
+                        )
+                    }
+                }
+            }
+        }
+
+        itemsIndexed(productList) { index, product ->
+            val isLeft = index % 2 == 0
+            val paddingModifier = if (isLeft) {
+                Modifier.padding(start = 20.dp)
+            } else {
+                Modifier.padding(end = 20.dp)
+            }
+
+            with(product) {
+                NapzakLargeProductItem(
+                    genre = genre,
+                    title = name,
+                    imgUrl = photo,
+                    price = price.toString(),
+                    createdDate = uploadTime,
+                    reviewCount = reviewCount.toString(),
+                    likeCount = likeCount.toString(),
+                    isLiked = isInterested,
+                    isMyItem = isOwnedByCurrentUser,
+                    isSellElseBuy = TradeType.valueOf(tradeType) == TradeType.SELL,
+                    isSuggestionAllowed = isPriceNegotiable,
+                    tradeStatus = TradeStatusType.get(
+                        tradeStatus, TradeType.valueOf(tradeType)
+                    ),
+                    onLikeClick = { onLikeButtonClick(id, isInterested) },
+                    modifier = paddingModifier
+                        .noRippleClickable { onProductClick(id) },
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ExploreScreenPreview(modifier: Modifier = Modifier) {
+    NapzakMarketTheme {
+        ExploreScreen(modifier)
+    }
+}
