@@ -52,6 +52,7 @@ fun NapzakButton(
         onClick = onClick,
         enabled = enabled,
         modifier = Modifier
+            .fillMaxWidth()
             .padding(
                 vertical = 14.dp,
                 horizontal = 10.dp,
@@ -90,7 +91,6 @@ private fun NapzakButtonPreview() {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
-                .padding(20.dp)
                 .width(360.dp)
         ) {
             NapzakButton(
