@@ -167,9 +167,9 @@ fun MyPageScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(41.dp)
                     .clip(RoundedCornerShape(14.dp))
                     .background(NapzakMarketTheme.colors.gray10)
+                    .padding(vertical = 13.dp)
                     .clickable { onMyMarketClick() },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
