@@ -1,23 +1,25 @@
 package com.napzak.market.designsystem.component.button
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R
@@ -34,6 +36,7 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
  * @param modifier Modifier를 통해 외부에서 레이아웃 및 스타일을 조절할 수 있습니다 (기본값: Modifier)
  * @param backgroundColor 컴포넌트 배경색 (기본값: NapzakMarketTheme.colors.white)
  * @param onCheckedChange 체크 상태가 변경될 때 호출되는 콜백
+ * @param icon 텍스트 가장 오른쪽에 표시할 아이콘 (기본값: null)
  */
 
 @Composable
@@ -43,11 +46,12 @@ fun NapzakCheckedButton(
     modifier: Modifier = Modifier,
     backgroundColor: Color = NapzakMarketTheme.colors.white,
     onCheckedChange: (Boolean) -> Unit,
+    icon: ImageVector? = null,
 ) {
     val checkIcon = if (checked) {
-        painterResource(id = R.drawable.ic_checked_box)
+        ImageVector.vectorResource(R.drawable.ic_checked_box)
     } else {
-        painterResource(id = R.drawable.ic_unchecked_box)
+        ImageVector.vectorResource(R.drawable.ic_unchecked_box)
     }
 
     Surface(
@@ -64,18 +68,30 @@ fun NapzakCheckedButton(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(start = 10.dp),
         ) {
-            Image(
-                painter = checkIcon,
+            Icon(
+                imageVector = checkIcon,
                 contentDescription = null,
                 modifier = Modifier
                     .size(24.dp)
                     .clickable { onCheckedChange(!checked) },
+                tint = Color.Unspecified,
             )
             Text(
                 text = text,
                 style = NapzakMarketTheme.typography.body14b,
                 color = NapzakMarketTheme.colors.gray400,
             )
+            Spacer(modifier = Modifier.weight(1f))
+            if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = Color.Unspecified,
+                    modifier = Modifier
+                        .padding(end = 10.dp)
+                        .size(12.dp),
+                )
+            }
         }
     }
 }
@@ -92,6 +108,7 @@ fun NapzakCheckItemPreview() {
             NapzakCheckedButton(
                 checked = true,
                 text = "약관 전체 동의",
+                icon = ImageVector.vectorResource(id = R.drawable.ic_arrow_right),
                 onCheckedChange = {},
                 backgroundColor = NapzakMarketTheme.colors.white,
             )
@@ -99,6 +116,7 @@ fun NapzakCheckItemPreview() {
             NapzakCheckedButton(
                 checked = false,
                 text = "배송비",
+                icon = null,
                 onCheckedChange = {},
                 backgroundColor = NapzakMarketTheme.colors.gray50,
             )
