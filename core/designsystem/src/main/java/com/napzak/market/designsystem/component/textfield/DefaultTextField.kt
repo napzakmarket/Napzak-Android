@@ -20,8 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +28,7 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
 
 /**
- * Napzak default text field
+ * Default text field: 다른 TextField의 기본이 되는 컴포넌트입니다.
  *
  * @param text: 입력 값
  * @param onTextChange: 입력 값 변경
@@ -38,7 +36,7 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
  * @param isSingleLined: single / multi line
  */
 @Composable
-fun NapzakDefaultTextField(
+fun DefaultTextField(
     text: String,
     onTextChange: (String) -> Unit,
     hint: String,
@@ -47,6 +45,8 @@ fun NapzakDefaultTextField(
     modifier: Modifier = Modifier,
     textColor: Color = NapzakMarketTheme.colors.gray500,
     hintTextColor: Color = NapzakMarketTheme.colors.gray200,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     isSingleLined: Boolean = true,
@@ -68,6 +68,8 @@ fun NapzakDefaultTextField(
         singleLine = isSingleLined,
         visualTransformation = visualTransformation,
         modifier = modifier,
+        enabled = enabled,
+        readOnly = readOnly,
         decorationBox = { innerTextField ->
             Row(
                 modifier = Modifier
@@ -98,7 +100,7 @@ fun NapzakDefaultTextField(
 private fun OnBoardingTextFieldPreview() {
     NapzakMarketTheme {
         var text by remember { mutableStateOf("") }
-        NapzakDefaultTextField(
+        DefaultTextField(
             text = text,
             onTextChange = { text = it },
             hint = "이름을 입력해주세요",
