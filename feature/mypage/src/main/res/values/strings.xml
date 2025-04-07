@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--MyPageScreen-->
+        <string name="profile_image_description">프로필 이미지</string>
+        <string name="sell_label">팔아요</string>
+        <string name="sell_count">%1$d개</string>
+        <string name="buy_label">구해요</string>
+        <string name="buy_count">%1$d개</string>
+        <string name="my_market">내 마켓 보기</string>
+        <string name="sales_history">판매 내역</string>
+        <string name="purchase_history">구매 내역</string>
+        <string name="recently_viewed">최근 본 상품</string>
+        <string name="favorites">찜</string>
+        <string name="settings">설정</string>
+        <string name="help_center">고객센터</string>
+</resources>

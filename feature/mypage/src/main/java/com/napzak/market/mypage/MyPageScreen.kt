@@ -44,18 +44,18 @@ import com.napzak.market.designsystem.R.drawable.ic_recent_30
 import com.napzak.market.designsystem.R.drawable.ic_favorite_27
 import com.napzak.market.designsystem.R.drawable.ic_settings_27
 import com.napzak.market.designsystem.R.drawable.ic_help_32
-import com.napzak.market.designsystem.R.string.profile_image_description
-import com.napzak.market.designsystem.R.string.sell_label
-import com.napzak.market.designsystem.R.string.sell_count
-import com.napzak.market.designsystem.R.string.buy_label
-import com.napzak.market.designsystem.R.string.buy_count
-import com.napzak.market.designsystem.R.string.my_market
-import com.napzak.market.designsystem.R.string.sales_history
-import com.napzak.market.designsystem.R.string.purchase_history
-import com.napzak.market.designsystem.R.string.recently_viewed
-import com.napzak.market.designsystem.R.string.favorites
-import com.napzak.market.designsystem.R.string.settings
-import com.napzak.market.designsystem.R.string.help_center
+import com.napzak.market.feature.mypage.R.string.profile_image_description
+import com.napzak.market.feature.mypage.R.string.sell_label
+import com.napzak.market.feature.mypage.R.string.sell_count
+import com.napzak.market.feature.mypage.R.string.buy_label
+import com.napzak.market.feature.mypage.R.string.buy_count
+import com.napzak.market.feature.mypage.R.string.my_market
+import com.napzak.market.feature.mypage.R.string.sales_history
+import com.napzak.market.feature.mypage.R.string.purchase_history
+import com.napzak.market.feature.mypage.R.string.recently_viewed
+import com.napzak.market.feature.mypage.R.string.favorites
+import com.napzak.market.feature.mypage.R.string.settings
+import com.napzak.market.feature.mypage.R.string.help_center
 
 @Composable
 fun MyPageScreen(
