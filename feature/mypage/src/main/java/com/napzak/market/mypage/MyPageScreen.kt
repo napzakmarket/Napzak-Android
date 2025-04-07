@@ -59,6 +59,7 @@ import com.napzak.market.feature.mypage.R.string.help_center
 
 @Composable
 fun MyPageScreen(
+    modifier: Modifier = Modifier,
     nickname: String,
     salesCount: Int,
     purchaseCount: Int,
@@ -71,7 +72,7 @@ fun MyPageScreen(
     onHelpClick: () -> Unit,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(NapzakMarketTheme.colors.white)
     ) {
@@ -299,6 +300,7 @@ fun MyPageScreen(
 fun MyPageScreenPreview() {
     NapzakMarketTheme {
         MyPageScreen(
+            modifier = Modifier,
             nickname = "납작한자기",
             salesCount = 31,
             purchaseCount = 15,
