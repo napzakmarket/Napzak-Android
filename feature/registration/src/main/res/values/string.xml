@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Registration Common Components   -->
+    <string name="title">%s 등록</string>
+    <string name="product_image">상품 이미지</string>
+    <string name="product_image_description">꾹 눌러서 대표 이미지를 변경할 수 있어요</string>
+    <string name="photo_count">사진 %s/10</string>
+    <string name="representative_tag">대표</string>
+    <string name="genre">장르</string>
+    <string name="product_name">상품명</string>
+    <string name="product_name_hint">정확한 상품명을 포함하면 거래 확률이 올라가요 </string>
+    <string name="product_description">상품 설명</string>
+    <string name="product_description_hint">자세히 작성하면 더 빠르고 원활한 거래를 할 수 있어요\n예) 상품 상태, 한정판 여부, 네고 가능 여부 등</string>
+    <string name="price_error">가격 설정은 1,000원 단위만 가능해요</string>
+    <string name="register">등록하기</string>
+
+    <!-- Sale Components   -->
+    <string name="product_condition">상품 상태</string>
+    <string name="sale_price">가격</string>
+    <string name="sale_price_description">얼마에 거래하고 싶으신가요? (최대 100만원)</string>
+    <string name="sale_price_tag">원</string>
+    <string name="shipping_method">배송 방법</string>
+    <string name="shipping_included">배송비 포함</string>
+    <string name="shipping_excluded">배송비 별도</string>
+    <string name="normal_shipping">일반 택배</string>
+    <string name="half_priced_shipping">반값/알뜰 택배</string>
+
+    <!-- Purchase Components   -->
+    <string name="purchase_price">희망 가격</string>
+    <string name="purchase_price_description">얼마에 거래하고 싶으신가요? (1천원 단위, 최대 100만원)</string>
+    <string name="purchase_price_tag">원대</string>
+    <string name="negotiable">가격 제시</string>
+    <string name="accept_negotiation">받기</string>
+</resources>
