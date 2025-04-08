@@ -97,12 +97,7 @@ private fun ExploreScreen(
             .background(color = NapzakMarketTheme.colors.white)
             .padding(top = 54.dp),
     ) {
-        SearchTextField(
-            text = "",
-            onTextChange = { },
-            hint = stringResource(explore_search_hint),
-            onResetClick = { },
-            onSearchClick = { },
+        ExploreSearchTextField(
             modifier = Modifier
                 .noRippleClickable(onSearchNavigate)
                 .padding(horizontal = 20.dp),
@@ -153,6 +148,20 @@ private fun ExploreScreen(
         )
 
     }
+}
+
+@Composable
+private fun ExploreSearchTextField(
+    modifier: Modifier = Modifier,
+) {
+    SearchTextField(
+        text = "",
+        onTextChange = { },
+        hint = stringResource(explore_search_hint),
+        onResetClick = { },
+        onSearchClick = { },
+        modifier = modifier,
+    )
 }
 
 @Composable
