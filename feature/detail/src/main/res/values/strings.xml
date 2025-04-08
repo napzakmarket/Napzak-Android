@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="detail_top_bar_content_description_back">뒤로가기</string>
+    <string name="detail_top_bar_content_description_option">옵션</string>
+
+    <string name="detail_product_image_indicator">%d/%d</string>
+    <string name="detail_product_tag_is_price_negotiable">가격제시</string>
+
+    <string name="detail_product_title_is_price_negotiable">가격 제시</string>
+    <string name="detail_product_is_price_negotiable_true">받음</string>
+    <string name="detail_product_is_price_negotiable_false">받지않음</string>
+
+    <string name="detail_product_title_product_condition">상품 상태</string>
+
+    <string name="detail_product_title_delivery">배송 방법</string>
+    <string name="detail_product_title_delivery_normal">일반 택배 %s원</string>
+    <string name="detail_product_title_delivery_half">반값/알뜰 택배 %s원</string>
+
+
+    <string name="detail_product_market_group_title">마켓 정보</string>
+    <string name="detail_product_market_sell">팔아요</string>
+    <string name="detail_product_market_buy">구해요</string>
+    <string name="detail_product_market_count">%s개</string>
+
+    <string name="detail_product_button_chat">채팅하기</string>
+</resources>
