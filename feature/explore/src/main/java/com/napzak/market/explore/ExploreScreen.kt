@@ -83,7 +83,7 @@ private fun ExploreScreen(
     modifier: Modifier = Modifier,
 ) {
     // TODO : 더미데이터 변수 삭제 예정
-    var tradeType = TradeType.SELL
+    var tradeType = TradeType.BUY
     val genreList = listOf(
         Genre(0, "산리오"),
         Genre(1, "주술회전"),
@@ -133,11 +133,13 @@ private fun ExploreScreen(
                 onChipClick = onUnopenFilterClick,
             )
 
-            BasicFilterChip(
-                filterName = stringResource(explore_exclude_sold_out),
-                isClicked = false,
-                onChipClick = onExcludeSoldOutFilterClick,
-            )
+            if (tradeType == TradeType.SELL) {
+                BasicFilterChip(
+                    filterName = stringResource(explore_exclude_sold_out),
+                    isClicked = false,
+                    onChipClick = onExcludeSoldOutFilterClick,
+                )
+            }
         }
 
         GenreAndProductList(
