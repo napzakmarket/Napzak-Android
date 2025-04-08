@@ -50,17 +50,20 @@ import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 internal fun ExploreRoute(
+    onSearchNavigate: () -> Unit,
+    onGenreDetailNavigate: (Long) -> Unit,
+    onProductDetailNavigate: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ExploreScreen(
-        onSearchNavigate = { },
+        onSearchNavigate = onSearchNavigate,
         onTabClicked = { },
         onGenreFilterClick = { },
         onUnopenFilterClick = { },
         onExcludeSoldOutFilterClick = { },
-        onGenreDetailNavigate = { },
+        onGenreDetailNavigate = onGenreDetailNavigate,
         onSortOptionClick = { },
-        onProductDetailNavigate = { },
+        onProductDetailNavigate = onProductDetailNavigate,
         onLikeButtonClick = { id, value -> },
         modifier = modifier,
     )

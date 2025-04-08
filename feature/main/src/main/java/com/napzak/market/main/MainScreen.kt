@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.napzak.market.dummy.navigation.dummyGraph
+import com.napzak.market.explore.navigation.exploreGraph
 import com.napzak.market.main.component.MainBottomBar
 import kotlinx.collections.immutable.toImmutableList
 
@@ -61,5 +62,12 @@ private fun MainNavHost(
         startDestination = navigator.startDestination
     ) {
         dummyGraph(modifier = modifier)
+
+        exploreGraph(
+            navigateToSearch = { /* TODO: 검색 화면으로 이동 */ },
+            navigateToGenreDetail = { /* TODO: 장르 상세 화면으로 이동 */ },
+            navigateToProductDetail = { /* TODO: 상품 상세 화면으로 이동 */ },
+            modifier = modifier,
+        )
     }
 }

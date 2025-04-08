@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.napzak.market.common.navigation.MainTabRoute
 import com.napzak.market.common.navigation.Route
 import com.napzak.market.dummy.navigation.Dummy
+import com.napzak.market.explore.navigation.Explore
 
 // TODO: 구현 시작 시 수정
 enum class MainTab(
@@ -20,10 +21,10 @@ enum class MainTab(
         contentDescription = "더미1",
         route = Dummy,
     ),
-    DUMMY2(
+    EXPLORE(
         icon = Icons.Filled.Search,
-        contentDescription = "더미2",
-        route = Dummy,
+        contentDescription = "탐색",
+        route = Explore,
     );
 
     companion object {

@@ -13,6 +13,7 @@ android {
 
 dependencies {
     implementation(projects.feature.dummy)
+    implementation(projects.feature.explore)
 
     implementation(projects.core.designsystem)
     implementation(projects.core.common)

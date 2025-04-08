@@ -38,7 +38,7 @@ class MainNavigator(
 
         when (tab) {
             MainTab.DUMMY -> { } //TODO: 더미 추가 예정
-            MainTab.DUMMY2 -> { } //TODO: 더미 추가 예정
+            MainTab.EXPLORE -> { } //TODO: 더미 추가 예정
         }
     }
 
