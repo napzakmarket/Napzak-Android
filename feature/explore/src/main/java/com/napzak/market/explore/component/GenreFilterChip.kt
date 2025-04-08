@@ -27,6 +27,8 @@ import com.napzak.market.util.android.noRippleClickable
 import com.napzak.market.feature.explore.R.string.explore_genre
 import com.napzak.market.feature.explore.R.string.explore_genre_extra_count
 
+const val CHARACTER_MAX_COUNT = 5
+
 @Composable
 fun GenreFilterChip(
     genreList: List<Genre>,
@@ -70,11 +72,18 @@ fun getFilterName(genreList: List<Genre>): String {
     return when {
         genreList.isEmpty() -> stringResource(explore_genre)
         genreList.size == 1 -> genreList.first().genreName
-        else -> stringResource(
-            explore_genre_extra_count,
-            genreList.first().genreName,
-            genreList.size - 1,
-        )
+        else -> {
+            val genreName = if (genreList.first().genreName.length > CHARACTER_MAX_COUNT) {
+                genreList.first().genreName.take(CHARACTER_MAX_COUNT - 1) + "…"
+            } else {
+                genreList.first().genreName
+            }
+            stringResource(
+                explore_genre_extra_count,
+                genreName,
+                genreList.size - 1,
+            )
+        }
     }
 }
 
