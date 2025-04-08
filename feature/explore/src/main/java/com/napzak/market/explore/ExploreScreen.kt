@@ -53,14 +53,34 @@ internal fun ExploreRoute(
     modifier: Modifier = Modifier,
 ) {
     ExploreScreen(
+        onSearchNavigate = { },
+        onTabClicked = { },
+        onGenreFilterClick = { },
+        onUnopenFilterClick = { },
+        onExcludeSoldOutFilterClick = { },
+        onGenreDetailNavigate = { },
+        onSortOptionClick = { },
+        onProductDetailNavigate = { },
+        onLikeButtonClick = { id, value -> },
         modifier = modifier,
     )
 }
 
 @Composable
 private fun ExploreScreen(
+    onSearchNavigate: () -> Unit,
+    onTabClicked: (TradeType) -> Unit,
+    onGenreFilterClick: () -> Unit,
+    onUnopenFilterClick: () -> Unit,
+    onExcludeSoldOutFilterClick: () -> Unit,
+    onSortOptionClick: (SortType) -> Unit,
+    onGenreDetailNavigate: (Long) -> Unit,
+    onProductDetailNavigate: (Long) -> Unit,
+    onLikeButtonClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // TODO : 더미데이터 변수 삭제 예정
+    var tradeType = TradeType.SELL
     val genreList = listOf(
         Genre(0, "산리오"),
         Genre(1, "주술회전"),
@@ -69,6 +89,7 @@ private fun ExploreScreen(
         Genre(4, "주술회전1"),
         Genre(5, "진격의 거인1"),
     )
+    var sortType = SortType.RECENT
 
     Column(
         modifier = modifier
@@ -82,15 +103,17 @@ private fun ExploreScreen(
             hint = stringResource(explore_search_hint),
             onResetClick = { },
             onSearchClick = { },
-            modifier = Modifier.padding(horizontal = 20.dp)
+            modifier = Modifier
+                .noRippleClickable(onSearchNavigate)
+                .padding(horizontal = 20.dp),
         )
 
         Spacer(Modifier.height(20.dp))
 
         TradeTypeTabBar(
-            selectedTab = TradeType.SELL,
-            onTabClicked = { },
-            modifier = Modifier.padding(horizontal = 20.dp)
+            selectedTab = tradeType,
+            onTabClicked = onTabClicked,
+            modifier = Modifier.padding(horizontal = 20.dp),
         )
 
         Row(
@@ -103,30 +126,30 @@ private fun ExploreScreen(
         ) {
             GenreFilterChip(
                 genreList = genreList,
-                onChipClick = { },
+                onChipClick = onGenreFilterClick,
             )
 
             BasicFilterChip(
                 filterName = stringResource(explore_unopened),
                 isClicked = false,
-                onChipClick = { },
+                onChipClick = onUnopenFilterClick,
             )
 
             BasicFilterChip(
                 filterName = stringResource(explore_exclude_sold_out),
                 isClicked = false,
-                onChipClick = { },
+                onChipClick = onExcludeSoldOutFilterClick,
             )
         }
 
         GenreAndProductList(
             genreList = genreList,
             productList = Product.mockMixedProduct,
-            sortType = SortType.RECENT,
-            onGenreButtonClick = { },
-            onSortTypeClick = { },
-            onProductClick = { },
-            onLikeButtonClick = { int, value -> },
+            sortType = sortType,
+            onGenreButtonClick = onGenreDetailNavigate,
+            onSortOptionClick = { onSortOptionClick(sortType) },
+            onProductClick = onProductDetailNavigate,
+            onLikeButtonClick = onLikeButtonClick,
         )
 
     }
@@ -138,7 +161,7 @@ private fun GenreAndProductList(
     productList: List<Product>,
     sortType: SortType,
     onGenreButtonClick: (Long) -> Unit,
-    onSortTypeClick: () -> Unit,
+    onSortOptionClick: () -> Unit,
     onProductClick: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
 ) {
@@ -185,7 +208,7 @@ private fun GenreAndProductList(
                     Spacer(Modifier.weight(1f))
 
                     Row(
-                        modifier = Modifier.noRippleClickable(onSortTypeClick),
+                        modifier = Modifier.noRippleClickable(onSortOptionClick),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
@@ -244,6 +267,17 @@ private fun GenreAndProductList(
 @Composable
 private fun ExploreScreenPreview(modifier: Modifier = Modifier) {
     NapzakMarketTheme {
-        ExploreScreen(modifier)
+        ExploreScreen(
+            onSearchNavigate = { },
+            onTabClicked = { },
+            onGenreFilterClick = { },
+            onUnopenFilterClick = { },
+            onExcludeSoldOutFilterClick = { },
+            onSortOptionClick = { },
+            onGenreDetailNavigate = { },
+            onProductDetailNavigate = { },
+            onLikeButtonClick = { id, value -> },
+            modifier = modifier
+        )
     }
 }
