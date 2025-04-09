@@ -3,6 +3,7 @@ package com.napzak.market.detail.component.bottombar
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,22 +39,28 @@ internal fun ProductDetailBottomBar(
     onLikeButtonClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 24.dp),
+    Surface(
+        shadowElevation = 2.dp,
+        color = NapzakMarketTheme.colors.white,
+        modifier = modifier.fillMaxWidth(),
     ) {
-        LikeButton(
-            isLiked = isLiked,
-            onClick = { onLikeButtonClick(!isLiked) },
-        )
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 24.dp),
+        ) {
+            LikeButton(
+                isLiked = isLiked,
+                onClick = { onLikeButtonClick(!isLiked) },
+            )
 
-        Spacer(Modifier.width(8.dp))
+            Spacer(Modifier.width(8.dp))
 
-        ChatButton(
-            onChatButtonClick = onChatButtonClick,
-            modifier = Modifier.weight(1f)
-        )
+            ChatButton(
+                onChatButtonClick = onChatButtonClick,
+                modifier = Modifier.weight(1f),
+            )
+        }
     }
 }
 
@@ -63,6 +71,7 @@ private fun LikeButton(
     modifier: Modifier = Modifier,
 ) {
     val likeIcon = if (isLiked) ic_heart_filled_large else ic_heart_unfilled_large
+    val shape = RoundedCornerShape(14.dp)
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -70,15 +79,19 @@ private fun LikeButton(
                 mergeDescendants = true,
                 properties = { role = Role.Button },
             )
-            .clip(RoundedCornerShape(14.dp))
-            .border(width = 1.dp, color = NapzakMarketTheme.colors.gray50)
-            .clickable { onClick() }
+            .clip(shape)
+            .border(
+                width = 1.dp,
+                color = NapzakMarketTheme.colors.gray50,
+                shape = shape,
+            )
+            .clickable { onClick() },
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(likeIcon),
             tint = Color.Unspecified,
             contentDescription = null,
-            modifier = Modifier.padding(14.dp)
+            modifier = Modifier.padding(14.dp),
         )
     }
 }
@@ -92,7 +105,7 @@ private fun ChatButton(
         text = stringResource(detail_product_button_chat),
         icon = ImageVector.vectorResource(ic_chevron_right),
         onClick = onChatButtonClick,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -100,10 +113,14 @@ private fun ChatButton(
 @Composable
 private fun ChatButtonPreview() {
     NapzakMarketTheme {
-        ProductDetailBottomBar(
-            isLiked = true,
-            onChatButtonClick = {},
-            onLikeButtonClick = {},
-        )
+        Column(
+            modifier = Modifier.padding(top = 20.dp),
+        ) {
+            ProductDetailBottomBar(
+                isLiked = true,
+                onChatButtonClick = {},
+                onLikeButtonClick = {},
+            )
+        }
     }
 }
