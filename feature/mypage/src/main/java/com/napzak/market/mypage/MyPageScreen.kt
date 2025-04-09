@@ -74,7 +74,7 @@ fun MyPageScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(NapzakMarketTheme.colors.white),
+            .background(NapzakMarketTheme.colors.gray10),
     ) {
         Column(
             modifier = Modifier
@@ -181,8 +181,8 @@ fun MyPageScreen(
                     tint = Color.Unspecified,
                 )
             }
+            Spacer(modifier = Modifier.height(20.dp))
         }
-        Spacer(modifier = Modifier.height(20.dp))
 
         Box(
             modifier = Modifier
@@ -194,14 +194,14 @@ fun MyPageScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(NapzakMarketTheme.colors.white)
                 .padding(horizontal = 20.dp),
         ) {
+            Spacer(modifier = Modifier.height(20.dp))
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -276,16 +276,8 @@ fun MyPageScreen(
                 }
             }
 
-
+            Spacer(modifier = Modifier.height(30.dp))
         }
-        Spacer(modifier = Modifier.height(30.dp))
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .background(NapzakMarketTheme.colors.gray10)
-        ) { }
     }
 }
 
