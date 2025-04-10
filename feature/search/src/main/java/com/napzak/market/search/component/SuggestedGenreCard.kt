@@ -20,16 +20,19 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 internal fun SuggestedGenreCard(
     genreName: String,
     imgUrl: String,
+    onCardClick: () -> Unit,
 ) {
     val context = LocalContext.current
 
     Column(
         modifier = Modifier
+            .noRippleClickable(onCardClick)
             .width(100.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -65,6 +68,7 @@ private fun SuggestedGenreCardPreview() {
         SuggestedGenreCard(
             genreName = "짱구는 못말려 날아라 수제김밥",
             imgUrl = "",
+            onCardClick = { },
         )
     }
 }
