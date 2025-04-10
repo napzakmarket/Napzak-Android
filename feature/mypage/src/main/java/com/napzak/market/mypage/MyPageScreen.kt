@@ -50,6 +50,7 @@ import com.napzak.market.util.android.noRippleClickable
 fun MyPageScreen(
     modifier: Modifier = Modifier,
     nickname: String,
+    profileImageUrl: String,
     salesCount: Int,
     purchaseCount: Int,
     onMyMarketClick: () -> Unit,
@@ -71,117 +72,18 @@ fun MyPageScreen(
                 .background(NapzakMarketTheme.colors.white)
                 .padding(horizontal = 20.dp),
         ) {
-            Text(
-                text = "Napzak(Logo)", //임시 로고라 stringX
-                color = Color.White,
-                modifier = Modifier
-                    .padding(top = 60.dp)
-                    .background(NapzakMarketTheme.colors.purple500)
-                    .padding(horizontal = 12.dp, vertical = 6.dp)
-            )
-
+            MyPageHeader()
             Spacer(modifier = Modifier.height(30.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(94.dp)
-                    .clip(RoundedCornerShape(25.dp))
-                    .background(NapzakMarketTheme.colors.gray10)
-                    .padding(horizontal = 22.dp, vertical = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(60.dp)
-                        .background(
-                            color = NapzakMarketTheme.colors.purple100,
-                            shape = CircleShape,
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .placeholder(ic_profile_60)
-                            .error(ic_profile_60)
-                            .build(),
-                        contentDescription = stringResource(profile_image_description),
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(14.dp))
-
-                Column {
-                    Text(
-                        text = nickname,
-                        color = NapzakMarketTheme.colors.purple500,
-                        style = NapzakMarketTheme.typography.body14b,
-                    )
-                    Spacer(modifier = Modifier.height(7.dp))
-                    Row {
-                        Text(
-                            text = stringResource(sell_label),
-                            color = NapzakMarketTheme.colors.gray500,
-                            style = NapzakMarketTheme.typography.caption12m,
-                        )
-                        Spacer(modifier = Modifier.width(2.dp))
-                        Text(
-                            text = stringResource(sell_count, salesCount),
-                            color = NapzakMarketTheme.colors.gray500,
-                            style = NapzakMarketTheme.typography.caption12sb,
-                        )
-                        Spacer(modifier = Modifier.width(14.dp))
-                        Text(
-                            text = stringResource(buy_label),
-                            color = NapzakMarketTheme.colors.gray500,
-                            style = NapzakMarketTheme.typography.caption12m,
-                        )
-                        Spacer(modifier = Modifier.width(2.dp))
-                        Text(
-                            text = stringResource(buy_count, purchaseCount),
-                            color = NapzakMarketTheme.colors.gray500,
-                            style = NapzakMarketTheme.typography.caption12sb,
-                        )
-                    }
-                }
-            }
-
+            MyPageProfileSection(nickname, profileImageUrl = profileImageUrl, salesCount, purchaseCount)
             Spacer(modifier = Modifier.height(20.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(NapzakMarketTheme.colors.gray10)
-                    .padding(vertical = 14.dp)
-                    .noRippleClickable(onMyMarketClick),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = stringResource(my_market),
-                    style = NapzakMarketTheme.typography.caption12sb,
-                    color = NapzakMarketTheme.colors.gray300,
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Icon(
-                    imageVector = ImageVector.vectorResource(ic_arrow_right_7),
-                    contentDescription = null,
-                    tint = Color.Unspecified,
-                )
-            }
+            MyMarketButton(onClick = onMyMarketClick)
             Spacer(modifier = Modifier.height(20.dp))
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(),
-        ) {
-            HorizontalDivider(
-                color = NapzakMarketTheme.colors.gray10,
-                thickness = 4.dp,
-            )
-        }
+        HorizontalDivider(
+            color = NapzakMarketTheme.colors.gray10,
+            thickness = 4.dp,
+        )
 
         Column(
             modifier = Modifier
@@ -190,82 +92,185 @@ fun MyPageScreen(
                 .padding(horizontal = 20.dp),
         ) {
             Spacer(modifier = Modifier.height(20.dp))
+            MyPageMenuCard(
+                onSalesClick,
+                onPurchaseClick,
+                onRecentClick,
+                onFavoriteClick,
+                onSettingsClick,
+                onHelpClick
+            )
+            Spacer(modifier = Modifier.height(30.dp))
+        }
+    }
+}
+@Composable
+fun MyPageHeader() {
+    Text(
+        text = "Napzak(Logo)",
+        color = Color.White,
+        modifier = Modifier
+            .padding(top = 60.dp)
+            .background(NapzakMarketTheme.colors.purple500)
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+    )
+}
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(168.dp),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = NapzakMarketTheme.colors.gray10),
-            ) {
-                val menus = listOf(
-                    MyPageMenu.SALES to onSalesClick,
-                    MyPageMenu.PURCHASE to onPurchaseClick,
-                    MyPageMenu.RECENT to onRecentClick,
-                    MyPageMenu.FAVORITE to onFavoriteClick,
-                    MyPageMenu.SETTINGS to onSettingsClick,
-                    MyPageMenu.HELP to onHelpClick,
-                )
+@Composable
+fun MyPageProfileSection(
+    nickname: String,
+    profileImageUrl: String,
+    salesCount: Int,
+    purchaseCount: Int) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(94.dp)
+            .clip(RoundedCornerShape(25.dp))
+            .background(NapzakMarketTheme.colors.gray10)
+            .padding(horizontal = 22.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(profileImageUrl.takeIf { it.isNotBlank() })
+                .placeholder(ic_profile_60)
+                .error(ic_profile_60)
+                .build(),
+            modifier = Modifier
+                .size(60.dp)
+                .clip(CircleShape)
+                .background(NapzakMarketTheme.colors.purple100),
+            contentDescription = stringResource(profile_image_description),
+        )
 
-                val dividerColor = NapzakMarketTheme.colors.gray50
+        Spacer(modifier = Modifier.width(14.dp))
 
-                Column(modifier = Modifier.fillMaxSize()) {
-                    for (rowIndex in 0 until 2) {
-                        Row(modifier = Modifier.weight(1f)) {
-                            for (colIndex in 0 until 3) {
-                                val index = rowIndex * 3 + colIndex
-                                val (menu, onClick) = menus[index]
+        Column {
+            Text(
+                text = nickname,
+                color = NapzakMarketTheme.colors.purple500,
+                style = NapzakMarketTheme.typography.body14b,
+            )
+            Spacer(modifier = Modifier.height(7.dp))
+            Row {
+                Text(stringResource(sell_label), color = NapzakMarketTheme.colors.gray500, style = NapzakMarketTheme.typography.caption12m)
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(stringResource(sell_count, salesCount), color = NapzakMarketTheme.colors.gray500, style = NapzakMarketTheme.typography.caption12sb)
+                Spacer(modifier = Modifier.width(14.dp))
+                Text(stringResource(buy_label), color = NapzakMarketTheme.colors.gray500, style = NapzakMarketTheme.typography.caption12m)
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(stringResource(buy_count, purchaseCount), color = NapzakMarketTheme.colors.gray500, style = NapzakMarketTheme.typography.caption12sb)
+            }
+        }
+    }
+}
 
-                                val showRightBorder = colIndex < 2
-                                val showBottomBorder = rowIndex < 1
+@Composable
+fun MyMarketButton(onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(NapzakMarketTheme.colors.gray10)
+            .padding(vertical = 14.dp)
+            .noRippleClickable(onClick),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = stringResource(my_market),
+            style = NapzakMarketTheme.typography.caption12sb,
+            color = NapzakMarketTheme.colors.gray300,
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Icon(
+            imageVector = ImageVector.vectorResource(ic_arrow_right_7),
+            contentDescription = null,
+            tint = Color.Unspecified,
+        )
+    }
+}
 
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .fillMaxHeight()
-                                        .noRippleClickable(onClick)
-                                        .drawBehind {
-                                            val strokeWidth = 4.dp.toPx()
-                                            if (showRightBorder) {
-                                                drawLine(
-                                                    color = dividerColor,
-                                                    start = Offset(size.width, 0f),
-                                                    end = Offset(size.width, size.height),
-                                                    strokeWidth = strokeWidth,
-                                                )
-                                            }
-                                            if (showBottomBorder) {
-                                                drawLine(
-                                                    color = dividerColor,
-                                                    start = Offset(0f, size.height),
-                                                    end = Offset(size.width, size.height),
-                                                    strokeWidth = strokeWidth,
-                                                )
-                                            }
-                                        },
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        Icon(
-                                            imageVector = ImageVector.vectorResource(id = menu.iconRes),
-                                            contentDescription = stringResource(menu.titleRes),
-                                            tint = Color.Unspecified,
-                                        )
-                                        Spacer(modifier = Modifier.height(5.dp))
-                                        Text(
-                                            text = stringResource(menu.titleRes),
-                                            style = NapzakMarketTheme.typography.caption12sb,
-                                            color = NapzakMarketTheme.colors.gray400,
+@Composable
+fun MyPageMenuCard(
+    onSalesClick: () -> Unit,
+    onPurchaseClick: () -> Unit,
+    onRecentClick: () -> Unit,
+    onFavoriteClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onHelpClick: () -> Unit,
+) {
+    val menus = listOf(
+        MyPageMenu.SALES to onSalesClick,
+        MyPageMenu.PURCHASE to onPurchaseClick,
+        MyPageMenu.RECENT to onRecentClick,
+        MyPageMenu.FAVORITE to onFavoriteClick,
+        MyPageMenu.SETTINGS to onSettingsClick,
+        MyPageMenu.HELP to onHelpClick,
+    )
+
+    val dividerColor = NapzakMarketTheme.colors.gray50
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(168.dp),
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = NapzakMarketTheme.colors.gray10),
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            for (rowIndex in 0 until 2) {
+                Row(modifier = Modifier.weight(1f)) {
+                    for (colIndex in 0 until 3) {
+                        val index = rowIndex * 3 + colIndex
+                        val (menu, onClick) = menus[index]
+                        val showRightBorder = colIndex < 2
+                        val showBottomBorder = rowIndex < 1
+
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                                .noRippleClickable(onClick)
+                                .drawBehind {
+                                    val strokeWidth = 4.dp.toPx()
+                                    if (showRightBorder) {
+                                        drawLine(
+                                            color = dividerColor,
+                                            start = Offset(size.width, 0f),
+                                            end = Offset(size.width, size.height),
+                                            strokeWidth = strokeWidth,
                                         )
                                     }
-                                }
+                                    if (showBottomBorder) {
+                                        drawLine(
+                                            color = dividerColor,
+                                            start = Offset(0f, size.height),
+                                            end = Offset(size.width, size.height),
+                                            strokeWidth = strokeWidth,
+                                        )
+                                    }
+                                },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(menu.iconRes),
+                                    contentDescription = stringResource(menu.titleRes),
+                                    tint = Color.Unspecified,
+                                )
+                                Spacer(modifier = Modifier.height(5.dp))
+                                Text(
+                                    text = stringResource(menu.titleRes),
+                                    style = NapzakMarketTheme.typography.caption12sb,
+                                    color = NapzakMarketTheme.colors.gray400,
+                                )
                             }
                         }
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(30.dp))
         }
     }
 }
@@ -277,6 +282,7 @@ fun MyPageScreenPreview() {
         MyPageScreen(
             modifier = Modifier,
             nickname = "납작한자기",
+            profileImageUrl = "https://via.placeholder.com/150",
             salesCount = 31,
             purchaseCount = 15,
             onMyMarketClick = { println("내 마켓 보기 클릭") },
