@@ -217,6 +217,9 @@ fun MyMarketButton(onClick: () -> Unit) {
     }
 }
 
+private const val ROW_COUNT = 2
+private const val COLUMN_COUNT = 3
+
 @Composable
 fun MyPageMenuCard(
     onSalesClick: () -> Unit,
@@ -226,6 +229,7 @@ fun MyPageMenuCard(
     onSettingsClick: () -> Unit,
     onHelpClick: () -> Unit,
 ) {
+
     val menus = listOf(
         MyPageMenu.SALES to onSalesClick,
         MyPageMenu.PURCHASE to onPurchaseClick,
@@ -245,13 +249,13 @@ fun MyPageMenuCard(
         colors = CardDefaults.cardColors(containerColor = NapzakMarketTheme.colors.gray10),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            for (rowIndex in 0 until 2) {
+            for (rowIndex in 0 until ROW_COUNT) {
                 Row(modifier = Modifier.weight(1f)) {
-                    for (colIndex in 0 until 3) {
-                        val index = rowIndex * 3 + colIndex
+                    for (colIndex in 0 until COLUMN_COUNT) {
+                        val index = rowIndex * COLUMN_COUNT + colIndex
                         val (menu, onClick) = menus[index]
-                        val showRightBorder = colIndex < 2
-                        val showBottomBorder = rowIndex < 1
+                        val showRightBorder = colIndex < COLUMN_COUNT - 1
+                        val showBottomBorder = rowIndex < ROW_COUNT - 1
 
                         Box(
                             modifier = Modifier
