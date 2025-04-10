@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="search_suggested_keyword">추천 검색어</string>
+    <string name="search_suggested_search_text">추천 검색어</string>
     <string name="search_suggested_genre">추천 장르</string>
     <string name="search_genre">장르</string>
+    <string name="search_hint">원하는 장르를 직접 검색해보세요!</string>
 </resources>
