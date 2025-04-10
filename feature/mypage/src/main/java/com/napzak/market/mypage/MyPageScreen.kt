@@ -74,9 +74,16 @@ fun MyPageScreen(
         ) {
             MyPageHeader()
             Spacer(modifier = Modifier.height(30.dp))
-            MyPageProfileSection(nickname, profileImageUrl = profileImageUrl, salesCount, purchaseCount)
+            MyPageProfileSection(
+                nickname = nickname,
+                profileImageUrl = profileImageUrl,
+                salesCount = salesCount,
+                purchaseCount = purchaseCount,
+            )
             Spacer(modifier = Modifier.height(20.dp))
-            MyMarketButton(onClick = onMyMarketClick)
+            MyMarketButton(
+                onClick = onMyMarketClick,
+            )
             Spacer(modifier = Modifier.height(20.dp))
         }
 
@@ -93,17 +100,18 @@ fun MyPageScreen(
         ) {
             Spacer(modifier = Modifier.height(20.dp))
             MyPageMenuCard(
-                onSalesClick,
-                onPurchaseClick,
-                onRecentClick,
-                onFavoriteClick,
-                onSettingsClick,
-                onHelpClick
+                onSalesClick = onSalesClick,
+                onPurchaseClick = onPurchaseClick,
+                onRecentClick = onRecentClick,
+                onFavoriteClick = onFavoriteClick,
+                onSettingsClick = onSettingsClick,
+                onHelpClick = onHelpClick,
             )
             Spacer(modifier = Modifier.height(30.dp))
         }
     }
 }
+
 @Composable
 fun MyPageHeader() {
     Text(
@@ -112,7 +120,7 @@ fun MyPageHeader() {
         modifier = Modifier
             .padding(top = 60.dp)
             .background(NapzakMarketTheme.colors.purple500)
-            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .padding(horizontal = 12.dp, vertical = 6.dp),
     )
 }
 
@@ -121,7 +129,8 @@ fun MyPageProfileSection(
     nickname: String,
     profileImageUrl: String,
     salesCount: Int,
-    purchaseCount: Int) {
+    purchaseCount: Int,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -129,7 +138,7 @@ fun MyPageProfileSection(
             .clip(RoundedCornerShape(25.dp))
             .background(NapzakMarketTheme.colors.gray10)
             .padding(horizontal = 22.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -154,13 +163,29 @@ fun MyPageProfileSection(
             )
             Spacer(modifier = Modifier.height(7.dp))
             Row {
-                Text(stringResource(sell_label), color = NapzakMarketTheme.colors.gray500, style = NapzakMarketTheme.typography.caption12m)
+                Text(
+                    stringResource(sell_label),
+                    color = NapzakMarketTheme.colors.gray500,
+                    style = NapzakMarketTheme.typography.caption12m,
+                )
                 Spacer(modifier = Modifier.width(2.dp))
-                Text(stringResource(sell_count, salesCount), color = NapzakMarketTheme.colors.gray500, style = NapzakMarketTheme.typography.caption12sb)
+                Text(
+                    stringResource(sell_count, salesCount),
+                    color = NapzakMarketTheme.colors.gray500,
+                    style = NapzakMarketTheme.typography.caption12sb,
+                )
                 Spacer(modifier = Modifier.width(14.dp))
-                Text(stringResource(buy_label), color = NapzakMarketTheme.colors.gray500, style = NapzakMarketTheme.typography.caption12m)
+                Text(
+                    stringResource(buy_label),
+                    color = NapzakMarketTheme.colors.gray500,
+                    style = NapzakMarketTheme.typography.caption12m,
+                )
                 Spacer(modifier = Modifier.width(2.dp))
-                Text(stringResource(buy_count, purchaseCount), color = NapzakMarketTheme.colors.gray500, style = NapzakMarketTheme.typography.caption12sb)
+                Text(
+                    stringResource(buy_count, purchaseCount),
+                    color = NapzakMarketTheme.colors.gray500,
+                    style = NapzakMarketTheme.typography.caption12sb,
+                )
             }
         }
     }
@@ -176,7 +201,7 @@ fun MyMarketButton(onClick: () -> Unit) {
             .padding(vertical = 14.dp)
             .noRippleClickable(onClick),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         Text(
             text = stringResource(my_market),
