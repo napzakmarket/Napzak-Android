@@ -69,21 +69,24 @@ fun GenreFilterChip(
 
 @Composable
 fun getFilterName(genreList: List<Genre>): String {
-    return when {
-        genreList.isEmpty() -> stringResource(explore_genre)
-        genreList.size == 1 -> genreList.first().genreName
-        else -> {
-            val genreName = if (genreList.first().genreName.length > CHARACTER_MAX_COUNT) {
-                genreList.first().genreName.take(CHARACTER_MAX_COUNT - 1) + "…"
-            } else {
-                genreList.first().genreName
-            }
-            stringResource(
-                explore_genre_extra_count,
-                genreName,
-                genreList.size - 1,
-            )
-        }
+    if (genreList.isEmpty()) return stringResource(explore_genre)
+
+    val firstGenreName = genreList.first().genreName
+
+    val genreName = if (firstGenreName.length > CHARACTER_MAX_COUNT) {
+        firstGenreName.take(CHARACTER_MAX_COUNT - 1) + "…"
+    } else {
+        firstGenreName
+    }
+
+    return if (genreList.size == 1) {
+        genreName
+    } else {
+        stringResource(
+            explore_genre_extra_count,
+            genreName,
+            genreList.size - 1
+        )
     }
 }
 
