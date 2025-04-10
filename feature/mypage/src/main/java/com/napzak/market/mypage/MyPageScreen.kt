@@ -1,7 +1,6 @@
 package com.napzak.market.mypage
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,26 +35,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.designsystem.R.drawable.ic_arrow_right_7
-import com.napzak.market.designsystem.R.drawable.ic_sales_32
-import com.napzak.market.designsystem.R.drawable.ic_purchase_32
-import com.napzak.market.designsystem.R.drawable.ic_recent_30
-import com.napzak.market.designsystem.R.drawable.ic_favorite_27
-import com.napzak.market.designsystem.R.drawable.ic_settings_27
 import com.napzak.market.designsystem.R.drawable.ic_help_32
-import com.napzak.market.feature.mypage.R.string.profile_image_description
-import com.napzak.market.feature.mypage.R.string.sell_label
-import com.napzak.market.feature.mypage.R.string.sell_count
-import com.napzak.market.feature.mypage.R.string.buy_label
+import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.buy_count
+import com.napzak.market.feature.mypage.R.string.buy_label
 import com.napzak.market.feature.mypage.R.string.my_market
-import com.napzak.market.feature.mypage.R.string.sales_history
-import com.napzak.market.feature.mypage.R.string.purchase_history
-import com.napzak.market.feature.mypage.R.string.recently_viewed
-import com.napzak.market.feature.mypage.R.string.favorites
-import com.napzak.market.feature.mypage.R.string.settings
-import com.napzak.market.feature.mypage.R.string.help_center
+import com.napzak.market.feature.mypage.R.string.profile_image_description
+import com.napzak.market.feature.mypage.R.string.sell_count
+import com.napzak.market.feature.mypage.R.string.sell_label
 import com.napzak.market.util.android.noRippleClickable
 
 @Composable
@@ -103,60 +91,60 @@ fun MyPageScreen(
                     .padding(horizontal = 22.dp, vertical = 17.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                    Box(
-                        modifier = Modifier
-                            .size(60.dp)
-                            .background(
-                                color = NapzakMarketTheme.colors.purple100,
-                                shape = CircleShape,
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .placeholder(ic_help_32)
-                                .error(ic_help_32)
-                                .build(),
-                            contentDescription = stringResource(profile_image_description),
-                        )
-                    }
+                Box(
+                    modifier = Modifier
+                        .size(60.dp)
+                        .background(
+                            color = NapzakMarketTheme.colors.purple100,
+                            shape = CircleShape,
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .placeholder(ic_help_32)
+                            .error(ic_help_32)
+                            .build(),
+                        contentDescription = stringResource(profile_image_description),
+                    )
+                }
 
-                    Spacer(modifier = Modifier.width(14.dp))
+                Spacer(modifier = Modifier.width(14.dp))
 
-                    Column {
+                Column {
+                    Text(
+                        text = nickname,
+                        color = NapzakMarketTheme.colors.purple500,
+                        style = NapzakMarketTheme.typography.body14b,
+                    )
+                    Spacer(modifier = Modifier.height(7.dp))
+                    Row {
                         Text(
-                            text = nickname,
-                            color = NapzakMarketTheme.colors.purple500,
-                            style = NapzakMarketTheme.typography.body14b,
+                            text = stringResource(sell_label),
+                            color = NapzakMarketTheme.colors.gray500,
+                            style = NapzakMarketTheme.typography.caption12m,
                         )
-                        Spacer(modifier = Modifier.height(7.dp))
-                        Row {
-                            Text(
-                                text = stringResource(sell_label),
-                                color = NapzakMarketTheme.colors.gray500,
-                                style = NapzakMarketTheme.typography.caption12m,
-                            )
-                            Spacer(modifier = Modifier.width(2.dp))
-                            Text(
-                                text = stringResource(sell_count, salesCount),
-                                color = NapzakMarketTheme.colors.gray500,
-                                style = NapzakMarketTheme.typography.caption12sb,
-                            )
-                            Spacer(modifier = Modifier.width(14.dp))
-                            Text(
-                                text = stringResource(buy_label),
-                                color = NapzakMarketTheme.colors.gray500,
-                                style = NapzakMarketTheme.typography.caption12m,
-                            )
-                            Spacer(modifier = Modifier.width(2.dp))
-                            Text(
-                                text = stringResource(buy_count, purchaseCount),
-                                color = NapzakMarketTheme.colors.gray500,
-                                style = NapzakMarketTheme.typography.caption12sb,
-                            )
-                        }
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Text(
+                            text = stringResource(sell_count, salesCount),
+                            color = NapzakMarketTheme.colors.gray500,
+                            style = NapzakMarketTheme.typography.caption12sb,
+                        )
+                        Spacer(modifier = Modifier.width(14.dp))
+                        Text(
+                            text = stringResource(buy_label),
+                            color = NapzakMarketTheme.colors.gray500,
+                            style = NapzakMarketTheme.typography.caption12m,
+                        )
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Text(
+                            text = stringResource(buy_count, purchaseCount),
+                            color = NapzakMarketTheme.colors.gray500,
+                            style = NapzakMarketTheme.typography.caption12sb,
+                        )
                     }
                 }
+            }
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -211,12 +199,12 @@ fun MyPageScreen(
                 colors = CardDefaults.cardColors(containerColor = NapzakMarketTheme.colors.gray10),
             ) {
                 val menus = listOf(
-                    Triple(stringResource(sales_history), ic_sales_32, onSalesClick),
-                    Triple(stringResource(purchase_history), ic_purchase_32, onPurchaseClick),
-                    Triple(stringResource(recently_viewed), ic_recent_30, onRecentClick),
-                    Triple(stringResource(favorites), ic_favorite_27, onFavoriteClick),
-                    Triple(stringResource(settings), ic_settings_27, onSettingsClick),
-                    Triple(stringResource(help_center), ic_help_32, onHelpClick),
+                    MyPageMenu.SALES to onSalesClick,
+                    MyPageMenu.PURCHASE to onPurchaseClick,
+                    MyPageMenu.RECENT to onRecentClick,
+                    MyPageMenu.FAVORITE to onFavoriteClick,
+                    MyPageMenu.SETTINGS to onSettingsClick,
+                    MyPageMenu.HELP to onHelpClick,
                 )
 
                 val dividerColor = NapzakMarketTheme.colors.gray50
@@ -226,7 +214,7 @@ fun MyPageScreen(
                         Row(modifier = Modifier.weight(1f)) {
                             for (colIndex in 0 until 3) {
                                 val index = rowIndex * 3 + colIndex
-                                val (title, iconRes, onClick) = menus[index]
+                                val (menu, onClick) = menus[index]
 
                                 val showRightBorder = colIndex < 2
                                 val showBottomBorder = rowIndex < 1
@@ -259,13 +247,13 @@ fun MyPageScreen(
                                 ) {
                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                         Icon(
-                                            imageVector = ImageVector.vectorResource(id = iconRes),
-                                            contentDescription = title,
+                                            imageVector = ImageVector.vectorResource(id = menu.iconRes),
+                                            contentDescription = stringResource(menu.titleRes),
                                             tint = Color.Unspecified,
                                         )
                                         Spacer(modifier = Modifier.height(5.dp))
                                         Text(
-                                            text = title,
+                                            text = stringResource(menu.titleRes),
                                             style = NapzakMarketTheme.typography.caption12sb,
                                             color = NapzakMarketTheme.colors.gray400,
                                         )
