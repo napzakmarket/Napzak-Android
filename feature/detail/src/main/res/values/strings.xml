@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="detail_snack_bar_trade_status">상품 상태를 \“%s\"으로 변경하였습니다.</string>
+
     <string name="detail_top_bar_content_description_back">뒤로가기</string>
     <string name="detail_top_bar_content_description_option">옵션</string>
 
@@ -24,4 +26,14 @@
     <string name="detail_product_market_count">%s개</string>
 
     <string name="detail_product_button_chat">채팅하기</string>
+
+    <string name="detail_bottom_sheet_edit">상품 수정</string>
+    <string name="detail_bottom_sheet_setting">상품 상태 변경</string>
+    <string name="detail_bottom_sheet_delete">삭제하기</string>
+    <string name="detail_bottom_sheet_report">상품 신고하기</string>
+    <string name="detail_bottom_sheet_radio_button_before_trade_sell">판매중</string>
+    <string name="detail_bottom_sheet_radio_button_before_trade_buy">구매중</string>
+    <string name="detail_bottom_sheet_radio_button_reserved">예약중</string>
+    <string name="detail_bottom_sheet_radio_button_complete_trade_sell">판매완료</string>
+    <string name="detail_bottom_sheet_radio_button_complete_trade_buy">구매완료</string>
 </resources>
