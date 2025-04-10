@@ -56,6 +56,7 @@ import com.napzak.market.feature.mypage.R.string.recently_viewed
 import com.napzak.market.feature.mypage.R.string.favorites
 import com.napzak.market.feature.mypage.R.string.settings
 import com.napzak.market.feature.mypage.R.string.help_center
+import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 fun MyPageScreen(
@@ -165,7 +166,7 @@ fun MyPageScreen(
                     .clip(RoundedCornerShape(14.dp))
                     .background(NapzakMarketTheme.colors.gray10)
                     .padding(vertical = 13.dp)
-                    .clickable { onMyMarketClick() },
+                    .noRippleClickable(onMyMarketClick),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
