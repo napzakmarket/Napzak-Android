@@ -235,7 +235,7 @@ fun MyPageScreen(
                                     modifier = Modifier
                                         .weight(1f)
                                         .fillMaxHeight()
-                                        .clickable { onClick() }
+                                        .noRippleClickable(onClick)
                                         .drawBehind {
                                             val strokeWidth = 4.dp.toPx()
                                             if (showRightBorder) {
