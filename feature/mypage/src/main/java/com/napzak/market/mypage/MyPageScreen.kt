@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.designsystem.R.drawable.ic_arrow_right_7
-import com.napzak.market.designsystem.R.drawable.ic_help_32
+import com.napzak.market.designsystem.R.drawable.ic_profile_60
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.buy_count
 import com.napzak.market.feature.mypage.R.string.buy_label
@@ -102,8 +102,8 @@ fun MyPageScreen(
                 ) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .placeholder(ic_help_32)
-                            .error(ic_help_32)
+                            .placeholder(ic_profile_60)
+                            .error(ic_profile_60)
                             .build(),
                         contentDescription = stringResource(profile_image_description),
                     )
