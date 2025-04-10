@@ -27,7 +27,7 @@ internal fun ProductInformationSellGroup(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 20.dp, vertical = 26.dp),
     ) {
         Text(
             text = stringResource(detail_product_title_is_price_negotiable),

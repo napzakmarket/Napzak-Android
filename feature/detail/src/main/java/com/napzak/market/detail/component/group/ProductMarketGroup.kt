@@ -40,7 +40,11 @@ internal fun ProductMarketGroup(
     buyCount: String,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.padding(horizontal = 20.dp)) {
+    Column(
+        modifier = modifier
+            .padding(horizontal = 20.dp)
+            .padding(top = 26.dp, bottom = 22.dp),
+    ) {
         Text(
             text = stringResource(detail_product_market_group_title),
             style = NapzakMarketTheme.typography.body14b.copy(

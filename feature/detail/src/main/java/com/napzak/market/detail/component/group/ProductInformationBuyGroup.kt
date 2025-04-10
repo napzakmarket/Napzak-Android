@@ -31,7 +31,7 @@ internal fun ProductInformationBuyGroup(
     halfDeliveryFee: Int,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier.padding(vertical = 26.dp)) {
         ProductConditionSection(
             productCondition = productCondition,
         )
