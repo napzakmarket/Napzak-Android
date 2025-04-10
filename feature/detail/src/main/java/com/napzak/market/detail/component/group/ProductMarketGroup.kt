@@ -31,6 +31,7 @@ import com.napzak.market.feature.detail.R.string.detail_product_market_buy
 import com.napzak.market.feature.detail.R.string.detail_product_market_count
 import com.napzak.market.feature.detail.R.string.detail_product_market_group_title
 import com.napzak.market.feature.detail.R.string.detail_product_market_sell
+import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 internal fun ProductMarketGroup(
@@ -38,6 +39,7 @@ internal fun ProductMarketGroup(
     marketName: String,
     sellCount: String,
     buyCount: String,
+    onMarketProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -59,6 +61,7 @@ internal fun ProductMarketGroup(
             marketName = marketName,
             sellCount = sellCount,
             buyCount = buyCount,
+            modifier = Modifier.noRippleClickable(onClick = onMarketProfileClick)
         )
     }
 }
@@ -145,7 +148,8 @@ private fun ProductMarketGroupPreview() {
             marketName = "납작한 자기",
             sellCount = "31",
             buyCount = "15",
-            modifier = Modifier.background(NapzakMarketTheme.colors.white)
+            modifier = Modifier.background(NapzakMarketTheme.colors.white),
+            onMarketProfileClick = {},
         )
     }
 }
