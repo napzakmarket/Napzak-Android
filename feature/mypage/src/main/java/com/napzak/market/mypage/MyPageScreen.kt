@@ -88,7 +88,7 @@ fun MyPageScreen(
                     .height(94.dp)
                     .clip(RoundedCornerShape(25.dp))
                     .background(NapzakMarketTheme.colors.gray10)
-                    .padding(horizontal = 22.dp, vertical = 17.dp),
+                    .padding(horizontal = 22.dp, vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
@@ -153,7 +153,7 @@ fun MyPageScreen(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(14.dp))
                     .background(NapzakMarketTheme.colors.gray10)
-                    .padding(vertical = 13.dp)
+                    .padding(vertical = 14.dp)
                     .noRippleClickable(onMyMarketClick),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
