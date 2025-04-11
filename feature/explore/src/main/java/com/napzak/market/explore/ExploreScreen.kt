@@ -46,17 +46,21 @@ import com.napzak.market.feature.explore.R.string.explore_unopened
 import com.napzak.market.feature.explore.R.string.explore_exclude_sold_out
 import com.napzak.market.feature.explore.R.string.explore_product
 import com.napzak.market.feature.explore.R.string.explore_count
-import com.napzak.market.feature.explore.R.string.explore_empty_text
+import com.napzak.market.feature.explore.R.drawable.ic_left_chevron
 import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 internal fun ExploreRoute(
+    searchTerm: String,
+    onBackButtonClick: () -> Unit,
     onSearchNavigate: () -> Unit,
     onGenreDetailNavigate: (Long) -> Unit,
     onProductDetailNavigate: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ExploreScreen(
+        searchTerm = searchTerm,
+        onBackButtonClick = onBackButtonClick,
         onSearchNavigate = onSearchNavigate,
         onTabClicked = { },
         onGenreFilterClick = { },
@@ -72,6 +76,8 @@ internal fun ExploreRoute(
 
 @Composable
 private fun ExploreScreen(
+    searchTerm: String,
+    onBackButtonClick: () -> Unit,
     onSearchNavigate: () -> Unit,
     onTabClicked: (TradeType) -> Unit,
     onGenreFilterClick: () -> Unit,
@@ -94,6 +100,7 @@ private fun ExploreScreen(
         Genre(5, "진격의 거인1"),
     )
     var sortType = SortType.RECENT
+    val searchTerm = searchTerm
 
     Column(
         modifier = modifier
@@ -101,11 +108,26 @@ private fun ExploreScreen(
             .background(color = NapzakMarketTheme.colors.white)
             .padding(top = 54.dp),
     ) {
-        ExploreSearchTextField(
-            modifier = Modifier
-                .noRippleClickable(onSearchNavigate)
-                .padding(horizontal = 20.dp),
-        )
+        Row(
+            modifier = Modifier.padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (searchTerm.isNotEmpty()) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(ic_left_chevron),
+                    contentDescription = null,
+                    tint = NapzakMarketTheme.colors.gray200,
+                    modifier = Modifier.noRippleClickable(onBackButtonClick)
+                )
+
+                Spacer(Modifier.width(12.dp))
+            }
+            ExploreSearchTextField(
+                searchTerm = searchTerm,
+                modifier = Modifier
+                    .noRippleClickable(onSearchNavigate),
+            )
+        }
 
         Spacer(Modifier.height(20.dp))
 
@@ -158,10 +180,11 @@ private fun ExploreScreen(
 
 @Composable
 private fun ExploreSearchTextField(
+    searchTerm: String,
     modifier: Modifier = Modifier,
 ) {
     SearchTextField(
-        text = stringResource(explore_empty_text),
+        text = searchTerm,
         onTextChange = { },
         hint = stringResource(explore_search_hint),
         onResetClick = { },
@@ -287,6 +310,8 @@ private fun GenreAndProductList(
 private fun ExploreScreenPreview(modifier: Modifier = Modifier) {
     NapzakMarketTheme {
         ExploreScreen(
+            searchTerm = "",
+            onBackButtonClick = { },
             onSearchNavigate = { },
             onTabClicked = { },
             onGenreFilterClick = { },
