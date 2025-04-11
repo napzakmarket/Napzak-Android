@@ -57,7 +57,7 @@ internal fun GenreNavigationButton(
         Icon(
             imageVector = ImageVector.vectorResource(ic_right_chevron),
             contentDescription = null,
-            tint = Color.Unspecified,
+            tint = NapzakMarketTheme.colors.gray200,
         )
     }
 }

@@ -101,7 +101,7 @@ private fun SearchScreen(
             Icon(
                 imageVector = ImageVector.vectorResource(ic_left_chevron),
                 contentDescription = null,
-                tint = Color.Unspecified,
+                tint = NapzakMarketTheme.colors.gray200,
                 modifier = Modifier.noRippleClickable(onBackButtonClick),
             )
 
