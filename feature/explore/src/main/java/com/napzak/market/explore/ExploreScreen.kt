@@ -197,7 +197,7 @@ private fun GenreAndProductList(
                             Modifier
                                 .fillMaxWidth()
                                 .background(color = NapzakMarketTheme.colors.gray10)
-                                .height(4.dp)
+                                .height(4.dp),
                         )
                     }
                 }

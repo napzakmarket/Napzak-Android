@@ -26,6 +26,7 @@ import com.napzak.market.designsystem.R.drawable.ic_down_chevron
 import com.napzak.market.util.android.noRippleClickable
 import com.napzak.market.feature.explore.R.string.explore_genre
 import com.napzak.market.feature.explore.R.string.explore_genre_extra_count
+import com.napzak.market.feature.explore.R.string.explore_ellipsis
 
 const val CHARACTER_MAX_COUNT = 5
 
@@ -62,7 +63,7 @@ internal fun GenreFilterChip(
             imageVector = ImageVector.vectorResource(ic_down_chevron),
             contentDescription = null,
             tint = textColor,
-            modifier = Modifier.size(width = 7.dp, height = 4.dp)
+            modifier = Modifier.size(width = 7.dp, height = 4.dp),
         )
     }
 }
@@ -74,7 +75,7 @@ private fun getFilterName(genreList: List<Genre>): String {
     val firstGenreName = genreList.first().genreName
 
     val genreName = if (firstGenreName.length > CHARACTER_MAX_COUNT) {
-        firstGenreName.take(CHARACTER_MAX_COUNT - 1) + "…"
+        firstGenreName.take(CHARACTER_MAX_COUNT - 1) + stringResource(explore_ellipsis)
     } else {
         firstGenreName
     }
@@ -92,7 +93,7 @@ private fun getFilterName(genreList: List<Genre>): String {
 
 @Preview
 @Composable
-private fun GenreFilterChipPreview(modifier: Modifier = Modifier) {
+private fun GenreFilterChipPreview() {
     NapzakMarketTheme {
         Column {
             GenreFilterChip(
