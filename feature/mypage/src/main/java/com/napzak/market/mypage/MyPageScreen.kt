@@ -46,6 +46,9 @@ import com.napzak.market.feature.mypage.R.string.sell_count
 import com.napzak.market.feature.mypage.R.string.sell_label
 import com.napzak.market.util.android.noRippleClickable
 
+private const val ROW_COUNT = 2
+private const val COLUMN_COUNT = 3
+
 @Composable
 fun MyPageScreen(
     modifier: Modifier = Modifier,
@@ -216,9 +219,6 @@ fun MyMarketButton(onClick: () -> Unit) {
         )
     }
 }
-
-private const val ROW_COUNT = 2
-private const val COLUMN_COUNT = 3
 
 @Composable
 fun MyPageMenuCard(
