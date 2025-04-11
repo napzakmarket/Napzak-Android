@@ -30,7 +30,7 @@ import com.napzak.market.feature.explore.R.string.explore_genre_extra_count
 const val CHARACTER_MAX_COUNT = 5
 
 @Composable
-fun GenreFilterChip(
+internal fun GenreFilterChip(
     genreList: List<Genre>,
     onChipClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -68,7 +68,7 @@ fun GenreFilterChip(
 }
 
 @Composable
-fun getFilterName(genreList: List<Genre>): String {
+private fun getFilterName(genreList: List<Genre>): String {
     if (genreList.isEmpty()) return stringResource(explore_genre)
 
     val firstGenreName = genreList.first().genreName

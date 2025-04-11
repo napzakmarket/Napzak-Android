@@ -25,7 +25,7 @@ import com.napzak.market.util.android.noRippleClickable
 import com.napzak.market.feature.explore.R.string.explore_genre
 
 @Composable
-fun GenreNavigationButton(
+internal fun GenreNavigationButton(
     genreName: String,
     onBlockClick: () -> Unit,
     modifier: Modifier = Modifier,

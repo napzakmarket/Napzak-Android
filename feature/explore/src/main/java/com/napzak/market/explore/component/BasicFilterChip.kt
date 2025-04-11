@@ -15,7 +15,7 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.util.android.noRippleClickable
 
 @Composable
-fun BasicFilterChip(
+internal fun BasicFilterChip(
     filterName: String,
     isClicked: Boolean,
     onChipClick: () -> Unit,
