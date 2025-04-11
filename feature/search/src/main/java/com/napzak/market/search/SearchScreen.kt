@@ -109,7 +109,7 @@ private fun SearchScreen(
 
             SearchTextField(
                 text = searchText,
-                onTextChange = { onTextChange(it) },
+                onTextChange = onTextChange,
                 hint = stringResource(search_hint),
                 onResetClick = { onTextChange(EMPTY_TEXT) },
                 onSearchClick = onSearchClick,
