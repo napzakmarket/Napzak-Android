@@ -14,7 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -38,18 +42,23 @@ import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 internal fun SearchRoute(
+    onBackButtonClick: () -> Unit,
+    onSearchResultNavigate: (String) -> Unit,
+    onGenreDetailNavigate: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var searchText by remember { mutableStateOf("") } // TODO: viewModel로 옮길 예정
+
     SearchScreen(
-        searchText = "",
+        searchText = searchText,
         suggestedSearchText = emptyList(),
         suggestedGenre = emptyList(),
         searchResultGenres = emptyList(),
-        onBackButtonClick = { },
-        onTextChange = { },
-        onSearchClick = { },
-        onSuggestedTextClick = { },
-        onSuggestedGenreClick = { },
+        onBackButtonClick = onBackButtonClick,
+        onTextChange = { searchText = it },
+        onSearchClick = { onSearchResultNavigate(searchText) },
+        onSuggestedTextClick = onSearchResultNavigate,
+        onSuggestedGenreClick = onGenreDetailNavigate,
         modifier = modifier,
     )
 }
@@ -77,7 +86,7 @@ private fun SearchScreen(
                 .shadow(
                     elevation = 4.dp,
                     spotColor = NapzakMarketTheme.colors.transBlack,
-                    ambientColor = NapzakMarketTheme.colors.transBlack
+                    ambientColor = NapzakMarketTheme.colors.transBlack,
                 )
                 .background(color = NapzakMarketTheme.colors.white)
                 .padding(start = 20.dp, top = 66.dp, end = 20.dp, bottom = 20.dp),
@@ -87,7 +96,7 @@ private fun SearchScreen(
                 imageVector = ImageVector.vectorResource(ic_left_chevron),
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.noRippleClickable(onBackButtonClick)
+                modifier = Modifier.noRippleClickable(onBackButtonClick),
             )
 
             Spacer(Modifier.width(12.dp))
@@ -212,6 +221,7 @@ private fun SuggestedGenreSection(
 @Preview
 @Composable
 private fun SearchScreenPreview(modifier: Modifier = Modifier) {
+    var searchText by remember { mutableStateOf("") }
     val suggestedSearchText = listOf(
         "헌터x헌터 룩업", "주술회전 고죠 사토루", "웨딩 마이멜로디",
         "짱구는 못말려 날아라 수제김밥", "은혼 긴토키", "하이큐 모찌모찌아아아아아",
@@ -224,6 +234,8 @@ private fun SearchScreenPreview(modifier: Modifier = Modifier) {
         Genre(4, "짱구는 못말려 날아라 수제김밥"),
         Genre(5, "짱구는 못말려 날아라 수제김밥"),
         Genre(6, "짱구는 못말려 날아라 수제김밥"),
+        Genre(7, "짱구는 못말려 날아라 수제김밥"),
+        Genre(8, "짱구는 못말려 날아라 수제김밥"),
     )
     val searchResultGenres = listOf(
         Genre(0, "짱구는 못말려 날아라 수제김밥"),
@@ -237,12 +249,12 @@ private fun SearchScreenPreview(modifier: Modifier = Modifier) {
 
     NapzakMarketTheme {
         SearchScreen(
-            searchText = "dk",
+            searchText = searchText,
             suggestedSearchText = suggestedSearchText,
             suggestedGenre = suggestedGenre,
             searchResultGenres = searchResultGenres,
             onBackButtonClick = { },
-            onTextChange = { },
+            onTextChange = { searchText = it },
             onSearchClick = { },
             onSuggestedTextClick = { },
             onSuggestedGenreClick = { },
