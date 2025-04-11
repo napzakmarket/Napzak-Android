@@ -40,6 +40,8 @@ import com.napzak.market.search.component.SuggestedGenreCard
 import com.napzak.market.search.component.SuggestedKeywordChip
 import com.napzak.market.util.android.noRippleClickable
 
+const val EMPTY_TEXT = ""
+
 @Composable
 internal fun SearchRoute(
     onBackButtonClick: () -> Unit,
@@ -105,7 +107,7 @@ private fun SearchScreen(
                 text = searchText,
                 onTextChange = { onTextChange(it) },
                 hint = stringResource(search_hint),
-                onResetClick = { onTextChange("") },
+                onResetClick = { onTextChange(EMPTY_TEXT) },
                 onSearchClick = onSearchClick,
             )
         }
