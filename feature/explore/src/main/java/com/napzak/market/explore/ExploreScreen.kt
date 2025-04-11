@@ -275,6 +275,10 @@ private fun GenreAndProductList(
                 )
             }
         }
+
+        item {
+            Spacer(Modifier.padding(bottom = 32.dp))
+        }
     }
 }
 
