@@ -46,6 +46,7 @@ import com.napzak.market.feature.explore.R.string.explore_unopened
 import com.napzak.market.feature.explore.R.string.explore_exclude_sold_out
 import com.napzak.market.feature.explore.R.string.explore_product
 import com.napzak.market.feature.explore.R.string.explore_count
+import com.napzak.market.feature.explore.R.string.explore_empty_text
 import com.napzak.market.util.android.noRippleClickable
 
 @Composable
@@ -160,7 +161,7 @@ private fun ExploreSearchTextField(
     modifier: Modifier = Modifier,
 ) {
     SearchTextField(
-        text = "",
+        text = stringResource(explore_empty_text),
         onTextChange = { },
         hint = stringResource(explore_search_hint),
         onResetClick = { },
