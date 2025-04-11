@@ -12,6 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
@@ -112,23 +116,31 @@ private fun SearchScreen(
             )
         }
 
-        Spacer(Modifier.height(14.dp))
-
         if (searchText.isEmpty()) {
-            SuggestedSearchTextSection(
-                searchTexts = suggestedSearchText,
-                onTextChipClick = onSuggestedTextClick,
-            )
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(top = 14.dp)
+            ) {
+                SuggestedSearchTextSection(
+                    searchTexts = suggestedSearchText,
+                    onTextChipClick = onSuggestedTextClick,
+                )
 
-            Spacer(Modifier.height(46.dp))
+                Spacer(Modifier.height(46.dp))
 
-            SuggestedGenreSection(
-                genres = suggestedGenre,
-                onGenreCardClick = onSuggestedGenreClick,
-            )
+                SuggestedGenreSection(
+                    genres = suggestedGenre,
+                    onGenreCardClick = onSuggestedGenreClick,
+                )
+            }
         } else {
-            Column {
-                searchResultGenres.forEach { genreItem ->
+            LazyColumn {
+                item {
+                    Spacer(Modifier.height(14.dp))
+                }
+
+                items(searchResultGenres) { genreItem ->
                     GenreNavigationButton(
                         genreName = genreItem.genreName,
                         onBlockClick = { onSuggestedGenreClick(genreItem.genreId) },
