@@ -65,8 +65,8 @@ private fun MainNavHost(
 
         searchGraph(
             navigateToPrevious = { navigator.navController.popBackStack() },
-            navigateToSearchResult = { /* 검색어 검색결과 페이지로 이동 */ },
-            navigateToGenreDetail = { /* 장르상세 페이지로 이동 */ },
+            navigateToSearchResult = { /* TODO: 검색어 검색결과 페이지로 이동 */ },
+            navigateToGenreDetail = { /* TODO: 장르상세 페이지로 이동 */ },
             modifier = modifier,
         )
     }
