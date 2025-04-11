@@ -219,6 +219,7 @@ private fun SuggestedGenreSection(
                         genreName = genre.genreName,
                         imgUrl = genre.genreImgUrl.toString(),
                         onCardClick = { onGenreCardClick(genre.genreId) },
+                        modifier = Modifier.width(100.dp),
                     )
                 }
 

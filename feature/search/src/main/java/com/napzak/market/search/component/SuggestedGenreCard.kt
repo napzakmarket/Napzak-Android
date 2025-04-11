@@ -3,8 +3,9 @@ package com.napzak.market.search.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -27,13 +28,13 @@ internal fun SuggestedGenreCard(
     genreName: String,
     imgUrl: String,
     onCardClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
 
     Column(
-        modifier = Modifier
-            .noRippleClickable(onCardClick)
-            .width(100.dp),
+        modifier = modifier
+            .noRippleClickable(onCardClick),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AsyncImage(
@@ -44,7 +45,8 @@ internal fun SuggestedGenreCard(
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(100.dp)
+                .fillMaxWidth()
+                .aspectRatio(1f)
                 .clip(RoundedCornerShape(50.dp))
                 .background(color = NapzakMarketTheme.colors.gray100),
         )
@@ -69,6 +71,7 @@ private fun SuggestedGenreCardPreview() {
             genreName = "짱구는 못말려 날아라 수제김밥",
             imgUrl = "",
             onCardClick = { },
+            modifier = Modifier.width(100.dp),
         )
     }
 }
