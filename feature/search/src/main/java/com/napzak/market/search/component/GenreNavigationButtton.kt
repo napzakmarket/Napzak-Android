@@ -27,7 +27,7 @@ import com.napzak.market.feature.search.R.string.search_genre
 import com.napzak.market.feature.search.R.drawable.ic_right_chevron
 
 @Composable
-fun GenreNavigationButton(
+internal fun GenreNavigationButton(
     genreName: String,
     onBlockClick: () -> Unit,
     modifier: Modifier = Modifier,
