@@ -229,6 +229,7 @@ private fun MyPageMenuCard(
     onFavoriteClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onHelpClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
 
     val menus = listOf(
@@ -243,7 +244,7 @@ private fun MyPageMenuCard(
     val dividerColor = NapzakMarketTheme.colors.gray50
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(168.dp),
         shape = RoundedCornerShape(14.dp),
