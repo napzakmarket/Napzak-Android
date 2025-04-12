@@ -57,6 +57,7 @@ fun PhotoPicker(
     ) {
         item {
             PhotoRegisterButton(
+                modifier = Modifier.padding(start = 20.dp),
                 imageCount = imageUrlList.size,
                 onPhotoClick = onPhotoClick,
             )
@@ -72,7 +73,8 @@ fun PhotoPicker(
                 onDeleteClick = onDeleteClick,
                 onLongClick = { onLongClick(index) },
                 modifier = Modifier
-                    .padding(end = if (index == imageUrlList.lastIndex) 0.dp else 8.dp),
+                    .padding(
+                        end = if (index == imageUrlList.lastIndex) 20.dp else 8.dp),
             )
         }
     }
