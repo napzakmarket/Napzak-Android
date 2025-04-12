@@ -9,6 +9,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.napzak.market.dummy.navigation.Dummy
+import com.napzak.market.explore.navigation.navigateToExplore
 
 class MainNavigator(
     val navController: NavHostController,
@@ -38,7 +39,7 @@ class MainNavigator(
 
         when (tab) {
             MainTab.DUMMY -> { } //TODO: 더미 추가 예정
-            MainTab.EXPLORE -> { } //TODO: 더미 추가 예정
+            MainTab.EXPLORE -> navController.navigateToExplore()
         }
     }
 

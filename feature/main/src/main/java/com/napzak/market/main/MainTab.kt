@@ -24,7 +24,7 @@ enum class MainTab(
     EXPLORE(
         icon = Icons.Filled.Search,
         contentDescription = "탐색",
-        route = Explore,
+        route = Explore(),
     );
 
     companion object {

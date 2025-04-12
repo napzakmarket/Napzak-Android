@@ -10,8 +10,10 @@ import com.napzak.market.common.navigation.MainTabRoute
 import com.napzak.market.explore.ExploreRoute
 import kotlinx.serialization.Serializable
 
+const val EMPTY_TEXT = ""
+
 fun NavController.navigateToExplore(
-    searchTerm: String,
+    searchTerm: String = EMPTY_TEXT,
     navOptions: NavOptions? = null,
 ) = navigate(Explore(searchTerm), navOptions)
 
@@ -23,10 +25,10 @@ fun NavGraphBuilder.exploreGraph(
     modifier: Modifier = Modifier,
 ) {
     composable<Explore> { backStackEntry ->
-        val searchTerm: String = backStackEntry.toRoute()
+        val explore: Explore = backStackEntry.toRoute()
 
         ExploreRoute(
-            searchTerm = searchTerm,
+            searchTerm = explore.searchTerm,
             onBackButtonClick = navigateToPrevious,
             onSearchNavigate = navigateToSearch,
             onGenreDetailNavigate = navigateToGenreDetail,
@@ -38,5 +40,5 @@ fun NavGraphBuilder.exploreGraph(
 
 @Serializable
 data class Explore(
-    val searchTerm: String? = null,
+    val searchTerm: String = EMPTY_TEXT,
 ) : MainTabRoute
