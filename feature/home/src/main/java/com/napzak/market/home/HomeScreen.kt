@@ -139,6 +139,8 @@ private fun HomeSearchTextField(
         onTextChange = {},
         onSearchClick = {},
         onResetClick = {},
+        enabled = false,
+        readOnly = true,
         modifier = Modifier
             .noRippleClickable(onClick)
             .then(modifier),
