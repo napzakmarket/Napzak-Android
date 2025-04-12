@@ -51,7 +51,6 @@ private const val COLUMN_COUNT = 3
 
 @Composable
 fun MyPageScreen(
-    modifier: Modifier = Modifier,
     nickname: String,
     profileImageUrl: String,
     salesCount: Int,
@@ -63,6 +62,7 @@ fun MyPageScreen(
     onFavoriteClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onHelpClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
