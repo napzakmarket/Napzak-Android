@@ -18,7 +18,6 @@ fun NavController.navigateToExplore(
 ) = navigate(Explore(searchTerm), navOptions)
 
 fun NavGraphBuilder.exploreGraph(
-    navigateToPrevious: () -> Unit,
     navigateToSearch: () -> Unit,
     navigateToGenreDetail: (Long) -> Unit,
     navigateToProductDetail: (Long) -> Unit,
@@ -29,7 +28,6 @@ fun NavGraphBuilder.exploreGraph(
 
         ExploreRoute(
             searchTerm = explore.searchTerm,
-            onBackButtonClick = navigateToPrevious,
             onSearchNavigate = navigateToSearch,
             onGenreDetailNavigate = navigateToGenreDetail,
             onProductDetailNavigate = navigateToProductDetail,

@@ -64,7 +64,6 @@ private fun MainNavHost(
         dummyGraph(modifier = modifier)
 
         exploreGraph(
-            navigateToPrevious = { navigator.navController.popBackStack() },
             navigateToSearch = { /* TODO: 검색 화면으로 이동 */ },
             navigateToGenreDetail = { /* TODO: 장르 상세 화면으로 이동 */ },
             navigateToProductDetail = { /* TODO: 상품 상세 화면으로 이동 */ },
