@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -38,7 +37,6 @@ import com.napzak.market.util.android.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 private const val SCROLL_DELAY = 5000L
 private const val SCROLL_TWEEN = 1000
@@ -59,7 +57,6 @@ internal fun HorizontalAutoScrolledImages(
     modifier: Modifier = Modifier,
 ) {
     val context by rememberUpdatedState(LocalContext.current)
-    val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f,
@@ -79,12 +76,10 @@ internal fun HorizontalAutoScrolledImages(
 
         while (true) {
             delay(SCROLL_DELAY)
-            coroutineScope.launch {
-                pagerState.animateScrollToPage(
-                    page = pagerState.currentPage + 1,
-                    animationSpec = tween(SCROLL_TWEEN),
-                )
-            }
+            pagerState.animateScrollToPage(
+                page = pagerState.currentPage + 1,
+                animationSpec = tween(SCROLL_TWEEN),
+            )
         }
     }
 
