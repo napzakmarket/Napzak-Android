@@ -35,9 +35,10 @@ fun MyPageProfileSection(
     profileImageUrl: String,
     salesCount: Int,
     purchaseCount: Int,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(94.dp)
             .clip(RoundedCornerShape(25.dp))
