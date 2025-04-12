@@ -23,7 +23,9 @@
     <string name="shipping_included">배송비 포함</string>
     <string name="shipping_excluded">배송비 별도</string>
     <string name="normal_shipping">일반 택배</string>
+    <string name="normal_shipping_hint">100~30,000</string>
     <string name="half_priced_shipping">반값/알뜰 택배</string>
+    <string name="half_priced_shipping_hint">0~5,000</string>
 
     <!-- Purchase Components   -->
     <string name="purchase_price">희망 가격</string>
