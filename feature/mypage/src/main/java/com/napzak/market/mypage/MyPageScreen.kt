@@ -38,12 +38,12 @@ import coil.request.ImageRequest
 import com.napzak.market.designsystem.R.drawable.ic_arrow_right_7
 import com.napzak.market.designsystem.R.drawable.ic_profile_60
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.mypage.R.string.buy_count
-import com.napzak.market.feature.mypage.R.string.buy_label
-import com.napzak.market.feature.mypage.R.string.my_market
-import com.napzak.market.feature.mypage.R.string.profile_image_description
-import com.napzak.market.feature.mypage.R.string.sell_count
-import com.napzak.market.feature.mypage.R.string.sell_label
+import com.napzak.market.feature.mypage.R.string.mypage_buy_count
+import com.napzak.market.feature.mypage.R.string.mypage_buy_label
+import com.napzak.market.feature.mypage.R.string.mypage_my_market
+import com.napzak.market.feature.mypage.R.string.mypage_profile_image_description
+import com.napzak.market.feature.mypage.R.string.mypage_sell_count
+import com.napzak.market.feature.mypage.R.string.mypage_sell_label
 import com.napzak.market.util.android.noRippleClickable
 
 private const val ROW_COUNT = 2
@@ -153,7 +153,7 @@ fun MyPageProfileSection(
                 .size(60.dp)
                 .clip(CircleShape)
                 .background(NapzakMarketTheme.colors.purple100),
-            contentDescription = stringResource(profile_image_description),
+            contentDescription = stringResource(mypage_profile_image_description),
         )
 
         Spacer(modifier = Modifier.width(14.dp))
@@ -167,25 +167,25 @@ fun MyPageProfileSection(
             Spacer(modifier = Modifier.height(7.dp))
             Row {
                 Text(
-                    stringResource(sell_label),
+                    stringResource(mypage_sell_label),
                     color = NapzakMarketTheme.colors.gray500,
                     style = NapzakMarketTheme.typography.caption12m,
                 )
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(
-                    stringResource(sell_count, salesCount),
+                    stringResource(mypage_sell_count, salesCount),
                     color = NapzakMarketTheme.colors.gray500,
                     style = NapzakMarketTheme.typography.caption12sb,
                 )
                 Spacer(modifier = Modifier.width(14.dp))
                 Text(
-                    stringResource(buy_label),
+                    stringResource(mypage_buy_label),
                     color = NapzakMarketTheme.colors.gray500,
                     style = NapzakMarketTheme.typography.caption12m,
                 )
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(
-                    stringResource(buy_count, purchaseCount),
+                    stringResource(mypage_buy_count, purchaseCount),
                     color = NapzakMarketTheme.colors.gray500,
                     style = NapzakMarketTheme.typography.caption12sb,
                 )
@@ -207,7 +207,7 @@ fun MyMarketButton(onClick: () -> Unit) {
         horizontalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = stringResource(my_market),
+            text = stringResource(mypage_my_market),
             style = NapzakMarketTheme.typography.caption12sb,
             color = NapzakMarketTheme.colors.gray300,
         )
