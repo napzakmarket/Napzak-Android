@@ -40,7 +40,7 @@ fun InputTextField(
     onTextChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     hint: String = BLANK,
-    textStyle: TextStyle = NapzakMarketTheme.typography.body14r,
+    textStyle: TextStyle = NapzakMarketTheme.typography.body14sb,
     textColor: Color = NapzakMarketTheme.colors.gray500,
     hintTextStyle: TextStyle = NapzakMarketTheme.typography.body14sb,
     hintTextColor: Color = NapzakMarketTheme.colors.gray200,
