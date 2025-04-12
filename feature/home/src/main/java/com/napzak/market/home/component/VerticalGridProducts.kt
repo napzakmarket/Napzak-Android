@@ -91,6 +91,7 @@ internal fun VerticalGridProducts(
 
         Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
             products.chunked(GRID_CELL_COUNT).forEach { productRow ->
+                val isRowSizeOdd = productRow.size % 2 == 1
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
                     modifier = Modifier.fillMaxWidth()
@@ -118,6 +119,10 @@ internal fun VerticalGridProducts(
                                     .noRippleClickable { onProductClick(id) },
                             )
                         }
+                    }
+
+                    if (isRowSizeOdd) {
+                        Spacer(modifier = Modifier.weight(1f))
                     }
                 }
             }
