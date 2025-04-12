@@ -44,6 +44,7 @@ import com.napzak.market.feature.mypage.R.string.mypage_my_market
 import com.napzak.market.feature.mypage.R.string.mypage_profile_image_description
 import com.napzak.market.feature.mypage.R.string.mypage_sell_count
 import com.napzak.market.feature.mypage.R.string.mypage_sell_label
+import com.napzak.market.feature.mypage.R.string.mypage_header_title
 import com.napzak.market.util.android.noRippleClickable
 
 private const val ROW_COUNT = 2
@@ -116,9 +117,9 @@ fun MyPageScreen(
 }
 
 @Composable
-fun MyPageHeader() {
+private fun MyPageHeader() {
     Text(
-        text = "Napzak(Logo)",
+        text = stringResource(mypage_header_title),
         color = Color.White,
         modifier = Modifier
             .padding(top = 60.dp)
@@ -128,7 +129,7 @@ fun MyPageHeader() {
 }
 
 @Composable
-fun MyPageProfileSection(
+private fun MyPageProfileSection(
     nickname: String,
     profileImageUrl: String,
     salesCount: Int,
@@ -195,7 +196,7 @@ fun MyPageProfileSection(
 }
 
 @Composable
-fun MyMarketButton(onClick: () -> Unit) {
+private fun MyMarketButton(onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -221,7 +222,7 @@ fun MyMarketButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun MyPageMenuCard(
+private fun MyPageMenuCard(
     onSalesClick: () -> Unit,
     onPurchaseClick: () -> Unit,
     onRecentClick: () -> Unit,
