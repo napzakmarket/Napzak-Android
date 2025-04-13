@@ -35,7 +35,7 @@ private const val ITEM_CHUNK = 2
  * @param onConditionSelected: 상태 선택
  */
 @Composable
-fun ProductConditionGridButton(
+internal fun ProductConditionGridButton(
     selectedCondition: ProductConditionType?,
     onConditionSelected: (ProductConditionType) -> Unit,
     modifier: Modifier = Modifier,

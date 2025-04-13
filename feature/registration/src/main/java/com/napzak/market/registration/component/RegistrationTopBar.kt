@@ -20,7 +20,7 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.util.android.noRippleClickable
 
 @Composable
-fun RegistrationTopBar(
+internal fun RegistrationTopBar(
     title: String,
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,

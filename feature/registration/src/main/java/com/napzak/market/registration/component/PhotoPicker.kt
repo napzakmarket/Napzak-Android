@@ -45,7 +45,7 @@ private const val MAX_PHOTOS = 10
  * @param onDeleteClick: 클릭 시 이미지 삭제 처리를 위한 함수
  */
 @Composable
-fun PhotoPicker(
+internal fun PhotoPicker(
     imageUrlList: List<String>,
     onPhotoClick: () -> Unit,
     onLongClick: (Int) -> Unit,

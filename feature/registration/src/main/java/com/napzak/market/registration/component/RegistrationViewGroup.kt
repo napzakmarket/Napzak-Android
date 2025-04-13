@@ -37,7 +37,7 @@ private const val MAX_PRODUCT_DESCRIPTION = 430
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun RegistrationViewGroup(
+internal fun RegistrationViewGroup(
     title: String,
     onCloseClick: () -> Unit,
     productImageUrls: List<String>,

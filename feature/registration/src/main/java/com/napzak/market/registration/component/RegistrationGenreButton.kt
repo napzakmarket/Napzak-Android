@@ -27,7 +27,7 @@ import com.napzak.market.util.android.noRippleClickable
  * @param onGenreClick: 장르 선택 화면으로 이동
  */
 @Composable
-fun RegistrationGenreButton(
+internal fun RegistrationGenreButton(
     selectedGenre: String,
     onGenreClick: () -> Unit,
     modifier: Modifier = Modifier,
