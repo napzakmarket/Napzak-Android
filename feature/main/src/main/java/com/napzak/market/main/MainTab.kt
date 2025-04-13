@@ -1,28 +1,51 @@
 package com.napzak.market.main
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.napzak.market.common.navigation.MainTabRoute
 import com.napzak.market.common.navigation.Route
+import com.napzak.market.designsystem.R.drawable.ic_nav_add
+import com.napzak.market.designsystem.R.drawable.ic_nav_chat
+import com.napzak.market.designsystem.R.drawable.ic_nav_explore
+import com.napzak.market.designsystem.R.drawable.ic_nav_home
+import com.napzak.market.designsystem.R.drawable.ic_nav_user
 import com.napzak.market.dummy.navigation.Dummy
+import com.napzak.market.main.R.string.main_bottom_bar_chatting
+import com.napzak.market.main.R.string.main_bottom_bar_explore
+import com.napzak.market.main.R.string.main_bottom_bar_home
+import com.napzak.market.main.R.string.main_bottom_bar_my_page
+import com.napzak.market.main.R.string.main_bottom_bar_register
 
 // TODO: 구현 시작 시 수정
 enum class MainTab(
-    val icon: ImageVector,
-    val contentDescription: String,
+    @DrawableRes val iconRes: Int,
+    @StringRes val title: Int,
     val route: MainTabRoute,
 ) {
-    DUMMY(
-        icon = Icons.Filled.Home,
-        contentDescription = "더미1",
+    HOME(
+        iconRes = ic_nav_home,
+        title = main_bottom_bar_home,
         route = Dummy,
     ),
-    DUMMY2(
-        icon = Icons.Filled.Search,
-        contentDescription = "더미2",
+    EXPLORE(
+        iconRes = ic_nav_explore,
+        title = main_bottom_bar_explore,
+        route = Dummy,
+    ),
+    REGISTER(
+        iconRes = ic_nav_add,
+        title = main_bottom_bar_register,
+        route = Dummy,
+    ),
+    CHAT(
+        iconRes = ic_nav_chat,
+        title = main_bottom_bar_chatting,
+        route = Dummy,
+    ),
+    MY_PAGE(
+        iconRes = ic_nav_user,
+        title = main_bottom_bar_my_page,
         route = Dummy,
     );
 

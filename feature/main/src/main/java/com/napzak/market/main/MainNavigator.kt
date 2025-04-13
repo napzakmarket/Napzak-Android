@@ -37,8 +37,11 @@ class MainNavigator(
         }
 
         when (tab) {
-            MainTab.DUMMY -> { } //TODO: 더미 추가 예정
-            MainTab.DUMMY2 -> { } //TODO: 더미 추가 예정
+            MainTab.HOME -> {} //TODO: 더미 추가 예정
+            MainTab.EXPLORE -> {} //TODO: 더미 추가 예정
+            MainTab.REGISTER -> {} //TODO: 더미 추가 예정
+            MainTab.CHAT -> {} //TODO: 더미 추가 예정
+            MainTab.MY_PAGE -> {} //TODO: 더미 추가 예정
         }
     }
 
