@@ -1,4 +1,4 @@
-package com.napzak.market.market.model
+package com.napzak.market.store.model
 
 data class Product( // TODO: 추후 domain으로 이동 예정
     val id: Long,

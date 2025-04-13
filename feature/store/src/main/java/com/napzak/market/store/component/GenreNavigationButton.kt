@@ -1,4 +1,4 @@
-package com.napzak.market.market.component
+package com.napzak.market.store.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,8 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.util.android.noRippleClickable
-import com.napzak.market.feature.market.R.string.market_genre
-import com.napzak.market.feature.market.R.drawable.ic_right_chevron
+import com.napzak.market.feature.store.R.string.market_genre
+import com.napzak.market.feature.store.R.drawable.ic_right_chevron
 
 @Composable
 internal fun GenreNavigationButton(

@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    setNameSpace("feature.market")
+    setNameSpace("feature.store")
 }
 
 dependencies {

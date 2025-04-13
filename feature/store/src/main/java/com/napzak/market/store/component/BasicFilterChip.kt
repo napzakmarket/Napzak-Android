@@ -1,4 +1,4 @@
-package com.napzak.market.market.component
+package com.napzak.market.store.component
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column

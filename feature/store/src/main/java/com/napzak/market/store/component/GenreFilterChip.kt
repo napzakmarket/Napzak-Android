@@ -1,4 +1,4 @@
-package com.napzak.market.market.component
+package com.napzak.market.store.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,9 +24,9 @@ import com.napzak.market.designsystem.component.bottomsheet.Genre
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.designsystem.R.drawable.ic_down_chevron
 import com.napzak.market.util.android.noRippleClickable
-import com.napzak.market.feature.market.R.string.market_genre
-import com.napzak.market.feature.market.R.string.market_genre_extra_count
-import com.napzak.market.feature.market.R.string.market_ellipsis
+import com.napzak.market.feature.store.R.string.market_genre
+import com.napzak.market.feature.store.R.string.market_genre_extra_count
+import com.napzak.market.feature.store.R.string.market_ellipsis
 
 const val CHARACTER_MAX_COUNT = 5
 

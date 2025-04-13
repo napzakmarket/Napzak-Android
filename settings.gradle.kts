@@ -42,5 +42,5 @@ include(
 include(
     "feature:main",
     "feature:dummy",
-    ":feature:market"
+    ":feature:store"
 )
