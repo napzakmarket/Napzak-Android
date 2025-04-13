@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.registration.R.string.sale_price_tag
+import com.napzak.market.feature.registration.R.string.sale_price_tag
 import com.napzak.market.util.android.priceSeparatorTransformation
 
 @Composable
