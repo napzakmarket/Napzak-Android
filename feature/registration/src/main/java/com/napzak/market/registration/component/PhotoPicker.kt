@@ -107,7 +107,7 @@ private fun PhotoRegisterButton(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(5.dp)
+            verticalArrangement = Arrangement.spacedBy(5.dp),
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(ic_import_24),

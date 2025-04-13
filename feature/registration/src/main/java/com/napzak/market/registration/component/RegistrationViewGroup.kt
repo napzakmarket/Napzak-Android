@@ -132,7 +132,7 @@ internal fun RegistrationViewGroup(
             Column(
                 modifier = paddedModifier,
                 horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 InputTextField(
                     text = productName,
@@ -164,7 +164,7 @@ internal fun RegistrationViewGroup(
             Column(
                 modifier = paddedModifier,
                 horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 InputTextField(
                     text = productDescription,

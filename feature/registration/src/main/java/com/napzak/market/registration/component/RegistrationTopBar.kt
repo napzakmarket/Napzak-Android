@@ -40,7 +40,7 @@ internal fun RegistrationTopBar(
             style = NapzakMarketTheme.typography.body16b.copy(
                 color = NapzakMarketTheme.colors.gray500,
             ),
-            modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center),
         )
         Icon(
             imageVector = ImageVector.vectorResource(ic_close_24),
