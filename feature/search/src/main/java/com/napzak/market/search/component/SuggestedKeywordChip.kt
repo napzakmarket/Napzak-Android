@@ -34,7 +34,7 @@ internal fun SuggestedKeywordChip(
                 color = lineColor,
                 shape = RoundedCornerShape(size = 50.dp)
             )
-            .padding(horizontal = 10.dp, vertical = 8.dp)
+            .padding(horizontal = 10.dp, vertical = 8.dp),
     ) {
         Text(
             text = keyword,

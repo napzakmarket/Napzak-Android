@@ -120,7 +120,7 @@ private fun SearchScreen(
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
-                    .padding(top = 14.dp)
+                    .padding(top = 14.dp),
             ) {
                 SuggestedSearchTextSection(
                     searchTexts = suggestedSearchText,
