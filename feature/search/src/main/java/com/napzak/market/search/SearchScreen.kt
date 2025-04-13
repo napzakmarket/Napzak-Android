@@ -164,9 +164,10 @@ private fun SearchScreen(
 private fun SuggestedSearchTextSection(
     searchTexts: List<String>,
     onTextChipClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier.padding(start = 20.dp, top = 14.dp),
+        modifier = modifier.padding(start = 20.dp, top = 14.dp),
     ) {
         Text(
             text = stringResource(search_suggested_search_text),
@@ -194,9 +195,10 @@ private fun SuggestedSearchTextSection(
 private fun SuggestedGenreSection(
     genres: List<Genre>,
     onGenreCardClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp),
     ) {
