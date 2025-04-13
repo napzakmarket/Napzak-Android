@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_arrow_right_gray
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.registration.R.string.genre
+import com.napzak.market.feature.registration.R.string.genre
 import com.napzak.market.util.android.noRippleClickable
 
 /**

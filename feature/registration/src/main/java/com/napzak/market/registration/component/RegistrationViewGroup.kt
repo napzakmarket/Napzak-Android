@@ -24,12 +24,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.component.textfield.InputTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.registration.R.string.product_description
-import com.napzak.market.registration.R.string.product_description_hint
-import com.napzak.market.registration.R.string.product_image
-import com.napzak.market.registration.R.string.product_image_description
-import com.napzak.market.registration.R.string.product_name
-import com.napzak.market.registration.R.string.product_name_hint
+import com.napzak.market.feature.registration.R.string.product_description
+import com.napzak.market.feature.registration.R.string.product_description_hint
+import com.napzak.market.feature.registration.R.string.product_image
+import com.napzak.market.feature.registration.R.string.product_image_description
+import com.napzak.market.feature.registration.R.string.product_name
+import com.napzak.market.feature.registration.R.string.product_name_hint
 import com.napzak.market.util.android.noRippleClickable
 
 private const val MAX_PRODUCT_NAME = 48

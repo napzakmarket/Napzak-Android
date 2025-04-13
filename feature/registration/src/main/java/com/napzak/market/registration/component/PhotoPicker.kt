@@ -29,8 +29,8 @@ import coil.compose.AsyncImage
 import com.napzak.market.designsystem.R.drawable.ic_cancel_image_24
 import com.napzak.market.designsystem.R.drawable.ic_import_24
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.registration.R.string.photo_count
-import com.napzak.market.registration.R.string.representative_tag
+import com.napzak.market.feature.registration.R.string.photo_count
+import com.napzak.market.feature.registration.R.string.representative_tag
 import com.napzak.market.util.android.noRippleClickable
 import com.napzak.market.util.android.noRippleCombineClickable
 

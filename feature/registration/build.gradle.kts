@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    setNameSpace("registration")
+    setNameSpace("feature.registration")
 }
 
 dependencies {
