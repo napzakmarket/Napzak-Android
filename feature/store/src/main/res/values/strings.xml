@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="store_genre">장르</string>
-    <string name="store_ellipsis">%s...</string>
+    <string name="store_ellipsis">%s…</string>
     <string name="store_genre_extra_count">%s 외 %d</string>
     <string name="store_empty_text"></string>
 
