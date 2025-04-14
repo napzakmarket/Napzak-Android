@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.napzak.market.dummy.navigation.dummyGraph
 import com.napzak.market.main.component.MainBottomBar
+import com.napzak.market.store.navigation.storeGraph
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -61,5 +62,13 @@ private fun MainNavHost(
         startDestination = navigator.startDestination
     ) {
         dummyGraph(modifier = modifier)
+
+        storeGraph(
+            navigateToUp = navigator::navigateUp,
+            navigateToProfileEdit = { /* TODO: move to profile edit */ },
+            navigateToGenreDetail = { /* TODO: move to genre detail */ },
+            navigateToProductDetail = { /* TODO: move to product detail */ },
+            modifier = modifier,
+        )
     }
 }

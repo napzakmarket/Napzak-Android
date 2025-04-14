@@ -66,7 +66,11 @@ import kotlin.collections.forEach
 
 @Composable
 internal fun StoreRoute(
-    modifier: Modifier = Modifier
+    onNavigateUp: () -> Unit,
+    onProfileEditNavigate: () -> Unit,
+    onGenreDetailNavigate: (Long) -> Unit,
+    onProductDetailNavigate: (Long) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     StoreScreen(
         selectedTab = MarketTab.SELL,
@@ -74,14 +78,14 @@ internal fun StoreRoute(
         filteredGenres = emptyList(),
         sortType = SortType.RECENT,
         productList = Product.mockMixedProduct,
-        onBackButtonClick = {},
-        onProfileEditClick = {},
+        onBackButtonClick = onNavigateUp,
+        onProfileEditClick = onProfileEditNavigate,
         onTabClicked = {},
         onGenreFilterClick = {},
         onFilterClick = {},
-        onGenreDetailNavigate = {},
+        onGenreItemClick = onGenreDetailNavigate,
         onSortOptionClick = {},
-        onProductDetailNavigate = {},
+        onProductItemClick = onProductDetailNavigate,
         onLikeButtonClick = { id, value -> },
         modifier = modifier,
     )
@@ -99,9 +103,9 @@ private fun StoreScreen(
     onGenreFilterClick: () -> Unit,
     onFilterClick: () -> Unit,
     onBackButtonClick: () -> Unit,
-    onGenreDetailNavigate: (Long) -> Unit,
+    onGenreItemClick: (Long) -> Unit,
     onSortOptionClick: (SortType) -> Unit,
-    onProductDetailNavigate: (Long) -> Unit,
+    onProductItemClick: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -124,9 +128,9 @@ private fun StoreScreen(
             onTabClicked = onTabClicked,
             onGenreFilterClick = onGenreFilterClick,
             onFilterClick = onFilterClick,
-            onGenreDetailNavigate = onGenreDetailNavigate,
+            onGenreDetailNavigate = onGenreItemClick,
             onSortOptionClick = onSortOptionClick,
-            onProductDetailNavigate = onProductDetailNavigate,
+            onProductDetailNavigate = onProductItemClick,
             onLikeButtonClick = onLikeButtonClick,
         )
     }
@@ -456,9 +460,9 @@ private fun StoreScreenPreview(modifier: Modifier = Modifier) {
             onTabClicked = {},
             onGenreFilterClick = {},
             onFilterClick = {},
-            onGenreDetailNavigate = {},
+            onGenreItemClick = {},
             onSortOptionClick = {},
-            onProductDetailNavigate = {},
+            onProductItemClick = {},
             onLikeButtonClick = { id, value -> },
             modifier = modifier,
         )
