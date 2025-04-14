@@ -26,6 +26,11 @@ enum class MainTab(
         icon = Icons.Filled.Search,
         contentDescription = "탐색",
         route = Explore(),
+    ),
+    DUMMY(
+        icon = Icons.Filled.Search,
+        contentDescription = "더미2",
+        route = Dummy,
     );
 
     companion object {
