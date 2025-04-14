@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="back_button_description">뒤로 가기 버튼</string>
+
     <string name="store_genre">장르</string>
     <string name="store_ellipsis">%s…</string>
     <string name="store_genre_extra_count">%s 외 %d</string>
@@ -9,4 +11,6 @@
     <string name="store_filter_buying">구매중</string>
     <string name="store_product">상품</string>
     <string name="store_count">%d개</string>
+    <string name="store_edit_profile">프로필 편집</string>
+
 </resources>

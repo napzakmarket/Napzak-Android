@@ -56,6 +56,8 @@ import com.napzak.market.feature.store.R.string.store_filter_buying
 import com.napzak.market.feature.store.R.string.store_product
 import com.napzak.market.feature.store.R.string.store_count
 import com.napzak.market.feature.store.R.string.store_empty_text
+import com.napzak.market.feature.store.R.string.store_edit_profile
+import com.napzak.market.feature.store.R.string.back_button_description
 import com.napzak.market.store.component.BasicFilterChip
 import com.napzak.market.store.component.GenreChip
 import com.napzak.market.store.component.GenreFilterChip
@@ -141,7 +143,7 @@ private fun StoreTopBar(
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(ic_left_chevron),
-            contentDescription = null,
+            contentDescription = stringResource(back_button_description),
             tint = NapzakMarketTheme.colors.gray200,
             modifier = Modifier.noRippleClickable(onBackButtonClick),
         )
@@ -343,7 +345,7 @@ private fun StoreInfoSection(
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(
-                                text = "프로필 편집",
+                                text = stringResource(store_edit_profile),
                                 style = NapzakMarketTheme.typography.caption10sb,
                                 color = NapzakMarketTheme.colors.white,
                                 textAlign = TextAlign.Center,
