@@ -1,7 +1,10 @@
 package com.napzak.market.main
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
@@ -9,6 +12,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.napzak.market.dummy.navigation.Dummy
+import com.napzak.market.dummy.navigation.navigateToDummy
 
 class MainNavigator(
     val navController: NavHostController,
@@ -19,15 +23,21 @@ class MainNavigator(
 
     val startDestination = Dummy
 
+    var isRegister: Boolean by mutableStateOf(false)
+        private set
+
     val currentTab: MainTab?
-        @Composable get() = MainTab.find { tab ->
-            currentDestination?.hasRoute(tab::class) == true
-        }
+        @Composable get() =
+            if (isRegister) MainTab.REGISTER
+            else MainTab.find { tab -> currentDestination?.hasRoute(tab::class) == true }
+
 
     fun navigate(tab: MainTab) {
+        if (tab != MainTab.REGISTER && isRegister) dismissRegisterDialog()
+
         val navOptions = navOptions {
             navController.currentDestination?.route?.let {
-                popUpTo(it){
+                popUpTo(it) {
                     inclusive = true
                     saveState = true
                 }
@@ -37,21 +47,33 @@ class MainNavigator(
         }
 
         when (tab) {
-            MainTab.HOME -> {} //TODO: 더미 추가 예정
-            MainTab.EXPLORE -> {} //TODO: 더미 추가 예정
-            MainTab.REGISTER -> {} //TODO: 더미 추가 예정
-            MainTab.CHAT -> {} //TODO: 더미 추가 예정
-            MainTab.MY_PAGE -> {} //TODO: 더미 추가 예정
+            MainTab.HOME -> {
+                //TODO: 홈 추가 예정
+                navController.navigateToDummy(navOptions)
+            }
+
+            MainTab.EXPLORE -> {} //TODO: 탐색 추가 예정
+            MainTab.REGISTER -> {
+                isRegister = isRegister.not()
+            }
+
+            MainTab.CHAT -> {} //TODO: 체팅 추가 예정
+            MainTab.MY_PAGE -> {} //TODO: 마이페이지 추가 예정
         }
     }
 
     fun navigateUp() {
-        navController.navigateUp()
+        if (isRegister) dismissRegisterDialog()
+        else navController.navigateUp()
     }
 
     @Composable
     fun showBottomBar() = MainTab.contains {
         currentDestination?.hasRoute(it::class) == true
+    }
+
+    fun dismissRegisterDialog() {
+        isRegister = false
     }
 }
 
