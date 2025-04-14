@@ -12,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.store.R.string.market_ellipsis
+import com.napzak.market.feature.store.R.string.store_ellipsis
 
 private const val MAX_LENGTH = 5
 
@@ -22,7 +22,7 @@ internal fun GenreChip(
     modifier: Modifier = Modifier,
     contentColor: Color = NapzakMarketTheme.colors.purple500,
 ) {
-    val genre = if (genreName.length > MAX_LENGTH) stringResource(market_ellipsis, genreName.take(MAX_LENGTH))
+    val genre = if (genreName.length > MAX_LENGTH) stringResource(store_ellipsis, genreName.take(MAX_LENGTH))
     else genreName
 
     Box(
@@ -32,7 +32,7 @@ internal fun GenreChip(
                 color = contentColor,
                 shape = RoundedCornerShape(size = 50.dp)
             )
-            .padding(horizontal = 10.dp, vertical = 8.dp),
+            .padding(horizontal = 10.dp, vertical = 6.dp),
     ) {
         Text(
             text = genre,

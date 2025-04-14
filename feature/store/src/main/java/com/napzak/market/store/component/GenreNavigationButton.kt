@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.util.android.noRippleClickable
-import com.napzak.market.feature.store.R.string.market_genre
+import com.napzak.market.feature.store.R.string.store_genre
 import com.napzak.market.feature.store.R.drawable.ic_right_chevron
 
 @Composable
@@ -72,7 +72,7 @@ private fun GenreChip() {
             .padding(horizontal = 7.dp, vertical = 2.dp)
     ) {
         Text(
-            text = stringResource(market_genre),
+            text = stringResource(store_genre),
             style = NapzakMarketTheme.typography.caption10sb,
             color = NapzakMarketTheme.colors.white,
         )

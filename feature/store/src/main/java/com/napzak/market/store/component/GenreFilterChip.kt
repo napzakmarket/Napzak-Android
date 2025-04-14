@@ -24,9 +24,9 @@ import com.napzak.market.designsystem.component.bottomsheet.Genre
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.designsystem.R.drawable.ic_down_chevron
 import com.napzak.market.util.android.noRippleClickable
-import com.napzak.market.feature.store.R.string.market_genre
-import com.napzak.market.feature.store.R.string.market_genre_extra_count
-import com.napzak.market.feature.store.R.string.market_ellipsis
+import com.napzak.market.feature.store.R.string.store_genre
+import com.napzak.market.feature.store.R.string.store_genre_extra_count
+import com.napzak.market.feature.store.R.string.store_ellipsis
 
 const val CHARACTER_MAX_COUNT = 5
 
@@ -70,19 +70,19 @@ internal fun GenreFilterChip(
 
 @Composable
 private fun getFilterName(genreList: List<Genre>): String {
-    if (genreList.isEmpty()) return stringResource(market_genre)
+    if (genreList.isEmpty()) return stringResource(store_genre)
 
     val firstGenreName = genreList.first().genreName
 
     val genreName = if (firstGenreName.length > CHARACTER_MAX_COUNT)
-        stringResource(market_ellipsis, firstGenreName.take(CHARACTER_MAX_COUNT - 1))
+        stringResource(store_ellipsis, firstGenreName.take(CHARACTER_MAX_COUNT - 1))
     else firstGenreName
 
     return if (genreList.size == 1) {
         genreName
     } else {
         stringResource(
-            market_genre_extra_count,
+            store_genre_extra_count,
             genreName,
             genreList.size - 1
         )

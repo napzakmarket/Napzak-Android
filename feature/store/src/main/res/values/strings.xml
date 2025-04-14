@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="market_genre">장르</string>
-    <string name="market_ellipsis">%s...</string>
-    <string name="market_unopened">미개봉</string>
-    <string name="market_exclude_sold_out">품절제외</string>
-    <string name="market_genre_extra_count">%s 외 %d</string>
-    <string name="market_empty_text"></string>
+    <string name="store_genre">장르</string>
+    <string name="store_ellipsis">%s...</string>
+    <string name="store_genre_extra_count">%s 외 %d</string>
+    <string name="store_empty_text"></string>
+
+    <string name="store_filter_selling">판매중</string>
+    <string name="store_filter_buying">구매중</string>
+    <string name="store_product">상품</string>
+    <string name="store_count">%d개</string>
 </resources>
