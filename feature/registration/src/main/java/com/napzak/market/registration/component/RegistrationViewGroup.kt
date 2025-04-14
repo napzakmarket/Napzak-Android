@@ -38,11 +38,11 @@ internal fun RegistrationViewGroup(
     onPhotoPress: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
     productGenre: String,
-    onGenreSelected: () -> Unit,
+    onGenreSelect: () -> Unit,
     productName: String,
-    onProductNameChanged: (String) -> Unit,
+    onProductNameChange: (String) -> Unit,
     productDescription: String,
-    onProductDescriptionChanged: (String) -> Unit,
+    onProductDescriptionChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val paddedModifier = Modifier.padding(horizontal = 20.dp)
@@ -83,7 +83,7 @@ internal fun RegistrationViewGroup(
 
         RegistrationGenreButton(
             selectedGenre = productGenre,
-            onGenreClick = onGenreSelected,
+            onGenreClick = onGenreSelect,
             modifier = paddedModifier
                 .padding(vertical = 8.dp),
         )
@@ -111,7 +111,7 @@ internal fun RegistrationViewGroup(
         ) {
             InputTextField(
                 text = productName,
-                onTextChange = onProductNameChanged,
+                onTextChange = onProductNameChange,
                 hint = stringResource(product_name_hint),
             )
             Text(
@@ -141,7 +141,7 @@ internal fun RegistrationViewGroup(
         ) {
             InputTextField(
                 text = productDescription,
-                onTextChange = onProductDescriptionChanged,
+                onTextChange = onProductDescriptionChange,
                 hint = stringResource(product_description_hint),
                 modifier = Modifier.height(136.dp),
                 isSingleLined = false,
@@ -174,11 +174,11 @@ private fun RegistrationViewGroupPreview() {
             onPhotoPress = { },
             onDeleteClick = { },
             productGenre = "사카모토데이즈",
-            onGenreSelected = { },
+            onGenreSelect = { },
             productName = name,
-            onProductNameChanged = { name = it },
+            onProductNameChange = { name = it },
             productDescription = content,
-            onProductDescriptionChanged = { content = it },
+            onProductDescriptionChange = { content = it },
             modifier = Modifier
                 .fillMaxWidth(),
         )

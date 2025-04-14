@@ -32,12 +32,12 @@ private const val ITEM_CHUNK = 2
  * Product condition grid button
  *
  * @param selectedCondition: 선택된 상태
- * @param onConditionSelected: 상태 선택
+ * @param onConditionSelect: 상태 선택
  */
 @Composable
 internal fun ProductConditionGridButton(
     selectedCondition: ProductConditionType?,
-    onConditionSelected: (ProductConditionType) -> Unit,
+    onConditionSelect: (ProductConditionType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -55,7 +55,7 @@ internal fun ProductConditionGridButton(
                         isSelected = selectedCondition == item,
                         modifier = Modifier
                             .weight(1f)
-                            .noRippleClickable { onConditionSelected(item) },
+                            .noRippleClickable { onConditionSelect(item) },
                     )
                 }
             }
@@ -109,7 +109,7 @@ private fun ProductConditionGridButtonPreview() {
     NapzakMarketTheme {
         var selectedItem by remember { mutableStateOf<ProductConditionType?>(null) }
         ProductConditionGridButton(
-            onConditionSelected = { selectedItem = it },
+            onConditionSelect = { selectedItem = it },
             modifier = Modifier.fillMaxWidth(),
             selectedCondition = selectedItem
         )

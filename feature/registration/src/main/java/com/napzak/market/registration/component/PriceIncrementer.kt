@@ -24,10 +24,10 @@ import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 internal fun PriceIncrementer(
-    onClickAddOne: () -> Unit,
-    onClickAddFive: () -> Unit,
-    onClickAddTen: () -> Unit,
-    onClickAddHundred: () -> Unit,
+    onAddOneClick: () -> Unit,
+    onAddFiveClick: () -> Unit,
+    onAddTenClick: () -> Unit,
+    onAddHundredClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -37,19 +37,19 @@ internal fun PriceIncrementer(
     ) {
         PriceButton(
             priceUnit = stringResource(price_button_1000),
-            onClick = onClickAddOne,
+            onClick = onAddOneClick,
         )
         PriceButton(
             priceUnit = stringResource(price_button_5000),
-            onClick = onClickAddFive,
+            onClick = onAddFiveClick,
         )
         PriceButton(
             priceUnit = stringResource(price_button_10000),
-            onClick = onClickAddTen,
+            onClick = onAddTenClick,
         )
         PriceButton(
             priceUnit = stringResource(price_button_100000),
-            onClick = onClickAddHundred,
+            onClick = onAddHundredClick,
         )
     }
 }
@@ -83,10 +83,10 @@ private fun PriceButton(
 private fun PriceIncrementerPreview() {
     NapzakMarketTheme {
         PriceIncrementer(
-            onClickAddOne = {},
-            onClickAddFive = {},
-            onClickAddTen = {},
-            onClickAddHundred = {},
+            onAddOneClick = {},
+            onAddFiveClick = {},
+            onAddTenClick = {},
+            onAddHundredClick = {},
         )
     }
 }
