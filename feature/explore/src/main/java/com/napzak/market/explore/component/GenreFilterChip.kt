@@ -75,7 +75,7 @@ private fun getFilterName(genreList: List<Genre>): String {
     val firstGenreName = genreList.first().genreName
 
     val genreName = if (firstGenreName.length > CHARACTER_MAX_COUNT) {
-        firstGenreName.take(CHARACTER_MAX_COUNT - 1) + stringResource(explore_ellipsis)
+        stringResource(explore_ellipsis, firstGenreName.take(CHARACTER_MAX_COUNT - 1))
     } else {
         firstGenreName
     }
