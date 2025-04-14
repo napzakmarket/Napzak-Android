@@ -31,7 +31,6 @@ class MainNavigator(
             if (isRegister) MainTab.REGISTER
             else MainTab.find { tab -> currentDestination?.hasRoute(tab::class) == true }
 
-
     fun navigate(tab: MainTab) {
         if (tab != MainTab.REGISTER && isRegister) dismissRegisterDialog()
 

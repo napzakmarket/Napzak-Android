@@ -73,7 +73,7 @@ internal fun MainBottomBar(
             color = White,
             border = BorderStroke(
                 width = 1.dp,
-                color = NapzakMarketTheme.colors.gray200
+                color = NapzakMarketTheme.colors.gray200,
             ),
         ) {
             Row(
@@ -116,7 +116,7 @@ internal fun MainBottomBar(
                                     tint = iconColor,
                                 )
                             }
-                        }
+                        },
                     )
                 }
 
@@ -137,7 +137,7 @@ private fun MainNavigationBarItem(
         modifier = modifier
             .semantics(mergeDescendants = true) { role = Role.Tab }
             .noRippleClickable(onClick),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         iconContent()
         Spacer(Modifier.height(5.dp))
@@ -179,7 +179,7 @@ private fun RegisterIcon(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(25.dp)
-            .background(color = iconColor, shape = RoundedCornerShape(5.dp))
+            .background(color = iconColor, shape = RoundedCornerShape(5.dp)),
     ) {
         Icon(
             imageVector = imageVector,
@@ -187,7 +187,7 @@ private fun RegisterIcon(
             tint = Color.Unspecified,
             modifier = Modifier.graphicsLayer(
                 rotationZ = rotation.value,
-                transformOrigin = TransformOrigin.Center
+                transformOrigin = TransformOrigin.Center,
             ),
         )
     }

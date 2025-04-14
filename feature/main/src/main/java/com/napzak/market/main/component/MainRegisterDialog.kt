@@ -49,14 +49,14 @@ internal fun MainRegisterDialog(
         visible = visibility,
         enter = slideInVertically { fullHeight -> fullHeight },
         exit = slideOutVertically { fullHeight -> fullHeight },
-        modifier = modifier
+        modifier = modifier,
     ) {
         Box(
             contentAlignment = Alignment.BottomCenter,
             modifier = Modifier
                 .fillMaxSize()
                 .noRippleClickable(onDismissRequest)
-                .padding(bottom = 10.dp)
+                .padding(bottom = 10.dp),
         ) {
             Column(
                 modifier = Modifier
@@ -68,7 +68,7 @@ internal fun MainRegisterDialog(
                             color = colorScheme.gray200,
                             strokeWidth = Dp.Hairline.toPx(),
                             start = Offset(0f, size.height / 2),
-                            end = Offset(size.width, size.height / 2)
+                            end = Offset(size.width, size.height / 2),
                         )
                     }
             ) {
@@ -102,12 +102,12 @@ private fun RegisterNavigationButton(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier
             .noRippleClickable(onClick = onClick)
-            .padding(horizontal = 46.dp, vertical = 10.dp)
+            .padding(horizontal = 46.dp, vertical = 10.dp),
     ) {
         Icon(
             imageVector = image,
             contentDescription = label,
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
         )
         Text(
             text = label,
