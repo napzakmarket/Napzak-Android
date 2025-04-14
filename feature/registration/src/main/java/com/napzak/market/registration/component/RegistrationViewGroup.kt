@@ -94,7 +94,7 @@ internal fun RegistrationViewGroup(
             Spacer(modifier = Modifier.height(8.dp))
 
             PhotoPicker(
-                imageUrlList = productImageUrls,
+                imageUrls = productImageUrls,
                 onPhotoClick = onPhotoClick,
                 onLongClick = onPhotoPress,
                 onDeleteClick = onDeleteClick,
@@ -170,8 +170,7 @@ internal fun RegistrationViewGroup(
                     text = productDescription,
                     onTextChange = onProductDescriptionChanged,
                     hint = stringResource(product_description_hint),
-                    modifier = Modifier
-                        .height(136.dp),
+                    modifier = Modifier.height(136.dp),
                     isSingleLined = false,
                     contentAlignment = Alignment.TopStart,
                 )

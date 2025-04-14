@@ -41,14 +41,14 @@ private const val MAX_PHOTOS = 10
 /**
  * Registration photo picker
  *
- * @param imageUrlList: 현재 이미지 URL 리스트
+ * @param imageUrls: 현재 이미지 URL 리스트
  * @param onPhotoClick: 클릭 시 이미지 추가 함수 호출
  * @param onLongClick: 길게 누를 시 대표 이미지 변경을 위한 함수
  * @param onDeleteClick: 클릭 시 이미지 삭제 처리를 위한 함수
  */
 @Composable
 internal fun PhotoPicker(
-    imageUrlList: List<String>,
+    imageUrls: List<String>,
     onPhotoClick: () -> Unit,
     onLongClick: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
@@ -60,23 +60,23 @@ internal fun PhotoPicker(
         item {
             PhotoRegisterButton(
                 modifier = Modifier.padding(start = 20.dp),
-                imageCount = imageUrlList.size,
+                imageCount = imageUrls.size,
                 onPhotoClick = onPhotoClick,
             )
             Spacer(modifier = Modifier.width(14.dp))
         }
         itemsIndexed(
-            items = imageUrlList,
+            items = imageUrls,
             key = { index, _ -> index },
         ) { index, url ->
+            val padEnd = if (index == imageUrls.lastIndex) 20.dp else 8.dp
             PhotoContainer(
                 index = index,
                 imageUrl = url,
                 onDeleteClick = onDeleteClick,
                 onLongClick = { onLongClick(index) },
                 modifier = Modifier
-                    .padding(
-                        end = if (index == imageUrlList.lastIndex) 20.dp else 8.dp),
+                    .padding(end = padEnd),
             )
         }
     }
@@ -202,7 +202,7 @@ private fun RegistrationPhotoPickerPreview() {
     NapzakMarketTheme {
         Column {
             PhotoPicker(
-                imageUrlList = listOf("1", "2", "3", "4", "1", "1", "4"),
+                imageUrls = listOf("1", "2", "3", "4", "1", "1", "4"),
                 onPhotoClick = { },
                 onLongClick = { },
                 onDeleteClick = { },
