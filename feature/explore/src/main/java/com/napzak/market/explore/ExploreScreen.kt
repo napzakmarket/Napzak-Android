@@ -11,10 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -186,12 +184,12 @@ private fun GenreAndProductList(
     onProductClick: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        horizontalArrangement = Arrangement.spacedBy(20.dp),
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = NapzakMarketTheme.colors.white),
     ) {
-        item(span = { GridItemSpan(maxCurrentLineSpan) }) {
+        item {
             Column {
                 if (genreList.isNotEmpty()) {
                     genreList.forEach { genreItem ->
@@ -251,40 +249,49 @@ private fun GenreAndProductList(
             }
         }
 
-        itemsIndexed(productList) { index, product ->
-            val isLeft = index % 2 == 0
-            val paddingModifier = if (isLeft) {
-                Modifier.padding(start = 20.dp)
-            } else {
-                Modifier.padding(end = 20.dp)
-            }
+        itemsIndexed(productList.chunked(2)) { index, rowItems ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp)
+                    .padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+            ) {
+                rowItems.forEach { product ->
+                    with(product) {
+                        NapzakLargeProductItem(
+                            genre = genre,
+                            title = name,
+                            imgUrl = photo,
+                            price = price.toString(),
+                            createdDate = uploadTime,
+                            reviewCount = reviewCount.toString(),
+                            likeCount = likeCount.toString(),
+                            isLiked = isInterested,
+                            isMyItem = isOwnedByCurrentUser,
+                            isSellElseBuy = TradeType.valueOf(tradeType) == TradeType.SELL,
+                            isSuggestionAllowed = isPriceNegotiable,
+                            tradeStatus = TradeStatusType.get(
+                                tradeStatus, TradeType.valueOf(tradeType)
+                            ),
+                            onLikeClick = { onLikeButtonClick(id, isInterested) },
+                            modifier = Modifier
+                                .weight(1f)
+                                .noRippleClickable { onProductClick(id) },
+                        )
+                    }
+                }
 
-            with(product) {
-                NapzakLargeProductItem(
-                    genre = genre,
-                    title = name,
-                    imgUrl = photo,
-                    price = price.toString(),
-                    createdDate = uploadTime,
-                    reviewCount = reviewCount.toString(),
-                    likeCount = likeCount.toString(),
-                    isLiked = isInterested,
-                    isMyItem = isOwnedByCurrentUser,
-                    isSellElseBuy = TradeType.valueOf(tradeType) == TradeType.SELL,
-                    isSuggestionAllowed = isPriceNegotiable,
-                    tradeStatus = TradeStatusType.get(
-                        tradeStatus, TradeType.valueOf(tradeType)
-                    ),
-                    onLikeClick = { onLikeButtonClick(id, isInterested) },
-                    modifier = paddingModifier
-                        .noRippleClickable { onProductClick(id) },
-                )
+                if (rowItems.size == 1) {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
             }
         }
 
         item {
             Spacer(Modifier.padding(bottom = 32.dp))
         }
+
     }
 }
 
