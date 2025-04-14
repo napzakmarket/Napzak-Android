@@ -32,14 +32,14 @@ internal fun ProductInformationSellGroup(
         Text(
             text = stringResource(detail_product_title_is_price_negotiable),
             style = NapzakMarketTheme.typography.body14b.copy(
-                color = NapzakMarketTheme.colors.gray500
+                color = NapzakMarketTheme.colors.gray500,
             ),
         )
 
         Text(
             text = stringResource(negotiableStringRes),
             style = NapzakMarketTheme.typography.body14b.copy(
-                color = NapzakMarketTheme.colors.gray300
+                color = NapzakMarketTheme.colors.gray300,
             ),
         )
     }

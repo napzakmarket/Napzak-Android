@@ -41,7 +41,9 @@ internal fun ProductInformationGroup(
     description: String,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier.background(NapzakMarketTheme.colors.white)) {
+    Column(
+        modifier = modifier.background(NapzakMarketTheme.colors.white),
+    ) {
         Surface(
             color = NapzakMarketTheme.colors.white,
             shadowElevation = 1.dp,
@@ -49,7 +51,7 @@ internal fun ProductInformationGroup(
             Column(Modifier.padding(horizontal = 20.dp, vertical = 22.dp)) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     TradeTypeTagGroup(
                         tradeType = tradeType,

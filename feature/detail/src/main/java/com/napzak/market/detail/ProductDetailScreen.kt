@@ -139,7 +139,7 @@ fun ProductDetailScreen(
         modifier = modifier,
     ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         ) {
             item {
                 ProductImageGroup(
