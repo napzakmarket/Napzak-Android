@@ -8,7 +8,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.napzak.market.dummy.navigation.Dummy
+import com.napzak.market.home.navigation.Home
+import com.napzak.market.home.navigation.navigateToHome
 
 class MainNavigator(
     val navController: NavHostController,
@@ -17,7 +18,7 @@ class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = Dummy
+    val startDestination = Home
 
     val currentTab: MainTab?
         @Composable get() = MainTab.find { tab ->
@@ -27,7 +28,7 @@ class MainNavigator(
     fun navigate(tab: MainTab) {
         val navOptions = navOptions {
             navController.currentDestination?.route?.let {
-                popUpTo(it){
+                popUpTo(it) {
                     inclusive = true
                     saveState = true
                 }
@@ -37,8 +38,8 @@ class MainNavigator(
         }
 
         when (tab) {
-            MainTab.DUMMY -> { } //TODO: 더미 추가 예정
-            MainTab.DUMMY2 -> { } //TODO: 더미 추가 예정
+            MainTab.HOME -> navController.navigateToHome(navOptions)
+            MainTab.DUMMY -> {} //TODO: 더미 추가 예정
         }
     }
 
