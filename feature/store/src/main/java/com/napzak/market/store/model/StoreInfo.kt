@@ -27,7 +27,7 @@ data class StoreInfo(
                 Genre(3, "산리오3"),
                 Genre(4, "산리오4"),
                 Genre(5, "산리오5"),
-                Genre(6, "산리오6")
+                Genre(6, "산리오6"),
             )
         )
     }

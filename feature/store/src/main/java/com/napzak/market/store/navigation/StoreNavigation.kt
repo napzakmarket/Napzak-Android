@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 
 fun NavController.navigateToStore(
     storeId: Long,
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) = navigate(Store(storeId), navOptions)
 
 fun NavGraphBuilder.storeGraph(

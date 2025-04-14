@@ -84,7 +84,7 @@ private fun getFilterName(genreList: List<Genre>): String {
         stringResource(
             store_genre_extra_count,
             genreName,
-            genreList.size - 1
+            genreList.size - 1,
         )
     }
 }

@@ -10,7 +10,7 @@ data class Product( // TODO: 추후 domain으로 이동 예정
     val isInterested: Boolean,
     val tradeType: String,
     val tradeStatus: String,
-    val isPriceNegotiable: Boolean = false, // "구해요"에만 사용
+    val isPriceNegotiable: Boolean = false,
     val isOwnedByCurrentUser: Boolean = false,
     val likeCount: Int,
     val reviewCount: Int,

@@ -142,7 +142,7 @@ private fun StoreTopBar(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier.padding(start = 20.dp, top = 62.dp, bottom = 22.dp)
+        modifier = modifier.padding(start = 20.dp, top = 62.dp, bottom = 22.dp),
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(ic_left_chevron),
@@ -373,9 +373,9 @@ private fun StoreInfoSection(
                                     .noRippleClickable(onProfileEditClick)
                                     .background(
                                         color = NapzakMarketTheme.colors.transBlack,
-                                        shape = RoundedCornerShape(24.dp)
+                                        shape = RoundedCornerShape(24.dp),
                                     )
-                                    .padding(6.dp)
+                                    .padding(6.dp),
                             )
                         }
                     }
@@ -395,12 +395,12 @@ private fun StoreInfoSection(
                     .size(70.dp)
                     .background(
                         color = NapzakMarketTheme.colors.gray200,
-                        shape = RoundedCornerShape(50.dp)
+                        shape = RoundedCornerShape(50.dp),
                     )
                     .border(
                         width = 5.dp,
                         color = NapzakMarketTheme.colors.white,
-                        shape = RoundedCornerShape(50.dp)
+                        shape = RoundedCornerShape(50.dp),
                     ),
             )
         }
@@ -431,7 +431,7 @@ private fun StoreInfoSection(
 
         LazyRow(
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
         ) {
             items(genrePreferences) { genre ->
                 GenreChip(

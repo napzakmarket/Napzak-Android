@@ -69,7 +69,7 @@ private fun GenreChip() {
                 color = NapzakMarketTheme.colors.purple500,
                 shape = RoundedCornerShape(4.dp)
             )
-            .padding(horizontal = 7.dp, vertical = 2.dp)
+            .padding(horizontal = 7.dp, vertical = 2.dp),
     ) {
         Text(
             text = stringResource(store_genre),
