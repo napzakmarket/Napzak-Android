@@ -1,15 +1,15 @@
 package com.napzak.market.main.component
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -34,15 +34,6 @@ import com.napzak.market.main.R.string.dialog_register_buy
 import com.napzak.market.main.R.string.dialog_register_sell
 import com.napzak.market.util.android.noRippleClickable
 
-/**
- * 바텀바의 등록 버튼을 눌렀을 때 나타나는 버튼 그룹입니다.
- *
- * @param visibility 버튼 그룹의 화면 표시 여부입니다.
- * @param onSellRegisterClick 팔아요 등록을 눌렀을 때 호출되는 콜백입니다.
- * @param onBuyRegisterClick 구매 등록을 눌렀을 때 호출되는 콜백입니다.
- * @param onDismissRequest 버튼 그룹을 닫을 때 호출되는 콜백입니다.
- */
-
 @Composable
 internal fun MainRegisterDialog(
     visibility: Boolean,
@@ -54,43 +45,47 @@ internal fun MainRegisterDialog(
     val dialogShape = RoundedCornerShape(12.dp)
     val colorScheme = NapzakMarketTheme.colors
 
-    BackHandler(visibility) {
-        onDismissRequest()
-    }
-
     AnimatedVisibility(
         visible = visibility,
         enter = slideInVertically { fullHeight -> fullHeight },
         exit = slideOutVertically { fullHeight -> fullHeight },
-        modifier = modifier.wrapContentWidth()
+        modifier = modifier
     ) {
-        Column(
+        Box(
+            contentAlignment = Alignment.BottomCenter,
             modifier = Modifier
-                .clip(dialogShape)
-                .shadow(elevation = 4.dp)
-                .background(color = colorScheme.white)
-                .drawBehind {
-                    drawLine(
-                        color = colorScheme.gray200,
-                        strokeWidth = Dp.Hairline.toPx(),
-                        start = Offset(0f, size.height / 2),
-                        end = Offset(size.width, size.height / 2)
-                    )
-                }
+                .fillMaxSize()
+                .noRippleClickable(onDismissRequest)
+                .padding(bottom = 10.dp)
         ) {
-            RegisterNavigationButton(
-                image = ImageVector.vectorResource(ic_register_sell),
-                label = stringResource(dialog_register_sell),
-                onClick = onSellRegisterClick,
-                modifier = Modifier.padding(5.dp),
-            )
+            Column(
+                modifier = Modifier
+                    .clip(dialogShape)
+                    .shadow(elevation = 4.dp, clip = true)
+                    .background(color = colorScheme.white)
+                    .drawBehind {
+                        drawLine(
+                            color = colorScheme.gray200,
+                            strokeWidth = Dp.Hairline.toPx(),
+                            start = Offset(0f, size.height / 2),
+                            end = Offset(size.width, size.height / 2)
+                        )
+                    }
+            ) {
+                RegisterNavigationButton(
+                    image = ImageVector.vectorResource(ic_register_sell),
+                    label = stringResource(dialog_register_sell),
+                    onClick = onSellRegisterClick,
+                    modifier = Modifier.padding(5.dp),
+                )
 
-            RegisterNavigationButton(
-                image = ImageVector.vectorResource(ic_register_buy),
-                label = stringResource(dialog_register_buy),
-                onClick = onBuyRegisterClick,
-                modifier = Modifier.padding(5.dp),
-            )
+                RegisterNavigationButton(
+                    image = ImageVector.vectorResource(ic_register_buy),
+                    label = stringResource(dialog_register_buy),
+                    onClick = onBuyRegisterClick,
+                    modifier = Modifier.padding(5.dp),
+                )
+            }
         }
     }
 }
