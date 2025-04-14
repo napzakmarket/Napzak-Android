@@ -2,7 +2,6 @@ package com.napzak.market.main.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -162,11 +161,13 @@ private fun RegisterIcon(
 
     LaunchedEffect(isSelected) {
         if (hasLaunchedOnce) {
+            val targetValue = if (isSelected) rotation.value + TARGET_ANIMATION_VALUE
+            else DEFAULT_ANIMATION_VALUE
+
             rotation.animateTo(
-                targetValue = rotation.value + TARGET_ANIMATION_VALUE,
+                targetValue = targetValue,
                 animationSpec = tween(
                     durationMillis = ANIMATION_DURATION_IN_MILLIS,
-                    easing = LinearEasing
                 ),
             )
         } else {
