@@ -41,6 +41,7 @@ class MainNavigator(
         when (tab) {
             MainTab.HOME -> navController.navigateToHome(navOptions)
             MainTab.EXPLORE -> navController.navigateToExplore()
+            MainTab.DUMMY -> { }
         }
     }
 
