@@ -59,7 +59,6 @@ import com.napzak.market.feature.store.R.string.store_empty_text
 import com.napzak.market.store.component.BasicFilterChip
 import com.napzak.market.store.component.GenreChip
 import com.napzak.market.store.component.GenreFilterChip
-import com.napzak.market.store.component.GenreNavigationButton
 import com.napzak.market.store.model.Product
 import kotlin.collections.chunked
 import kotlin.collections.forEach
@@ -68,7 +67,6 @@ import kotlin.collections.forEach
 internal fun StoreRoute(
     onNavigateUp: () -> Unit,
     onProfileEditNavigate: () -> Unit,
-    onGenreDetailNavigate: (Long) -> Unit,
     onProductDetailNavigate: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -83,7 +81,6 @@ internal fun StoreRoute(
         onTabClicked = {},
         onGenreFilterClick = {},
         onFilterClick = {},
-        onGenreItemClick = onGenreDetailNavigate,
         onSortOptionClick = {},
         onProductItemClick = onProductDetailNavigate,
         onLikeButtonClick = { id, value -> },
@@ -103,7 +100,6 @@ private fun StoreScreen(
     onGenreFilterClick: () -> Unit,
     onFilterClick: () -> Unit,
     onBackButtonClick: () -> Unit,
-    onGenreItemClick: (Long) -> Unit,
     onSortOptionClick: (SortType) -> Unit,
     onProductItemClick: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
@@ -128,7 +124,6 @@ private fun StoreScreen(
             onTabClicked = onTabClicked,
             onGenreFilterClick = onGenreFilterClick,
             onFilterClick = onFilterClick,
-            onGenreDetailNavigate = onGenreItemClick,
             onSortOptionClick = onSortOptionClick,
             onProductDetailNavigate = onProductItemClick,
             onLikeButtonClick = onLikeButtonClick,
@@ -165,7 +160,6 @@ private fun StoreScrollSection(
     onTabClicked: (MarketTab) -> Unit,
     onGenreFilterClick: () -> Unit,
     onFilterClick: () -> Unit,
-    onGenreDetailNavigate: (Long) -> Unit,
     onSortOptionClick: (SortType) -> Unit,
     onProductDetailNavigate: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
@@ -224,22 +218,6 @@ private fun StoreScrollSection(
 
         item {
             Column {
-                if (filteredGenres.isNotEmpty()) {
-                    filteredGenres.forEach { genreItem ->
-                        GenreNavigationButton(
-                            genreName = genreItem.genreName,
-                            onBlockClick = { onGenreDetailNavigate(genreItem.genreId) },
-                        )
-
-                        Spacer(
-                            Modifier
-                                .fillMaxWidth()
-                                .background(color = NapzakMarketTheme.colors.gray10)
-                                .height(4.dp),
-                        )
-                    }
-                }
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -460,7 +438,6 @@ private fun StoreScreenPreview(modifier: Modifier = Modifier) {
             onTabClicked = {},
             onGenreFilterClick = {},
             onFilterClick = {},
-            onGenreItemClick = {},
             onSortOptionClick = {},
             onProductItemClick = {},
             onLikeButtonClick = { id, value -> },

@@ -17,7 +17,6 @@ fun NavController.navigateToStore(
 fun NavGraphBuilder.storeGraph(
     navigateToUp: () -> Unit,
     navigateToProfileEdit: () -> Unit,
-    navigateToGenreDetail: (Long) -> Unit,
     navigateToProductDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -25,7 +24,6 @@ fun NavGraphBuilder.storeGraph(
         StoreRoute(
             onNavigateUp = navigateToUp,
             onProfileEditNavigate = navigateToProfileEdit,
-            onGenreDetailNavigate = navigateToGenreDetail,
             onProductDetailNavigate = navigateToProductDetail,
             modifier = modifier,
         )

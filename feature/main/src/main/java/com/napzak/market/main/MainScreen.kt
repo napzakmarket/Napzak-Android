@@ -66,7 +66,6 @@ private fun MainNavHost(
         storeGraph(
             navigateToUp = navigator::navigateUp,
             navigateToProfileEdit = { /* TODO: move to profile edit */ },
-            navigateToGenreDetail = { /* TODO: move to genre detail */ },
             navigateToProductDetail = { /* TODO: move to product detail */ },
             modifier = modifier,
         )
