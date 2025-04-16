@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.navigateToHome
+import com.napzak.market.explore.navigation.navigateToExplore
 
 class MainNavigator(
     val navController: NavHostController,
@@ -39,7 +40,8 @@ class MainNavigator(
 
         when (tab) {
             MainTab.HOME -> navController.navigateToHome(navOptions)
-            MainTab.DUMMY -> {} //TODO: 더미 추가 예정
+            MainTab.EXPLORE -> navController.navigateToExplore()
+            MainTab.DUMMY -> { }
         }
     }
 

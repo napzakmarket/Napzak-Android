@@ -9,6 +9,7 @@ import com.napzak.market.common.navigation.MainTabRoute
 import com.napzak.market.common.navigation.Route
 import com.napzak.market.dummy.navigation.Dummy
 import com.napzak.market.home.navigation.Home
+import com.napzak.market.explore.navigation.Explore
 
 // TODO: 구현 시작 시 수정
 enum class MainTab(
@@ -20,6 +21,11 @@ enum class MainTab(
         icon = Icons.Filled.Home,
         contentDescription = "홈",
         route = Home,
+    ),
+    EXPLORE(
+        icon = Icons.Filled.Search,
+        contentDescription = "탐색",
+        route = Explore(),
     ),
     DUMMY(
         icon = Icons.Filled.Search,
