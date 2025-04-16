@@ -13,10 +13,10 @@
     <string name="product_description_hint">자세히 작성하면 더 빠르고 원활한 거래를 할 수 있어요\n예) 상품 상태, 한정판 여부, 네고 가능 여부 등</string>
     <string name="price_error">가격 설정은 1,000원 단위만 가능해요</string>
     <string name="register">등록하기</string>
-    <string name="price_button_1000">+ 1,000원</string>
-    <string name="price_button_5000">+ 5,000원</string>
-    <string name="price_button_10000">+ 10,000원</string>
-    <string name="price_button_100000">+ 100,000원</string>
+    <string name="price_button_1000">+1,000원</string>
+    <string name="price_button_5000">+5,000원</string>
+    <string name="price_button_10000">+10,000원</string>
+    <string name="price_button_100000">+100,000원</string>
 
     <!-- Sale Components   -->
     <string name="sale">팔아요</string>
