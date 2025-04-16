@@ -1,4 +1,4 @@
-package com.napzak.market.registration.component
+package com.napzak.market.registration.sale.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
