@@ -75,14 +75,14 @@ private fun ProductConditionItem(
     isSelected: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val contentColor =
-        if (isSelected) NapzakMarketTheme.colors.purple500 else NapzakMarketTheme.colors.gray200
+    val contentColor = if (isSelected) NapzakMarketTheme.colors.purple500 else NapzakMarketTheme.colors.gray200
+    val borderColor = if (isSelected) NapzakMarketTheme.colors.purple500 else NapzakMarketTheme.colors.gray100
     val icon = if (isSelected) ic_check_purple else null
 
     Row(
         modifier = modifier
             .background(NapzakMarketTheme.colors.white, RoundedCornerShape(8.dp))
-            .border(1.dp, contentColor, RoundedCornerShape(8.dp))
+            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
             .padding(horizontal = 21.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
