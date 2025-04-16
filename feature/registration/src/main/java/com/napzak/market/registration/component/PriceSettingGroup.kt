@@ -40,7 +40,7 @@ private const val TNE_THOUSAND = 10000
 private const val HUNDRED_THOUSAND = 100000
 
 @Composable
-fun PriceSettingGroup(
+internal fun PriceSettingGroup(
     tradeType: TradeType,
     title: String,
     description: String,

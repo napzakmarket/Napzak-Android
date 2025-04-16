@@ -30,7 +30,7 @@ import com.napzak.market.feature.registration.R.string.negotiation_description
 import com.napzak.market.util.android.noRippleClickable
 
 @Composable
-fun PriceNegotiationGroup(
+internal fun PriceNegotiationGroup(
     isNegotiable: Boolean,
     onNegotiableChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
