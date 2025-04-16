@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,7 +58,7 @@ internal fun ExploreRoute(
     ExploreScreen(
         searchTerm = searchTerm,
         onSearchNavigate = onSearchNavigate,
-        onTabClicked = { },
+        onTabClick = { },
         onGenreFilterClick = { },
         onUnopenFilterClick = { },
         onExcludeSoldOutFilterClick = { },
@@ -73,7 +74,7 @@ internal fun ExploreRoute(
 private fun ExploreScreen(
     searchTerm: String,
     onSearchNavigate: () -> Unit,
-    onTabClicked: (TradeType) -> Unit,
+    onTabClick: (TradeType) -> Unit,
     onGenreFilterClick: () -> Unit,
     onUnopenFilterClick: () -> Unit,
     onExcludeSoldOutFilterClick: () -> Unit,
@@ -113,7 +114,7 @@ private fun ExploreScreen(
 
         TradeTypeTabBar(
             selectedTab = tradeType,
-            onTabClicked = onTabClicked,
+            onTabClicked = onTabClick,
             modifier = Modifier.padding(horizontal = 20.dp),
         )
 
@@ -154,7 +155,6 @@ private fun ExploreScreen(
             onProductClick = onProductDetailNavigate,
             onLikeButtonClick = onLikeButtonClick,
         )
-
     }
 }
 
@@ -198,11 +198,9 @@ private fun GenreAndProductList(
                             onBlockClick = { onGenreButtonClick(genreItem.genreId) },
                         )
 
-                        Spacer(
-                            Modifier
-                                .fillMaxWidth()
-                                .background(color = NapzakMarketTheme.colors.gray10)
-                                .height(4.dp),
+                        HorizontalDivider(
+                            thickness = 4.dp,
+                            color = NapzakMarketTheme.colors.gray10
                         )
                     }
                 }
@@ -289,7 +287,7 @@ private fun GenreAndProductList(
         }
 
         item {
-            Spacer(Modifier.padding(bottom = 32.dp))
+            Spacer(Modifier.height(32.dp))
         }
 
     }
@@ -302,7 +300,7 @@ private fun ExploreScreenPreview(modifier: Modifier = Modifier) {
         ExploreScreen(
             searchTerm = "",
             onSearchNavigate = { },
-            onTabClicked = { },
+            onTabClick = { },
             onGenreFilterClick = { },
             onUnopenFilterClick = { },
             onExcludeSoldOutFilterClick = { },
