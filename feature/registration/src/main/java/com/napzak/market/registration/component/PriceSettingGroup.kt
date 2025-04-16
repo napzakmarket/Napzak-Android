@@ -50,7 +50,7 @@ fun PriceSettingGroup(
     modifier: Modifier = Modifier,
 ) {
     val transformedPrice = price.priceToNumericTransformation()
-    val purchaseError = tradeType == TradeType.BUY && transformedPrice != 0 && transformedPrice % THOUSAND != 0
+    val purchaseError = tradeType == TradeType.BUY && transformedPrice != 0 && transformedPrice?.rem(THOUSAND) != 0
     val textColor = if (purchaseError) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray400
     val borderColor = if (purchaseError) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray100
 
@@ -102,7 +102,7 @@ fun PriceSettingGroup(
 
         if (tradeType == TradeType.BUY) {
             AnimatedVisibility(
-                visible = transformedPrice != 0 && transformedPrice % THOUSAND != 0,
+                visible = transformedPrice != 0 && transformedPrice?.rem(THOUSAND) != 0,
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth(),

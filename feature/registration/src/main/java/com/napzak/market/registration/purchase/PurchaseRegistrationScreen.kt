@@ -32,9 +32,11 @@ import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 fun PurchaseRegistrationRoute(
+    onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     PurchaseRegistrationScreen(
+        onCloseClick = {},
         productImageUrls = emptyList(),
         onPhotoClick = {},
         onPhotoPress = {},
@@ -47,7 +49,6 @@ fun PurchaseRegistrationRoute(
         onProductDescriptionChange = {},
         price = "",
         onPriceChange = {},
-        onCloseClick = {},
         isNegotiable = false,
         onNegotiableChange = {},
         onRegisterClick = {}
@@ -57,6 +58,7 @@ fun PurchaseRegistrationRoute(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PurchaseRegistrationScreen(
+    onCloseClick: () -> Unit,
     productImageUrls: List<String>,
     onPhotoClick: () -> Unit,
     onPhotoPress: (Int) -> Unit,
@@ -69,7 +71,6 @@ fun PurchaseRegistrationScreen(
     onProductDescriptionChange: (String) -> Unit,
     price: String,
     onPriceChange: (String) -> Unit,
-    onCloseClick: () -> Unit,
     isNegotiable: Boolean,
     onNegotiableChange: (Boolean) -> Unit,
     onRegisterClick: () -> Unit,
@@ -159,7 +160,7 @@ fun PurchaseRegistrationScreen(
 private fun PurchaseRegistrationScreenPreview() {
     NapzakMarketTheme {
         PurchaseRegistrationScreen(
-            price = "10000",
+            price = "",
             onPriceChange = {},
             onCloseClick = {},
             isNegotiable = true,
