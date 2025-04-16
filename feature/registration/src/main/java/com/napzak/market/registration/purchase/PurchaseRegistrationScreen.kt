@@ -51,7 +51,7 @@ fun PurchaseRegistrationRoute(
         onPriceChange = {},
         isNegotiable = false,
         onNegotiableChange = {},
-        onRegisterClick = {}
+        onRegisterClick = {},
     )
 }
 
@@ -105,7 +105,7 @@ fun PurchaseRegistrationScreen(
                 productName = productName,
                 onProductNameChange = onProductNameChange,
                 productDescription = productDescription,
-                onProductDescriptionChange = onProductDescriptionChange
+                onProductDescriptionChange = onProductDescriptionChange,
             )
         }
 
