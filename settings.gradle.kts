@@ -42,4 +42,6 @@ include(
 include(
     "feature:main",
     "feature:dummy",
+    "feature:home",
+    ":feature:explore",
 )

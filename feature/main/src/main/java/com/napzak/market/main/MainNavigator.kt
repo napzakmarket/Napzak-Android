@@ -11,8 +11,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.napzak.market.dummy.navigation.Dummy
-import com.napzak.market.dummy.navigation.navigateToDummy
+import com.napzak.market.home.navigation.Home
+import com.napzak.market.home.navigation.navigateToHome
+import com.napzak.market.explore.navigation.navigateToExplore
 
 class MainNavigator(
     val navController: NavHostController,
@@ -21,7 +22,7 @@ class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = Dummy
+    val startDestination = Home
 
     var isRegister: Boolean by mutableStateOf(false)
         private set
@@ -46,16 +47,11 @@ class MainNavigator(
         }
 
         when (tab) {
-            MainTab.HOME -> {
-                //TODO: 홈 추가 예정
-                navController.navigateToDummy(navOptions)
-            }
-
-            MainTab.EXPLORE -> {} //TODO: 탐색 추가 예정
+            MainTab.HOME -> navController.navigateToHome(navOptions)
+            MainTab.EXPLORE -> navController.navigateToExplore()
             MainTab.REGISTER -> {
                 isRegister = isRegister.not()
             }
-
             MainTab.CHAT -> {} //TODO: 체팅 추가 예정
             MainTab.MY_PAGE -> {} //TODO: 마이페이지 추가 예정
         }
