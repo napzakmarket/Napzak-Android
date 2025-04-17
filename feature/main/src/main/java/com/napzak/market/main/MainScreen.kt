@@ -5,16 +5,18 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
 import com.napzak.market.dummy.navigation.dummyGraph
-import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.explore.navigation.exploreGraph
+import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
+import com.napzak.market.report.navigation.reportGraph
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -84,6 +86,11 @@ private fun MainNavHost(
             navigateToGenreDetail = { /* TODO: 장르 상세 화면으로 이동 */ },
             navigateToProductDetail = { /* TODO: 상품 상세 화면으로 이동 */ },
             modifier = modifier,
+        )
+
+        reportGraph(
+            navigateUp = navigator::navigateUp,
+            modifier = Modifier.systemBarsPadding()
         )
     }
 }
