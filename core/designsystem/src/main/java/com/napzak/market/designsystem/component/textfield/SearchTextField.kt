@@ -77,7 +77,7 @@ fun SearchTextField(
                         .padding(start = 10.dp, end = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    if (text.isNotEmpty()) {
+                    if (text.isNotEmpty() && !readOnly) {
                         Icon(
                             imageVector = ImageVector.vectorResource(ic_cancel_search_12),
                             contentDescription = null,
