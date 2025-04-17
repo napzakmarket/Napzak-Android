@@ -2,16 +2,19 @@ package com.napzak.market.main
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
 import com.napzak.market.dummy.navigation.dummyGraph
 import com.napzak.market.home.navigation.homeGraph
+import com.napzak.market.explore.navigation.exploreGraph
 import com.napzak.market.main.component.MainBottomBar
+import com.napzak.market.main.component.MainRegisterDialog
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -24,18 +27,23 @@ fun MainScreen(
                 isVisible = navigator.showBottomBar(),
                 tabs = MainTab.entries.toImmutableList(),
                 currentTab = navigator.currentTab,
-                onTabSelected = navigator::navigate
+                onTabSelected = navigator::navigate,
             )
         },
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
-        Column(
-            modifier = Modifier.fillMaxSize()
+        Box(
+            modifier = Modifier.padding(innerPadding),
         ) {
-            MainNavHost(
-                navigator = navigator,
-                modifier = Modifier.padding(innerPadding)
+            MainRegisterDialog(
+                visibility = navigator.isRegister,
+                onSellRegisterClick = {},
+                onBuyRegisterClick = {},
+                onDismissRequest = navigator::dismissRegisterDialog,
+                modifier = Modifier.zIndex(1f),
             )
+
+            MainNavHost(navigator = navigator)
         }
     }
 }
@@ -68,6 +76,13 @@ private fun MainNavHost(
             navigateToProductDetail = { /*TODO: 물품 상세페이지로 이동*/ },
             navigateToExploreSell = { /*TODO: 탐색>팔아요>인기상품순 */ },
             navigateToExploreBuy = { /*TODO: 탐색>구해요>인기상품순 */ },
+            modifier = modifier,
+        )
+
+        exploreGraph(
+            navigateToSearch = { /* TODO: 검색 화면으로 이동 */ },
+            navigateToGenreDetail = { /* TODO: 장르 상세 화면으로 이동 */ },
+            navigateToProductDetail = { /* TODO: 상품 상세 화면으로 이동 */ },
             modifier = modifier,
         )
     }

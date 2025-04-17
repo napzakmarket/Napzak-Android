@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="explore_unopened">미개봉</string>
+    <string name="explore_exclude_sold_out">품절제외</string>
+    <string name="explore_genre">장르</string>
+    <string name="explore_genre_extra_count">%s 외 %d</string>
+    <string name="explore_ellipsis">%s…</string>
+    <string name="explore_empty_text"></string>
+
+    <string name="explore_search_hint">어떤 상품을 찾고 계신가요?</string>
+    <string name="explore_product">상품</string>
+    <string name="explore_count">%d개</string>
+</resources>
