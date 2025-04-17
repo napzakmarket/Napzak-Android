@@ -1,5 +1,6 @@
 package com.napzak.market.report.component
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -21,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,8 +42,9 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 internal fun ReportReasonSection(
-    reasons: ImmutableList<String>,
-    onReasonSelect: (String) -> Unit,
+    @StringRes reasons: ImmutableList<Int>,
+    selectedReason: Int,
+    onReasonSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Text(
@@ -56,7 +57,8 @@ internal fun ReportReasonSection(
     Spacer(modifier = modifier.height(16.dp))
 
     ReportReasonDropDownMenu(
-        reasons = reasons.toImmutableList(),
+        reasons = reasons,
+        selectedReason = selectedReason,
         onReasonSelect = onReasonSelect,
         modifier = modifier
             .fillMaxWidth(),
@@ -65,8 +67,9 @@ internal fun ReportReasonSection(
 
 @Composable
 private fun ReportReasonDropDownMenu(
-    reasons: ImmutableList<String>,
-    onReasonSelect: (String) -> Unit,
+    @StringRes reasons: ImmutableList<Int>,
+    @StringRes selectedReason: Int,
+    onReasonSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val shape = RoundedCornerShape(14.dp)
@@ -77,14 +80,13 @@ private fun ReportReasonDropDownMenu(
     )
 
     var expanded by remember { mutableStateOf(false) }
-    var selectedOption by rememberSaveable { mutableStateOf(reasons.first()) }
 
     Column(
         modifier = modifier.then(borderModifier),
     ) {
         TextField(
-            value = selectedOption,
-            onValueChange = { onReasonSelect(selectedOption) },
+            value = stringResource(selectedReason),
+            onValueChange = { },
             textStyle = NapzakMarketTheme.typography.caption12sb,
             shape = shape,
             colors = dropDownMenuColor(),
@@ -107,11 +109,13 @@ private fun ReportReasonDropDownMenu(
             exit = shrinkVertically(shrinkTowards = Alignment.Top),
         ) {
             Column(modifier = Modifier.padding(8.dp)) {
-                reasons.forEach { option ->
+                reasons.forEach { reason ->
                     DropdownMenuItem(
-                        text = option,
-                        isSelected = option == selectedOption,
-                        onClick = { selectedOption = option },
+                        text = stringResource(reason),
+                        isSelected = reason == selectedReason,
+                        onClick = {
+                            onReasonSelect(reason)
+                        },
                     )
                 }
             }
@@ -156,14 +160,15 @@ private fun dropDownMenuColor(): TextFieldColors = TextFieldDefaults.colors(
 @Composable
 private fun ReportReasonSectionPreview() {
     NapzakMarketTheme {
-        var selectedReason by remember { mutableStateOf("") }
+        var selectedReason by remember { mutableStateOf(0) }
 
         Column(modifier = Modifier.padding(20.dp)) {
             ReportReasonSection(
+                selectedReason = selectedReason,
                 reasons = listOf(
-                    stringResource(R.string.report_product_banned_product),
-                    stringResource(R.string.report_product_mal_content),
-                    stringResource(R.string.report_product_exaggerated_advertisement),
+                    R.string.report_product_banned_product,
+                    R.string.report_product_mal_content,
+                    R.string.report_product_exaggerated_advertisement,
                 ).toImmutableList(),
                 onReasonSelect = { selectedReason = it },
             )
