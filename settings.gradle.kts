@@ -44,4 +44,5 @@ include(
     "feature:dummy",
     "feature:home",
     ":feature:explore",
+    ":feature:search",
 )
