@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.report.type.ReportType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -13,6 +15,9 @@ import javax.inject.Inject
 internal class ReportViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+    private val _sideEffect = Channel<ReportSideEffect>()
+    val sideEffect = _sideEffect.receiveAsFlow()
+
     private val id = savedStateHandle.get<Long>(ID)
 
     fun sendReport(

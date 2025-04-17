@@ -16,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -25,6 +26,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.report.R
@@ -44,7 +47,20 @@ internal fun ReportRoute(
     viewModel: ReportViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     val reportState = rememberReportState(reportType)
+
+    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    ReportSideEffect.NavigateUp -> {
+                        navigateUp()
+                    }
+                }
+            }
+    }
 
     ReportScreen(
         reportState = reportState,
