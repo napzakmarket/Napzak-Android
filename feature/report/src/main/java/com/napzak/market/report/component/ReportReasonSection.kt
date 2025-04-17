@@ -34,17 +34,17 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_down_chevron
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.report.R
 import com.napzak.market.feature.report.R.string.report_input_title_reason
+import com.napzak.market.report.state.ReportState
+import com.napzak.market.report.state.rememberReportState
+import com.napzak.market.report.type.ReportType
 import com.napzak.market.util.android.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 internal fun ReportReasonSection(
-    @StringRes reasons: ImmutableList<Int>,
-    selectedReason: Int,
-    onReasonSelect: (Int) -> Unit,
+    reportState: ReportState,
     modifier: Modifier = Modifier,
 ) {
     Text(
@@ -57,9 +57,9 @@ internal fun ReportReasonSection(
     Spacer(modifier = modifier.height(16.dp))
 
     ReportReasonDropDownMenu(
-        reasons = reasons,
-        selectedReason = selectedReason,
-        onReasonSelect = onReasonSelect,
+        reasons = reportState.reasons.toImmutableList(),
+        selectedReason = reportState.reason,
+        onReasonSelect = { reportState.reason = it },
         modifier = modifier
             .fillMaxWidth(),
     )
@@ -160,17 +160,11 @@ private fun dropDownMenuColor(): TextFieldColors = TextFieldDefaults.colors(
 @Composable
 private fun ReportReasonSectionPreview() {
     NapzakMarketTheme {
-        var selectedReason by remember { mutableStateOf(0) }
+        val reportState = rememberReportState(ReportType.PRODUCT.toString())
 
         Column(modifier = Modifier.padding(20.dp)) {
             ReportReasonSection(
-                selectedReason = selectedReason,
-                reasons = listOf(
-                    R.string.report_product_banned_product,
-                    R.string.report_product_mal_content,
-                    R.string.report_product_exaggerated_advertisement,
-                ).toImmutableList(),
-                onReasonSelect = { selectedReason = it },
+                reportState = reportState,
             )
         }
     }

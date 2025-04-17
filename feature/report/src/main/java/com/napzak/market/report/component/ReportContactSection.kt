@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
@@ -21,11 +17,13 @@ import com.napzak.market.designsystem.component.textfield.NapzakDefaultTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.report.R.string.report_input_place_holder_contact
 import com.napzak.market.feature.report.R.string.report_input_title_contact
+import com.napzak.market.report.state.ReportState
+import com.napzak.market.report.state.rememberReportState
+import com.napzak.market.report.type.ReportType
 
 @Composable
 internal fun ReportContactSection(
-    text: String,
-    onTextChange: (String) -> Unit,
+    reportState: ReportState,
     modifier: Modifier = Modifier,
 ) {
     Text(
@@ -38,8 +36,8 @@ internal fun ReportContactSection(
     Spacer(modifier = modifier.height(16.dp))
 
     NapzakDefaultTextField(
-        text = text,
-        onTextChange = onTextChange,
+        text = reportState.contact,
+        onTextChange = { reportState.contact = it },
         hint = stringResource(report_input_place_holder_contact),
         textStyle = NapzakMarketTheme.typography.caption12m,
         textColor = NapzakMarketTheme.colors.gray500,
@@ -57,12 +55,10 @@ internal fun ReportContactSection(
 @Composable
 private fun ReportDetailSectionPreview() {
     NapzakMarketTheme {
-        var text by remember { mutableStateOf("") }
-
+        val reportState = rememberReportState(ReportType.PRODUCT.toString())
         Column(Modifier.padding(horizontal = 20.dp)) {
             ReportContactSection(
-                text = text,
-                onTextChange = { text = it },
+                reportState = reportState
             )
         }
     }
