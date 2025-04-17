@@ -1,0 +1,194 @@
+package com.napzak.market.report
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.napzak.market.designsystem.component.button.NapzakButton
+import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.feature.report.R
+import com.napzak.market.report.component.ReportContactSection
+import com.napzak.market.report.component.ReportDetailSection
+import com.napzak.market.report.component.ReportReasonSection
+import com.napzak.market.report.state.ReportState
+import com.napzak.market.report.state.rememberReportState
+import com.napzak.market.report.type.ReportType
+import com.napzak.market.util.android.noRippleClickable
+
+@Composable
+internal fun ReportRoute(
+    reportType: String,
+    navigateUp: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: ReportViewModel = hiltViewModel(),
+) {
+    val context = LocalContext.current
+    val reportState = rememberReportState(reportType)
+
+    ReportScreen(
+        reportState = reportState,
+        onSubmitButtonClick = {
+            viewModel.sendReport(
+                reportType = reportState.reportType,
+                reason = context.getString(reportState.reason),
+                detail = reportState.detail,
+                contact = reportState.contact,
+            )
+        },
+        onNavigateUp = navigateUp,
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun ReportScreen(
+    reportState: ReportState,
+    onSubmitButtonClick: () -> Unit,
+    onNavigateUp: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val scrollState = rememberScrollState()
+
+    Scaffold(
+        topBar = {
+            ReportTopBar(
+                onNavigateUp = onNavigateUp,
+            )
+        },
+        bottomBar = {
+            ReportSubmitButton(
+                onClick = onSubmitButtonClick,
+                enabled = reportState.isReportFilled,
+            )
+        },
+        containerColor = NapzakMarketTheme.colors.white,
+        modifier = modifier.fillMaxSize(),
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .verticalScroll(scrollState)
+        ) {
+            Spacer(Modifier.height(40.dp))
+
+            Text(
+                text = stringResource(reportState.title),
+                style = NapzakMarketTheme.typography.title20b.copy(
+                    color = NapzakMarketTheme.colors.gray500
+                ), modifier = Modifier.padding(horizontal = 20.dp)
+            )
+
+            Spacer(Modifier.height(30.dp))
+
+            ReportReasonSection(
+                reportState = reportState,
+                modifier = Modifier.padding(horizontal = 20.dp),
+            )
+
+            SectionDivider(Modifier.padding(vertical = 30.dp))
+
+            ReportDetailSection(
+                reportState = reportState,
+                modifier = Modifier.padding(horizontal = 20.dp),
+            )
+
+            SectionDivider(Modifier.padding(top = 9.dp, bottom = 30.dp))
+
+            ReportContactSection(
+                reportState = reportState,
+                modifier = Modifier.padding(horizontal = 20.dp),
+            )
+
+            Spacer(Modifier.height(35.dp))
+        }
+    }
+}
+
+@Composable
+private fun ReportTopBar(
+    onNavigateUp: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        shadowElevation = 1.dp,
+        color = NapzakMarketTheme.colors.white,
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        Box(contentAlignment = Alignment.TopStart) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_chevron_left),
+                contentDescription = null,
+                tint = NapzakMarketTheme.colors.gray200,
+                modifier = Modifier
+                    .noRippleClickable(onNavigateUp)
+                    .wrapContentWidth()
+                    .padding(horizontal = 20.dp, vertical = 22.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun ReportSubmitButton(
+    onClick: () -> Unit,
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .padding(horizontal = 20.dp)
+            .padding(bottom = 20.dp, top = 6.dp),
+    ) {
+        NapzakButton(
+            text = stringResource(R.string.report_button_submit),
+            onClick = onClick,
+            enabled = enabled,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+@Composable
+private fun SectionDivider(
+    modifier: Modifier = Modifier,
+) {
+    HorizontalDivider(
+        thickness = 4.dp, color = NapzakMarketTheme.colors.gray10, modifier = modifier
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ReportScreenPreview() {
+    NapzakMarketTheme {
+        val reportType = ReportType.USER
+        val reportState = rememberReportState(reportType.toString())
+
+        ReportScreen(
+            reportState = reportState,
+            onSubmitButtonClick = { },
+            onNavigateUp = {},
+        )
+    }
+}
