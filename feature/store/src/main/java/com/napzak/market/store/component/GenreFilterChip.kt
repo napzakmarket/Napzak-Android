@@ -1,5 +1,6 @@
 package com.napzak.market.store.component
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -12,11 +13,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +38,9 @@ internal fun GenreFilterChip(
     onChipClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+    val formatGenreText = remember(genreList) { getFilterName(context, genreList) }
+
     val textColor = if (genreList.isEmpty()) NapzakMarketTheme.colors.gray400
     else NapzakMarketTheme.colors.white
     val borderColor = if (genreList.isEmpty()) NapzakMarketTheme.colors.gray100
@@ -52,7 +57,7 @@ internal fun GenreFilterChip(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = getFilterName(genreList),
+            text = formatGenreText,
             style = NapzakMarketTheme.typography.caption12sb,
             color = textColor,
         )
@@ -68,24 +73,18 @@ internal fun GenreFilterChip(
     }
 }
 
-@Composable
-private fun getFilterName(genreList: List<Genre>): String {
-    if (genreList.isEmpty()) return stringResource(store_genre)
+private fun getFilterName(context: Context, genreList: List<Genre>): String {
+    if (genreList.isEmpty()) return context.getString(store_genre)
 
     val firstGenreName = genreList.first().genreName
-
     val genreName = if (firstGenreName.length > CHARACTER_MAX_COUNT)
-        stringResource(store_ellipsis, firstGenreName.take(CHARACTER_MAX_COUNT - 1))
+        context.getString(store_ellipsis, firstGenreName.take(CHARACTER_MAX_COUNT - 1))
     else firstGenreName
 
     return if (genreList.size == 1) {
         genreName
     } else {
-        stringResource(
-            store_genre_extra_count,
-            genreName,
-            genreList.size - 1,
-        )
+        context.getString(store_genre_extra_count, genreName, genreList.size - 1)
     }
 }
 
