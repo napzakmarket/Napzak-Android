@@ -82,7 +82,7 @@ fun NapzakDialog(
                 .padding(horizontal = 30.dp)
                 .background(
                     color = dialogColor.containerColor,
-                    shape = RoundedCornerShape(14.dp)
+                    shape = RoundedCornerShape(14.dp),
                 ),
         ) {
 
@@ -98,7 +98,7 @@ fun NapzakDialog(
                 Text(
                     text = subTitle,
                     style = NapzakMarketTheme.typography.caption12sb.copy(
-                        color = dialogColor.subTitleColor
+                        color = dialogColor.subTitleColor,
                     ),
                 )
                 Spacer(Modifier.height(24.dp))
@@ -132,15 +132,16 @@ private fun DialogButtons(
                     color = dialogColor.lineColor,
                     start = Offset(0f, 0f),
                     end = Offset(size.width, 0f),
-                    strokeWidth = Dp.Hairline.toPx()
+                    strokeWidth = Dp.Hairline.toPx(),
                 )
                 drawLine(
                     color = dialogColor.lineColor,
                     start = Offset(size.width / 2, 0f),
                     end = Offset(size.width / 2, size.height),
-                    strokeWidth = Dp.Hairline.toPx()
+                    strokeWidth = Dp.Hairline.toPx(),
                 )
-            }) {
+            }
+    ) {
         DialogButton(
             text = confirmText,
             textColor = dialogColor.confirmColor,
