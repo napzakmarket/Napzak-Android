@@ -204,7 +204,7 @@ private fun MainBottomBarPreview() {
                 tabs = MainTab.entries.toImmutableList(),
                 currentTab = currentTab,
                 onTabSelected = { currentTab = it },
-                modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier.align(Alignment.BottomCenter),
             )
         }
     }

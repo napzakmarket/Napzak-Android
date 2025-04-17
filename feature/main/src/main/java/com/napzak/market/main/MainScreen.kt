@@ -25,28 +25,23 @@ fun MainScreen(
                 isVisible = navigator.showBottomBar(),
                 tabs = MainTab.entries.toImmutableList(),
                 currentTab = navigator.currentTab,
-                onTabSelected = navigator::navigate
+                onTabSelected = navigator::navigate,
             )
         },
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.padding(innerPadding),
         ) {
             MainRegisterDialog(
                 visibility = navigator.isRegister,
                 onSellRegisterClick = {},
                 onBuyRegisterClick = {},
                 onDismissRequest = navigator::dismissRegisterDialog,
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .zIndex(1f),
+                modifier = Modifier.zIndex(1f),
             )
 
-            MainNavHost(
-                navigator = navigator,
-                modifier = Modifier.padding(innerPadding)
-            )
+            MainNavHost(navigator = navigator)
         }
     }
 }
