@@ -75,7 +75,7 @@ internal fun ShippingFeeSelector(
                     width = 1.dp,
                     color = NapzakMarketTheme.colors.gray50,
                     shape = RoundedCornerShape(14.dp),
-                )
+                ),
         ) {
             Column {
                 SelectorButton(
