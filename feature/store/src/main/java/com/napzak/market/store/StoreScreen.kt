@@ -51,6 +51,7 @@ import com.napzak.market.store.model.StoreInfo
 import com.napzak.market.util.android.noRippleClickable
 import com.napzak.market.feature.store.R.drawable.ic_left_chevron
 import com.napzak.market.feature.store.R.drawable.ic_down_chevron_7
+import com.napzak.market.feature.store.R.drawable.ic_kebap
 import com.napzak.market.feature.store.R.string.store_filter_selling
 import com.napzak.market.feature.store.R.string.store_filter_buying
 import com.napzak.market.feature.store.R.string.store_product
@@ -79,6 +80,7 @@ internal fun StoreRoute(
         sortType = SortType.RECENT,
         productList = Product.mockMixedProduct,
         onBackButtonClick = onNavigateUp,
+        onMenuButtonClick = {},
         onProfileEditClick = onProfileEditNavigate,
         onTabClicked = {},
         onGenreFilterClick = {},
@@ -105,19 +107,27 @@ private fun StoreScreen(
     onSortOptionClick: (SortType) -> Unit,
     onProductItemClick: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
+    onMenuButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // TODO: ViewModel로 이동예정
+    val userId : Long = 0
+    val isMyStore = storeInfo.storeId == userId
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(color = NapzakMarketTheme.colors.white),
     ) {
         StoreTopBar(
+            isMyStore = isMyStore,
             onBackButtonClick = onBackButtonClick,
+            onMenuButtonClick = onMenuButtonClick
         )
 
         StoreScrollSection(
             storeInfo = storeInfo,
+            isMyStore = isMyStore,
             selectedTab = selectedTab,
             filteredGenres = filteredGenres,
             sortType = sortType,
@@ -135,11 +145,13 @@ private fun StoreScreen(
 
 @Composable
 private fun StoreTopBar(
+    isMyStore: Boolean,
     onBackButtonClick: () -> Unit,
+    onMenuButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier.padding(start = 20.dp, top = 62.dp, bottom = 22.dp),
+    Row(
+        modifier = modifier.padding(start = 20.dp, top = 62.dp, end = 20.dp, bottom = 22.dp),
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(ic_left_chevron),
@@ -147,6 +159,17 @@ private fun StoreTopBar(
             tint = NapzakMarketTheme.colors.gray200,
             modifier = Modifier.noRippleClickable(onBackButtonClick),
         )
+
+        Spacer(Modifier.weight(1f))
+
+        if (!isMyStore) {
+            Icon(
+                imageVector = ImageVector.vectorResource(ic_kebap),
+                contentDescription = null,
+                tint = NapzakMarketTheme.colors.gray200,
+                modifier = Modifier.noRippleClickable(onMenuButtonClick),
+            )
+        }
     }
 }
 
@@ -154,6 +177,7 @@ private fun StoreTopBar(
 @Composable
 private fun StoreScrollSection(
     storeInfo: StoreInfo,
+    isMyStore: Boolean,
     selectedTab: MarketTab,
     filteredGenres: List<Genre>,
     productList: List<Product>,
@@ -181,6 +205,7 @@ private fun StoreScrollSection(
         item {
             StoreInfoSection(
                 storeInfo = storeInfo,
+                isMyStore = isMyStore,
                 onProfileEditClick = onProfileEditClick,
             )
         }
@@ -310,11 +335,11 @@ private fun StoreScrollSection(
 @Composable
 private fun StoreInfoSection(
     storeInfo: StoreInfo,
+    isMyStore: Boolean,
     onProfileEditClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val userId: Long = 0 // TODO: 추후 userId로 변경
 
     with(storeInfo) {
         Box(
@@ -338,7 +363,7 @@ private fun StoreInfoSection(
                             .background(color = NapzakMarketTheme.colors.gray100),
                     )
 
-                    if (storeId == userId) {
+                    if (isMyStore) {
                         Box(
                             modifier = Modifier
                                 .padding(end = 20.dp, bottom = 10.dp),
@@ -436,6 +461,7 @@ private fun StoreScreenPreview(modifier: Modifier = Modifier) {
             sortType = SortType.RECENT,
             productList = Product.mockMixedProduct,
             onBackButtonClick = {},
+            onMenuButtonClick = {},
             onProfileEditClick = {},
             onTabClicked = {},
             onGenreFilterClick = {},
