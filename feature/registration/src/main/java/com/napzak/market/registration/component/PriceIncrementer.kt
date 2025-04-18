@@ -60,18 +60,20 @@ private fun PriceButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val shape = RoundedCornerShape(8.dp)
+
     Text(
         text = priceUnit,
         style = NapzakMarketTheme.typography.caption12m.copy(
             color = NapzakMarketTheme.colors.gray100,
         ),
         modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
+            .clip(shape)
             .background(color = NapzakMarketTheme.colors.gray10)
             .border(
                 width = 1.dp,
                 color = NapzakMarketTheme.colors.gray100,
-                shape = RoundedCornerShape(8.dp)
+                shape = shape
             )
             .padding(horizontal = 10.dp, vertical = 4.dp)
             .noRippleClickable(onClick),
