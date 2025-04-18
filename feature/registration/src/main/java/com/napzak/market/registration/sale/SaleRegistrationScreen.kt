@@ -141,7 +141,6 @@ fun SaleRegistrationScreen(
         }
 
         item {
-
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
