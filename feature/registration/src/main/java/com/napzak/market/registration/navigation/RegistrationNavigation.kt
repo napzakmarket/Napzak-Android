@@ -5,7 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.napzak.market.common.navigation.MainTabRoute
+import com.napzak.market.common.navigation.Route
 import com.napzak.market.registration.purchase.PurchaseRegistrationRoute
 import com.napzak.market.registration.sale.SaleRegistrationRoute
 import kotlinx.serialization.Serializable
@@ -33,7 +33,7 @@ fun NavGraphBuilder.registrationGraph(
 }
 
 @Serializable
-data object SaleRegistration : MainTabRoute
+data object SaleRegistration : Route
 
 @Serializable
-data object PurchaseRegistration : MainTabRoute
+data object PurchaseRegistration : Route
