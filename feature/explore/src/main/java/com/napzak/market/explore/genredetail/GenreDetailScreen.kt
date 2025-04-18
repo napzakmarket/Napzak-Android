@@ -1,0 +1,385 @@
+package com.napzak.market.explore.genredetail
+
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.napzak.market.common.type.SortType
+import com.napzak.market.common.type.TradeStatusType
+import com.napzak.market.common.type.TradeType
+import com.napzak.market.designsystem.R.drawable.ic_down_chevron
+import com.napzak.market.designsystem.component.bottomsheet.Genre
+import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
+import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
+import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.explore.component.BasicFilterChip
+import com.napzak.market.explore.component.GenreChip
+import com.napzak.market.explore.model.Product
+import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.feature.explore.R.drawable.ic_left_chevron_24
+import com.napzak.market.feature.explore.R.drawable.ic_home
+import com.napzak.market.feature.explore.R.string.explore_count
+import com.napzak.market.feature.explore.R.string.explore_exclude_sold_out
+import com.napzak.market.feature.explore.R.string.explore_product
+import com.napzak.market.feature.explore.R.string.explore_unopened
+import kotlin.collections.chunked
+
+@Composable
+internal fun GenreDetailRoute(
+    onBackButtonClick: () -> Unit,
+    onHomeNavigate: () -> Unit,
+    onProductClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val genreInfo = Genre(0, "산리오", "")
+
+    GenreDetailScreen(
+        genreInfo = genreInfo,
+        genreTag = "",
+        selectedTab = TradeType.SELL,
+        productList = Product.mockMixedProduct,
+        sortType = SortType.RECENT,
+        onBackButtonClick = onBackButtonClick,
+        onHomeButtonClick = onHomeNavigate,
+        onTabClick = {},
+        onUnopenFilterClick = {},
+        onExcludeSoldOutFilterClick = {},
+        onProductClick = onProductClick,
+        onSortOptionClick = {},
+        onLikeButtonClick = { id, value -> },
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun GenreDetailScreen(
+    genreInfo: Genre,
+    genreTag: String,
+    selectedTab: TradeType,
+    productList: List<Product>,
+    sortType: SortType,
+    onBackButtonClick: () -> Unit,
+    onHomeButtonClick: () -> Unit,
+    onTabClick: (TradeType) -> Unit,
+    onUnopenFilterClick: () -> Unit,
+    onExcludeSoldOutFilterClick: () -> Unit,
+    onSortOptionClick: () -> Unit,
+    onProductClick: (Long) -> Unit,
+    onLikeButtonClick: (Long, Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(color = NapzakMarketTheme.colors.white),
+    ) {
+        GenreTopBar(
+            onBackButtonClick = onBackButtonClick,
+            onHomeButtonClick = onHomeButtonClick,
+        )
+
+        GenreScrollSection(
+            genreInfo = genreInfo,
+            genreTag = genreTag,
+            selectedTab = selectedTab,
+            productList = productList,
+            sortType = sortType,
+            onTabClick = onTabClick,
+            onUnopenFilterClick = onUnopenFilterClick,
+            onExcludeSoldOutFilterClick = onExcludeSoldOutFilterClick,
+            onSortOptionClick = onSortOptionClick,
+            onProductClick = onProductClick,
+            onLikeButtonClick = onLikeButtonClick,
+        )
+    }
+}
+
+@Composable
+private fun GenreTopBar(
+    onBackButtonClick: () -> Unit,
+    onHomeButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .padding(start = 20.dp, top = 66.dp, end = 20.dp, bottom = 18.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(ic_left_chevron_24),
+            contentDescription = null,
+            tint = NapzakMarketTheme.colors.gray200,
+            modifier = Modifier.noRippleClickable(onBackButtonClick),
+        )
+
+        Spacer(Modifier.width(4.dp))
+
+        Icon(
+            imageVector = ImageVector.vectorResource(ic_home),
+            contentDescription = null,
+            tint = NapzakMarketTheme.colors.gray200,
+            modifier = Modifier.noRippleClickable(onHomeButtonClick),
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun GenreScrollSection(
+    genreInfo: Genre,
+    genreTag: String?,
+    selectedTab: TradeType,
+    productList: List<Product>,
+    sortType: SortType,
+    onTabClick: (TradeType) -> Unit,
+    onUnopenFilterClick: () -> Unit,
+    onExcludeSoldOutFilterClick: () -> Unit,
+    onSortOptionClick: () -> Unit,
+    onProductClick: (Long) -> Unit,
+    onLikeButtonClick: (Long, Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+
+    LazyColumn(
+        modifier = modifier,
+    ) {
+        item {
+            with(genreInfo) {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(0.9f),
+                    ) {
+                        AsyncImage(
+                            model = ImageRequest
+                                .Builder(context)
+                                .data(genreImgUrl)
+                                .build(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color = NapzakMarketTheme.colors.gray100),
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(10f / 3f)
+                                .align(Alignment.BottomCenter)
+                                .background(
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.Transparent,
+                                            NapzakMarketTheme.colors.transBlack,
+                                        )
+                                    )
+                                ),
+                        )
+                    }
+
+                    Spacer(Modifier.height(20.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 20.dp),
+                    ) {
+                        GenreChip()
+                        // TODO: 추후 "지금핫한" 과 같은 키워드 칩 추가
+                    }
+
+                    Spacer(Modifier.height(14.dp))
+
+                    Text(
+                        text = genreName,
+                        style = NapzakMarketTheme.typography.title20b.copy(
+                            color = NapzakMarketTheme.colors.gray500,
+                        ),
+                        modifier = Modifier.padding(start = 20.dp, bottom = 14.dp),
+                    )
+                }
+            }
+        }
+
+        stickyHeader {
+            TradeTypeTabBar(
+                selectedTab = selectedTab,
+                onTabClicked = onTabClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = NapzakMarketTheme.colors.white)
+                    .padding(horizontal = 20.dp),
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = NapzakMarketTheme.colors.gray10)
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 15.dp, bottom = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                BasicFilterChip(
+                    filterName = stringResource(explore_unopened),
+                    isClicked = false,
+                    onChipClick = onUnopenFilterClick,
+                )
+
+                if (selectedTab == TradeType.SELL) {
+                    BasicFilterChip(
+                        filterName = stringResource(explore_exclude_sold_out),
+                        isClicked = false,
+                        onChipClick = onExcludeSoldOutFilterClick,
+                    )
+                }
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, top = 20.dp, end = 20.dp),
+            ) {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(color = NapzakMarketTheme.colors.gray500)) {
+                            append(stringResource(explore_product))
+                        }
+                        withStyle(style = SpanStyle(color = NapzakMarketTheme.colors.purple500)) {
+                            append(stringResource(explore_count, productList.size))
+                        }
+                    },
+                    style = NapzakMarketTheme.typography.body14sb,
+                )
+
+                Spacer(Modifier.weight(1f))
+
+                Row(
+                    modifier = Modifier.noRippleClickable(onSortOptionClick),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = sortType.label,
+                        style = NapzakMarketTheme.typography.caption12sb,
+                        color = NapzakMarketTheme.colors.gray200,
+                    )
+
+                    Spacer(Modifier.width(3.dp))
+
+                    Icon(
+                        imageVector = ImageVector.vectorResource(ic_down_chevron),
+                        contentDescription = null,
+                        tint = NapzakMarketTheme.colors.gray200,
+                        modifier = Modifier.size(width = 7.dp, height = 4.dp),
+                    )
+                }
+            }
+        }
+
+        itemsIndexed(productList.chunked(2)) { index, rowItems ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp)
+                    .padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+            ) {
+                rowItems.forEach { product ->
+                    with(product) {
+                        NapzakLargeProductItem(
+                            genre = genre,
+                            title = name,
+                            imgUrl = photo,
+                            price = price.toString(),
+                            createdDate = uploadTime,
+                            reviewCount = reviewCount.toString(),
+                            likeCount = likeCount.toString(),
+                            isLiked = isInterested,
+                            isMyItem = isOwnedByCurrentUser,
+                            isSellElseBuy = TradeType.valueOf(tradeType) == TradeType.SELL,
+                            isSuggestionAllowed = isPriceNegotiable,
+                            tradeStatus = TradeStatusType.get(
+                                tradeStatus, TradeType.valueOf(tradeType)
+                            ),
+                            onLikeClick = { onLikeButtonClick(id, isInterested) },
+                            modifier = Modifier
+                                .weight(1f)
+                                .noRippleClickable { onProductClick(id) },
+                        )
+                    }
+                }
+
+                if (rowItems.size == 1) {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
+        }
+
+        item {
+            Spacer(Modifier.height(32.dp))
+        }
+    }
+}
+
+
+@Preview
+@Composable
+private fun GenreDetailScreenPreview(modifier: Modifier = Modifier) {
+    val genreInfo = Genre(0, "산리오", "")
+
+    NapzakMarketTheme {
+        GenreDetailScreen(
+            genreInfo = genreInfo,
+            genreTag = "",
+            selectedTab = TradeType.SELL,
+            productList = Product.mockMixedProduct,
+            sortType = SortType.RECENT,
+            onBackButtonClick = {},
+            onHomeButtonClick = {},
+            onTabClick = {},
+            onUnopenFilterClick = {},
+            onExcludeSoldOutFilterClick = {},
+            onProductClick = {},
+            onSortOptionClick = {},
+            onLikeButtonClick = { id, value -> },
+            modifier = modifier,
+        )
+    }
+}
