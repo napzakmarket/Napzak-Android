@@ -59,21 +59,21 @@ private fun ProductConditionSection(
         Text(
             text = stringResource(detail_product_title_product_condition),
             style = NapzakMarketTheme.typography.body14b.copy(
-                color = NapzakMarketTheme.colors.gray500
+                color = NapzakMarketTheme.colors.gray500,
             ),
         )
 
         Text(
             text = productCondition.label,
             style = NapzakMarketTheme.typography.body14b.copy(
-                color = NapzakMarketTheme.colors.gray300
+                color = NapzakMarketTheme.colors.gray300,
             ),
             modifier = Modifier
                 .background(
                     color = NapzakMarketTheme.colors.gray50,
-                    shape = RoundedCornerShape(4.dp)
+                    shape = RoundedCornerShape(4.dp),
                 )
-                .padding(vertical = 6.dp, horizontal = 16.dp)
+                .padding(vertical = 6.dp, horizontal = 16.dp),
 
         )
     }
@@ -107,7 +107,7 @@ private fun ProductDeliverySection(
         Text(
             text = stringResource(detail_product_title_product_condition),
             style = NapzakMarketTheme.typography.body14b.copy(
-                color = NapzakMarketTheme.colors.gray500
+                color = NapzakMarketTheme.colors.gray500,
             ),
         )
 
@@ -119,7 +119,7 @@ private fun ProductDeliverySection(
                 Text(
                     text = type,
                     style = NapzakMarketTheme.typography.body14b.copy(
-                        color = NapzakMarketTheme.colors.gray300
+                        color = NapzakMarketTheme.colors.gray300,
                     ),
                 )
             }

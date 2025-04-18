@@ -26,7 +26,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.detail.R
+import com.napzak.market.feature.detail.R.drawable.ic_chevron_right
+import com.napzak.market.feature.detail.R.drawable.ic_profile
 import com.napzak.market.feature.detail.R.string.detail_product_market_buy
 import com.napzak.market.feature.detail.R.string.detail_product_market_count
 import com.napzak.market.feature.detail.R.string.detail_product_market_group_title
@@ -61,7 +62,7 @@ internal fun ProductMarketGroup(
             marketName = marketName,
             sellCount = sellCount,
             buyCount = buyCount,
-            modifier = Modifier.noRippleClickable(onClick = onMarketProfileClick)
+            modifier = Modifier.noRippleClickable(onClick = onMarketProfileClick),
         )
     }
 }
@@ -92,7 +93,7 @@ private fun ProductMarketProfile(
                 .Builder(context)
                 .data(marketImage)
                 .crossfade(true)
-                .placeholder(R.drawable.ic_profile)
+                .placeholder(ic_profile)
                 .build(),
             contentDescription = null,
             modifier = Modifier.size(60.dp),
@@ -131,7 +132,7 @@ private fun ProductMarketProfile(
         Spacer(Modifier.weight(1f))
 
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_chevron_right),
+            imageVector = ImageVector.vectorResource(ic_chevron_right),
             contentDescription = null,
             tint = NapzakMarketTheme.colors.gray300,
             modifier = Modifier.padding(start = 10.dp),
