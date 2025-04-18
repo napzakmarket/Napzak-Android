@@ -36,7 +36,7 @@ import com.napzak.market.util.android.priceToNumericTransformation
 
 private const val THOUSAND = 1000
 private const val FIVE_THOUSAND = 5000
-private const val TNE_THOUSAND = 10000
+private const val TEN_THOUSAND = 10000
 private const val HUNDRED_THOUSAND = 100000
 
 @Composable
@@ -138,7 +138,7 @@ internal fun PriceSettingGroup(
         PriceIncrementer(
             onAddOneClick = { onPriceChange(price.addPrice(THOUSAND)) },
             onAddFiveClick = { onPriceChange(price.addPrice(FIVE_THOUSAND)) },
-            onAddTenClick = { onPriceChange(price.addPrice(TNE_THOUSAND)) },
+            onAddTenClick = { onPriceChange(price.addPrice(TEN_THOUSAND)) },
             onAddHundredClick = { onPriceChange(price.addPrice(HUNDRED_THOUSAND)) },
         )
     }
