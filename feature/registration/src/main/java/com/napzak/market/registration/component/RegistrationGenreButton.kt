@@ -9,13 +9,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_arrow_right_gray
+import com.napzak.market.designsystem.R.drawable.ic_arrow_right
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.genre
 import com.napzak.market.util.android.noRippleClickable
@@ -57,9 +56,9 @@ internal fun RegistrationGenreButton(
                 ),
             )
             Icon(
-                imageVector = ImageVector.vectorResource(ic_arrow_right_gray),
+                imageVector = ImageVector.vectorResource(ic_arrow_right),
                 contentDescription = null,
-                tint = Color.Unspecified,
+                tint = NapzakMarketTheme.colors.gray300,
             )
         }
     }

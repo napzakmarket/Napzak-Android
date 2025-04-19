@@ -1,4 +1,4 @@
-package com.napzak.market.registration.component
+package com.napzak.market.registration.sale.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,12 +32,12 @@ private const val ITEM_CHUNK = 2
  * Product condition grid button
  *
  * @param selectedCondition: 선택된 상태
- * @param onConditionSelected: 상태 선택
+ * @param onConditionSelect: 상태 선택
  */
 @Composable
 internal fun ProductConditionGridButton(
     selectedCondition: ProductConditionType?,
-    onConditionSelected: (ProductConditionType) -> Unit,
+    onConditionSelect: (ProductConditionType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -55,7 +55,7 @@ internal fun ProductConditionGridButton(
                         isSelected = selectedCondition == item,
                         modifier = Modifier
                             .weight(1f)
-                            .noRippleClickable { onConditionSelected(item) },
+                            .noRippleClickable { onConditionSelect(item) },
                     )
                 }
             }
@@ -75,14 +75,14 @@ private fun ProductConditionItem(
     isSelected: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val contentColor =
-        if (isSelected) NapzakMarketTheme.colors.purple500 else NapzakMarketTheme.colors.gray200
+    val contentColor = if (isSelected) NapzakMarketTheme.colors.purple500 else NapzakMarketTheme.colors.gray200
+    val borderColor = if (isSelected) NapzakMarketTheme.colors.purple500 else NapzakMarketTheme.colors.gray100
     val icon = if (isSelected) ic_check_purple else null
 
     Row(
         modifier = modifier
             .background(NapzakMarketTheme.colors.white, RoundedCornerShape(8.dp))
-            .border(1.dp, contentColor, RoundedCornerShape(8.dp))
+            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
             .padding(horizontal = 21.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -109,7 +109,7 @@ private fun ProductConditionGridButtonPreview() {
     NapzakMarketTheme {
         var selectedItem by remember { mutableStateOf<ProductConditionType?>(null) }
         ProductConditionGridButton(
-            onConditionSelected = { selectedItem = it },
+            onConditionSelect = { selectedItem = it },
             modifier = Modifier.fillMaxWidth(),
             selectedCondition = selectedItem
         )
