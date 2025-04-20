@@ -16,6 +16,7 @@ import com.napzak.market.explore.navigation.exploreGraph
 import com.napzak.market.explore.navigation.navigateToGenreDetail
 import com.napzak.market.home.navigation.Home
 import com.napzak.market.main.component.MainBottomBar
+import com.napzak.market.store.navigation.storeGraph
 import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.search.navigation.navigateToSearch
 import com.napzak.market.search.navigation.searchGraph
@@ -100,6 +101,13 @@ private fun MainNavHost(
             navigateToGenreDetail = { genreId ->
                 navigator.navController.navigateToGenreDetail(genreId)
             },
+            modifier = modifier,
+        )
+
+        storeGraph(
+            navigateToUp = navigator::navigateUp,
+            navigateToProfileEdit = { /* TODO: move to profile edit */ },
+            navigateToProductDetail = { /* TODO: move to product detail */ },
             modifier = modifier,
         )
     }
