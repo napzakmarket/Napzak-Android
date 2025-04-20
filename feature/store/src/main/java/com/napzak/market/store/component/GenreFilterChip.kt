@@ -30,7 +30,7 @@ import com.napzak.market.feature.store.R.string.store_genre
 import com.napzak.market.feature.store.R.string.store_genre_extra_count
 import com.napzak.market.feature.store.R.string.store_ellipsis
 
-const val CHARACTER_MAX_COUNT = 5
+private const val CHARACTER_MAX_COUNT = 5
 
 @Composable
 internal fun GenreFilterChip(
@@ -47,12 +47,13 @@ internal fun GenreFilterChip(
     else NapzakMarketTheme.colors.gray500
     val contentColor = if (genreList.isEmpty()) Color.Transparent
     else NapzakMarketTheme.colors.gray500
+    val contentShape = RoundedCornerShape(72.dp)
 
     Row(
         modifier = modifier
             .noRippleClickable(onChipClick)
-            .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(size = 72.dp))
-            .background(color = contentColor, shape = RoundedCornerShape(size = 72.dp))
+            .border(width = 1.dp, color = borderColor, shape = contentShape)
+            .background(color = contentColor, shape = contentShape)
             .padding(horizontal = 14.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
