@@ -14,6 +14,7 @@ import com.napzak.market.dummy.navigation.dummyGraph
 import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.explore.navigation.exploreGraph
 import com.napzak.market.main.component.MainBottomBar
+import com.napzak.market.store.navigation.storeGraph
 import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.search.navigation.navigateToSearch
 import com.napzak.market.search.navigation.searchGraph
@@ -92,6 +93,13 @@ private fun MainNavHost(
             navigateToPrevious = { navigator.navController.popBackStack() },
             navigateToSearchResult = { /* TODO: 검색어 검색결과 페이지로 이동 */ },
             navigateToGenreDetail = { /* TODO: 장르상세 페이지로 이동 */ },
+            modifier = modifier,
+        )
+
+        storeGraph(
+            navigateToUp = navigator::navigateUp,
+            navigateToProfileEdit = { /* TODO: move to profile edit */ },
+            navigateToProductDetail = { /* TODO: move to product detail */ },
             modifier = modifier,
         )
     }
