@@ -44,7 +44,7 @@ import com.napzak.market.designsystem.component.productItem.NapzakLargeProductIt
 import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.explore.component.BasicFilterChip
-import com.napzak.market.explore.component.GenreChip
+import com.napzak.market.explore.component.GenreLabel
 import com.napzak.market.explore.model.Product
 import com.napzak.market.util.android.noRippleClickable
 import com.napzak.market.feature.explore.R.drawable.ic_left_chevron_24
@@ -220,7 +220,7 @@ private fun GenreScrollSection(
                             .fillMaxWidth()
                             .padding(start = 20.dp),
                     ) {
-                        GenreChip()
+                        GenreLabel()
                         // TODO: 추후 "지금핫한" 과 같은 키워드 칩 추가
                     }
 

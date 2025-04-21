@@ -14,7 +14,7 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.explore.R.string.explore_genre
 
 @Composable
-internal fun GenreChip() {
+internal fun GenreLabel() {
     Box(
         modifier = Modifier
             .background(
@@ -35,6 +35,6 @@ internal fun GenreChip() {
 @Composable
 private fun GenreChipPreview() {
     NapzakMarketTheme {
-        GenreChip()
+        GenreLabel()
     }
 }

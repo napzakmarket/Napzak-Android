@@ -46,7 +46,7 @@ internal fun GenreNavigationButton(
 
         Spacer(Modifier.width(6.dp))
 
-        GenreChip()
+        GenreLabel()
 
         Spacer(Modifier.weight(1f))
 
