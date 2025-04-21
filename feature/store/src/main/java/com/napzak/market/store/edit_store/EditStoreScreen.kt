@@ -23,18 +23,24 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -44,14 +50,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.napzak.market.designsystem.component.bottomsheet.Genre
+import com.napzak.market.designsystem.component.bottomsheet.GenreSearchBottomSheet
 import com.napzak.market.designsystem.component.button.NapzakButton
-import com.napzak.market.designsystem.component.textfield.InputTextField
 import com.napzak.market.designsystem.component.textfield.NapzakDefaultTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.store.R.drawable.ic_left_chevron
 import com.napzak.market.feature.store.R.drawable.ic_profile_basic
 import com.napzak.market.feature.store.R.drawable.ic_profile_edit
 import com.napzak.market.feature.store.R.string.back_button_description
+import com.napzak.market.feature.store.R.string.store_edit_button_genre
+import com.napzak.market.feature.store.R.string.store_edit_button_name_check
+import com.napzak.market.feature.store.R.string.store_edit_button_proceed
+import com.napzak.market.feature.store.R.string.store_edit_hint_introduction
+import com.napzak.market.feature.store.R.string.store_edit_hint_name
+import com.napzak.market.feature.store.R.string.store_edit_profile
+import com.napzak.market.feature.store.R.string.store_edit_sub_title_genre
+import com.napzak.market.feature.store.R.string.store_edit_sub_title_introduction
+import com.napzak.market.feature.store.R.string.store_edit_sub_title_name
+import com.napzak.market.feature.store.R.string.store_edit_title_genre
+import com.napzak.market.feature.store.R.string.store_edit_title_introduction
+import com.napzak.market.feature.store.R.string.store_edit_title_name
 import com.napzak.market.util.android.noRippleClickable
 
 private const val DESCRIPTION_MAX_LENGTH = 200
@@ -63,18 +82,7 @@ internal fun EditStoreScreen(
 ) {
     var storeName by remember { mutableStateOf("") }
     var storeIntroduction by remember { mutableStateOf("") }
-    var storeGenres by remember {
-        mutableStateOf(
-            listOf(
-                "산리오",
-                "은혼",
-                "주술회전",
-                "귀멸의 칼날",
-                "사카모토데이즈",
-                "디즈니/픽사"
-            )
-        )
-    }
+    var storeGenres by remember { mutableStateOf(emptyList<Genre>()) }
 
     EditStoreScreen(
         storeCover = "",
@@ -84,26 +92,36 @@ internal fun EditStoreScreen(
         storeGenres = storeGenres,
         onStoreNameChange = { storeName = it },
         onStoreIntroductionChange = { storeIntroduction = it },
+        onGenreSearchTextChange = { }, // TODO: 장르 검색 API 연결
         onBackButtonClick = onNavigateUp,
-        onProceedButtonClick = {},
+        onNameValidityCheckClick = { }, // TODO: 이름 유효성 검사 API 연결
+        onProceedButtonClick = { }, // TODO: 마켓 수정 API 연결
         modifier = modifier,
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EditStoreScreen(
     storeCover: String,
     storeProfile: String,
     storeName: String,
     storeIntroduction: String,
-    storeGenres: List<String>,
+    storeGenres: List<Genre>,
     onStoreNameChange: (String) -> Unit,
     onStoreIntroductionChange: (String) -> Unit,
+    onGenreSearchTextChange: (String) -> Unit,
     onBackButtonClick: () -> Unit,
+    onNameValidityCheckClick: () -> Unit,
     onProceedButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+    var bottomSheetVisibility by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -136,7 +154,7 @@ private fun EditStoreScreen(
             EditStoreNameSection(
                 marketName = storeName,
                 onNameChange = onStoreNameChange,
-                onNameValidityCheckClick = {},
+                onNameValidityCheckClick = onNameValidityCheckClick,
                 checkEnabled = false,
             )
 
@@ -150,11 +168,37 @@ private fun EditStoreScreen(
             SectionDivider()
 
             EditInterestedGenreSection(
-                genres = storeGenres,
-                onGenreSelectButtonClick = {},
+                genres = storeGenres.map { it.genreName },
+                onGenreSelectButtonClick = { bottomSheetVisibility = true },
             )
 
             Spacer(Modifier.height(18.dp))
+        }
+
+        if (bottomSheetVisibility) {
+            GenreSearchBottomSheet(
+                initialSelectedGenreList = storeGenres,
+                genreItems = listOf(
+                    Genre(0, "산리오"),
+                    Genre(1, "주술회전"),
+                    Genre(2, "진격의 거인"),
+                    Genre(3, "산리오1"),
+                    Genre(4, "주술회전1"),
+                    Genre(5, "진격의 거인1"),
+                    Genre(6, "산리오2"),
+                    Genre(7, "주술회전2"),
+                    Genre(8, "진격의 거인2"),
+                    Genre(9, "산리오3"),
+                    Genre(10, "주술회전3"),
+                ),
+                sheetState = bottomSheetState,
+                onDismissRequest = {
+                    //coroutineScope.launch { bottomSheetState.hide() }
+                    bottomSheetVisibility = false
+                },
+                onTextChange = onGenreSearchTextChange,
+                onButtonClick = { bottomSheetVisibility = false },
+            )
         }
     }
 }
@@ -178,7 +222,7 @@ private fun EditStoreTopBar(
         Spacer(Modifier.width(9.dp))
 
         Text(
-            text = "프로필 편집",
+            text = stringResource(store_edit_profile),
             style = NapzakMarketTheme.typography.body16b.copy(
                 color = NapzakMarketTheme.colors.gray400,
             )
@@ -198,7 +242,7 @@ private fun EditStoreProceedButton(
             .padding(bottom = 63.dp),
     ) {
         NapzakButton(
-            text = "확인",
+            text = stringResource(store_edit_button_proceed),
             onClick = onClick,
             modifier = Modifier.align(Alignment.Center),
         )
@@ -206,7 +250,7 @@ private fun EditStoreProceedButton(
 }
 
 /**
- * 마켓 프로필 및 커버 이미지를 편집하는 컴포넌트입니다.
+ * 마켓 프로필 및 커버 이미지를 편집하는 컴포넌트
  */
 @Composable
 private fun EditStorePhotoSection(
@@ -216,6 +260,7 @@ private fun EditStorePhotoSection(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val colorScheme = NapzakMarketTheme.colors
 
     Box(
         modifier = modifier,
@@ -243,6 +288,14 @@ private fun EditStorePhotoSection(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(top = 80.dp)
+                .drawBehind {
+                    drawCircle(color = colorScheme.purple100, style = Fill)
+                    drawCircle(
+                        color = colorScheme.white, style = Stroke(
+                            width = 5.dp.toPx()
+                        )
+                    )
+                }
                 .size(110.dp)
         )
 
@@ -291,7 +344,7 @@ private fun EditStoreProfileContainer(
 }
 
 /**
- * 마켓의 이름을 수정하는 입력필드를 제공하는 컴포넌트입니다.
+ * 마켓의 이름을 수정하는 입력 필드를 제공하는 컴포넌트
  */
 @Composable
 private fun EditStoreNameSection(
@@ -306,13 +359,13 @@ private fun EditStoreNameSection(
     }
 
     EditStoreProfileContainer(
-        title = "마켓 이름",
-        subtitle = "띄어쓰기 없이 한글, 영문, 숫자만 사용할 수 있어요 (최대 20자)",
+        title = stringResource(store_edit_title_name),
+        subtitle = stringResource(store_edit_sub_title_name),
     ) {
         NapzakDefaultTextField(
             text = marketName,
             onTextChange = onNameChange,
-            hint = "이름을 입력해주세요",
+            hint = stringResource(store_edit_hint_name),
             textStyle = NapzakMarketTheme.typography.caption12sb,
             hintTextStyle = NapzakMarketTheme.typography.caption12m,
             modifier = Modifier
@@ -332,7 +385,7 @@ private fun EditStoreNameSection(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "이름확인",
+                        text = stringResource(store_edit_button_name_check),
                         style = NapzakMarketTheme.typography.caption12sb,
                         color = NapzakMarketTheme.colors.gray50
                     )
@@ -343,7 +396,7 @@ private fun EditStoreNameSection(
 }
 
 /**
- * 마켓의 소개를 수정하는 입력필드를 제공하는 컴포넌트입니다.
+ * 마켓의 소개를 수정하는 입력 필드를 제공하는 컴포넌트
  */
 @Composable
 private fun EditStoreIntroductionSection(
@@ -353,16 +406,26 @@ private fun EditStoreIntroductionSection(
     val paddingValues = PaddingValues(horizontal = 20.dp)
 
     EditStoreProfileContainer(
-        title = "마켓 소개",
-        subtitle = "어떤 장르를 좋아하고, 판매하는지! 덕후력을 뽐내는 소개를 작성해주세요"
+        title = stringResource(store_edit_title_introduction),
+        subtitle = stringResource(store_edit_sub_title_introduction),
     ) {
-        InputTextField(
+        NapzakDefaultTextField(
             text = introduction,
             onTextChange = onIntroductionChange,
-            hint = "어떤 장르를 좋아하고, 판매하는지!\n덕후력을 뽐내는 소개를 작성해주세요",
+            hint = stringResource(store_edit_hint_introduction),
+            textStyle = NapzakMarketTheme.typography.caption12sb,
+            hintTextStyle = NapzakMarketTheme.typography.caption12m,
+            verticalAlignment = Alignment.Top,
+            contentAlignment = Alignment.TopStart,
             modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxWidth()
                 .height(150.dp)
-                .padding(paddingValues),
+                .background(
+                    NapzakMarketTheme.colors.gray50,
+                    RoundedCornerShape(14.dp)
+                )
+                .padding(PaddingValues(14.dp, 16.dp, 14.dp, 16.dp))
         )
 
         Spacer(Modifier.height(14.dp))
@@ -384,7 +447,7 @@ private fun EditStoreIntroductionSection(
 }
 
 /**
- * 관심 장르 목록을 보여주고, 장르 선택 버튼을 제공하는 컴포넌트입니다.
+ * 관심 장르 목록을 보여주고, 장르 선택 버튼을 제공하는 컴포넌트
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -395,8 +458,8 @@ private fun EditInterestedGenreSection(
     val paddingValues = PaddingValues(horizontal = 20.dp)
     val contentColor = NapzakMarketTheme.colors.purple500
     EditStoreProfileContainer(
-        title = "관심 장르",
-        subtitle = "최대 7개 선택 가능"
+        title = stringResource(store_edit_title_genre),
+        subtitle = stringResource(store_edit_sub_title_genre),
     ) {
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -437,7 +500,7 @@ private fun EditInterestedGenreSection(
             shape = RoundedCornerShape(14.dp),
         ) {
             Text(
-                text = "관심 장르 설정",
+                text = stringResource(store_edit_button_genre),
                 style = NapzakMarketTheme.typography.body14b,
                 modifier = Modifier
             )
@@ -446,7 +509,7 @@ private fun EditInterestedGenreSection(
 }
 
 /**
- * 섹션 간 분할을 담당하는 4dp 두께의 가로 줄 컴포넌트입니다.
+ * 섹션 간 분할을 담당하는 4dp 두께의 가로 줄 컴포넌트
  */
 @Composable
 private fun SectionDivider(modifier: Modifier = Modifier) {
@@ -463,18 +526,7 @@ private fun EditStoreScreenPreview() {
     NapzakMarketTheme {
         var storeName by remember { mutableStateOf("") }
         var storeIntroduction by remember { mutableStateOf("") }
-        var storeGenres by remember {
-            mutableStateOf(
-                listOf(
-                    "산리오",
-                    "은혼",
-                    "주술회전",
-                    "귀멸의 칼날",
-                    "사카모토데이즈",
-                    "디즈니/픽사"
-                )
-            )
-        }
+        var storeGenres by remember { mutableStateOf(emptyList<Genre>()) }
 
         EditStoreScreen(
             storeCover = "",
@@ -484,7 +536,9 @@ private fun EditStoreScreenPreview() {
             storeGenres = storeGenres,
             onStoreNameChange = { storeName = it },
             onStoreIntroductionChange = { storeIntroduction = it },
+            onGenreSearchTextChange = { },
             onBackButtonClick = {},
+            onNameValidityCheckClick = {},
             onProceedButtonClick = {},
             modifier = Modifier.fillMaxSize()
         )
