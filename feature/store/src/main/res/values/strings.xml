@@ -27,6 +27,4 @@
     <string name="store_edit_hint_introduction">어떤 장르를 좋아하고, 판매하는지!\n덕후력을 뽐내는 소개를 작성해주세요</string>
     <string name="store_edit_button_genre">관심 장르 설정</string>
     <string name="store_edit_button_proceed">확인</string>
-
-
 </resources>

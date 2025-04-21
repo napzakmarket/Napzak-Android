@@ -274,7 +274,7 @@ private fun EditStorePhotoSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(2.25f)
-                .background(NapzakMarketTheme.colors.gray200)
+                .background(NapzakMarketTheme.colors.gray200),
         )
 
         AsyncImage(
@@ -291,12 +291,11 @@ private fun EditStorePhotoSection(
                 .drawBehind {
                     drawCircle(color = colorScheme.purple100, style = Fill)
                     drawCircle(
-                        color = colorScheme.white, style = Stroke(
-                            width = 5.dp.toPx()
-                        )
+                        color = colorScheme.white,
+                        style = Stroke(width = 5.dp.toPx()),
                     )
                 }
-                .size(110.dp)
+                .size(110.dp),
         )
 
         Icon(
@@ -306,8 +305,7 @@ private fun EditStorePhotoSection(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(start = 96.dp, bottom = 16.dp)
-                .noRippleClickable(onEditClick)
-
+                .noRippleClickable(onEditClick),
         )
     }
 }
@@ -373,7 +371,7 @@ private fun EditStoreNameSection(
                 .fillMaxWidth()
                 .background(
                     NapzakMarketTheme.colors.gray50,
-                    RoundedCornerShape(14.dp)
+                    RoundedCornerShape(14.dp),
                 )
                 .padding(PaddingValues(16.dp, 10.dp, 10.dp, 10.dp)),
             suffix = {
@@ -387,7 +385,7 @@ private fun EditStoreNameSection(
                     Text(
                         text = stringResource(store_edit_button_name_check),
                         style = NapzakMarketTheme.typography.caption12sb,
-                        color = NapzakMarketTheme.colors.gray50
+                        color = NapzakMarketTheme.colors.gray50,
                     )
                 }
             }
@@ -425,7 +423,7 @@ private fun EditStoreIntroductionSection(
                     NapzakMarketTheme.colors.gray50,
                     RoundedCornerShape(14.dp)
                 )
-                .padding(PaddingValues(14.dp, 16.dp, 14.dp, 16.dp))
+                .padding(PaddingValues(14.dp, 16.dp, 14.dp, 16.dp)),
         )
 
         Spacer(Modifier.height(14.dp))
@@ -434,7 +432,7 @@ private fun EditStoreIntroductionSection(
             horizontalArrangement = Arrangement.End,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(paddingValues)
+                .padding(paddingValues),
         ) {
             Text(
                 text = "${introduction.length}/$DESCRIPTION_MAX_LENGTH",
@@ -464,7 +462,7 @@ private fun EditInterestedGenreSection(
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues),
         ) {
             genres.forEach { genre ->
                 Box(
@@ -502,7 +500,6 @@ private fun EditInterestedGenreSection(
             Text(
                 text = stringResource(store_edit_button_genre),
                 style = NapzakMarketTheme.typography.body14b,
-                modifier = Modifier
             )
         }
     }
@@ -516,7 +513,7 @@ private fun SectionDivider(modifier: Modifier = Modifier) {
     HorizontalDivider(
         color = NapzakMarketTheme.colors.gray10,
         thickness = 4.dp,
-        modifier = modifier.padding(vertical = 30.dp)
+        modifier = modifier.padding(vertical = 30.dp),
     )
 }
 
