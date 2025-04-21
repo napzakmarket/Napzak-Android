@@ -76,7 +76,7 @@ import com.napzak.market.util.android.noRippleClickable
 private const val DESCRIPTION_MAX_LENGTH = 200
 
 @Composable
-internal fun EditStoreScreen(
+internal fun EditStoreRoute(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
