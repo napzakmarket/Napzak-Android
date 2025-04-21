@@ -44,7 +44,8 @@ include(
     "feature:dummy",
     "feature:home",
     ":feature:explore",
+    ":feature:onboarding",
     ":feature:search",
     ":feature:registration",
-    ":feature:store"
+    ":feature:store",
 )
