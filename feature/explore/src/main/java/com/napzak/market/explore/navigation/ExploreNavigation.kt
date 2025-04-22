@@ -23,11 +23,8 @@ fun NavGraphBuilder.exploreGraph(
     navigateToProductDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    composable<Explore> { backStackEntry ->
-        val explore: Explore = backStackEntry.toRoute()
-
+    composable<Explore> {
         ExploreRoute(
-            searchTerm = explore.searchTerm,
             onSearchNavigate = navigateToSearch,
             onGenreDetailNavigate = navigateToGenreDetail,
             onProductDetailNavigate = navigateToProductDetail,

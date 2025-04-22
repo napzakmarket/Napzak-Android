@@ -17,6 +17,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -27,6 +28,9 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
@@ -40,6 +44,7 @@ import com.napzak.market.explore.component.BasicFilterChip
 import com.napzak.market.explore.component.GenreFilterChip
 import com.napzak.market.explore.component.GenreNavigationButton
 import com.napzak.market.explore.model.Product
+import com.napzak.market.explore.state.ExploreUiState
 import com.napzak.market.feature.explore.R.string.explore_search_hint
 import com.napzak.market.feature.explore.R.string.explore_unopened
 import com.napzak.market.feature.explore.R.string.explore_exclude_sold_out
@@ -49,13 +54,17 @@ import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 internal fun ExploreRoute(
-    searchTerm: String,
     onSearchNavigate: () -> Unit,
     onGenreDetailNavigate: (Long) -> Unit,
     onProductDetailNavigate: (Long) -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: ExploreViewModel = hiltViewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val searchTerm = viewModel.searchTerm.toString()
+
     ExploreScreen(
+        uiState = uiState,
         searchTerm = searchTerm,
         onSearchNavigate = onSearchNavigate,
         onTabClick = { },
@@ -72,6 +81,7 @@ internal fun ExploreRoute(
 
 @Composable
 private fun ExploreScreen(
+    uiState: ExploreUiState,
     searchTerm: String,
     onSearchNavigate: () -> Unit,
     onTabClick: (TradeType) -> Unit,
@@ -84,19 +94,58 @@ private fun ExploreScreen(
     onLikeButtonClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // TODO : 더미데이터 변수 삭제 예정
-    var tradeType = TradeType.BUY
-    val genreList = listOf(
-        Genre(0, "산리오"),
-        Genre(1, "주술회전"),
-        Genre(2, "진격의 거인"),
-        Genre(3, "산리오1"),
-        Genre(4, "주술회전1"),
-        Genre(5, "진격의 거인1"),
-    )
-    var sortType = SortType.RECENT
-    val searchTerm = searchTerm
+    when (uiState.loadState) {
+        is UiState.Loading -> {
+        }
 
+        is UiState.Empty -> {
+        }
+
+        is UiState.Failure -> {
+        }
+
+        is UiState.Success -> {
+            with(uiState) {
+                ExploreSuccessScreen(
+                    searchTerm = searchTerm,
+                    selectedTab = selectedTab,
+                    filteredGenres = filteredGenres,
+                    sortOption = sortOption,
+                    onSearchNavigate = onSearchNavigate,
+                    onTabClick = onTabClick,
+                    onGenreFilterClick = onGenreFilterClick,
+                    onUnopenFilterClick = onUnopenFilterClick,
+                    onExcludeSoldOutFilterClick = onExcludeSoldOutFilterClick,
+                    onSortOptionClick = onSortOptionClick,
+                    onGenreDetailNavigate = onGenreDetailNavigate,
+                    onProductDetailNavigate = onProductDetailNavigate,
+                    onLikeButtonClick = onLikeButtonClick,
+                    modifier = modifier,
+                )
+            }
+        }
+    }
+
+
+}
+
+@Composable
+private fun ExploreSuccessScreen(
+    searchTerm: String,
+    selectedTab: TradeType,
+    filteredGenres: List<Genre>,
+    sortOption: SortType,
+    onSearchNavigate: () -> Unit,
+    onTabClick: (TradeType) -> Unit,
+    onGenreFilterClick: () -> Unit,
+    onUnopenFilterClick: () -> Unit,
+    onExcludeSoldOutFilterClick: () -> Unit,
+    onSortOptionClick: (SortType) -> Unit,
+    onGenreDetailNavigate: (Long) -> Unit,
+    onProductDetailNavigate: (Long) -> Unit,
+    onLikeButtonClick: (Long, Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -113,7 +162,7 @@ private fun ExploreScreen(
         Spacer(Modifier.height(20.dp))
 
         TradeTypeTabBar(
-            selectedTab = tradeType,
+            selectedTab = selectedTab,
             onTabClicked = onTabClick,
             modifier = Modifier.padding(horizontal = 20.dp),
         )
@@ -127,7 +176,7 @@ private fun ExploreScreen(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             GenreFilterChip(
-                genreList = genreList,
+                genreList = filteredGenres,
                 onChipClick = onGenreFilterClick,
             )
 
@@ -137,7 +186,7 @@ private fun ExploreScreen(
                 onChipClick = onUnopenFilterClick,
             )
 
-            if (tradeType == TradeType.SELL) {
+            if (selectedTab == TradeType.SELL) {
                 BasicFilterChip(
                     filterName = stringResource(explore_exclude_sold_out),
                     isClicked = false,
@@ -147,11 +196,11 @@ private fun ExploreScreen(
         }
 
         GenreAndProductList(
-            genreList = genreList,
+            genreList = filteredGenres,
             productList = Product.mockMixedProduct,
-            sortType = sortType,
+            sortType = sortOption,
             onGenreButtonClick = onGenreDetailNavigate,
-            onSortOptionClick = { onSortOptionClick(sortType) },
+            onSortOptionClick = { onSortOptionClick(sortOption) },
             onProductClick = onProductDetailNavigate,
             onLikeButtonClick = onLikeButtonClick,
         )
@@ -299,6 +348,7 @@ private fun ExploreScreenPreview(modifier: Modifier = Modifier) {
     NapzakMarketTheme {
         ExploreScreen(
             searchTerm = "",
+            uiState = ExploreUiState(),
             onSearchNavigate = { },
             onTabClick = { },
             onGenreFilterClick = { },
