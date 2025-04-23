@@ -17,6 +17,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,14 +64,18 @@ internal fun ExploreRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val searchTerm = viewModel.searchTerm.toString()
 
+    LaunchedEffect(uiState) {
+        viewModel.updateExploreInformation()
+    }
+
     ExploreScreen(
         uiState = uiState,
         searchTerm = searchTerm,
         onSearchNavigate = onSearchNavigate,
-        onTabClick = { },
+        onTabClick = viewModel::updateTradeType,
         onGenreFilterClick = { },
-        onUnopenFilterClick = { },
-        onExcludeSoldOutFilterClick = { },
+        onUnopenFilterClick = viewModel::updateUnopenFilter,
+        onExcludeSoldOutFilterClick = viewModel::updateSoldOutFilter,
         onGenreDetailNavigate = onGenreDetailNavigate,
         onSortOptionClick = { },
         onProductDetailNavigate = onProductDetailNavigate,
@@ -110,6 +115,8 @@ private fun ExploreScreen(
                     searchTerm = searchTerm,
                     selectedTab = selectedTab,
                     filteredGenres = filteredGenres,
+                    isUnopenSelected = isUnopenSelected,
+                    isSoldOutSelected = isSoldOutSelected,
                     sortOption = sortOption,
                     onSearchNavigate = onSearchNavigate,
                     onTabClick = onTabClick,
@@ -134,6 +141,8 @@ private fun ExploreSuccessScreen(
     searchTerm: String,
     selectedTab: TradeType,
     filteredGenres: List<Genre>,
+    isUnopenSelected: Boolean,
+    isSoldOutSelected: Boolean,
     sortOption: SortType,
     onSearchNavigate: () -> Unit,
     onTabClick: (TradeType) -> Unit,
@@ -182,14 +191,14 @@ private fun ExploreSuccessScreen(
 
             BasicFilterChip(
                 filterName = stringResource(explore_unopened),
-                isClicked = false,
+                isClicked = isUnopenSelected,
                 onChipClick = onUnopenFilterClick,
             )
 
             if (selectedTab == TradeType.SELL) {
                 BasicFilterChip(
                     filterName = stringResource(explore_exclude_sold_out),
-                    isClicked = false,
+                    isClicked = isSoldOutSelected,
                     onChipClick = onExcludeSoldOutFilterClick,
                 )
             }
@@ -220,6 +229,7 @@ private fun ExploreSearchTextField(
         onSearchClick = { },
         modifier = modifier,
         readOnly = true,
+        enabled = false,
     )
 }
 

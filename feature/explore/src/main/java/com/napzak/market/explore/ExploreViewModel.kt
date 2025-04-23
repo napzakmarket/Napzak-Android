@@ -2,13 +2,17 @@ package com.napzak.market.explore
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.napzak.market.common.type.SortType
+import androidx.lifecycle.viewModelScope
+import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.TradeType
+import com.napzak.market.explore.model.Product
+import com.napzak.market.explore.state.ExploreProducts
 import com.napzak.market.explore.state.ExploreUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,6 +23,17 @@ internal class ExploreViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(ExploreUiState())
     val uiState = _uiState.asStateFlow()
+
+    fun updateExploreInformation() = viewModelScope.launch{
+        with(uiState.value) {
+            // TODO : 추후 API로 변경
+            updateLoadState(
+                UiState.Success(
+                    ExploreProducts(productList = Product.mockMixedProduct)
+                )
+            )
+        }
+    }
 
     fun updateTradeType(newTradeType: TradeType) {
         _uiState.update { currentState ->
@@ -47,6 +62,13 @@ internal class ExploreViewModel @Inject constructor(
     }
 
     // 좋아요 버튼 기능
+
+    private fun updateLoadState(loadState: UiState<ExploreProducts>) =
+        _uiState.update { currentState ->
+            currentState.copy(
+                loadState = loadState
+            )
+        }
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L
