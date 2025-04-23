@@ -24,7 +24,6 @@ internal class ExploreViewModel @Inject constructor(
         _uiState.update { currentState ->
             currentState.copy(
                 selectedTab = newTradeType,
-                sortOption = SortType.RECENT,
             )
         }
     }
