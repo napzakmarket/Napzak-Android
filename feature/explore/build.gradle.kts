@@ -17,4 +17,5 @@ dependencies {
     implementation(projects.core.util)
 
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.coil.compose)
 }
