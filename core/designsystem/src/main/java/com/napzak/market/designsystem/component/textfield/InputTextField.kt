@@ -40,7 +40,7 @@ fun InputTextField(
     onTextChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     hint: String = BLANK,
-    textStyle: TextStyle = NapzakMarketTheme.typography.body14r,
+    textStyle: TextStyle = NapzakMarketTheme.typography.body14sb,
     textColor: Color = NapzakMarketTheme.colors.gray500,
     hintTextStyle: TextStyle = NapzakMarketTheme.typography.body14sb,
     hintTextColor: Color = NapzakMarketTheme.colors.gray200,
@@ -49,10 +49,10 @@ fun InputTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     isSingleLined: Boolean = true,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    suffix: @Composable (() -> Unit)? = null,
     paddingValues: PaddingValues = PaddingValues(14.dp, 16.dp, 14.dp, 16.dp),
     contentAlignment: Alignment = Alignment.CenterStart,
     textAlign: TextAlign = TextAlign.Start,
+    suffix: @Composable (() -> Unit)? = null,
 ) {
     NapzakDefaultTextField(
         text = text,
@@ -63,7 +63,7 @@ fun InputTextField(
             .border(1.dp, borderColor, RoundedCornerShape(14.dp))
             .padding(paddingValues),
         hint = hint,
-        textStyle = textStyle.copy(textAlign = textAlign),
+        textStyle = textStyle,
         textColor = textColor,
         keyboardActions = keyboardActions,
         keyboardOptions = keyboardOptions,
@@ -73,6 +73,7 @@ fun InputTextField(
         suffix = suffix,
         verticalAlignment = Alignment.Top,
         contentAlignment = contentAlignment,
+        textAlign = textAlign,
     )
 }
 
