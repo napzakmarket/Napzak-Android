@@ -49,6 +49,7 @@ fun NapzakCheckedButton(
     backgroundColor: Color = NapzakMarketTheme.colors.white,
     onCheckedChange: (Boolean) -> Unit,
     icon: ImageVector? = null,
+    onIconClick: (() -> Unit)? = null,
 ) {
     val checkIcon = if (checked) {
         ImageVector.vectorResource(ic_checked_box)
@@ -58,8 +59,7 @@ fun NapzakCheckedButton(
 
     Surface(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(14.dp),
         color = backgroundColor,
 
@@ -67,13 +67,13 @@ fun NapzakCheckedButton(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .padding(start = 10.dp),
+            modifier = Modifier,
         ) {
             Icon(
                 imageVector = checkIcon,
                 contentDescription = null,
                 modifier = Modifier
+                    .padding(start = 10.dp)
                     .size(24.dp)
                     .clickable { onCheckedChange(!checked) },
                 tint = Color.Unspecified,
@@ -86,14 +86,16 @@ fun NapzakCheckedButton(
                     .padding(vertical = 14.dp),
             )
             Spacer(modifier = Modifier.weight(1f))
-            if (icon != null) {
+            icon?.let {
                 Icon(
-                    imageVector = icon,
+                    imageVector = it,
                     contentDescription = null,
-                    tint = Color.Unspecified,
+                    tint = NapzakMarketTheme.colors.gray300,
                     modifier = Modifier
-                        .padding(end = 10.dp)
-                        .size(12.dp),
+                        .size(16.dp)
+                        .clickable(enabled = onIconClick != null) {
+                            onIconClick?.invoke()
+                        }
                 )
             }
         }
