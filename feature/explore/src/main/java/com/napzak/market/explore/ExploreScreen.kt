@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.common.state.UiState
+import com.napzak.market.common.type.BottomSheetType
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
@@ -42,9 +45,11 @@ import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.explore.component.BasicFilterChip
+import com.napzak.market.explore.component.ExploreBottomSheetScreen
 import com.napzak.market.explore.component.GenreFilterChip
 import com.napzak.market.explore.component.GenreNavigationButton
 import com.napzak.market.explore.model.Product
+import com.napzak.market.explore.state.ExploreBottomSheetState
 import com.napzak.market.explore.state.ExploreUiState
 import com.napzak.market.feature.explore.R.string.explore_search_hint
 import com.napzak.market.feature.explore.R.string.explore_unopened
@@ -62,6 +67,7 @@ internal fun ExploreRoute(
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val bottomSheetState by viewModel.bottomSheetState.collectAsStateWithLifecycle()
     val searchTerm = viewModel.searchTerm.toString()
 
     LaunchedEffect(uiState) {
@@ -69,15 +75,25 @@ internal fun ExploreRoute(
     }
 
     ExploreScreen(
-        uiState = uiState,
         searchTerm = searchTerm,
+        uiState = uiState,
+        bottomSheetState = bottomSheetState,
+        onDismissRequest = viewModel::updateBottomSheetVisibility,
         onSearchNavigate = onSearchNavigate,
         onTabClick = viewModel::updateTradeType,
-        onGenreFilterClick = { },
+        onGenreFilterClick = {
+            viewModel.updateGenreItemsInBottomSheet()
+            viewModel.updateBottomSheetVisibility(BottomSheetType.GENRE_SEARCHING)
+        },
+        onGenreBottomSheetTextChange = {},
+        onGenreSelectButtonClick = viewModel::updateSelectedGenres,
         onUnopenFilterClick = viewModel::updateUnopenFilter,
         onExcludeSoldOutFilterClick = viewModel::updateSoldOutFilter,
         onGenreDetailNavigate = onGenreDetailNavigate,
-        onSortOptionClick = { },
+        onSortOptionClick = {
+            viewModel.updateBottomSheetVisibility(BottomSheetType.SORT)
+        },
+        onSortItemClick = viewModel::updateSortOption,
         onProductDetailNavigate = onProductDetailNavigate,
         onLikeButtonClick = { id, value -> },
         modifier = modifier,
@@ -86,14 +102,19 @@ internal fun ExploreRoute(
 
 @Composable
 private fun ExploreScreen(
-    uiState: ExploreUiState,
     searchTerm: String,
+    uiState: ExploreUiState,
+    bottomSheetState: ExploreBottomSheetState,
+    onDismissRequest: (BottomSheetType) -> Unit,
     onSearchNavigate: () -> Unit,
     onTabClick: (TradeType) -> Unit,
     onGenreFilterClick: () -> Unit,
+    onGenreBottomSheetTextChange: (String) -> Unit,
+    onGenreSelectButtonClick: (List<Genre>) -> Unit,
     onUnopenFilterClick: () -> Unit,
     onExcludeSoldOutFilterClick: () -> Unit,
     onSortOptionClick: (SortType) -> Unit,
+    onSortItemClick: (SortType) -> Unit,
     onGenreDetailNavigate: (Long) -> Unit,
     onProductDetailNavigate: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
@@ -118,12 +139,18 @@ private fun ExploreScreen(
                     isUnopenSelected = isUnopenSelected,
                     isSoldOutSelected = isSoldOutSelected,
                     sortOption = sortOption,
+                    genreItems = genreItems,
+                    bottomSheetState = bottomSheetState,
                     onSearchNavigate = onSearchNavigate,
                     onTabClick = onTabClick,
                     onGenreFilterClick = onGenreFilterClick,
+                    onDismissRequest = onDismissRequest,
+                    onGenreBottomSheetTextChange = onGenreBottomSheetTextChange,
+                    onGenreSelectButtonClick = onGenreSelectButtonClick,
                     onUnopenFilterClick = onUnopenFilterClick,
                     onExcludeSoldOutFilterClick = onExcludeSoldOutFilterClick,
                     onSortOptionClick = onSortOptionClick,
+                    onSortItemClick = onSortItemClick,
                     onGenreDetailNavigate = onGenreDetailNavigate,
                     onProductDetailNavigate = onProductDetailNavigate,
                     onLikeButtonClick = onLikeButtonClick,
@@ -136,6 +163,7 @@ private fun ExploreScreen(
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ExploreSuccessScreen(
     searchTerm: String,
@@ -144,17 +172,27 @@ private fun ExploreSuccessScreen(
     isUnopenSelected: Boolean,
     isSoldOutSelected: Boolean,
     sortOption: SortType,
+    genreItems: List<Genre>,
+    bottomSheetState: ExploreBottomSheetState,
     onSearchNavigate: () -> Unit,
     onTabClick: (TradeType) -> Unit,
     onGenreFilterClick: () -> Unit,
+    onDismissRequest: (BottomSheetType) -> Unit,
+    onGenreBottomSheetTextChange: (String) -> Unit,
+    onGenreSelectButtonClick: (List<Genre>) -> Unit,
     onUnopenFilterClick: () -> Unit,
     onExcludeSoldOutFilterClick: () -> Unit,
     onSortOptionClick: (SortType) -> Unit,
+    onSortItemClick: (SortType) -> Unit,
     onGenreDetailNavigate: (Long) -> Unit,
     onProductDetailNavigate: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -214,6 +252,18 @@ private fun ExploreSuccessScreen(
             onLikeButtonClick = onLikeButtonClick,
         )
     }
+
+    ExploreBottomSheetScreen(
+        exploreBottomSheetState = bottomSheetState,
+        sheetState = sheetState,
+        selectedGenres = filteredGenres,
+        genreItems = genreItems,
+        sortType = sortOption,
+        onDismissRequest = onDismissRequest,
+        onSortItemClick = onSortItemClick,
+        onTextChange = onGenreBottomSheetTextChange,
+        onGenreSelectButtonClick = onGenreSelectButtonClick,
+    )
 }
 
 @Composable
@@ -359,12 +409,17 @@ private fun ExploreScreenPreview(modifier: Modifier = Modifier) {
         ExploreScreen(
             searchTerm = "",
             uiState = ExploreUiState(),
+            bottomSheetState = ExploreBottomSheetState(),
+            onDismissRequest = { },
             onSearchNavigate = { },
             onTabClick = { },
             onGenreFilterClick = { },
+            onGenreSelectButtonClick = { },
+            onGenreBottomSheetTextChange = { },
             onUnopenFilterClick = { },
             onExcludeSoldOutFilterClick = { },
             onSortOptionClick = { },
+            onSortItemClick = { },
             onGenreDetailNavigate = { },
             onProductDetailNavigate = { },
             onLikeButtonClick = { id, value -> },
