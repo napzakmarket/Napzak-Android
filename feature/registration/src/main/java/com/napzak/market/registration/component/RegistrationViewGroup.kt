@@ -114,9 +114,12 @@ internal fun RegistrationViewGroup(
         ) {
             InputTextField(
                 text = productName,
-                onTextChange = onProductNameChange,
+                onTextChange = {
+                    if (it.length <= MAX_PRODUCT_NAME) onProductNameChange(it)
+                },
                 hint = stringResource(product_name_hint),
             )
+
             Text(
                 text = "${productName.length}/$MAX_PRODUCT_NAME",
                 style = NapzakMarketTheme.typography.caption10r.copy(
@@ -144,12 +147,15 @@ internal fun RegistrationViewGroup(
         ) {
             InputTextField(
                 text = productDescription,
-                onTextChange = onProductDescriptionChange,
+                onTextChange = {
+                    if (it.length <= MAX_PRODUCT_DESCRIPTION) onProductDescriptionChange(it)
+                },
                 hint = stringResource(product_description_hint),
                 modifier = Modifier.height(136.dp),
                 isSingleLined = false,
                 contentAlignment = Alignment.TopStart,
             )
+
             Text(
                 text = "${productDescription.length}/$MAX_PRODUCT_DESCRIPTION",
                 style = NapzakMarketTheme.typography.caption10r.copy(
@@ -182,8 +188,6 @@ private fun RegistrationViewGroupPreview() {
             onProductNameChange = { name = it },
             productDescription = content,
             onProductDescriptionChange = { content = it },
-            modifier = Modifier
-                .fillMaxWidth(),
         )
     }
 }
