@@ -40,12 +40,13 @@ include(
     ":domain:dummy",
 )
 include(
-    "feature:main",
-    "feature:dummy",
+    ":feature:main",
+    ":feature:dummy",
+    ":feature:home",
     ":feature:mypage",
-    "feature:home",
     ":feature:explore",
     ":feature:search",
+    ":feature:report",
     ":feature:registration",
     ":feature:store",
     ":feature:detail",

@@ -5,6 +5,7 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,6 +22,7 @@ import com.napzak.market.store.navigation.storeGraph
 import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.search.navigation.navigateToSearch
 import com.napzak.market.search.navigation.searchGraph
+import com.napzak.market.report.navigation.reportGraph
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -119,6 +121,11 @@ private fun MainNavHost(
             onReportNavigate = {}, //TODO: 물품 신고 화면으로 이동
             onNavigateUp = navigator::navigateUp,
             modifier = modifier
+        )
+
+        reportGraph(
+            navigateUp = navigator::navigateUp,
+            modifier = Modifier.systemBarsPadding()
         )
     }
 }
