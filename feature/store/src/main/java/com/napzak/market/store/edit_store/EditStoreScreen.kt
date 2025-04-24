@@ -378,8 +378,9 @@ private fun EditStoreNameSection(
                 ) {
                     Text(
                         text = stringResource(store_edit_button_name_check),
-                        style = NapzakMarketTheme.typography.caption12sb,
-                        color = NapzakMarketTheme.colors.gray50,
+                        style = NapzakMarketTheme.typography.caption12sb.copy(
+                            color = NapzakMarketTheme.colors.gray50,
+                        ),
                     )
                 }
             }
@@ -470,8 +471,9 @@ private fun EditInterestedGenreSection(
                 ) {
                     Text(
                         text = genre,
-                        style = NapzakMarketTheme.typography.caption12sb,
-                        color = contentColor,
+                        style = NapzakMarketTheme.typography.caption12sb.copy(
+                            color = contentColor,
+                        ),
                     )
                 }
             }
