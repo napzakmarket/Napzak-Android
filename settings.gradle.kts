@@ -46,4 +46,7 @@ include(
     ":feature:explore",
     ":feature:search",
     ":feature:report",
+    ":feature:registration",
+    ":feature:store",
+    ":feature:detail",
 )
