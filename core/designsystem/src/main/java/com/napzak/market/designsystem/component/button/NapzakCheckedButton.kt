@@ -93,7 +93,7 @@ fun NapzakCheckedButton(
                     tint = NapzakMarketTheme.colors.gray300,
                     modifier = Modifier
                         .size(16.dp)
-                        .noRippleClickable(enabled = onIconClick != null) {
+                        .clickable(enabled = onIconClick != null) {
                             onIconClick?.invoke()
                         },
                 )

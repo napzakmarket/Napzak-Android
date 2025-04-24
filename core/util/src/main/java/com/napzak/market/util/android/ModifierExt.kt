@@ -23,12 +23,8 @@ import kotlinx.coroutines.launch
  * Material3의 기본 리플 모션을 제거하기 위한 함수입니다.
  */
 @SuppressLint("ModifierFactoryUnreferencedReceiver")
-inline fun Modifier.noRippleClickable(
-    enabled: Boolean = true,
-    crossinline onClick: () -> Unit,
-): Modifier = composed {
+inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier = composed {
     clickable(
-        enabled = enabled,
         indication = null,
         interactionSource = remember { MutableInteractionSource() },
         onClick = { onClick() }
