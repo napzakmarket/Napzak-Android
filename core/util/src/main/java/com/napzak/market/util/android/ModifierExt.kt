@@ -26,9 +26,9 @@ import kotlinx.coroutines.launch
 inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier = composed {
     clickable(
         indication = null,
-        interactionSource = remember { MutableInteractionSource() }) {
-        onClick()
-    }
+        interactionSource = remember { MutableInteractionSource() },
+        onClick = { onClick() }
+    )
 }
 
 /**
