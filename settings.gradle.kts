@@ -43,6 +43,7 @@ include(
     ":feature:main",
     ":feature:dummy",
     ":feature:home",
+    ":feature:mypage",
     ":feature:explore",
     ":feature:search",
     ":feature:report",
