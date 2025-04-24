@@ -25,7 +25,6 @@ import com.napzak.market.designsystem.R
 import com.napzak.market.designsystem.R.drawable.ic_checked_box
 import com.napzak.market.designsystem.R.drawable.ic_unchecked_box
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.util.android.noRippleClickable
 
 
 /**
