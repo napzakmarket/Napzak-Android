@@ -13,9 +13,12 @@ import com.napzak.market.explore.state.ExploreBottomSheetState
 import com.napzak.market.explore.state.ExploreProducts
 import com.napzak.market.explore.state.ExploreUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,6 +34,9 @@ internal class ExploreViewModel @Inject constructor(
     private val _bottomSheetState: MutableStateFlow<ExploreBottomSheetState> =
         MutableStateFlow(ExploreBottomSheetState())
     val bottomSheetState: StateFlow<ExploreBottomSheetState> = _bottomSheetState.asStateFlow()
+
+    private val _genreSearchTerm = MutableStateFlow("")
+    val genreSearchTerm = _genreSearchTerm.asStateFlow()
 
     fun updateExploreInformation() = viewModelScope.launch {
         with(uiState.value) {
@@ -86,6 +92,18 @@ internal class ExploreViewModel @Inject constructor(
                 ),
             )
         }
+    }
+
+    fun updateGenreSearchTerm(searchTerm: String) {
+        _genreSearchTerm.update { searchTerm }
+    }
+
+    @OptIn(FlowPreview::class)
+    fun updateGenreSearchResult() = viewModelScope.launch {
+        _genreSearchTerm.debounce(DEBOUNCE_DELAY)
+            .collectLatest { debounce ->
+                // TODO: 장르 검색 API 연결
+            }
     }
 
     fun updateSelectedGenres(newGenres: List<Genre>) {

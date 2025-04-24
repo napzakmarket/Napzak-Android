@@ -74,6 +74,10 @@ internal fun ExploreRoute(
         viewModel.updateExploreInformation()
     }
 
+    LaunchedEffect(viewModel.genreSearchTerm) {
+        viewModel.updateGenreSearchResult()
+    }
+
     ExploreScreen(
         searchTerm = searchTerm,
         uiState = uiState,
@@ -85,7 +89,7 @@ internal fun ExploreRoute(
             viewModel.updateGenreItemsInBottomSheet()
             viewModel.updateBottomSheetVisibility(BottomSheetType.GENRE_SEARCHING)
         },
-        onGenreBottomSheetTextChange = {},
+        onGenreBottomSheetTextChange = viewModel::updateGenreSearchTerm,
         onGenreSelectButtonClick = viewModel::updateSelectedGenres,
         onUnopenFilterClick = viewModel::updateUnopenFilter,
         onExcludeSoldOutFilterClick = viewModel::updateSoldOutFilter,
