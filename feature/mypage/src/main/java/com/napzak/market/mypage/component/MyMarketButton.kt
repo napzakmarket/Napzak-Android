@@ -27,8 +27,8 @@ import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 internal fun MyMarketButton(
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
 ) {
     Row(
         modifier = modifier
