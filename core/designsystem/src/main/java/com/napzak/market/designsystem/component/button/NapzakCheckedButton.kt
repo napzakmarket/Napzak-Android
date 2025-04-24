@@ -67,7 +67,6 @@ fun NapzakCheckedButton(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier,
         ) {
             Icon(
                 imageVector = checkIcon,
@@ -101,7 +100,6 @@ fun NapzakCheckedButton(
         }
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 private fun NapzakCheckItemPreview() {
