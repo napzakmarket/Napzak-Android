@@ -10,9 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
+import com.napzak.market.detail.navigation.productDetailRoute
 import com.napzak.market.dummy.navigation.dummyGraph
-import com.napzak.market.explore.navigation.exploreGraph
 import com.napzak.market.home.navigation.homeGraph
+import com.napzak.market.explore.navigation.exploreGraph
+import com.napzak.market.explore.navigation.navigateToGenreDetail
+import com.napzak.market.home.navigation.Home
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.search.navigation.navigateToSearch
@@ -83,8 +86,12 @@ private fun MainNavHost(
         )
 
         exploreGraph(
+            navigateToUp = { navigator.navController.popBackStack() },
+            navigateToHome = { navigator.navController.popBackStack(Home, inclusive = false) },
             navigateToSearch = { navigator.navController.navigateToSearch() },
-            navigateToGenreDetail = { /* TODO: 장르 상세 화면으로 이동 */ },
+            navigateToGenreDetail = { genreId ->
+                navigator.navController.navigateToGenreDetail(genreId)
+            },
             navigateToProductDetail = { /* TODO: 상품 상세 화면으로 이동 */ },
             modifier = modifier,
         )
@@ -92,7 +99,9 @@ private fun MainNavHost(
         searchGraph(
             navigateToPrevious = { navigator.navController.popBackStack() },
             navigateToSearchResult = { /* TODO: 검색어 검색결과 페이지로 이동 */ },
-            navigateToGenreDetail = { /* TODO: 장르상세 페이지로 이동 */ },
+            navigateToGenreDetail = { genreId ->
+                navigator.navController.navigateToGenreDetail(genreId)
+            },
             modifier = modifier,
         )
 
@@ -101,6 +110,15 @@ private fun MainNavHost(
             navigateToProfileEdit = { /* TODO: move to profile edit */ },
             navigateToProductDetail = { /* TODO: move to product detail */ },
             modifier = modifier,
+        )
+
+        productDetailRoute(
+            onMarketNavigate = {}, //TODO: 내마켓 화면으로 이동
+            onChatNavigate = {}, //TODO: 채팅 화면으로 이동
+            onModifyNavigate = {}, //TODO: 물품 정보 수정 화면으로 이동
+            onReportNavigate = {}, //TODO: 물품 신고 화면으로 이동
+            onNavigateUp = navigator::navigateUp,
+            modifier = modifier
         )
     }
 }

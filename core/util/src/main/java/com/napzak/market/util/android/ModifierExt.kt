@@ -5,12 +5,16 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -20,7 +24,8 @@ import kotlinx.coroutines.launch
  */
 @SuppressLint("ModifierFactoryUnreferencedReceiver")
 inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier = composed {
-    clickable(indication = null,
+    clickable(
+        indication = null,
         interactionSource = remember { MutableInteractionSource() }) {
         onClick()
     }
@@ -41,6 +46,21 @@ inline fun Modifier.noRippleCombineClickable(
         onClick = { onClick() },
         onLongClick = { onLongClick() },
     )
+}
+
+/**
+ * 커스텀 리플 효과를 넣기 위한 함수입니다.
+ */
+inline fun Modifier.napzakRippleClickable(
+    role: Role? = null,
+    crossinline onClick: () -> Unit,
+): Modifier = composed {
+    clickable(
+        role = role,
+        indication = ripple(false, 20.dp, Color.Unspecified),
+        interactionSource = remember { MutableInteractionSource() }) {
+        onClick()
+    }
 }
 
 /**
