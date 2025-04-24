@@ -31,6 +31,7 @@
     <string name="genre_search_hint">어떤 장르의 굿즈인가요? 검색해보세요!</string>
     <string name="genre_search_select_genre">장르 선택</string>
     <string name="genre_search_genre_limit_notice">최대 7개 선택</string>
+    <string name="genre_apply_button">적용하기</string>
 
     <!--AlertDialog-->
     <string name="dialog_text_confirm">예</string>
