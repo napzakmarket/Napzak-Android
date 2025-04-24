@@ -7,23 +7,15 @@ plugins {
 }
 
 android {
-    setNameSpace("main")
+    setNameSpace("feature.mypage")
 }
 
 dependencies {
-    implementation(projects.feature.dummy)
-    implementation(projects.feature.home)
-    implementation(projects.feature.explore)
-    implementation(projects.feature.search)
-    implementation(projects.feature.report)
-    implementation(projects.feature.store)
-    implementation(projects.feature.detail)
 
     implementation(projects.core.designsystem)
     implementation(projects.core.common)
     implementation(projects.core.util)
 
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.coil.compose)
 }
