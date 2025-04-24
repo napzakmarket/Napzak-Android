@@ -191,7 +191,6 @@ private fun EditStoreScreen(
                 ),
                 sheetState = bottomSheetState,
                 onDismissRequest = {
-                    //coroutineScope.launch { bottomSheetState.hide() }
                     bottomSheetVisibility = false
                 },
                 onTextChange = onGenreSearchTextChange,
@@ -258,7 +257,6 @@ private fun EditStorePhotoSection(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val colorScheme = NapzakMarketTheme.colors
 
     Box(
         modifier = modifier,
