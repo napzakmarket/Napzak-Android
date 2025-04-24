@@ -135,14 +135,14 @@ private fun TermsAgreementTopBar(
         modifier = modifier
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(ic_arrow_left),
             contentDescription = null,
             tint = Color.Unspecified,
             modifier = Modifier
-                .clickable { onBackClick() }
+                .clickable(onClick = onBackClick)
                 .size(12.dp),
         )
 
