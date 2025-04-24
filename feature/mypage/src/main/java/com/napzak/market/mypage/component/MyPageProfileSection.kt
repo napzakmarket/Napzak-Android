@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -93,5 +94,18 @@ fun MyPageProfileSection(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MyPageProfileSectionPreview() {
+    NapzakMarketTheme {
+        MyPageProfileSection(
+            nickname = "납작이",
+            profileImageUrl = "",
+            salesCount = 12,
+            purchaseCount = 7,
+        )
     }
 }
