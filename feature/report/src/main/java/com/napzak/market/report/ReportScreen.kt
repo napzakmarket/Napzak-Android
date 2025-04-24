@@ -30,7 +30,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.report.R
+import com.napzak.market.feature.report.R.drawable.ic_chevron_left
+import com.napzak.market.feature.report.R.string.report_button_submit
 import com.napzak.market.report.component.ReportContactSection
 import com.napzak.market.report.component.ReportDetailSection
 import com.napzak.market.report.component.ReportReasonSection
@@ -104,7 +105,7 @@ private fun ReportScreen(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .verticalScroll(scrollState)
+                .verticalScroll(scrollState),
         ) {
             Spacer(Modifier.height(40.dp))
 
@@ -112,7 +113,8 @@ private fun ReportScreen(
                 text = stringResource(reportState.title),
                 style = NapzakMarketTheme.typography.title20b.copy(
                     color = NapzakMarketTheme.colors.gray500
-                ), modifier = Modifier.padding(horizontal = 20.dp)
+                ),
+                modifier = Modifier.padding(horizontal = 20.dp),
             )
 
             Spacer(Modifier.height(30.dp))
@@ -153,7 +155,7 @@ private fun ReportTopBar(
     ) {
         Box(contentAlignment = Alignment.TopStart) {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_chevron_left),
+                imageVector = ImageVector.vectorResource(ic_chevron_left),
                 contentDescription = null,
                 tint = NapzakMarketTheme.colors.gray200,
                 modifier = Modifier
@@ -177,7 +179,7 @@ private fun ReportSubmitButton(
             .padding(bottom = 20.dp, top = 6.dp),
     ) {
         NapzakButton(
-            text = stringResource(R.string.report_button_submit),
+            text = stringResource(report_button_submit),
             onClick = onClick,
             enabled = enabled,
             modifier = Modifier.fillMaxWidth(),
@@ -190,7 +192,9 @@ private fun SectionDivider(
     modifier: Modifier = Modifier,
 ) {
     HorizontalDivider(
-        thickness = 4.dp, color = NapzakMarketTheme.colors.gray10, modifier = modifier
+        thickness = 4.dp,
+        color = NapzakMarketTheme.colors.gray10,
+        modifier = modifier,
     )
 }
 
