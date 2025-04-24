@@ -14,6 +14,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -41,14 +42,16 @@ fun MyPageMenuCard(
     modifier: Modifier = Modifier,
 ) {
 
-    val menus = listOf(
-        MyPageMenu.SALES to onSalesClick,
+    val menus = remember {
+        listOf(
+                MyPageMenu.SALES to onSalesClick,
         MyPageMenu.PURCHASE to onPurchaseClick,
         MyPageMenu.RECENT to onRecentClick,
         MyPageMenu.FAVORITE to onFavoriteClick,
         MyPageMenu.SETTINGS to onSettingsClick,
         MyPageMenu.HELP to onHelpClick,
-    )
+        )
+    }
 
     val dividerColor = NapzakMarketTheme.colors.gray50
 
