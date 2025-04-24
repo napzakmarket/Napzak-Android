@@ -179,7 +179,7 @@ fun GenreSearchBottomSheet(
                         brush = Brush.verticalGradient(
                             colors = listOf(
                                 Color.Transparent,
-                                NapzakMarketTheme.colors.transWhite,
+                                NapzakMarketTheme.colors.white,
                             )
                         )
                     ),
