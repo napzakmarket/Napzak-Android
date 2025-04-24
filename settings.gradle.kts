@@ -48,4 +48,5 @@ include(
     ":feature:search",
     ":feature:registration",
     ":feature:store",
+    ":feature:detail",
 )
