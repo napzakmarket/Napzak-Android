@@ -68,7 +68,6 @@ internal fun ExploreRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val bottomSheetState by viewModel.bottomSheetState.collectAsStateWithLifecycle()
-    val searchTerm = viewModel.searchTerm.toString()
 
     LaunchedEffect(uiState) {
         viewModel.updateExploreInformation()
@@ -79,7 +78,7 @@ internal fun ExploreRoute(
     }
 
     ExploreScreen(
-        searchTerm = searchTerm,
+        searchTerm = viewModel.searchTerm,
         uiState = uiState,
         bottomSheetState = bottomSheetState,
         onDismissRequest = viewModel::updateBottomSheetVisibility,

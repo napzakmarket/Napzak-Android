@@ -27,7 +27,7 @@ import javax.inject.Inject
 internal class ExploreViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    val searchTerm: String? = savedStateHandle.get<String>(SEARCH_TERM_KEY)
+    val searchTerm: String = savedStateHandle.get<String>(SEARCH_TERM_KEY) ?: ""
 
     private val _uiState = MutableStateFlow(ExploreUiState())
     val uiState = _uiState.asStateFlow()
