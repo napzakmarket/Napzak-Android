@@ -237,7 +237,7 @@ private fun EditStoreProceedButton(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
-            .padding(bottom = 63.dp),
+            .padding(bottom = 63.dp, top = 13.dp),
     ) {
         NapzakButton(
             text = stringResource(store_edit_button_proceed),
