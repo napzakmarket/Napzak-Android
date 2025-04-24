@@ -34,7 +34,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -115,7 +114,6 @@ private fun EditStoreScreen(
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
-    val coroutineScope = rememberCoroutineScope()
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
@@ -450,6 +448,7 @@ private fun EditInterestedGenreSection(
 ) {
     val paddingValues = PaddingValues(horizontal = 20.dp)
     val contentColor = NapzakMarketTheme.colors.purple500
+
     EditStoreProfileContainer(
         title = stringResource(store_edit_title_genre),
         subtitle = stringResource(store_edit_sub_title_genre),
