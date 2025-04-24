@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
+import com.napzak.market.detail.navigation.productDetailRoute
 import com.napzak.market.dummy.navigation.dummyGraph
 import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.explore.navigation.exploreGraph
@@ -109,6 +110,15 @@ private fun MainNavHost(
             navigateToProfileEdit = { /* TODO: move to profile edit */ },
             navigateToProductDetail = { /* TODO: move to product detail */ },
             modifier = modifier,
+        )
+
+        productDetailRoute(
+            onMarketNavigate = {}, //TODO: 내마켓 화면으로 이동
+            onChatNavigate = {}, //TODO: 채팅 화면으로 이동
+            onModifyNavigate = {}, //TODO: 물품 정보 수정 화면으로 이동
+            onReportNavigate = {}, //TODO: 물품 신고 화면으로 이동
+            onNavigateUp = navigator::navigateUp,
+            modifier = modifier
         )
     }
 }
