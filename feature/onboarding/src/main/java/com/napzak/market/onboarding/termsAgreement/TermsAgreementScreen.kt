@@ -37,6 +37,7 @@ import com.napzak.market.feature.onboarding.R.string.onboarding_title
 import com.napzak.market.onboarding.termsAgreement.model.TermType
 import com.napzak.market.onboarding.termsAgreement.model.TermsAgreementUiState
 import com.napzak.market.onboarding.termsAgreement.model.getDisplayLabel
+import com.napzak.market.util.android.noRippleClickable
 import com.napzak.market.util.common.openUrl
 
 @Composable
@@ -142,7 +143,7 @@ private fun TermsAgreementTopBar(
             contentDescription = null,
             tint = Color.Unspecified,
             modifier = Modifier
-                .clickable(onClick = onBackClick)
+                .noRippleClickable(onClick = onBackClick)
                 .size(12.dp),
         )
 

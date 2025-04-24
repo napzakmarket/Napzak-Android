@@ -25,6 +25,7 @@ import com.napzak.market.designsystem.R
 import com.napzak.market.designsystem.R.drawable.ic_checked_box
 import com.napzak.market.designsystem.R.drawable.ic_unchecked_box
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.util.android.noRippleClickable
 
 
 /**
@@ -92,9 +93,9 @@ fun NapzakCheckedButton(
                     tint = NapzakMarketTheme.colors.gray300,
                     modifier = Modifier
                         .size(16.dp)
-                        .clickable(enabled = onIconClick != null) {
+                        .noRippleClickable(enabled = onIconClick != null) {
                             onIconClick?.invoke()
-                        }
+                        },
                 )
             }
         }
