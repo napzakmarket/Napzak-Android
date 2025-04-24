@@ -45,6 +45,7 @@ include(
     ":feature:home",
     ":feature:mypage",
     ":feature:explore",
+    ":feature:onboarding",
     ":feature:search",
     ":feature:report",
     ":feature:registration",
