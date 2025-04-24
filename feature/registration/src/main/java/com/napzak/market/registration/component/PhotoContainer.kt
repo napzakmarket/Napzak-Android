@@ -1,5 +1,6 @@
 package com.napzak.market.registration.component
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -32,14 +33,14 @@ import com.napzak.market.util.android.noRippleCombineClickable
  * Photo container
  *
  * @param index: 이미지 index
- * @param imageUrl: 이미지 url
+ * @param imageUri: 이미지 uri
  * @param onDeleteClick: 삭제 버튼 클릭 시 등록한 이미지 삭제
  * @param onLongClick: 길게 눌러 대표 이미지 설정
  */
 @Composable
 internal fun PhotoContainer(
     index: Int,
-    imageUrl: String,
+    imageUri: Uri,
     onDeleteClick: (Int) -> Unit,
     onLongClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -61,7 +62,7 @@ internal fun PhotoContainer(
             AsyncImage(
                 model = ImageRequest
                     .Builder(context)
-                    .data(imageUrl)
+                    .data(imageUri)
                     .crossfade(true)
                     .build(),
                 contentDescription = null,

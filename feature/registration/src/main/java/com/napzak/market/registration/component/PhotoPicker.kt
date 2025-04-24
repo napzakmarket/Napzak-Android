@@ -1,5 +1,10 @@
 package com.napzak.market.registration.component
 
+import android.net.Uri
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,7 +12,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -20,59 +24,99 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import com.napzak.market.designsystem.R.drawable.ic_cancel_image_24
 import com.napzak.market.designsystem.R.drawable.ic_import_24
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.photo_count
-import com.napzak.market.feature.registration.R.string.representative_tag
 import com.napzak.market.util.android.noRippleClickable
-import com.napzak.market.util.android.noRippleCombineClickable
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 
-private const val MAX_PHOTOS = 10
+private const val MAX_ITEMS = 10
+private const val MIN_ITEMS = 2
+private const val ZERO = 0
+private const val INPUT_TYPE = "image/*"
 
 /**
  * Registration photo picker
  *
- * @param imageUrls: 현재 이미지 URL 리스트
- * @param onPhotoClick: 클릭 시 이미지 추가 함수 호출
+ * @param imageUris: 현재 이미지 URL 리스트
  * @param onLongClick: 길게 누를 시 대표 이미지 변경을 위한 함수
  * @param onDeleteClick: 클릭 시 이미지 삭제 처리를 위한 함수
  */
 @Composable
 internal fun PhotoPicker(
-    imageUrls: List<String>,
-    onPhotoClick: () -> Unit,
+    imageUris: PersistentList<Uri>,
+    onImagesSelected: (ImmutableList<Uri>) -> Unit,
     onLongClick: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val currentImageSize = (MAX_ITEMS - imageUris.size).coerceAtLeast(MIN_ITEMS)
+
+    val imageStorageLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetMultipleContents()
+    ) { uris ->
+        onImagesSelected(uris.take(currentImageSize).map { it }.toPersistentList())
+    }
+
+    val photoPickerLauncher = when (imageUris.size) {
+        MAX_ITEMS - 1 -> rememberLauncherForActivityResult(
+            ActivityResultContracts.PickVisualMedia()
+        ) { uri ->
+            uri?.let { onImagesSelected(listOf(it).toPersistentList()) }
+        }
+
+        else -> rememberLauncherForActivityResult(
+            ActivityResultContracts.PickMultipleVisualMedia(maxItems = currentImageSize)
+        ) { uris ->
+            onImagesSelected(uris.take(currentImageSize).map { it }.toPersistentList())
+        }
+    }
+
     LazyRow(
-        modifier = modifier, // TODO: Overscroll 넣을래말래넣을래말래넣을래말래넣을래말래넣을래말래넣을래말래넣을래말래넣을래말래
+        modifier = modifier,
     ) {
         item {
             PhotoRegisterButton(
                 modifier = Modifier.padding(start = 20.dp),
-                imageCount = imageUrls.size,
-                onPhotoClick = onPhotoClick,
+                imageCount = imageUris.size,
+                onPhotoClick = {
+                    val remainImageSize = MAX_ITEMS - imageUris.size
+
+                    when {
+                        /* TODO: 최대 개수 초과 시 스낵바 처리 */
+                        remainImageSize <= ZERO -> {}
+
+                        Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ->
+                            imageStorageLauncher.launch(INPUT_TYPE)
+
+                        else -> photoPickerLauncher.launch(
+                            PickVisualMediaRequest(
+                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                            )
+                        )
+                    }
+                },
             )
+
             Spacer(modifier = Modifier.width(14.dp))
         }
+
         itemsIndexed(
-            items = imageUrls,
+            items = imageUris,
             key = { index, _ -> index },
         ) { index, url ->
-            val padEnd = if (index == imageUrls.lastIndex) 20.dp else 8.dp
+            val padEnd = if (index == imageUris.lastIndex) 20.dp else 8.dp
+
             PhotoContainer(
                 index = index,
-                imageUrl = url,
+                imageUri = url,
                 onDeleteClick = onDeleteClick,
                 onLongClick = { onLongClick(index) },
                 modifier = Modifier
@@ -102,7 +146,7 @@ private fun PhotoRegisterButton(
             .clip(RoundedCornerShape(5.dp))
             .background(NapzakMarketTheme.colors.purple100)
             .padding(top = 10.dp)
-            .noRippleClickable { if (imageCount < MAX_PHOTOS) onPhotoClick() },
+            .noRippleClickable { if (imageCount < MAX_ITEMS) onPhotoClick() },
         contentAlignment = Alignment.Center,
     ) {
         Column(
@@ -114,6 +158,7 @@ private fun PhotoRegisterButton(
                 contentDescription = null,
                 tint = Color.Unspecified,
             )
+
             Text(
                 text = stringResource(photo_count, imageCount),
                 style = NapzakMarketTheme.typography.caption10r.copy(
@@ -124,89 +169,16 @@ private fun PhotoRegisterButton(
     }
 }
 
-@Composable
-private fun RepresentativeImageTag(
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .size(width = 46.dp, height = 24.dp)
-            .clip(RoundedCornerShape(topStart = 5.dp, bottomEnd = 5.dp))
-            .background(NapzakMarketTheme.colors.transBlack),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = stringResource(representative_tag),
-            style = NapzakMarketTheme.typography.caption10r.copy(
-                color = NapzakMarketTheme.colors.white,
-            ),
-        )
-    }
-}
-
-/**
- * Photo container
- *
- * @param index: 이미지 index
- * @param imageUrl: 이미지 url
- * @param onDeleteClick: 삭제 버튼 클릭 시 등록한 이미지 삭제
- * @param onLongClick: 길게 눌러 대표 이미지 설정
- */
-@Composable
-private fun PhotoContainer(
-    index: Int,
-    imageUrl: String,
-    onDeleteClick: (Int) -> Unit,
-    onLongClick: (Int) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val context = LocalContext.current
-
-    Box(
-        modifier = modifier,
-    ) {
-        Box(
-            modifier = Modifier
-                .padding(top = 8.dp, end = 6.dp)
-                .clip(RoundedCornerShape(5.dp))
-                .background(NapzakMarketTheme.colors.gray100)
-                .width(88.dp)
-                .aspectRatio(1f)
-                .noRippleCombineClickable { onLongClick(index) },
-        ) {
-            AsyncImage(
-                model = ImageRequest
-                    .Builder(context)
-                    .data(imageUrl)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-            )
-            if (index == 0) RepresentativeImageTag()
-        }
-        Icon(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .noRippleClickable { onDeleteClick(index) },
-            imageVector = ImageVector.vectorResource(ic_cancel_image_24),
-            contentDescription = null,
-            tint = Color.Unspecified,
-        )
-    }
-}
-
 @Preview
 @Composable
 private fun RegistrationPhotoPickerPreview() {
     NapzakMarketTheme {
         Column {
             PhotoPicker(
-                imageUrls = listOf("1", "2", "3", "4", "1", "1", "4"),
-                onPhotoClick = { },
+                imageUris = persistentListOf(),
+                onImagesSelected = { },
                 onLongClick = { },
                 onDeleteClick = { },
-                modifier = Modifier
             )
         }
     }
