@@ -1,6 +1,7 @@
 package com.napzak.market.dummy.di
 
 import com.napzak.market.dummy.service.DummyService
+import com.napzak.market.remote.qualifier.DUMMY
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,5 +16,5 @@ object DummyServiceModule {
 
     @Provides
     @Singleton
-    fun provideDummyService(retrofit: Retrofit): DummyService = retrofit.create()
+    fun provideDummyService(@DUMMY retrofit: Retrofit): DummyService = retrofit.create()
 }
