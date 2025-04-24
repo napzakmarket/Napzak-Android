@@ -40,7 +40,6 @@ fun MyPageProfileSection(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(94.dp)
             .clip(RoundedCornerShape(25.dp))
             .background(NapzakMarketTheme.colors.gray10)
             .padding(horizontal = 22.dp, vertical = 16.dp),
