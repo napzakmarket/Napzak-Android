@@ -26,4 +26,13 @@
     <string name="production_item_complete">%s 완료</string>
     <string name="production_item_complete_sell">판매</string>
     <string name="production_item_complete_buy">구매</string>
+
+    <!--GenreSearchBottomSheet-->
+    <string name="genre_search_hint">어떤 장르의 굿즈인가요? 검색해보세요!</string>
+    <string name="genre_search_select_genre">장르 선택</string>
+    <string name="genre_search_genre_limit_notice">최대 7개 선택</string>
+
+    <!--AlertDialog-->
+    <string name="dialog_text_confirm">예</string>
+    <string name="dialog_text_dismiss">아니오</string>
 </resources>
