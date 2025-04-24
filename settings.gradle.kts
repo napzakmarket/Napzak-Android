@@ -42,6 +42,7 @@ include(
 include(
     "feature:main",
     "feature:dummy",
+    ":feature:mypage",
     "feature:home",
     ":feature:explore",
     ":feature:search",
