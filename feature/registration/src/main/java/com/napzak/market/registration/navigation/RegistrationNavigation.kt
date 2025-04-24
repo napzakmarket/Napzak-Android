@@ -20,13 +20,13 @@ fun NavGraphBuilder.registrationGraph(
 ) {
     composable<SaleRegistration> {
         PurchaseRegistrationRoute(
-            onCloseClick = navigateUp,
+            navigateToUp = navigateUp,
             modifier = modifier,
         )
     }
     composable<PurchaseRegistration> {
         SaleRegistrationRoute(
-            onCloseClick = navigateUp,
+            navigateToUp = navigateUp,
             modifier = modifier,
         )
     }
