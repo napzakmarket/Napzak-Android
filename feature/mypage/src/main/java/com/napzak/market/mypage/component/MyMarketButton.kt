@@ -25,9 +25,12 @@ import com.napzak.market.feature.mypage.R.string.mypage_my_market
 import com.napzak.market.util.android.noRippleClickable
 
 @Composable
-fun MyMarketButton(onClick: () -> Unit) {
+internal fun MyMarketButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(14.dp))
             .background(NapzakMarketTheme.colors.gray10)
