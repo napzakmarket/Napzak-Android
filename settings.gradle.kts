@@ -45,5 +45,7 @@ include(
     "feature:home",
     ":feature:explore",
     ":feature:search",
+    ":feature:registration",
+    ":feature:store",
     ":feature:detail",
 )
