@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -55,6 +56,7 @@ import kotlinx.coroutines.launch
  * @param onDismissRequest x 버튼 또는 BottomSheet 외의 영역 클릭 시 실행됨
  * @param onTextChange 검색어 입력 시 실행됨
  * @param onButtonClick 적용하기 버튼 클릭 시 실행됨
+ * @param sheetState 바텀시트 상태 값 (default값 사용 권장)
  */
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,8 +67,8 @@ fun GenreSearchBottomSheet(
     onDismissRequest: () -> Unit,
     onTextChange: (String) -> Unit,
     onButtonClick: (List<Genre>) -> Unit,
+    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
     var searchText by remember { mutableStateOf("") }
