@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -53,7 +52,6 @@ import kotlinx.coroutines.launch
  *
  * @param initialSelectedGenreList 선택한 장르 리스트
  * @param genreItems 하단에 보여지는 장르 리스트
- * @param sheetState BottomSheet 상태
  * @param onDismissRequest x 버튼 또는 BottomSheet 외의 영역 클릭 시 실행됨
  * @param onTextChange 검색어 입력 시 실행됨
  * @param onButtonClick 적용하기 버튼 클릭 시 실행됨
@@ -64,11 +62,12 @@ import kotlinx.coroutines.launch
 fun GenreSearchBottomSheet(
     initialSelectedGenreList: List<Genre>,
     genreItems: List<Genre>,
-    sheetState: SheetState,
     onDismissRequest: () -> Unit,
     onTextChange: (String) -> Unit,
     onButtonClick: (List<Genre>) -> Unit,
 ) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
     var searchText by remember { mutableStateOf("") }
     var selectedGenreList by remember {
@@ -109,8 +108,10 @@ fun GenreSearchBottomSheet(
                         tint = Color.Unspecified,
                         modifier = Modifier
                             .noRippleClickable {
-                                onDismissRequest()
-                                focusManager.clearFocus()
+                                coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
+                                    focusManager.clearFocus()
+                                    onDismissRequest()
+                                }
                             }
                             .padding(end = 18.dp),
                     )
@@ -185,7 +186,13 @@ fun GenreSearchBottomSheet(
             )
 
             ButtonSection(
-                onButtonClick = { onButtonClick(selectedGenreList) }
+                onButtonClick = {
+                    coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
+                        focusManager.clearFocus()
+                        onDismissRequest()
+                        onButtonClick(selectedGenreList)
+                    }
+                }
             )
         }
     }
@@ -273,11 +280,6 @@ private fun ButtonSection(
 @Preview
 @Composable
 private fun GenreSearchBottomSheetPreview() {
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
-    val coroutineScope = rememberCoroutineScope()
-
     NapzakMarketTheme {
         GenreSearchBottomSheet(
             initialSelectedGenreList = listOf(
@@ -285,7 +287,6 @@ private fun GenreSearchBottomSheetPreview() {
                 Genre(1, "주술회전"),
                 Genre(2, "진격의 거인"),
             ),
-            sheetState = sheetState,
             genreItems = listOf(
                 Genre(0, "산리오"),
                 Genre(1, "주술회전"),
@@ -299,9 +300,7 @@ private fun GenreSearchBottomSheetPreview() {
                 Genre(9, "산리오3"),
                 Genre(10, "주술회전3"),
             ),
-            onDismissRequest = {
-                coroutineScope.launch { sheetState.hide() }
-            },
+            onDismissRequest = { },
             onTextChange = { },
             onButtonClick = { },
         )
