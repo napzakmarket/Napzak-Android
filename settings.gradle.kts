@@ -42,4 +42,10 @@ include(
 include(
     "feature:main",
     "feature:dummy",
+    "feature:home",
+    ":feature:explore",
+    ":feature:search",
+    ":feature:registration",
+    ":feature:store",
+    ":feature:detail",
 )
