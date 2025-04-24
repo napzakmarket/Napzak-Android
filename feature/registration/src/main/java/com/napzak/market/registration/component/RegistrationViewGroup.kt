@@ -41,7 +41,7 @@ internal fun RegistrationViewGroup(
     onPhotoPress: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
     productGenre: String,
-    onGenreSelect: () -> Unit,
+    onGenreSelect: (String) -> Unit,
     productName: String,
     onProductNameChange: (String) -> Unit,
     productDescription: String,
