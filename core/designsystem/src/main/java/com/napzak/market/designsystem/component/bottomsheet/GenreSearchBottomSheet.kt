@@ -38,7 +38,9 @@ import com.napzak.market.designsystem.R.drawable.ic_x_button_24
 import com.napzak.market.designsystem.R.string.genre_search_hint
 import com.napzak.market.designsystem.R.string.genre_search_select_genre
 import com.napzak.market.designsystem.R.string.genre_search_genre_limit_notice
+import com.napzak.market.designsystem.R.string.genre_apply_button
 import com.napzak.market.designsystem.component.GenreChipButtonGroup
+import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.util.android.noRippleClickable
@@ -238,10 +240,12 @@ private fun ButtonSection(
             .fillMaxWidth()
             .padding(horizontal = 20.dp),
     ) {
-        // TODO: 추후 버튼 컴포넌트로 변경 예정
-        Text(
-            text = "버튼",
-            modifier = Modifier.noRippleClickable(onButtonClick),
+        NapzakButton(
+            text = stringResource(genre_apply_button),
+            onClick = onButtonClick,
+            enabled = true,
+            modifier = Modifier
+                .fillMaxWidth(),
         )
 
         Spacer(Modifier.height(64.dp))
