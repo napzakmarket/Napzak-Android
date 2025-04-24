@@ -1,4 +1,3 @@
-import com.napzak.market.buildlogic.dsl.implementation
 import com.napzak.market.buildlogic.dsl.setNameSpace
 
 plugins {
@@ -13,6 +12,11 @@ android {
 
 dependencies {
     implementation(projects.feature.dummy)
+    implementation(projects.feature.home)
+    implementation(projects.feature.explore)
+    implementation(projects.feature.search)
+    implementation(projects.feature.store)
+    implementation(projects.feature.detail)
 
     implementation(projects.core.designsystem)
     implementation(projects.core.common)

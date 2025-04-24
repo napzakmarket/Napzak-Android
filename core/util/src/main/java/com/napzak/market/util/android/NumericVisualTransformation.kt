@@ -29,3 +29,5 @@ fun priceSeparatorTransformation(): VisualTransformation {
 fun String.priceToNumericTransformation(): Int {
     return this.replace(",", "").toIntOrNull() ?: 0
 }
+
+fun String.addPrice(amount: Int): String = (this.priceToNumericTransformation() + amount).toString()

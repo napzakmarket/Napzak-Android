@@ -43,4 +43,10 @@ include(
     "feature:main",
     "feature:dummy",
     ":feature:mypage",
+    "feature:home",
+    ":feature:explore",
+    ":feature:search",
+    ":feature:registration",
+    ":feature:store",
+    ":feature:detail",
 )
