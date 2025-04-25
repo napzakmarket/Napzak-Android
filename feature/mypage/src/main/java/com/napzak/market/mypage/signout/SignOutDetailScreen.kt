@@ -57,6 +57,7 @@ internal fun SignOutDetailScreen(
             SignOutDetailBottomBar(
                 onProceedClick = { onProceedClick(inputText) },
                 onSkipClick = { onProceedClick("") },
+                isProceedEnabled = inputText.isNotBlank()
             )
         },
         containerColor = NapzakMarketTheme.colors.white,
@@ -108,6 +109,7 @@ internal fun SignOutDetailScreen(
 
 @Composable
 private fun SignOutDetailBottomBar(
+    isProceedEnabled: Boolean,
     onProceedClick: () -> Unit,
     onSkipClick: () -> Unit,
 ) {
@@ -120,6 +122,7 @@ private fun SignOutDetailBottomBar(
         NapzakButton(
             text = stringResource(sign_out_button_proceed),
             onClick = onProceedClick,
+            enabled = isProceedEnabled
         )
 
         Spacer(Modifier.height(16.dp))
