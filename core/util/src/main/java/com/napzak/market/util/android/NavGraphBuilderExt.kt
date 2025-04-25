@@ -18,7 +18,7 @@ import androidx.navigation.compose.navigation
 inline fun <reified T : Any, reified R : Any> NavGraphBuilder.horizontalSlideNavigation(
     startDestination: R,
     screens: List<R>,
-    noinline builder: NavGraphBuilder.() -> Unit
+    noinline builder: NavGraphBuilder.() -> Unit,
 ) {
     val navigationSpec = tween<IntOffset>(durationMillis = 200)
 
@@ -43,7 +43,7 @@ inline fun <reified T : Any, reified R : Any> NavGraphBuilder.horizontalSlideNav
 inline fun <reified T : Any> animationDirection(
     screens: List<T>,
     initialState: NavBackStackEntry,
-    targetState: NavBackStackEntry
+    targetState: NavBackStackEntry,
 ) =
     if (initialState.screenOrder(screens) < targetState.screenOrder(screens)) {
         AnimatedContentTransitionScope.SlideDirection.Left

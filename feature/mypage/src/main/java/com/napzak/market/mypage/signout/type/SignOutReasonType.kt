@@ -10,5 +10,5 @@ enum class SignOutReasonType(
     NEW_MARKET("새 마켓(계정)을 만들고 싶어요"),
     PRIVACY("개인정보 보호가 걱정돼요"),
     NO_LONGER_ACTIVE("더 이상 덕질 활동을 하지 않아요"),
-    OTHER("다른 이유가 있어요"),
+    OTHER("다른 이유가 있어요");
 }

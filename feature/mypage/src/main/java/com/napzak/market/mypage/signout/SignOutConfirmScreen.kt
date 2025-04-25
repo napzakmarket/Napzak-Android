@@ -68,15 +68,13 @@ internal fun SignOutConfirmScreen(
             )
         },
         containerColor = NapzakMarketTheme.colors.white,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .verticalScroll(
-                    state = innerScreenScrollState
-                ),
+                .verticalScroll(state = innerScreenScrollState),
         ) {
             Spacer(Modifier.height(40.dp))
             Text(
@@ -98,7 +96,7 @@ internal fun SignOutConfirmScreen(
     }
 
     AnimatedVisibility(
-        visible = isSignOutDialogVisible
+        visible = isSignOutDialogVisible,
     ) {
         NapzakDialog(
             title = stringResource(sign_out_dialog_title),
@@ -124,9 +122,7 @@ private fun SignOutConfirmBottomBar(
     ) {
         val buttonModifier = Modifier
             .weight(1f)
-            .defaultMinSize(
-                minHeight = 50.dp
-            )
+            .defaultMinSize(minHeight = 50.dp)
 
         Button(
             onClick = onDismissClick,
@@ -139,7 +135,7 @@ private fun SignOutConfirmBottomBar(
         ) {
             Text(
                 text = stringResource(sign_out_confirm_button_dismiss),
-                style = NapzakMarketTheme.typography.caption12m
+                style = NapzakMarketTheme.typography.caption12m,
             )
         }
 
@@ -154,7 +150,7 @@ private fun SignOutConfirmBottomBar(
         ) {
             Text(
                 text = stringResource(sign_out_confirm_button_confirm),
-                style = NapzakMarketTheme.typography.caption12m
+                style = NapzakMarketTheme.typography.caption12m,
             )
         }
     }

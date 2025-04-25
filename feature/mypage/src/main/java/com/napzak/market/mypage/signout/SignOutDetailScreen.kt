@@ -57,7 +57,7 @@ internal fun SignOutDetailScreen(
             SignOutDetailBottomBar(
                 onProceedClick = { onProceedClick(inputText) },
                 onSkipClick = { onProceedClick("") },
-                isProceedEnabled = inputText.isNotBlank()
+                isProceedEnabled = inputText.isNotBlank(),
             )
         },
         containerColor = NapzakMarketTheme.colors.white,
@@ -85,9 +85,7 @@ internal fun SignOutDetailScreen(
                     .clip(RoundedCornerShape(10.dp))
                     .background(NapzakMarketTheme.colors.gray50)
                     .padding(12.dp)
-                    .noRippleClickable {
-                        focusRequester.requestFocus()
-                    },
+                    .noRippleClickable(focusRequester::requestFocus),
             ) {
                 NapzakDefaultTextField(
                     text = inputText,
@@ -100,7 +98,7 @@ internal fun SignOutDetailScreen(
                     isSingleLined = false,
                     verticalAlignment = Alignment.Top,
                     contentAlignment = Alignment.TopStart,
-                    modifier = Modifier.focusRequester(focusRequester)
+                    modifier = Modifier.focusRequester(focusRequester),
                 )
             }
         }
@@ -122,7 +120,7 @@ private fun SignOutDetailBottomBar(
         NapzakButton(
             text = stringResource(sign_out_button_proceed),
             onClick = onProceedClick,
-            enabled = isProceedEnabled
+            enabled = isProceedEnabled,
         )
 
         Spacer(Modifier.height(16.dp))

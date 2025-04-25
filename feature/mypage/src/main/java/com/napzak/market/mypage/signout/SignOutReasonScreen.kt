@@ -69,15 +69,13 @@ internal fun SignOutReasonScreen(
             }
         },
         containerColor = NapzakMarketTheme.colors.white,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .verticalScroll(
-                    state = innerScreenScrollState
-                ),
+                .verticalScroll(state = innerScreenScrollState),
         ) {
             Spacer(Modifier.height(40.dp))
             Text(

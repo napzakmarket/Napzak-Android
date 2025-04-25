@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
 
 fun NavHostController.navigateToSignOut(
     storeId: Long,
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) = navigate(route = SignOut(storeId), navOptions = navOptions)
 
 fun NavHostController.popSignOut() = popBackStack(SignOutReason, inclusive = true)
@@ -70,9 +70,7 @@ fun NavGraphBuilder.signOutGraph(
 }
 
 @Serializable
-data class SignOut(
-    val storeId: Long
-) : Route
+data class SignOut(val storeId: Long) : Route
 
 @Serializable
 private data object SignOutReason : Route

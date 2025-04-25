@@ -49,7 +49,7 @@ fun NapzakSpinner(
     initialOption: String,
     onOptionSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
-    color: TextFieldColors = spinnerDefaultColor()
+    color: TextFieldColors = spinnerDefaultColor(),
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by rememberSaveable { mutableStateOf(initialOption) }
@@ -110,7 +110,7 @@ private fun DropdownMenuItem(
     text: String,
     isSelected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val colorScheme = NapzakMarketTheme.colors
     val color = if (isSelected) colorScheme.purple500 else colorScheme.gray300
@@ -150,7 +150,7 @@ private fun NapzakSpinnerPreview() {
             onOptionSelect = { },
             modifier = Modifier
                 .padding(20.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
         )
     }
 }

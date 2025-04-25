@@ -10,7 +10,7 @@ import androidx.navigation.NavHostController
 /** 공용 뷰모델을 불러오기 위한 함수입니다.*/
 @Composable
 inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
-    navController: NavHostController
+    navController: NavHostController,
 ): T {
     val navGraphRoute = destination.parent?.route ?: return hiltViewModel()
     val parentEntry = remember(this) {
