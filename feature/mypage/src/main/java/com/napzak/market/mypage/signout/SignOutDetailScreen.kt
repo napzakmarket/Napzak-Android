@@ -1,6 +1,7 @@
 package com.napzak.market.mypage.signout
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -72,24 +73,27 @@ internal fun SignOutDetailScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            NapzakDefaultTextField(
-                text = inputText,
-                onTextChange = { inputText = it },
-                hint = stringResource(sign_out_detail_hint),
-                textStyle = NapzakMarketTheme.typography.caption12r,
-                textColor = NapzakMarketTheme.colors.gray500,
-                hintTextStyle = NapzakMarketTheme.typography.caption12r,
-                hintTextColor = NapzakMarketTheme.colors.gray200,
-                isSingleLined = false,
-                verticalAlignment = Alignment.Top,
-                contentAlignment = Alignment.TopStart,
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(0.77f)
                     .clip(RoundedCornerShape(10.dp))
                     .background(NapzakMarketTheme.colors.gray50)
                     .padding(12.dp),
-            )
+            ) {
+                NapzakDefaultTextField(
+                    text = inputText,
+                    onTextChange = { inputText = it },
+                    hint = stringResource(sign_out_detail_hint),
+                    textStyle = NapzakMarketTheme.typography.caption12r,
+                    textColor = NapzakMarketTheme.colors.gray500,
+                    hintTextStyle = NapzakMarketTheme.typography.caption12r,
+                    hintTextColor = NapzakMarketTheme.colors.gray200,
+                    isSingleLined = false,
+                    verticalAlignment = Alignment.Top,
+                    contentAlignment = Alignment.TopStart,
+                )
+            }
         }
     }
 }
