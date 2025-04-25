@@ -15,11 +15,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.component.button.NapzakButton
@@ -41,6 +44,7 @@ internal fun SignOutDetailScreen(
     modifier: Modifier = Modifier,
 ) {
     var inputText by rememberSaveable { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
 
     Scaffold(
         topBar = {
@@ -79,7 +83,10 @@ internal fun SignOutDetailScreen(
                     .aspectRatio(0.77f)
                     .clip(RoundedCornerShape(10.dp))
                     .background(NapzakMarketTheme.colors.gray50)
-                    .padding(12.dp),
+                    .padding(12.dp)
+                    .noRippleClickable {
+                        focusRequester.requestFocus()
+                    },
             ) {
                 NapzakDefaultTextField(
                     text = inputText,
@@ -92,6 +99,7 @@ internal fun SignOutDetailScreen(
                     isSingleLined = false,
                     verticalAlignment = Alignment.Top,
                     contentAlignment = Alignment.TopStart,
+                    modifier = Modifier.focusRequester(focusRequester)
                 )
             }
         }
