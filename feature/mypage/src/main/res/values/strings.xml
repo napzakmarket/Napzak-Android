@@ -14,4 +14,29 @@
     <string name="mypage_settings">설정</string>
     <string name="mypage_help_center">고객센터</string>
     <string name="mypage_header_title">Napzak(Logo)</string>
+
+    <!--SignOutScreen-->
+    <string name="sign_out_top_bar">탈퇴하기</string>
+    <string name="sign_out_button_proceed">제출하기</string>
+    <string name="sign_out_button_skip">건너뛰기</string>
+    <string name="sign_out_reason_title">정말 떠나시나요?</string>
+    <string name="sign_out_reason_description">
+        탈퇴하시면 찜해둔 굿즈 목록과 거래 내역, 프로필 정보 및 채팅 기록, 받은 리뷰와 작성한 리뷰 등 모든 활동 정보가 삭제되어 복구할 수 없어요.
+        \n\n쉬어가고 싶으시다면,
+        \n앱을 잠시 사용하지 않는 방법도 있어요.
+    </string>
+    <string name="sign_out_reason_spinner_title">어떤 이유로 떠나고 싶으신가요?</string>
+    <string name="sign_out_reason_spinner_description">
+        그래도 탈퇴를 원하신다면,
+        \n납작마켓이 더 나은 거래 공간이 될 수 있도록
+        \n그 이유를 알려주세요 🥹
+    </string>
+
+    <string name="sign_out_detail_title">더 자세한 이야기가 궁금해요</string>
+    <string name="sign_out_detail_hint">
+        어떤 점이 불편하셨는지 솔직히 알려주시면 큰 도움이 됩니다.
+        \n소중한 의견을 바탕으로 더 나은 거래 공간을 만들겠습니다!
+    </string>
+
+
 </resources>
