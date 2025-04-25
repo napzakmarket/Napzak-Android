@@ -1,5 +1,6 @@
 package com.napzak.market.mypage.signout
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,28 +18,41 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.component.topbar.NavigateUpTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.sign_out_confirm_button_confirm
 import com.napzak.market.feature.mypage.R.string.sign_out_confirm_button_dismiss
 import com.napzak.market.feature.mypage.R.string.sign_out_confirm_description
 import com.napzak.market.feature.mypage.R.string.sign_out_confirm_title
+import com.napzak.market.feature.mypage.R.string.sign_out_dialog_title
 import com.napzak.market.feature.mypage.R.string.sign_out_top_bar
 import com.napzak.market.util.android.ScreenPreview
 
 @Composable
 internal fun SignOutConfirmScreen(
-    onDismissClick: () -> Unit,
+    onCancelClick: () -> Unit,
     onConfirmClick: () -> Unit,
     onNavigateUpClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val innerScreenScrollState = rememberScrollState()
-    val paddingModifier = Modifier.padding(horizontal = 20.dp)
+    var isSignOutDialogVisible by rememberSaveable { mutableStateOf(false) }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            isSignOutDialogVisible = false
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -49,11 +63,9 @@ internal fun SignOutConfirmScreen(
         },
         bottomBar = {
             SignOutConfirmBottomBar(
-                onConfirmClick = onConfirmClick,
-                onDismissClick = onDismissClick,
+                onConfirmClick = { isSignOutDialogVisible = true },
+                onDismissClick = onCancelClick,
             )
-
-
         },
         containerColor = NapzakMarketTheme.colors.white,
         modifier = modifier.fillMaxSize()
@@ -83,6 +95,16 @@ internal fun SignOutConfirmScreen(
                 modifier = Modifier.padding(horizontal = 20.dp),
             )
         }
+    }
+
+    AnimatedVisibility(
+        visible = isSignOutDialogVisible
+    ) {
+        NapzakDialog(
+            title = stringResource(sign_out_dialog_title),
+            onConfirmClick = { onConfirmClick() },
+            onDismissClick = { isSignOutDialogVisible = false },
+        )
     }
 }
 
@@ -143,7 +165,7 @@ private fun SignOutConfirmBottomBar(
 private fun SignOutReasonScreenPreview() {
     NapzakMarketTheme {
         SignOutConfirmScreen(
-            onDismissClick = {},
+            onCancelClick = {},
             onConfirmClick = {},
             onNavigateUpClick = {},
         )

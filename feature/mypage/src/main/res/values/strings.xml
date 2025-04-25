@@ -52,5 +52,7 @@
     <string name="sign_out_confirm_button_confirm">탈퇴하기</string>
     <string name="sign_out_confirm_button_dismiss">취소하기</string>
 
+    <string name="sign_out_dialog_title">정말 탈퇴하시겠어요?</string>
+
 
 </resources>
