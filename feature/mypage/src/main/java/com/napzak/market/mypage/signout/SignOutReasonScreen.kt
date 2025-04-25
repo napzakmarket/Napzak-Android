@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.component.button.NapzakButton
-import com.napzak.market.designsystem.component.dropdown.NapzakSpinner
+import com.napzak.market.designsystem.component.spinner.NapzakSpinner
 import com.napzak.market.designsystem.component.topbar.NavigateUpTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.sign_out_button_proceed

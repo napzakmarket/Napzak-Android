@@ -1,4 +1,4 @@
-package com.napzak.market.designsystem.component.dropdown
+package com.napzak.market.designsystem.component.spinner
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -96,6 +96,7 @@ fun NapzakSpinner(
                         onClick = {
                             selectedOption = menu
                             onOptionSelect(menu)
+                            expanded = false
                         },
                     )
                 }
