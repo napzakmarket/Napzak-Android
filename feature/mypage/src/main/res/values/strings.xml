@@ -38,5 +38,19 @@
         \n소중한 의견을 바탕으로 더 나은 거래 공간을 만들겠습니다!
     </string>
 
+    <string name="sign_out_confirm_title">탈퇴 전 꼭 확인해주세요!</string>
+    <string name="sign_out_confirm_description">
+        탈퇴 시, 유저님의 개인정보는 모두 삭제되며 복구가 불가능합니다.\n\n
+        • 프로필 정보 및 계정 설정, 찜한 상품 및 최근 본 상품 목록,\n
+        모든 채팅 내역 및 거래 기록, 등록한 상품 및 구매/판매 내역,\n
+        받은 리뷰 및 작성한 리뷰 등\n\n
+        탈퇴 후 동일한 계정으로 재가입하셔도\n
+        이전 데이터는 복구되지 않습니다.\n\n
+        현재 진행 중인 거래가 있다면,\n
+        반드시 완료하거나 상대방과 협의 후 취소할 것을 권장합니다.
+    </string>
+    <string name="sign_out_confirm_button_confirm">탈퇴하기</string>
+    <string name="sign_out_confirm_button_dismiss">취소하기</string>
+
 
 </resources>
