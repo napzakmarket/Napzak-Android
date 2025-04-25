@@ -12,6 +12,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +45,10 @@ internal fun SignOutReasonScreen(
     val innerScreenScrollState = rememberScrollState()
     val signOutReasons = remember { SignOutReasonType.entries.map { it.reason } }
     val paddingModifier = Modifier.padding(horizontal = 20.dp)
+
+    LaunchedEffect(Unit) {
+        onReasonSelect(signOutReasons.first())
+    }
 
     Scaffold(
         topBar = {
