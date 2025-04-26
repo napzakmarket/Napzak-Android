@@ -48,8 +48,14 @@ fun MainScreen(
         ) {
             MainRegisterDialog(
                 visibility = navigator.isRegister,
-                onSellRegisterClick = navigator.navController::navigateToSaleRegistration,
-                onBuyRegisterClick = navigator.navController::navigateToPurchaseRegistration,
+                onSellRegisterClick = {
+                    navigator.navController.navigateToSaleRegistration()
+                    navigator.dismissRegisterDialog()
+                },
+                onBuyRegisterClick = {
+                    navigator.navController.navigateToPurchaseRegistration()
+                    navigator.dismissRegisterDialog()
+                },
                 onDismissRequest = navigator::dismissRegisterDialog,
                 modifier = Modifier.zIndex(1f),
             )
