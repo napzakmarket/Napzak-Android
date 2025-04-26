@@ -45,6 +45,8 @@ fun SearchTextField(
     onResetClick: () -> Unit,
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
 ) {
     Box(
         modifier = modifier,
@@ -60,6 +62,8 @@ fun SearchTextField(
                 .clip(RoundedCornerShape(14.dp))
                 .background(NapzakMarketTheme.colors.gray50)
                 .padding(16.dp, 13.dp, 0.dp, 13.dp),
+            enabled = enabled,
+            readOnly = readOnly,
             keyboardActions = KeyboardActions(
                 onSearch = { onSearchClick() },
             ),
@@ -73,7 +77,7 @@ fun SearchTextField(
                         .padding(start = 10.dp, end = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    if (text.isNotEmpty()) {
+                    if (text.isNotEmpty() && !readOnly) {
                         Icon(
                             imageVector = ImageVector.vectorResource(ic_cancel_search_12),
                             contentDescription = null,

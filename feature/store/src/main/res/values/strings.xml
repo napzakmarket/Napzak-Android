@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="back_button_description">뒤로 가기 버튼</string>
+
+    <string name="store_genre">장르</string>
+    <string name="store_ellipsis">%s…</string>
+    <string name="store_genre_extra_count">%s 외 %d</string>
+    <string name="store_empty_text"></string>
+
+    <string name="store_filter_selling">판매중</string>
+    <string name="store_filter_buying">구매중</string>
+    <string name="store_product">상품</string>
+    <string name="store_count">%d개</string>
+    <string name="store_edit_profile">프로필 편집</string>
+
+    <string name="store_report">마켓 신고하기</string>
+
+    <string name="store_edit_title_name">마켓 이름</string>
+    <string name="store_edit_sub_title_name">띄어쓰기 없이 한글, 영문, 숫자만 사용할 수 있어요 (최대 20자)</string>
+    <string name="store_edit_title_introduction">마켓 소개</string>
+    <string name="store_edit_sub_title_introduction">어떤 장르를 좋아하고, 판매하는지! 덕후력을 뽐내는 소개를 작성해주세요</string>
+    <string name="store_edit_title_genre">관심 장르</string>
+    <string name="store_edit_sub_title_genre">최대 7개 선택 가능</string>
+
+    <string name="store_edit_hint_name">이름을 입력해주세요</string>
+    <string name="store_edit_button_name_check">이름확인</string>
+    <string name="store_edit_hint_introduction">어떤 장르를 좋아하고, 판매하는지!\n덕후력을 뽐내는 소개를 작성해주세요</string>
+    <string name="store_edit_button_genre">관심 장르 설정</string>
+    <string name="store_edit_button_proceed">확인</string>
+</resources>
