@@ -15,18 +15,22 @@ fun NavController.navigateToSaleRegistration(navOptions: NavOptions? = null) = n
 fun NavController.navigateToPurchaseRegistration(navOptions: NavOptions? = null) = navigate(PurchaseRegistration, navOptions)
 
 fun NavGraphBuilder.registrationGraph(
-    navigateUp: () -> Unit,
+    navigateToUp: () -> Unit,
+    navigateToDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<SaleRegistration> {
-        PurchaseRegistrationRoute(
-            navigateToUp = navigateUp,
+        SaleRegistrationRoute(
+            navigateToUp = navigateToUp,
+            navigateToDetail = navigateToDetail,
             modifier = modifier,
         )
     }
+
     composable<PurchaseRegistration> {
-        SaleRegistrationRoute(
-            navigateToUp = navigateUp,
+        PurchaseRegistrationRoute(
+            navigateToUp = navigateToUp,
+            navigateToDetail = navigateToDetail,
             modifier = modifier,
         )
     }

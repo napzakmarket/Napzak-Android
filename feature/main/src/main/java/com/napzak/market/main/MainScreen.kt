@@ -132,7 +132,8 @@ private fun MainNavHost(
         )
 
         registrationGraph(
-            navigateUp = navigator::navigateUp,
+            navigateToUp = navigator::navigateUp,
+            navigateToDetail = {}, // TODO: 물품 상세 화면으로 이동
             modifier = modifier,
         )
     }
