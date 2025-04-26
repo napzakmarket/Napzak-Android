@@ -30,19 +30,31 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_arrow_left_9
 import com.napzak.market.designsystem.R.drawable.ic_arrow_right_9
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.feature.mypage.R.string.settings_topbar_back_button_description
+import com.napzak.market.feature.mypage.R.string.settings_topbar_title
+import com.napzak.market.feature.mypage.R.string.settings_section_service_info_title
+import com.napzak.market.feature.mypage.R.string.settings_item_notice_title
+import com.napzak.market.feature.mypage.R.string.settings_item_terms_of_use_title
+import com.napzak.market.feature.mypage.R.string.settings_item_privacy_policy_title
+import com.napzak.market.feature.mypage.R.string.settings_item_version_info_title
+import com.napzak.market.feature.mypage.R.string.settings_button_logout
+import com.napzak.market.feature.mypage.R.string.settings_button_withdraw
+
 
 @Composable
 private fun SettingsTopBar(
     onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(NapzakMarketTheme.colors.white),
     ) {
@@ -58,7 +70,7 @@ private fun SettingsTopBar(
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(ic_arrow_left_9),
-                    contentDescription = "뒤로가기",
+                    contentDescription = stringResource(id = settings_topbar_back_button_description),
                     tint = Color.Unspecified,
                 )
             }
@@ -66,7 +78,7 @@ private fun SettingsTopBar(
             Spacer(modifier = Modifier.width(4.dp))
 
             Text(
-                text = "설정",
+                text = stringResource(id = settings_topbar_title),
                 style = NapzakMarketTheme.typography.body16b,
                 color = NapzakMarketTheme.colors.gray400,
             )
@@ -118,26 +130,26 @@ private fun SettingsScreen(
                 Spacer(modifier = Modifier.height(28.dp))
 
                 Text(
-                    text = "서비스 정보",
+                    text = stringResource(id = settings_section_service_info_title),
                     style = NapzakMarketTheme.typography.body14r,
                     color = NapzakMarketTheme.colors.gray400,
                 )
 
                 Spacer(modifier = Modifier.height(28.dp))
 
-                SettingItem("공지사항", onClick = onNoticeClick)
+                SettingItem(stringResource(id = settings_item_notice_title), onClick = onNoticeClick)
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                SettingItem("이용약관", onClick = onTermsClick)
+                SettingItem(stringResource(id = settings_item_terms_of_use_title), onClick = onTermsClick)
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                SettingItem("개인정보 처리방침", onClick = onPrivacyClick)
+                SettingItem(stringResource(id = settings_item_privacy_policy_title), onClick = onPrivacyClick)
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                SettingItem("버전 정보", onClick = onVersionClick)
+                SettingItem(stringResource(id = settings_item_version_info_title), onClick = onVersionClick)
 
             }
 
@@ -157,7 +169,7 @@ private fun SettingsScreen(
 
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                 Text(
-                    text = "로그아웃",
+                    text = stringResource(id = settings_button_logout),
                     style = NapzakMarketTheme.typography.body16b,
                     color = NapzakMarketTheme.colors.purple500,
                     modifier = Modifier
@@ -171,7 +183,6 @@ private fun SettingsScreen(
                 )
             }
 
-            // 🔸 다이얼로그 띄우기
             if (showLogoutDialog) {
                 LogoutDialog(
                     onConfirm = {
@@ -200,7 +211,7 @@ private fun SettingsScreen(
 
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                 Text(
-                    text = "탈퇴하기",
+                    text = stringResource(id = settings_button_withdraw),
                     style = NapzakMarketTheme.typography.body16b,
                     color = NapzakMarketTheme.colors.red,
                     modifier = Modifier

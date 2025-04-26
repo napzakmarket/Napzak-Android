@@ -16,22 +16,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_title
+import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_confirm_button
+import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_cancel_button
 
 @Composable
 internal fun LogoutDialog(
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Dialog(onDismissRequest = onDismiss) {
-        // 뒷배경 + 중앙 정렬
         Box(
-            modifier = Modifier
+            modifier = modifier
         ) {
-            // 다이얼로그 박스
             Box(
                 modifier = Modifier
                     .width(285.dp)
@@ -42,7 +45,6 @@ internal fun LogoutDialog(
                     )
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    // 제목
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -50,13 +52,12 @@ internal fun LogoutDialog(
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
-                            text = "로그아웃 하시겠어요?",
+                            text = stringResource(id = settings_logout_dialog_title),
                             style = NapzakMarketTheme.typography.title18b,
                             color = NapzakMarketTheme.colors.purple500,
                         )
                     }
 
-                    // 가로 구분선
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -64,7 +65,6 @@ internal fun LogoutDialog(
                             .background(NapzakMarketTheme.colors.gray200),
                     )
 
-                    // 버튼 영역
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -77,14 +77,13 @@ internal fun LogoutDialog(
                                 colors = ButtonDefaults.buttonColors(containerColor = NapzakMarketTheme.colors.white),
                             ) {
                                 Text(
-                                    text = "예",
+                                    text = stringResource(id = settings_logout_dialog_confirm_button),
                                     style = NapzakMarketTheme.typography.body14sb,
                                     color = NapzakMarketTheme.colors.gray300,
                                 )
                             }
                         }
 
-                        // 세로 구분선
                         Box(
                             modifier = Modifier
                                 .width(1.dp)
@@ -99,7 +98,7 @@ internal fun LogoutDialog(
                                 colors = ButtonDefaults.buttonColors(containerColor = NapzakMarketTheme.colors.white),
                             ) {
                                 Text(
-                                    text = "아니요",
+                                    text = stringResource(id = settings_logout_dialog_cancel_button),
                                     style = NapzakMarketTheme.typography.body14sb,
                                     color = NapzakMarketTheme.colors.gray300,
                                 )
