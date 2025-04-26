@@ -64,8 +64,8 @@ fun PurchaseRegistrationRoute(
     }
 
     PurchaseRegistrationScreen(
-        onCloseClick = navigateToUp,
         uiState = uiState,
+        onCloseClick = navigateToUp,
         onImageSelect = viewModel::updatePhotos,
         onPhotoPress = viewModel::updateRepresentPhoto,
         onDeleteClick = viewModel::deletePhoto,
@@ -83,8 +83,8 @@ fun PurchaseRegistrationRoute(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PurchaseRegistrationScreen(
-    onCloseClick: () -> Unit,
     uiState: PurchaseUiState,
+    onCloseClick: () -> Unit,
     onImageSelect: (ImmutableList<Uri>) -> Unit,
     onPhotoPress: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
@@ -190,17 +190,17 @@ private fun PurchaseRegistrationScreenPreview() {
     NapzakMarketTheme {
         PurchaseRegistrationScreen(
             uiState = PurchaseUiState(),
-            onImageSelect = {},
-            onPriceChange = {},
             onCloseClick = {},
-            onNegotiableChange = {},
-            onRegisterClick = {},
+            onImageSelect = {},
             onPhotoPress = {},
             onDeleteClick = {},
             onGenreSelect = {},
             onProductNameChange = {},
             onProductDescriptionChange = {},
+            onPriceChange = {},
+            onNegotiableChange = {},
             checkButtonEnabled = { true },
+            onRegisterClick = {},
         )
     }
 }
