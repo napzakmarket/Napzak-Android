@@ -75,7 +75,7 @@ internal fun PhotoPicker(
         else -> rememberLauncherForActivityResult(
             ActivityResultContracts.PickMultipleVisualMedia(maxItems = currentImageSize)
         ) { uris ->
-            onImagesSelected(uris.take(currentImageSize).map { it }.toPersistentList())
+            onImagesSelected(uris.toPersistentList())
         }
     }
 
