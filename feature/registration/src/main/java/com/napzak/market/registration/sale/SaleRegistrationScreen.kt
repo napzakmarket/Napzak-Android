@@ -1,5 +1,6 @@
 package com.napzak.market.registration.sale
 
+import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -34,10 +35,12 @@ import com.napzak.market.registration.component.RegistrationViewGroup
 import com.napzak.market.registration.sale.component.ProductConditionGridButton
 import com.napzak.market.registration.sale.component.ShippingFeeSelector
 import com.napzak.market.util.android.noRippleClickable
+import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun SaleRegistrationRoute(
-    onCloseClick: () -> Unit,
+    navigateToUp: () -> Unit,
+    navigateToDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     SaleRegistrationScreen(
@@ -77,12 +80,12 @@ fun SaleRegistrationRoute(
 @Composable
 fun SaleRegistrationScreen(
     onCloseClick: () -> Unit,
-    productImageUrls: List<String>,
+    productImageUrls: List<Uri>,
     onPhotoClick: () -> Unit,
     onPhotoPress: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
     productGenre: String,
-    onGenreSelect: () -> Unit,
+    onGenreSelect: (String) -> Unit,
     productName: String,
     onProductNameChange: (String) -> Unit,
     productDescription: String,
@@ -127,8 +130,8 @@ fun SaleRegistrationScreen(
 
         item {
             RegistrationViewGroup(
-                productImageUrls = productImageUrls,
-                onPhotoClick = onPhotoClick,
+                productImageUris = productImageUrls.toPersistentList(),
+                onImageSelected = TODO(),
                 onPhotoPress = onPhotoPress,
                 onDeleteClick = onDeleteClick,
                 productGenre = productGenre,
@@ -137,6 +140,7 @@ fun SaleRegistrationScreen(
                 onProductNameChange = onProductNameChange,
                 productDescription = productDescription,
                 onProductDescriptionChange = onProductDescriptionChange,
+                modifier = TODO(),
             )
         }
 
