@@ -17,7 +17,7 @@ fun NavController.navigateToProductDetail(
     navOptions = navOptions,
 )
 
-fun NavGraphBuilder.productDetailRoute(
+fun NavGraphBuilder.productDetailGraph(
     onMarketNavigate: (userId: Long) -> Unit,
     onChatNavigate: (productId: Long) -> Unit,
     onModifyNavigate: (productId: Long) -> Unit,

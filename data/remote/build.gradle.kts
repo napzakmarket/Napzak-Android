@@ -15,15 +15,13 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField(
-                "String",
-                "DUMMY_URL",
-                properties.getProperty("dummy.url")
-            )
+            buildConfigField("String", "DUMMY_URL", properties.getProperty("dummy.url"))
+            buildConfigField("String", "BASE_URL", properties.getProperty("base.url"))
         }
     }
 }
 
 dependencies {
+    implementation(projects.data.local)
     implementation(libs.timber)
 }

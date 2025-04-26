@@ -15,6 +15,7 @@ dependencies {
     implementation(projects.feature.home)
     implementation(projects.feature.explore)
     implementation(projects.feature.search)
+    implementation(projects.feature.report)
     implementation(projects.feature.store)
     implementation(projects.feature.detail)
 

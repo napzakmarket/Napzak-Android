@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="report_input_title_reason">신고 사유</string>
+    <string name="report_input_title_detail">상세 내용</string>
+    <string name="report_input_place_holder_detail">
+        어떤 일이 있었나요? 💬\n\n
+        자세한 설명일수록 빠른 해결에 도움이 됩니다.\n
+        신고 내용은 비공개로 안전하게 처리되니 안심하세요.\n
+        안전한 거래 공간을 함께 만들어가요!
+    </string>
+    <string name="report_input_letter_num_detail">%d/%d</string>
+    <string name="report_input_title_contact">연락처 입력</string>
+    <string name="report_input_place_holder_contact">신고 검토 결과를 받아볼 이메일 또는 전화번호를 알려주세요</string>
+
+    <string name="report_product_title">상품을 신고하는 이유를 알려주세요</string>
+    <string name="report_product_banned_product">거래 금지 상품을 판매하고 있어요</string>
+    <string name="report_product_mal_content">부적절한 콘텐츠를 포함하고 있어요</string>
+    <string name="report_product_exaggerated_advertisement">허위/과장 정보 및 광고를 포함하고 있어요</string>
+    <string name="report_product_slang_used">욕설/비속어 등 불쾌한 표현을 사용했어요</string>
+    <string name="report_product_skirmish">거래 과정에서 분쟁이 발생했어요</string>
+    <string name="report_product_miscellaneous">기타 문제가 있어요</string>
+
+    <string name="report_user_title">마켓을 신고하는 이유를 알려주세요</string>
+    <string name="report_user_bad_manner">비매너 마켓이에요</string>
+    <string name="report_user_fraud">사기 행위가 의심돼요</string>
+    <string name="report_user_skirmish">거래 과정에서 분쟁이 발생했어요</string>
+    <string name="report_user_slang_used">욕설/비속어 등 불쾌한 표현을 사용했어요</string>
+    <string name="report_user_miscellaneous">기타 문제가 있어요</string>
+
+    <string name="report_snack_bar_message">
+        소중한 신고 감사합니다! 🙏\n\n
+        신고 내용을 꼼꼼히 검토하여\n
+        입력하신 연락처로 결과를 안내해드릴게요.\n
+        추가 정보가 필요할 경우 동일한 연락처로 문의드릴 수 있어요.
+    </string>
+    <string name="report_button_submit">제출하기</string>
+</resources>
