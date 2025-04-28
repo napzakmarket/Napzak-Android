@@ -69,6 +69,10 @@ internal fun ExploreRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val bottomSheetState by viewModel.bottomSheetState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.updateGenreItemsInBottomSheet()
+    }
+
     LaunchedEffect(uiState) {
         viewModel.updateExploreInformation()
     }
@@ -85,7 +89,6 @@ internal fun ExploreRoute(
         onSearchNavigate = onSearchNavigate,
         onTabClick = viewModel::updateTradeType,
         onGenreFilterClick = {
-            viewModel.updateGenreItemsInBottomSheet()
             viewModel.updateBottomSheetVisibility(BottomSheetType.GENRE_SEARCHING)
         },
         onGenreBottomSheetTextChange = viewModel::updateGenreSearchTerm,
@@ -142,7 +145,7 @@ private fun ExploreScreen(
                     isUnopenSelected = isUnopenSelected,
                     isSoldOutSelected = isSoldOutSelected,
                     sortOption = sortOption,
-                    genreItems = genreItems,
+                    genreItems = genreSearchResultItems,
                     bottomSheetState = bottomSheetState,
                     onSearchNavigate = onSearchNavigate,
                     onTabClick = onTabClick,

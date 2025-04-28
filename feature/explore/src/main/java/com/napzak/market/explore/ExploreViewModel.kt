@@ -77,7 +77,7 @@ internal class ExploreViewModel @Inject constructor(
         _uiState.update { currentState ->
             // TODO : 추후 API로 변경
             currentState.copy(
-                genreItems = listOf(
+                initGenreItems = listOf(
                     Genre(0, "산리오"),
                     Genre(1, "주술회전"),
                     Genre(2, "진격의 거인"),
@@ -90,6 +90,19 @@ internal class ExploreViewModel @Inject constructor(
                     Genre(9, "산리오3"),
                     Genre(10, "주술회전3"),
                 ),
+                genreSearchResultItems = listOf(
+                    Genre(0, "산리오"),
+                    Genre(1, "주술회전"),
+                    Genre(2, "진격의 거인"),
+                    Genre(3, "산리오1"),
+                    Genre(4, "주술회전1"),
+                    Genre(5, "진격의 거인1"),
+                    Genre(6, "산리오2"),
+                    Genre(7, "주술회전2"),
+                    Genre(8, "진격의 거인2"),
+                    Genre(9, "산리오3"),
+                    Genre(10, "주술회전3"),
+                )
             )
         }
     }
@@ -100,9 +113,20 @@ internal class ExploreViewModel @Inject constructor(
 
     @OptIn(FlowPreview::class)
     fun updateGenreSearchResult() = viewModelScope.launch {
-        _genreSearchTerm.debounce(DEBOUNCE_DELAY)
+        _genreSearchTerm
+            .debounce(DEBOUNCE_DELAY)
             .collectLatest { debounce ->
-                // TODO: 장르 검색 API 연결
+                val newGenreItems: List<Genre> = if (debounce.isBlank()) {
+                    _uiState.value.initGenreItems
+                } else {
+                    emptyList() // TODO: 장르 검색 API 연결
+                }
+
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        genreSearchResultItems = newGenreItems
+                    )
+                }
             }
     }
 
