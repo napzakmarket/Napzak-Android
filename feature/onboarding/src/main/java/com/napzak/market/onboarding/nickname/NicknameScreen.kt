@@ -96,6 +96,7 @@ fun NicknameScreen(
             hint = stringResource(onboarding_nickname_edit_hint),
             textStyle = NapzakMarketTheme.typography.caption12sb,
             hintTextStyle = NapzakMarketTheme.typography.caption12m,
+            textColor = NapzakMarketTheme.colors.gray500,
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
@@ -120,8 +121,6 @@ fun NicknameScreen(
                     )
                 }
             },
-            textColor = if (uiState.validationResult is NicknameValidationResult.Invalid)
-                Color.Red else NapzakMarketTheme.colors.gray500,
         )
 
         NicknameValidationResultMessage(validationResult = uiState.validationResult)
