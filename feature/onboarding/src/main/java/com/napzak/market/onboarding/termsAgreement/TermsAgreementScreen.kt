@@ -1,7 +1,6 @@
 package com.napzak.market.onboarding.termsAgreement
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,18 +24,19 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.napzak.market.designsystem.component.button.NapzakButton
-import com.napzak.market.designsystem.component.button.NapzakCheckedButton
-import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.designsystem.R.drawable.ic_arrow_left
 import com.napzak.market.designsystem.R.drawable.ic_arrow_right
 import com.napzak.market.designsystem.R.drawable.ic_first_step_indicator
+import com.napzak.market.designsystem.component.button.NapzakButton
+import com.napzak.market.designsystem.component.button.NapzakCheckedButton
+import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.onboarding.R.string.onboarding_all_agreement_title
 import com.napzak.market.feature.onboarding.R.string.onboarding_next
 import com.napzak.market.feature.onboarding.R.string.onboarding_title
 import com.napzak.market.onboarding.termsAgreement.model.TermType
 import com.napzak.market.onboarding.termsAgreement.model.TermsAgreementUiState
 import com.napzak.market.onboarding.termsAgreement.model.getDisplayLabel
+import com.napzak.market.util.android.noRippleClickable
 import com.napzak.market.util.common.openUrl
 
 @Composable
@@ -135,14 +135,14 @@ private fun TermsAgreementTopBar(
         modifier = modifier
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(ic_arrow_left),
             contentDescription = null,
             tint = Color.Unspecified,
             modifier = Modifier
-                .clickable { onBackClick() }
+                .noRippleClickable(onClick = onBackClick)
                 .size(12.dp),
         )
 

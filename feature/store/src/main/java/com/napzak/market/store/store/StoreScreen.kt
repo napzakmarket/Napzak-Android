@@ -1,4 +1,4 @@
-package com.napzak.market.store
+package com.napzak.market.store.store
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -47,24 +47,22 @@ import com.napzak.market.designsystem.component.bottomsheet.Genre
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.component.tabbar.MarketTabBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.store.model.StoreInfo
-import com.napzak.market.util.android.noRippleClickable
-import com.napzak.market.feature.store.R.drawable.ic_left_chevron
 import com.napzak.market.feature.store.R.drawable.ic_down_chevron_7
 import com.napzak.market.feature.store.R.drawable.ic_kebap
-import com.napzak.market.feature.store.R.string.store_filter_selling
-import com.napzak.market.feature.store.R.string.store_filter_buying
-import com.napzak.market.feature.store.R.string.store_product
-import com.napzak.market.feature.store.R.string.store_count
-import com.napzak.market.feature.store.R.string.store_empty_text
-import com.napzak.market.feature.store.R.string.store_edit_profile
+import com.napzak.market.feature.store.R.drawable.ic_left_chevron
 import com.napzak.market.feature.store.R.string.back_button_description
+import com.napzak.market.feature.store.R.string.store_count
+import com.napzak.market.feature.store.R.string.store_edit_profile
+import com.napzak.market.feature.store.R.string.store_empty_text
+import com.napzak.market.feature.store.R.string.store_filter_buying
+import com.napzak.market.feature.store.R.string.store_filter_selling
+import com.napzak.market.feature.store.R.string.store_product
 import com.napzak.market.store.component.BasicFilterChip
 import com.napzak.market.store.component.GenreChip
 import com.napzak.market.store.component.GenreFilterChip
 import com.napzak.market.store.model.Product
-import kotlin.collections.chunked
-import kotlin.collections.forEach
+import com.napzak.market.store.model.StoreInfo
+import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 internal fun StoreRoute(
