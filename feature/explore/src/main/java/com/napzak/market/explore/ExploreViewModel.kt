@@ -1,5 +1,6 @@
 package com.napzak.market.explore
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,6 +38,9 @@ internal class ExploreViewModel @Inject constructor(
 
     private val _genreSearchTerm = MutableStateFlow("")
     val genreSearchTerm = _genreSearchTerm.asStateFlow()
+
+    private val _pendingLikeActions = MutableStateFlow<List<Pair<Long, Boolean>>>(emptyList())
+    val pendingLikeActions = _pendingLikeActions.asStateFlow()
 
     fun updateExploreInformation() = viewModelScope.launch {
         with(uiState.value) {
@@ -162,7 +166,38 @@ internal class ExploreViewModel @Inject constructor(
         }
     }
 
-    // 좋아요 버튼 기능
+    fun updatePendingLikeAction(productId: Long, isLiked: Boolean) {
+        val currentList = _pendingLikeActions.value.toMutableList()
+        val index = currentList.indexOfFirst { it.first == productId }
+
+        if (index >= 0) {
+            currentList[index] = productId to isLiked
+        } else {
+            currentList.add(productId to isLiked)
+        }
+
+        _pendingLikeActions.value = currentList
+    }
+
+    @OptIn(FlowPreview::class)
+    fun updateLikeAction() = viewModelScope.launch {
+        _pendingLikeActions
+            .debounce(DEBOUNCE_DELAY)
+            .collectLatest { debounce ->
+                _pendingLikeActions.value.forEach { product ->
+                    if (product.second) {
+                        // TODO: 좋아요 설정 API
+                    } else {
+                        // TODO: 좋아요 해제 API
+                    }
+                    initPendingLikeAction()
+                }
+            }
+    }
+
+    fun initPendingLikeAction() {
+        _pendingLikeActions.update { emptyList() }
+    }
 
     private fun updateLoadState(loadState: UiState<ExploreProducts>) =
         _uiState.update { currentState ->

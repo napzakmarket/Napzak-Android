@@ -81,6 +81,10 @@ internal fun ExploreRoute(
         viewModel.updateGenreSearchResult()
     }
 
+    LaunchedEffect(viewModel.pendingLikeActions) {
+        viewModel.updateLikeAction()
+    }
+
     ExploreScreen(
         searchTerm = viewModel.searchTerm,
         uiState = uiState,
@@ -101,7 +105,9 @@ internal fun ExploreRoute(
         },
         onSortItemClick = viewModel::updateSortOption,
         onProductDetailNavigate = onProductDetailNavigate,
-        onLikeButtonClick = { id, value -> },
+        onLikeButtonClick = { id, value ->
+            viewModel.updatePendingLikeAction(productId = id, isLiked = value)
+        },
         modifier = modifier,
     )
 }
