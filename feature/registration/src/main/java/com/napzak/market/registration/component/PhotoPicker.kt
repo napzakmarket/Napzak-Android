@@ -52,31 +52,25 @@ private const val INPUT_TYPE = "image/*"
 @Composable
 internal fun PhotoPicker(
     imageUris: PersistentList<Uri>,
-    onImagesSelected: (ImmutableList<Uri>) -> Unit,
+    onImagesSelect: (ImmutableList<Uri>) -> Unit,
     onLongClick: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val currentImageSize = (MAX_ITEMS - imageUris.size).coerceAtLeast(MIN_ITEMS)
+    val remainingImageSize = (MAX_ITEMS - imageUris.size).coerceAtLeast(MIN_ITEMS)
 
     val imageStorageLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetMultipleContents()
-    ) { uris ->
-        onImagesSelected(uris.take(currentImageSize).map { it }.toPersistentList())
-    }
+    ) { uris -> onImagesSelect(uris.take(remainingImageSize).map { it }.toPersistentList()) }
 
     val photoPickerLauncher = when (imageUris.size) {
         MAX_ITEMS - 1 -> rememberLauncherForActivityResult(
             ActivityResultContracts.PickVisualMedia()
-        ) { uri ->
-            uri?.let { onImagesSelected(listOf(it).toPersistentList()) }
-        }
+        ) { uri -> uri?.let { onImagesSelect(listOf(it).toPersistentList()) } }
 
         else -> rememberLauncherForActivityResult(
-            ActivityResultContracts.PickMultipleVisualMedia(maxItems = currentImageSize)
-        ) { uris ->
-            onImagesSelected(uris.toPersistentList())
-        }
+            ActivityResultContracts.PickMultipleVisualMedia(maxItems = remainingImageSize)
+        ) { uris -> onImagesSelect(uris.toPersistentList()) }
     }
 
     LazyRow(
@@ -176,7 +170,7 @@ private fun RegistrationPhotoPickerPreview() {
         Column {
             PhotoPicker(
                 imageUris = persistentListOf(),
-                onImagesSelected = { },
+                onImagesSelect = { },
                 onLongClick = { },
                 onDeleteClick = { },
             )
