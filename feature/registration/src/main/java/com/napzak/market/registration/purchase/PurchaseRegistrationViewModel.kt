@@ -22,7 +22,6 @@ class PurchaseRegistrationViewModel @Inject constructor(
 
     private val _sideEffect = MutableSharedFlow<PurchaseSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
-    // TODO: Channel 써볼래 말래
 
     fun updatePhotos(newImageUrlList: List<Uri>) = _uiState.update { currentState ->
         currentState.copy(
@@ -47,41 +46,30 @@ class PurchaseRegistrationViewModel @Inject constructor(
         )
     }
 
-    fun updateGenre(genre: String) {
-        _uiState.update { currentState ->
-            currentState.copy(genre = genre)
-        }
+    fun updateGenre(genre: String) = _uiState.update { currentState ->
+        currentState.copy(genre = genre)
     }
 
-    fun updateTitle(title: String) {
-        _uiState.update { currentState ->
-            currentState.copy(title = title)
-        }
+    fun updateTitle(title: String) = _uiState.update { currentState ->
+        currentState.copy(title = title)
     }
 
-    fun updateDescription(description: String) {
-        _uiState.update { currentState ->
-            currentState.copy(description = description)
-        }
+    fun updateDescription(description: String) = _uiState.update { currentState ->
+        currentState.copy(description = description)
     }
 
-    fun updatePrice(price: String) {
-        _uiState.update { currentState ->
-            currentState.copy(price = price)
-        }
+    fun updatePrice(price: String) = _uiState.update { currentState ->
+        currentState.copy(price = price)
     }
 
-    fun updateNegotiable(isNegotiable: Boolean) {
-        _uiState.update { currentState ->
-            currentState.copy(isNegotiable = isNegotiable)
-        }
+
+    fun updateNegotiable(isNegotiable: Boolean) = _uiState.update { currentState ->
+        currentState.copy(isNegotiable = isNegotiable)
     }
 
-    fun updateButtonState(): Boolean {
-        with(_uiState.value) {
-            return !(imageUris.isEmpty() || genre.isEmpty() || title.isEmpty() || description.isEmpty()
-                    || price.isEmpty() || price.toIntOrNull()?.rem(1000) != 0)
-        }
+    fun updateButtonState(): Boolean = with(_uiState.value) {
+        return !(imageUris.isEmpty() || genre.isEmpty() || title.isEmpty() || description.isEmpty()
+                || price.isEmpty() || price.toIntOrNull()?.rem(1000) != 0)
     }
 
     fun registerProduct() {

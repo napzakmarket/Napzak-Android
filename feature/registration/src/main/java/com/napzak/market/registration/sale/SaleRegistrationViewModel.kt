@@ -23,7 +23,6 @@ class SaleRegistrationViewModel @Inject constructor(
 
     private val _sideEffect = MutableSharedFlow<SaleSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
-    // TODO: Channel 써볼래 말래
 
     fun updatePhotos(newImageUrlList: List<Uri>) = _uiState.update { currentState ->
         currentState.copy(
@@ -48,41 +47,37 @@ class SaleRegistrationViewModel @Inject constructor(
         )
     }
 
-    fun updateGenre(genre: String) {
-        _uiState.update { currentState ->
-            currentState.copy(genre = genre)
-        }
+    fun updateGenre(genre: String) = _uiState.update { currentState ->
+        currentState.copy(genre = genre)
     }
 
-    fun updateTitle(title: String) {
-        _uiState.update { currentState ->
-            currentState.copy(title = title)
-        }
+    fun updateTitle(title: String) = _uiState.update { currentState ->
+        currentState.copy(title = title)
     }
 
-    fun updateDescription(description: String) {
-        _uiState.update { currentState ->
-            currentState.copy(description = description)
-        }
+    fun updateDescription(description: String) = _uiState.update { currentState ->
+        currentState.copy(description = description)
     }
 
-    fun updateCondition(condition: ProductConditionType) {
-        _uiState.update { currentState ->
-            currentState.copy(condition = condition)
-        }
+    fun updateCondition(condition: ProductConditionType) = _uiState.update { currentState ->
+        currentState.copy(condition = condition)
     }
 
-    fun updatePrice(price: String) {
-        _uiState.update { currentState ->
-            currentState.copy(price = price)
-        }
+    fun updatePrice(price: String) = _uiState.update { currentState ->
+        currentState.copy(price = price)
     }
 
-    fun updateButtonState(): Boolean {
-        with(_uiState.value) {
-            return !(imageUris.isEmpty() || genre.isEmpty() || title.isEmpty() || description.isEmpty()
-                    || price.isEmpty() || price.toIntOrNull()?.rem(1000) != 0)
-        }
+    fun updateNormalShippingFee(normalShippingFee: String) = _uiState.update { currentState ->
+        currentState.copy(normalShippingFee = normalShippingFee)
+    }
+
+    fun updateHalfShippingFee(expressShippingFee: String) = _uiState.update { currentState ->
+        currentState.copy(halfShippingFee = expressShippingFee)
+    }
+
+    fun updateButtonState(): Boolean = with(_uiState.value) {
+        return !(imageUris.isEmpty() || genre.isEmpty() || title.isEmpty() || description.isEmpty()
+                || price.isEmpty() || price.toIntOrNull()?.rem(1000) != 0)
     }
 
     fun registerProduct() {
