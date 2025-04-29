@@ -43,6 +43,7 @@ fun NavGraphBuilder.signOutGraph(
 
         composable<SignOutDetail> { backStackEntry ->
             val viewModel = backStackEntry.sharedViewModel<SignOutViewModel>(navController)
+
             SignOutDetailScreen(
                 onNavigateUpClick = onNavigateUp,
                 onProceedClick = { detail ->
