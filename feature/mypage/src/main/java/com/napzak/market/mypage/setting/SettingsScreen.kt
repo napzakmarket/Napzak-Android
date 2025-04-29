@@ -1,8 +1,6 @@
 package com.napzak.market.mypage.setting
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +30,7 @@ import com.napzak.market.feature.mypage.R.string.settings_item_version_info_titl
 import com.napzak.market.feature.mypage.R.string.settings_section_service_info_title
 import com.napzak.market.mypage.setting.component.SettingItem
 import com.napzak.market.mypage.setting.component.SettingsTopBar
+import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 fun SettingsScreen(
@@ -120,12 +119,7 @@ fun SettingsScreen(
                     color = NapzakMarketTheme.colors.purple500,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
-                            showLogoutDialog = true
-                        }
+                        .noRippleClickable { showLogoutDialog = true }
                 )
             }
 
@@ -162,12 +156,7 @@ fun SettingsScreen(
                     color = NapzakMarketTheme.colors.red,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                        ) {
-                            onWithdrawClick()
-                        }
+                        .noRippleClickable(onWithdrawClick)
                 )
             }
             Spacer(modifier = Modifier.height(28.dp))
