@@ -1,6 +1,7 @@
 package com.napzak.market.product.repositoryimpl
 
 import com.napzak.market.product.datasource.ProductDetailDataSource
+import com.napzak.market.product.dto.ProductPatchTradeStatusRequest
 import com.napzak.market.product.mapper.toDomain
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.repository.ProductDetailRepository
@@ -22,7 +23,7 @@ class ProductDetailRepositoryImpl @Inject constructor(
         runCatching {
             productDetailDataSource.patchTradeStatus(
                 productId = productId,
-                tradeStatus = tradeStatus,
+                request = ProductPatchTradeStatusRequest(tradeStatus = tradeStatus),
             )
         }
 

@@ -1,5 +1,6 @@
 package com.napzak.market.product.datasource
 
+import com.napzak.market.product.dto.ProductPatchTradeStatusRequest
 import com.napzak.market.product.service.ProductDetailService
 import javax.inject.Inject
 
@@ -8,10 +9,10 @@ class ProductDetailDataSource @Inject constructor(
 ) {
     suspend fun getProductDetail(productId: Long) = productDetailService.getProductDetail(productId)
 
-    suspend fun patchTradeStatus(productId: Long, tradeStatus: String) =
+    suspend fun patchTradeStatus(productId: Long, request: ProductPatchTradeStatusRequest) =
         productDetailService.patchTradeStatus(
             productId = productId,
-            tradeStatus = tradeStatus,
+            request = request,
         )
 
     suspend fun deleteProduct(productId: Long) = productDetailService.deleteProduct(productId)

@@ -1,6 +1,7 @@
 package com.napzak.market.product.service
 
 import com.napzak.market.product.dto.ProductGetDetailResponse
+import com.napzak.market.product.dto.ProductPatchTradeStatusRequest
 import com.napzak.market.remote.model.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -17,7 +18,7 @@ interface ProductDetailService {
     @PATCH("products/{productId}")
     suspend fun patchTradeStatus(
         @Path("productId") productId: Long,
-        @Body tradeStatus: String,
+        @Body request: ProductPatchTradeStatusRequest,
     ): BaseResponse<Unit>
 
     @DELETE("products/{productId}")
