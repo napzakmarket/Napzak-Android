@@ -70,32 +70,20 @@ fun SettingsScreen(
 
                 Spacer(modifier = Modifier.height(28.dp))
 
-                SettingItem(
-                    stringResource(id = settings_item_notice_title),
-                    onClick = onNoticeClick
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                SettingItem(
-                    stringResource(id = settings_item_terms_of_use_title),
-                    onClick = onTermsClick
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                SettingItem(
-                    stringResource(id = settings_item_privacy_policy_title),
-                    onClick = onPrivacyClick
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                SettingItem(
-                    stringResource(id = settings_item_version_info_title),
-                    onClick = onVersionClick
-                )
-
+                SettingsMenu.entries.forEachIndexed { index, menu ->
+                    SettingItem(
+                        title = stringResource(id = menu.titleResId),
+                        onClick = when (menu) {
+                            SettingsMenu.NOTICE -> onNoticeClick
+                            SettingsMenu.TERMS_OF_USE -> onTermsClick
+                            SettingsMenu.PRIVACY_POLICY -> onPrivacyClick
+                            SettingsMenu.VERSION_INFO -> onVersionClick
+                        }
+                    )
+                    if (index != SettingsMenu.entries.lastIndex) {
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(28.dp))
