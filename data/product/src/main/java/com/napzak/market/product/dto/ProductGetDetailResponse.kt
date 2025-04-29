@@ -7,6 +7,8 @@ import kotlinx.serialization.Serializable
 data class ProductGetDetailResponse(
     @SerialName("isInterested") val isInterested: Boolean,
     @SerialName("productDetail") val productDetail: ProductDetailResponse,
+    @SerialName("productPhotoList") val productPhotoList: List<ProductPhotoResponse>,
+    @SerialName("storeInfo") val storeInfo: StoreInfoResponse,
 ) {
     @Serializable
     data class ProductDetailResponse(
@@ -25,9 +27,7 @@ data class ProductGetDetailResponse(
         @SerialName("isDeliveryIncluded") val isDeliveryIncluded: Boolean,
         @SerialName("isPriceNegotiable") val isPriceNegotiable: Boolean,
         @SerialName("tradeStatus") val tradeStatus: String,
-        @SerialName("isOwnedByCurrentUser") val isOwnedByCurrentUser: Boolean,
-        @SerialName("productPhotoList") val productPhotoList: List<ProductPhotoResponse>,
-        @SerialName("storeInfo") val storeInfo: StoreInfoResponse,
+        @SerialName("isOwnedByCurrentUser") val isOwnedByCurrentUser: Boolean
     )
 
     @Serializable
