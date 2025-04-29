@@ -100,7 +100,7 @@ internal fun SignOutConfirmScreen(
     ) {
         NapzakDialog(
             title = stringResource(sign_out_dialog_title),
-            onConfirmClick = { onConfirmClick() },
+            onConfirmClick = onConfirmClick,
             onDismissClick = { isSignOutDialogVisible = false },
         )
     }
