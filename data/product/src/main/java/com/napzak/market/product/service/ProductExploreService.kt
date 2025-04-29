@@ -13,7 +13,7 @@ interface ProductExploreService {
         @Query("genreId") genreId: Long?,
         @Query("isOnSale") isOnSale: Boolean,
         @Query("isUnopened") isUnopened: Boolean,
-        @Query("cursor") cursor: String?
+        @Query("cursor") cursor: String?,
     ): BaseResponse<ProductExploreSellResponse>
 
     @GET("products/buy")
@@ -21,7 +21,7 @@ interface ProductExploreService {
         @Query("sort") sort: String,
         @Query("genreId") genreId: Long?,
         @Query("isOnSale") isOnSale: Boolean,
-        @Query("cursor") cursor: String?
+        @Query("cursor") cursor: String?,
     ): BaseResponse<ProductExploreBuyResponse>
 
     @GET("products/sell/search")
@@ -31,7 +31,7 @@ interface ProductExploreService {
         @Query("genreId") genreId: Long?,
         @Query("isOnSale") isOnSale: Boolean,
         @Query("isUnopened") isUnopened: Boolean,
-        @Query("cursor") cursor: String?
+        @Query("cursor") cursor: String?,
     ): BaseResponse<ProductExploreSellResponse>
 
     @GET("products/buy/search")
@@ -40,6 +40,6 @@ interface ProductExploreService {
         @Query("sort") sort: String,
         @Query("genreId") genreId: Long?,
         @Query("isOnSale") isOnSale: Boolean,
-        @Query("cursor") cursor: String?
+        @Query("cursor") cursor: String?,
     ): BaseResponse<ProductExploreBuyResponse>
 }
