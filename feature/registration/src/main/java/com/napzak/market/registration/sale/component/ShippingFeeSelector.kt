@@ -54,6 +54,15 @@ internal fun ShippingFeeSelector(
     var isShippingExcluded by remember { mutableStateOf(false) }
     var isNormalShippingChecked by remember { mutableStateOf(false) }
     var isHalfShippingChecked by remember { mutableStateOf(false) }
+    val resetShippingExcluded = remember {
+        {
+            isShippingExcluded = false
+            isNormalShippingChecked = false
+            isHalfShippingChecked = false
+            onNormalShippingFeeChange(EMPTY_STRING)
+            onHalfShippingFeeChange(EMPTY_STRING)
+        }
+    }
 
     Column(
         modifier = modifier,
@@ -62,11 +71,7 @@ internal fun ShippingFeeSelector(
             title = stringResource(shipping_included),
             isChecked = isShippingIncluded,
             onCheckChange = {
-                if (isShippingExcluded && !isShippingIncluded) {
-                    isShippingExcluded = false
-                    onNormalShippingFeeChange(EMPTY_STRING)
-                    onHalfShippingFeeChange(EMPTY_STRING)
-                }
+                if (isShippingExcluded && !isShippingIncluded) resetShippingExcluded()
                 isShippingIncluded = !it
             },
         )
@@ -88,14 +93,9 @@ internal fun ShippingFeeSelector(
                     title = stringResource(shipping_excluded),
                     isChecked = isShippingExcluded,
                     onCheckChange = {
-                        if (isShippingIncluded && !isShippingExcluded) {
-                            isShippingIncluded = false
-                        }
+                        if (isShippingIncluded && !isShippingExcluded) isShippingIncluded = false
                         isShippingExcluded = !it
-                        if (!isShippingExcluded) {
-                            onNormalShippingFeeChange(EMPTY_STRING)
-                            onHalfShippingFeeChange(EMPTY_STRING)
-                        }
+                        if (!isShippingExcluded) resetShippingExcluded()
                     },
                 )
 
@@ -135,35 +135,32 @@ private fun SelectorButton(
 ) {
     val checkIcon = if (isChecked) ic_checked_box else ic_unchecked_box
 
-    Column(
+    Row(
         modifier = modifier
+            .fillMaxWidth()
             .background(
                 color = NapzakMarketTheme.colors.gray50,
                 shape = RoundedCornerShape(14.dp),
-            ),
+            )
+            .padding(horizontal = 10.dp, vertical = 12.dp)
+            .noRippleClickable {
+                onCheckChange(isChecked)
+            },
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 10.dp, vertical = 12.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(checkIcon),
-                contentDescription = null,
-                tint = Color.Unspecified,
-                modifier = Modifier.noRippleClickable {
-                    onCheckChange(isChecked)
-                },
-            )
-            Text(
-                text = title,
-                style = NapzakMarketTheme.typography.body14b.copy(
-                    color = NapzakMarketTheme.colors.gray400,
-                ),
-            )
-        }
+        Icon(
+            imageVector = ImageVector.vectorResource(checkIcon),
+            contentDescription = null,
+            tint = Color.Unspecified,
+            modifier = Modifier,
+        )
+        Text(
+            text = title,
+            style = NapzakMarketTheme.typography.body14b.copy(
+                color = NapzakMarketTheme.colors.gray400,
+            ),
+        )
     }
 }
 
@@ -187,7 +184,10 @@ fun ExpandedShippingFee(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
-            modifier = Modifier,
+            modifier = Modifier.noRippleClickable {
+                onCheckChange(isChecked)
+                if (isChecked) onShippingFeeChange(EMPTY_STRING)
+            },
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -195,9 +195,6 @@ fun ExpandedShippingFee(
                 imageVector = ImageVector.vectorResource(checkIcon),
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.noRippleClickable {
-                    onCheckChange(isChecked)
-                },
             )
             Text(
                 text = title,
@@ -210,6 +207,7 @@ fun ExpandedShippingFee(
             price = shippingFee,
             onPriceChange = onShippingFeeChange,
             hint = hint,
+            enabled = isChecked,
         )
     }
 }
