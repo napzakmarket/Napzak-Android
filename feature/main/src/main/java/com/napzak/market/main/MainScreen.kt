@@ -19,6 +19,9 @@ import com.napzak.market.explore.navigation.navigateToGenreDetail
 import com.napzak.market.home.navigation.Home
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
+import com.napzak.market.registration.navigation.navigateToPurchaseRegistration
+import com.napzak.market.registration.navigation.navigateToSaleRegistration
+import com.napzak.market.registration.navigation.registrationGraph
 import com.napzak.market.search.navigation.navigateToSearch
 import com.napzak.market.search.navigation.searchGraph
 import com.napzak.market.store.store.navigation.storeGraph
@@ -45,8 +48,14 @@ fun MainScreen(
         ) {
             MainRegisterDialog(
                 visibility = navigator.isRegister,
-                onSellRegisterClick = {},
-                onBuyRegisterClick = {},
+                onSellRegisterClick = {
+                    navigator.navController.navigateToSaleRegistration()
+                    navigator.dismissRegisterDialog()
+                },
+                onBuyRegisterClick = {
+                    navigator.navController.navigateToPurchaseRegistration()
+                    navigator.dismissRegisterDialog()
+                },
                 onDismissRequest = navigator::dismissRegisterDialog,
                 modifier = Modifier.zIndex(1f),
             )
@@ -126,6 +135,12 @@ private fun MainNavHost(
         reportGraph(
             navigateUp = navigator::navigateUp,
             modifier = Modifier.systemBarsPadding()
+        )
+
+        registrationGraph(
+            navigateToUp = navigator::navigateUp,
+            navigateToDetail = {}, // TODO: 물품 상세 화면으로 이동
+            modifier = modifier,
         )
     }
 }
