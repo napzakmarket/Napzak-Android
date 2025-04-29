@@ -13,5 +13,5 @@ data class Product(
     val isPriceNegotiable: Boolean,
     val isOwnedByCurrentUser: Boolean,
     val interestCount: Int,
-    val chatCount: Int
+    val chatCount: Int,
 )
