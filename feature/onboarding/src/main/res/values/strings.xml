@@ -3,4 +3,9 @@
     <string name="onboarding_title">서비스 이용약관에 동의해주세요</string>
     <string name="onboarding_all_agreement_title">서비스 이용약관에 동의해주세요</string>
     <string name="onboarding_next">다음으로</string>
+    <string name="onboarding_nickname_title">납작마켓에서 사용할\n이름을 알려주세요</string>
+    <string name="onboarding_nickname_sub_title">띄어쓰기 없이 한글, 영문, 숫자만 사용할 수 있어요 (2~20자)</string>
+    <string name="onboarding_nickname_edit_hint">이름을 입력해주세요</string>
+    <string name="onboarding_nickname_success">사용할 수 있는 이름이에요!</string>
+    <string name="onboarding_nickname_validation_button">이름확인</string>
 </resources>

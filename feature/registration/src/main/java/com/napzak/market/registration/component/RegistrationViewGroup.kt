@@ -1,10 +1,10 @@
 package com.napzak.market.registration.component
 
+import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -26,6 +26,9 @@ import com.napzak.market.feature.registration.R.string.product_image
 import com.napzak.market.feature.registration.R.string.product_image_description
 import com.napzak.market.feature.registration.R.string.product_name
 import com.napzak.market.feature.registration.R.string.product_name_hint
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 
 private const val MAX_PRODUCT_NAME = 48
 private const val MAX_PRODUCT_DESCRIPTION = 430
@@ -33,12 +36,12 @@ private const val MAX_PRODUCT_DESCRIPTION = 430
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun RegistrationViewGroup(
-    productImageUrls: List<String>,
-    onPhotoClick: () -> Unit,
+    productImageUris: PersistentList<Uri>,
+    onImageSelected: (ImmutableList<Uri>) -> Unit,
     onPhotoPress: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
     productGenre: String,
-    onGenreSelect: () -> Unit,
+    onGenreSelect: (String) -> Unit,
     productName: String,
     onProductNameChange: (String) -> Unit,
     productDescription: String,
@@ -73,8 +76,8 @@ internal fun RegistrationViewGroup(
         Spacer(modifier = Modifier.height(8.dp))
 
         PhotoPicker(
-            imageUrls = productImageUrls,
-            onPhotoClick = onPhotoClick,
+            imageUris = productImageUris,
+            onImagesSelected = onImageSelected,
             onLongClick = onPhotoPress,
             onDeleteClick = onDeleteClick,
         )
@@ -111,9 +114,12 @@ internal fun RegistrationViewGroup(
         ) {
             InputTextField(
                 text = productName,
-                onTextChange = onProductNameChange,
+                onTextChange = {
+                    if (it.length <= MAX_PRODUCT_NAME) onProductNameChange(it)
+                },
                 hint = stringResource(product_name_hint),
             )
+
             Text(
                 text = "${productName.length}/$MAX_PRODUCT_NAME",
                 style = NapzakMarketTheme.typography.caption10r.copy(
@@ -141,12 +147,15 @@ internal fun RegistrationViewGroup(
         ) {
             InputTextField(
                 text = productDescription,
-                onTextChange = onProductDescriptionChange,
+                onTextChange = {
+                    if (it.length <= MAX_PRODUCT_DESCRIPTION) onProductDescriptionChange(it)
+                },
                 hint = stringResource(product_description_hint),
                 modifier = Modifier.height(136.dp),
                 isSingleLined = false,
                 contentAlignment = Alignment.TopStart,
             )
+
             Text(
                 text = "${productDescription.length}/$MAX_PRODUCT_DESCRIPTION",
                 style = NapzakMarketTheme.typography.caption10r.copy(
@@ -169,8 +178,8 @@ private fun RegistrationViewGroupPreview() {
         var content by remember { mutableStateOf("") }
 
         RegistrationViewGroup(
-            productImageUrls = listOf(),
-            onPhotoClick = { },
+            productImageUris = persistentListOf(),
+            onImageSelected = { },
             onPhotoPress = { },
             onDeleteClick = { },
             productGenre = "사카모토데이즈",
@@ -179,8 +188,6 @@ private fun RegistrationViewGroupPreview() {
             onProductNameChange = { name = it },
             productDescription = content,
             onProductDescriptionChange = { content = it },
-            modifier = Modifier
-                .fillMaxWidth(),
         )
     }
 }
