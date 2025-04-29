@@ -75,6 +75,7 @@ fun NapzakSpinner(
             trailingIcon = {
                 Icon(
                     imageVector = ImageVector.vectorResource(ic_down_chevron),
+                    tint = NapzakMarketTheme.colors.gray200,
                     contentDescription = null,
                 )
             },
