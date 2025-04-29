@@ -35,6 +35,7 @@ include(
     ":data:remote",
     ":data:local",
     ":data:dummy",
+    ":data:product",
 )
 include(
     ":domain:dummy",
