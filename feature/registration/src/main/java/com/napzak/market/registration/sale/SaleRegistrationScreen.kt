@@ -11,12 +11,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.common.type.ProductConditionType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.component.button.NapzakButton
@@ -34,43 +41,44 @@ import com.napzak.market.registration.component.RegistrationTopBar
 import com.napzak.market.registration.component.RegistrationViewGroup
 import com.napzak.market.registration.sale.component.ProductConditionGridButton
 import com.napzak.market.registration.sale.component.ShippingFeeSelector
+import com.napzak.market.registration.sale.state.SaleContract.SaleSideEffect.NavigateToDetail
+import com.napzak.market.registration.sale.state.SaleContract.SaleUiState
 import com.napzak.market.util.android.noRippleClickable
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun SaleRegistrationRoute(
-    navigateToUp: () -> Unit,
+    onCloseClick: () -> Unit,
     navigateToDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: SaleRegistrationViewModel = hiltViewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    is NavigateToDetail -> navigateToDetail(sideEffect.productId)
+                }
+            }
+    }
     SaleRegistrationScreen(
-        onCloseClick = {},
-        productImageUrls = emptyList(),
-        onPhotoClick = {},
-        onPhotoPress = {},
-        onDeleteClick = {},
-        productGenre = "",
-        onGenreSelect = {},
-        productName = "",
-        onProductNameChange = {},
-        productDescription = "",
-        onProductDescriptionChange = {},
-        productCondition = null,
-        onProductConditionSelect = {},
-        price = "",
+        uiState = uiState,
+        onCloseClick = onCloseClick,
+        onImageSelect = viewModel::updatePhotos,
+        onPhotoPress = viewModel::updateRepresentPhoto,
+        onDeleteClick = viewModel::deletePhoto,
+        onGenreSelect = viewModel::updateGenre,
+        onProductNameChange = viewModel::updateTitle,
+        onProductDescriptionChange = viewModel::updateDescription,
+        onProductConditionSelect = viewModel::updateCondition,
         onPriceChange = {},
-        isShippingFeeIncluded = false,
-        onShippingFeeIncludedChange = {},
-        isShippingFeeExcluded = false,
-        onShippingFeeExcludedChange = {},
-        isNormalShippingChecked = false,
-        onNormalShippingCheckChange = {},
-        normalShippingFee = "",
         onNormalShippingFeeChange = {},
-        isHalfShippingChecked = false,
-        onHalfShippingCheckChange = {},
-        halfShippingFee = "",
         onHalfShippingFeeChange = {},
+        checkButtonEnabled = { true },
         onRegisterClick = {},
         modifier = modifier,
     )
@@ -79,38 +87,34 @@ fun SaleRegistrationRoute(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SaleRegistrationScreen(
+    uiState: SaleUiState,
     onCloseClick: () -> Unit,
-    productImageUrls: List<Uri>,
-    onPhotoClick: () -> Unit,
+    onImageSelect: (ImmutableList<Uri>) -> Unit,
     onPhotoPress: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
-    productGenre: String,
     onGenreSelect: (String) -> Unit,
-    productName: String,
     onProductNameChange: (String) -> Unit,
-    productDescription: String,
     onProductDescriptionChange: (String) -> Unit,
-    productCondition: ProductConditionType?,
     onProductConditionSelect: (ProductConditionType) -> Unit,
-    price: String,
     onPriceChange: (String) -> Unit,
-    isShippingFeeIncluded: Boolean,
-    onShippingFeeIncludedChange: (Boolean) -> Unit,
-    isShippingFeeExcluded: Boolean,
-    onShippingFeeExcludedChange: (Boolean) -> Unit,
-    isNormalShippingChecked: Boolean,
-    onNormalShippingCheckChange: (Boolean) -> Unit,
-    normalShippingFee: String,
     onNormalShippingFeeChange: (String) -> Unit,
-    isHalfShippingChecked: Boolean,
-    onHalfShippingCheckChange: (Boolean) -> Unit,
-    halfShippingFee: String,
     onHalfShippingFeeChange: (String) -> Unit,
+    checkButtonEnabled: () -> Boolean,
     onRegisterClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val paddedModifier = Modifier.padding(horizontal = 20.dp)
     val focusManager = LocalFocusManager.current
+    val isButtonEnabled = remember(
+        uiState.imageUris,
+        uiState.genre,
+        uiState.title,
+        uiState.description,
+        uiState.price,
+        uiState.isShippingFeeIncluded,
+        uiState.normalShippingFee,
+        uiState.halfShippingFee,
+    ) { checkButtonEnabled() }
 
     LazyColumn(
         modifier = modifier
@@ -130,15 +134,15 @@ fun SaleRegistrationScreen(
 
         item {
             RegistrationViewGroup(
-                productImageUris = productImageUrls.toPersistentList(),
-                onImageSelected = { }, // TODO: 마저 채우기
+                productImageUrls = uiState.imageUris.toPersistentList(),
+                onPhotoClick = onImageSelect,
                 onPhotoPress = onPhotoPress,
                 onDeleteClick = onDeleteClick,
-                productGenre = productGenre,
+                productGenre = uiState.genre,
                 onGenreSelect = onGenreSelect,
-                productName = productName,
+                productName = uiState.title,
                 onProductNameChange = onProductNameChange,
-                productDescription = productDescription,
+                productDescription = uiState.description,
                 onProductDescriptionChange = onProductDescriptionChange,
                 modifier = Modifier,  // TODO: 마저 채우기
             )
@@ -158,7 +162,7 @@ fun SaleRegistrationScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             ProductConditionGridButton(
-                selectedCondition = productCondition,
+                selectedCondition = uiState.condition,
                 onConditionSelect = onProductConditionSelect,
                 modifier = paddedModifier,
             )
@@ -171,7 +175,7 @@ fun SaleRegistrationScreen(
                 tradeType = TradeType.SELL,
                 title = stringResource(sale_price),
                 description = stringResource(sale_price_description),
-                price = price,
+                price = uiState.price,
                 onPriceChange = onPriceChange,
                 priceTag = stringResource(sale_price_tag),
                 modifier = paddedModifier,
@@ -192,24 +196,16 @@ fun SaleRegistrationScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             ShippingFeeSelector(
-                isShippingFeeIncluded = isShippingFeeIncluded,
-                onShippingFeeIncludedChange = onShippingFeeIncludedChange,
-                isShippingFeeExcluded = isShippingFeeExcluded,
-                onShippingFeeExcludedChange = onShippingFeeExcludedChange,
-                isNormalShippingChecked = isNormalShippingChecked,
-                onNormalShippingCheckChange = onNormalShippingCheckChange,
-                normalShippingFee = normalShippingFee,
+                normalShippingFee = uiState.normalShippingFee,
                 onNormalShippingFeeChange = onNormalShippingFeeChange,
-                isHalfShippingChecked = isHalfShippingChecked,
-                onHalfShippingCheckChange = onHalfShippingCheckChange,
-                halfShippingFee = halfShippingFee,
+                halfShippingFee = uiState.halfShippingFee,
                 onHalfShippingFeeChange = onHalfShippingFeeChange,
                 modifier = paddedModifier,
             )
         }
 
         item {
-            Spacer(modifier = Modifier.height(if (isShippingFeeIncluded) 60.dp else 20.dp))
+            Spacer(modifier = Modifier.height(if (uiState.isShippingFeeIncluded) 60.dp else 20.dp))
 
             Box(
                 modifier = Modifier
@@ -237,33 +233,19 @@ fun SaleRegistrationScreen(
 private fun SaleRegistrationScreenPreview() {
     NapzakMarketTheme {
         SaleRegistrationScreen(
+            uiState = SaleUiState(),
             onCloseClick = {},
-            productImageUrls = emptyList(),
-            onPhotoClick = {},
+            onImageSelect = {},
             onPhotoPress = {},
             onDeleteClick = {},
-            productGenre = "",
             onGenreSelect = {},
-            productName = "",
             onProductNameChange = {},
-            productDescription = "",
             onProductDescriptionChange = {},
-            productCondition = null,
             onProductConditionSelect = {},
-            price = "",
             onPriceChange = {},
-            isShippingFeeIncluded = false,
-            onShippingFeeIncludedChange = {},
-            isShippingFeeExcluded = false,
-            onShippingFeeExcludedChange = {},
-            isNormalShippingChecked = false,
-            onNormalShippingCheckChange = {},
-            normalShippingFee = "",
             onNormalShippingFeeChange = {},
-            isHalfShippingChecked = false,
-            onHalfShippingCheckChange = {},
-            halfShippingFee = "",
             onHalfShippingFeeChange = {},
+            checkButtonEnabled = { true },
             onRegisterClick = {},
         )
     }
