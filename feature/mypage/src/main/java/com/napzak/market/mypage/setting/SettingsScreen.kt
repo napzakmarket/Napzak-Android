@@ -83,6 +83,7 @@ private fun SettingsTopBar(
                 color = NapzakMarketTheme.colors.gray400,
             )
         }
+
         Spacer(modifier = Modifier.height(20.dp))
 
         Box(
