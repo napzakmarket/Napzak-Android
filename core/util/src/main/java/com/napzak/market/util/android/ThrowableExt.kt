@@ -14,7 +14,7 @@ fun Throwable.getHttpExceptionMessage(): String? = when (this) {
                 Json.decodeFromString<ErrorMessage>(errorBody).message
             }.fold(
                 onSuccess = { it },
-                onFailure = { null }
+                onFailure = { null },
             )
         } else null
     }

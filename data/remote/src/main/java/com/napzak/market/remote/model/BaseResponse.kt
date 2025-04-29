@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class BaseResponse<T>(
     @SerialName("status") val status: Int,
     @SerialName("message") val message: String,
-    @SerialName("data") val data: T
+    @SerialName("data") val data: T,
 ) {
     val isSuccess get() = status == 200
 }
