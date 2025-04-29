@@ -49,7 +49,7 @@ import com.napzak.market.feature.mypage.R.string.settings_button_withdraw
 
 
 @Composable
-private fun SettingsTopBar(
+fun SettingsTopBar(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
