@@ -23,10 +23,6 @@ import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.settings_button_logout
 import com.napzak.market.feature.mypage.R.string.settings_button_withdraw
-import com.napzak.market.feature.mypage.R.string.settings_item_notice_title
-import com.napzak.market.feature.mypage.R.string.settings_item_privacy_policy_title
-import com.napzak.market.feature.mypage.R.string.settings_item_terms_of_use_title
-import com.napzak.market.feature.mypage.R.string.settings_item_version_info_title
 import com.napzak.market.feature.mypage.R.string.settings_section_service_info_title
 import com.napzak.market.mypage.setting.component.SettingItem
 import com.napzak.market.mypage.setting.component.SettingsTopBar
