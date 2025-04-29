@@ -75,7 +75,7 @@ private fun SettingsTopBar(
                 )
             }
 
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(9.dp))
 
             Text(
                 text = stringResource(id = settings_topbar_title),
