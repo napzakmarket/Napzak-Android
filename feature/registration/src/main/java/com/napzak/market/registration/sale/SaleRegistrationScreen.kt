@@ -131,7 +131,7 @@ fun SaleRegistrationScreen(
         item {
             RegistrationViewGroup(
                 productImageUris = productImageUrls.toPersistentList(),
-                onImageSelected = TODO(),
+                onImageSelected = { }, // TODO: 마저 채우기
                 onPhotoPress = onPhotoPress,
                 onDeleteClick = onDeleteClick,
                 productGenre = productGenre,
@@ -140,7 +140,7 @@ fun SaleRegistrationScreen(
                 onProductNameChange = onProductNameChange,
                 productDescription = productDescription,
                 onProductDescriptionChange = onProductDescriptionChange,
-                modifier = TODO(),
+                modifier = Modifier,  // TODO: 마저 채우기
             )
         }
 
