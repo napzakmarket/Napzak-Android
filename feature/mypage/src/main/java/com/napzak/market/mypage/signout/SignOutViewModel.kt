@@ -15,7 +15,8 @@ import javax.inject.Inject
 class SignOutViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private val storeId get() = savedStateHandle.get<Long>(STORE_ID) ?: 0
+    private val storeId
+        get() = savedStateHandle.get<Long>(STORE_ID) ?: 0
 
     var signOutReason by mutableStateOf("")
     var signOutDescription by mutableStateOf("")
