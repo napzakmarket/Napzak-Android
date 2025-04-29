@@ -10,6 +10,7 @@ data class Product(
     val isInterested: Boolean,
     val tradeType: String,
     val tradeStatus: String,
+    val isPriceNegotiable: Boolean,
     val isOwnedByCurrentUser: Boolean,
     val interestCount: Int,
     val chatCount: Int
