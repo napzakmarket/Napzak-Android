@@ -1,8 +1,9 @@
-package com.napzak.market.product.repository
+package com.napzak.market.product.repositoryimpl
 
 import com.napzak.market.product.datasource.ProductRecommendationDataSource
 import com.napzak.market.product.mapper.toProducts
 import com.napzak.market.product.model.Product
+import com.napzak.market.product.repository.ProductRecommendationRepository
 import javax.inject.Inject
 
 class ProductRecommendationRepositoryImpl @Inject constructor(

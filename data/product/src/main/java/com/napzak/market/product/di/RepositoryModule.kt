@@ -1,7 +1,7 @@
 package com.napzak.market.product.di
 
 import com.napzak.market.product.repository.ProductRecommendationRepository
-import com.napzak.market.product.repository.ProductRecommendationRepositoryImpl
+import com.napzak.market.product.repositoryimpl.ProductRecommendationRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
