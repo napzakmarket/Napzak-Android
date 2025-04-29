@@ -40,29 +40,35 @@ import com.napzak.market.feature.registration.R.string.shipping_included
 import com.napzak.market.registration.component.ShippingFeeTextField
 import com.napzak.market.util.android.noRippleClickable
 
+private const val EMPTY_STRING = ""
+
 @Composable
 internal fun ShippingFeeSelector(
-    isShippingFeeIncluded: Boolean,
-    onShippingFeeIncludedChange: (Boolean) -> Unit,
-    isShippingFeeExcluded: Boolean,
-    onShippingFeeExcludedChange: (Boolean) -> Unit,
-    isNormalShippingChecked: Boolean,
-    onNormalShippingCheckChange: (Boolean) -> Unit,
     normalShippingFee: String,
     onNormalShippingFeeChange: (String) -> Unit,
-    isHalfShippingChecked: Boolean,
-    onHalfShippingCheckChange: (Boolean) -> Unit,
     halfShippingFee: String,
     onHalfShippingFeeChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var isShippingIncluded by remember { mutableStateOf(false) }
+    var isShippingExcluded by remember { mutableStateOf(false) }
+    var isNormalShippingChecked by remember { mutableStateOf(false) }
+    var isHalfShippingChecked by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier,
     ) {
         SelectorButton(
             title = stringResource(shipping_included),
-            isChecked = isShippingFeeIncluded,
-            onCheckChange = onShippingFeeIncludedChange,
+            isChecked = isShippingIncluded,
+            onCheckChange = {
+                if (isShippingExcluded && !isShippingIncluded) {
+                    isShippingExcluded = false
+                    onNormalShippingFeeChange(EMPTY_STRING)
+                    onHalfShippingFeeChange(EMPTY_STRING)
+                }
+                isShippingIncluded = !it
+            },
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -80,18 +86,27 @@ internal fun ShippingFeeSelector(
             Column {
                 SelectorButton(
                     title = stringResource(shipping_excluded),
-                    isChecked = isShippingFeeExcluded,
-                    onCheckChange = onShippingFeeExcludedChange,
+                    isChecked = isShippingExcluded,
+                    onCheckChange = {
+                        if (isShippingIncluded && !isShippingExcluded) {
+                            isShippingIncluded = false
+                        }
+                        isShippingExcluded = !it
+                        if (!isShippingExcluded) {
+                            onNormalShippingFeeChange(EMPTY_STRING)
+                            onHalfShippingFeeChange(EMPTY_STRING)
+                        }
+                    },
                 )
 
                 AnimatedVisibility(
-                    visible = isShippingFeeExcluded,
+                    visible = isShippingExcluded,
                 ) {
                     Column {
                         ExpandedShippingFee(
                             title = stringResource(normal_shipping),
                             isChecked = isNormalShippingChecked,
-                            onCheckChange = onNormalShippingCheckChange,
+                            onCheckChange = { isNormalShippingChecked = !it },
                             shippingFee = normalShippingFee,
                             onShippingFeeChange = onNormalShippingFeeChange,
                             hint = stringResource(normal_shipping_hint),
@@ -99,7 +114,7 @@ internal fun ShippingFeeSelector(
                         ExpandedShippingFee(
                             title = stringResource(half_priced_shipping),
                             isChecked = isHalfShippingChecked,
-                            onCheckChange = onHalfShippingCheckChange,
+                            onCheckChange = { isHalfShippingChecked = !it },
                             shippingFee = halfShippingFee,
                             onShippingFeeChange = onHalfShippingFeeChange,
                             hint = stringResource(half_priced_shipping_hint),
@@ -203,24 +218,12 @@ fun ExpandedShippingFee(
 @Composable
 private fun ShippingFeeSelectorPreview() {
     NapzakMarketTheme {
-        var feeIncluded by remember { mutableStateOf(false) }
-        var feeExcluded by remember { mutableStateOf(false) }
-        var normalShippingChecked by remember { mutableStateOf(false) }
         var normalShippingFee by remember { mutableStateOf("") }
-        var halfShippingChecked by remember { mutableStateOf(false) }
         var halfShippingFee by remember { mutableStateOf("") }
 
         ShippingFeeSelector(
-            isShippingFeeIncluded = feeIncluded,
-            onShippingFeeIncludedChange = { feeIncluded = !feeIncluded },
-            isShippingFeeExcluded = feeExcluded,
-            onShippingFeeExcludedChange = { feeExcluded = !feeExcluded },
-            isNormalShippingChecked = normalShippingChecked,
-            onNormalShippingCheckChange = { normalShippingChecked = !normalShippingChecked },
             normalShippingFee = normalShippingFee,
             onNormalShippingFeeChange = { normalShippingFee = it },
-            isHalfShippingChecked = halfShippingChecked,
-            onHalfShippingCheckChange = { halfShippingChecked = !halfShippingChecked },
             halfShippingFee = halfShippingFee,
             onHalfShippingFeeChange = { halfShippingFee = it },
             modifier = Modifier,
