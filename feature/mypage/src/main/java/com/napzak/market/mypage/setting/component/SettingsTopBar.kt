@@ -55,7 +55,7 @@ internal fun SettingsTopBar(
                     contentDescription = stringResource(id = settings_topbar_back_button_description),
                     modifier = Modifier
                         .noRippleClickable(onBackClick),
-                    tint = Color.Unspecified
+                    tint = NapzakMarketTheme.colors.gray200
                 )
             }
 
