@@ -20,10 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.settings_button_logout
 import com.napzak.market.feature.mypage.R.string.settings_button_withdraw
 import com.napzak.market.feature.mypage.R.string.settings_section_service_info_title
+import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_title
+import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_confirm_button
+import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_cancel_button
 import com.napzak.market.mypage.setting.component.SettingItem
 import com.napzak.market.mypage.setting.component.SettingsTopBar
 import com.napzak.market.util.android.noRippleClickable
@@ -108,12 +112,15 @@ fun SettingsScreen(
             }
 
             if (showLogoutDialog) {
-                LogoutDialog(
-                    onConfirm = {
+                NapzakDialog(
+                    title = stringResource(id = settings_logout_dialog_title),
+                    confirmText = stringResource(id = settings_logout_dialog_confirm_button),
+                    dismissText = stringResource(id = settings_logout_dialog_cancel_button),
+                    onConfirmClick = {
                         showLogoutDialog = false
                         onLogoutConfirm()
                     },
-                    onDismiss = {
+                    onDismissClick = {
                         showLogoutDialog = false
                     }
                 )
