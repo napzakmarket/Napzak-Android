@@ -1,4 +1,4 @@
-package com.napzak.market.genre
+package com.napzak.market.genre.model
 
 data class Genre (
     val genreId: Long,
