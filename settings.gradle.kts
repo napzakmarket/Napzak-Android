@@ -52,3 +52,4 @@ include(
     ":feature:store",
     ":feature:detail",
 )
+include(":domain:genre")
