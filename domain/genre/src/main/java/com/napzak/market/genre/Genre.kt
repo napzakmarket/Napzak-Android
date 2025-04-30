@@ -1,4 +1,7 @@
 package com.napzak.market.genre
 
-class Genre {
-}
+data class Genre (
+    val genreId: Long,
+    val genreName: String,
+    val genreImgUrl: String? = null,
+)
