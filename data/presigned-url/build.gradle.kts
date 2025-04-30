@@ -12,6 +12,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.util)
+
     implementation(projects.data.remote)
     implementation(projects.domain.presignedUrl)
 
