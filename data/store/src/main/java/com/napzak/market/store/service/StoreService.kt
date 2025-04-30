@@ -5,7 +5,7 @@ import com.napzak.market.store.dto.StoreResponse
 import retrofit2.http.GET
 
 interface StoreService {
-    @GET("api/v1/store/mypage")
+    @GET("api/v1/stores/mypage")
     suspend fun getStoreInfo(
     ): BaseResponse<StoreResponse>
 }

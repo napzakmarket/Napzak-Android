@@ -6,7 +6,7 @@ import retrofit2.http.GET
 
 interface StoreDetailService {
 
-    @GET("api/v1/store/mypage")
+    @GET("api/v1/stores/{storeId}")
     suspend fun getStoreDetail(
     ): BaseResponse<StoreDetailResponse>
 }
