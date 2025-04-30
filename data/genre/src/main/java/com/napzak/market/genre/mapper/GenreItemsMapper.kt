@@ -4,14 +4,13 @@ import com.napzak.market.genre.dto.GenreItemsResponse
 import com.napzak.market.genre.dto.GenreResponse
 import com.napzak.market.genre.model.Genre
 
-fun GenreItemsResponse.toModelList(): List<Genre> = genreList.toModelList()
+fun GenreItemsResponse.toGenres() = genreList.map { it.toGenre() }
 
-fun List<GenreResponse>.toModelList(): List<Genre> = map { it.toModel() }
-
-fun GenreResponse.toModel(): Genre =
+fun GenreResponse.toGenre() = with(this) {
     Genre(
         genreId = genreId,
         genreName = genreName,
         genrePhoto = genrePhoto,
         nextCursor = nextCursor
     )
+}

@@ -4,7 +4,7 @@ import com.napzak.market.genre.dto.RecommendedSearchWordGenreResponse
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.genre.model.RecommendedSearchWordGenre
 
-fun RecommendedSearchWordGenreResponse.toModel(): RecommendedSearchWordGenre =
+fun RecommendedSearchWordGenreResponse.toDomain(): RecommendedSearchWordGenre =
     RecommendedSearchWordGenre(
         searchWordList = searchWordList.map {
             RecommendedSearchWordGenre.SearchWord(
