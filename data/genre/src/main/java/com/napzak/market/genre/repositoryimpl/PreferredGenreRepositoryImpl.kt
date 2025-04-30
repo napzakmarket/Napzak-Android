@@ -17,7 +17,7 @@ class PreferredGenreRepositoryImpl @Inject constructor(
 
     override suspend fun getPreferredGenreResults(
         searchWord: String,
-        cursor: Long?
+        cursor: Long?,
     ): Result<List<Genre>> =
         runCatching {
             val responseData = preferredGenreDataSource.getPreferredGenreResults(
