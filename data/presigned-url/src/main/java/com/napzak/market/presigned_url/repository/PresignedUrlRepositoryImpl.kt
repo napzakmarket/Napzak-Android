@@ -12,7 +12,7 @@ class PresignedUrlRepositoryImpl @Inject constructor(
     ): Result<Map<String, String>> = runCatching {
         presignedUrlDataSource.getProductPresignedUrl(
             imageTitles = imageTitles,
-        ).data.toPresignedUrlMap().presignedUrls
+        ).toPresignedUrlMap().presignedUrls
     }
 
     override suspend fun getProfilePresignedUrls(
@@ -20,6 +20,6 @@ class PresignedUrlRepositoryImpl @Inject constructor(
     ): Result<Map<String, String>> = runCatching {
         presignedUrlDataSource.getProfilePresignedUrl(
             imageTitles = imageTitles,
-        ).data.toPresignedUrlMap().presignedUrls
+        ).toPresignedUrlMap().presignedUrls
     }
 }

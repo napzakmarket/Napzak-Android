@@ -8,9 +8,9 @@ class PresignedUrlDataSource @Inject constructor(
 ) {
     suspend fun getProductPresignedUrl(
         imageTitles: List<String>,
-    ) = presignedUrlService.getProductPresignedUrl(imageTitles)
+    ) = presignedUrlService.getProductPresignedUrl(imageTitles).data
 
     suspend fun getProfilePresignedUrl(
         imageTitles: List<String>,
-    ) = presignedUrlService.getProfilePresignedUrl(imageTitles)
+    ) = presignedUrlService.getProfilePresignedUrl(imageTitles).data
 }
