@@ -53,3 +53,4 @@ include(
     ":feature:detail",
 )
 include(":domain:genre")
+include(":data:genre")
