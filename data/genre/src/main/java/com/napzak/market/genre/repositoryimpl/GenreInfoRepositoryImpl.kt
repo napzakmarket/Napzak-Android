@@ -1,8 +1,9 @@
-package com.napzak.market.genre.repository
+package com.napzak.market.genre.repositoryimpl
 
 import com.napzak.market.genre.datasource.GenreInfoDataSource
 import com.napzak.market.genre.mapper.toDomain
 import com.napzak.market.genre.model.GenreInfo
+import com.napzak.market.genre.repository.GenreInfoRepository
 import javax.inject.Inject
 
 class GenreInfoRepositoryImpl @Inject constructor(
