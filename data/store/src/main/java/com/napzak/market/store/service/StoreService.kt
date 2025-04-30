@@ -1,6 +1,8 @@
 package com.napzak.market.store.service
 
 import com.napzak.market.remote.model.BaseResponse
+import com.napzak.market.store.dto.StoreDetailResponse
+import com.napzak.market.store.dto.StoreEditProfileResponse
 import com.napzak.market.store.dto.StoreResponse
 import retrofit2.http.GET
 
@@ -8,4 +10,13 @@ interface StoreService {
     @GET("api/v1/stores/mypage")
     suspend fun getStoreInfo(
     ): BaseResponse<StoreResponse>
+
+    @GET("api/v1/stores/modify/profile")
+    suspend fun getStoreEditProfile(
+    ): BaseResponse<StoreEditProfileResponse>
+
+    @GET("api/v1/stores/{storeId}")
+    suspend fun getStoreDetail(
+    ): BaseResponse<StoreDetailResponse>
+
 }
