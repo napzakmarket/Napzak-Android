@@ -38,9 +38,6 @@ internal class ExploreViewModel @Inject constructor(
     private val _genreSearchTerm = MutableStateFlow("")
     val genreSearchTerm = _genreSearchTerm.asStateFlow()
 
-    private val _pendingLikeActions = MutableStateFlow<List<Pair<Long, Boolean>>>(emptyList())
-    val pendingLikeActions = _pendingLikeActions.asStateFlow()
-
     fun updateExploreInformation() = viewModelScope.launch {
         with(uiState.value) {
             // TODO : 추후 API로 변경
@@ -165,37 +162,8 @@ internal class ExploreViewModel @Inject constructor(
         }
     }
 
-    fun updatePendingLikeAction(productId: Long, isLiked: Boolean) {
-        val currentList = _pendingLikeActions.value.toMutableList()
-        val index = currentList.indexOfFirst { it.first == productId }
-
-        if (index >= 0) {
-            currentList[index] = productId to isLiked
-        } else {
-            currentList.add(productId to isLiked)
-        }
-
-        _pendingLikeActions.value = currentList
-    }
-
-    @OptIn(FlowPreview::class)
-    fun updateLikeAction() = viewModelScope.launch {
-        _pendingLikeActions
-            .debounce(DEBOUNCE_DELAY)
-            .collectLatest { debounce ->
-                _pendingLikeActions.value.forEach { product ->
-                    if (product.second) {
-                        // TODO: 좋아요 설정 API
-                    } else {
-                        // TODO: 좋아요 해제 API
-                    }
-                    initPendingLikeAction()
-                }
-            }
-    }
-
-    fun initPendingLikeAction() {
-        _pendingLikeActions.update { emptyList() }
+    fun updateProductIsInterested(productId: Long, isLiked: Boolean) {
+        // TODO: 좋아요 연결 API 설정
     }
 
     private fun updateLoadState(loadState: UiState<ExploreProducts>) =
