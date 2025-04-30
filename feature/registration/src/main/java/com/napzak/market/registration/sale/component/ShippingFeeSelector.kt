@@ -44,19 +44,18 @@ private const val EMPTY_STRING = ""
 
 @Composable
 internal fun ShippingFeeSelector(
+    isShippingIncluded: Boolean?,
+    onShippingFeeChange: (Boolean) -> Unit,
     normalShippingFee: String,
     onNormalShippingFeeChange: (String) -> Unit,
     halfShippingFee: String,
     onHalfShippingFeeChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var isShippingIncluded by remember { mutableStateOf(false) }
-    var isShippingExcluded by remember { mutableStateOf(false) }
     var isNormalShippingChecked by remember { mutableStateOf(false) }
     var isHalfShippingChecked by remember { mutableStateOf(false) }
     val resetShippingExcluded = remember {
         {
-            isShippingExcluded = false
             isNormalShippingChecked = false
             isHalfShippingChecked = false
             onNormalShippingFeeChange(EMPTY_STRING)
@@ -69,10 +68,12 @@ internal fun ShippingFeeSelector(
     ) {
         SelectorButton(
             title = stringResource(shipping_included),
-            isChecked = isShippingIncluded,
+            isChecked = isShippingIncluded == true,
             onCheckChange = {
-                if (isShippingExcluded && !isShippingIncluded) resetShippingExcluded()
-                isShippingIncluded = !it
+                if (isShippingIncluded != true) {
+                    onShippingFeeChange(true)
+                    resetShippingExcluded()
+                }
             },
         )
 
@@ -91,16 +92,16 @@ internal fun ShippingFeeSelector(
             Column {
                 SelectorButton(
                     title = stringResource(shipping_excluded),
-                    isChecked = isShippingExcluded,
+                    isChecked = isShippingIncluded == false,
                     onCheckChange = {
-                        if (isShippingIncluded && !isShippingExcluded) isShippingIncluded = false
-                        isShippingExcluded = !it
-                        if (!isShippingExcluded) resetShippingExcluded()
+                        if (isShippingIncluded != false) {
+                            onShippingFeeChange(false)
+                        }
                     },
                 )
 
                 AnimatedVisibility(
-                    visible = isShippingExcluded,
+                    visible = isShippingIncluded == false,
                 ) {
                     Column {
                         ExpandedShippingFee(
@@ -143,9 +144,7 @@ private fun SelectorButton(
                 shape = RoundedCornerShape(14.dp),
             )
             .padding(horizontal = 10.dp, vertical = 12.dp)
-            .noRippleClickable {
-                onCheckChange(isChecked)
-            },
+            .noRippleClickable { onCheckChange(isChecked) },
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -153,7 +152,6 @@ private fun SelectorButton(
             imageVector = ImageVector.vectorResource(checkIcon),
             contentDescription = null,
             tint = Color.Unspecified,
-            modifier = Modifier,
         )
         Text(
             text = title,
@@ -184,10 +182,7 @@ fun ExpandedShippingFee(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
-            modifier = Modifier.noRippleClickable {
-                onCheckChange(isChecked)
-                if (isChecked) onShippingFeeChange(EMPTY_STRING)
-            },
+
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -195,6 +190,10 @@ fun ExpandedShippingFee(
                 imageVector = ImageVector.vectorResource(checkIcon),
                 contentDescription = null,
                 tint = Color.Unspecified,
+                modifier = Modifier.noRippleClickable {
+                    onCheckChange(isChecked)
+                    if (isChecked) onShippingFeeChange(EMPTY_STRING)
+                },
             )
             Text(
                 text = title,
@@ -220,6 +219,8 @@ private fun ShippingFeeSelectorPreview() {
         var halfShippingFee by remember { mutableStateOf("") }
 
         ShippingFeeSelector(
+            isShippingIncluded = true,
+            onShippingFeeChange = { },
             normalShippingFee = normalShippingFee,
             onNormalShippingFeeChange = { normalShippingFee = it },
             halfShippingFee = halfShippingFee,
