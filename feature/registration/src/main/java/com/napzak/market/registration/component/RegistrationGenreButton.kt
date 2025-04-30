@@ -28,12 +28,12 @@ import com.napzak.market.util.android.noRippleClickable
 @Composable
 internal fun RegistrationGenreButton(
     selectedGenre: String,
-    onGenreClick: () -> Unit,
+    onGenreClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
-            .noRippleClickable(onGenreClick)
+            .noRippleClickable { onGenreClick(selectedGenre) }
             .padding(vertical = 8.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -44,6 +44,7 @@ internal fun RegistrationGenreButton(
                 color = NapzakMarketTheme.colors.gray500,
             ),
         )
+
         Row(
             modifier = Modifier,
             horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -55,6 +56,7 @@ internal fun RegistrationGenreButton(
                     color = NapzakMarketTheme.colors.purple500,
                 ),
             )
+
             Icon(
                 imageVector = ImageVector.vectorResource(ic_arrow_right),
                 contentDescription = null,
