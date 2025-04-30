@@ -49,7 +49,7 @@ import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun SaleRegistrationRoute(
-    onCloseClick: () -> Unit,
+    navigateToUp: () -> Unit,
     navigateToDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SaleRegistrationViewModel = hiltViewModel(),
@@ -65,9 +65,10 @@ fun SaleRegistrationRoute(
                 }
             }
     }
+
     SaleRegistrationScreen(
         uiState = uiState,
-        onCloseClick = onCloseClick,
+        onCloseClick = navigateToUp,
         onImageSelect = viewModel::updatePhotos,
         onPhotoPress = viewModel::updateRepresentPhoto,
         onDeleteClick = viewModel::deletePhoto,
@@ -75,11 +76,12 @@ fun SaleRegistrationRoute(
         onProductNameChange = viewModel::updateTitle,
         onProductDescriptionChange = viewModel::updateDescription,
         onProductConditionSelect = viewModel::updateCondition,
-        onPriceChange = {},
-        onNormalShippingFeeChange = {},
-        onHalfShippingFeeChange = {},
-        checkButtonEnabled = { true },
-        onRegisterClick = {},
+        onPriceChange = viewModel::updatePrice,
+        onShippingFeeSelect = viewModel::updateShippingFeeInclusion,
+        onNormalShippingFeeChange = viewModel::updateNormalShippingFee,
+        onHalfShippingFeeChange = viewModel::updateHalfShippingFee,
+        checkButtonEnabled = viewModel::updateButtonState,
+        onRegisterClick = viewModel::registerProduct,
         modifier = modifier,
     )
 }
@@ -97,6 +99,7 @@ fun SaleRegistrationScreen(
     onProductDescriptionChange: (String) -> Unit,
     onProductConditionSelect: (ProductConditionType) -> Unit,
     onPriceChange: (String) -> Unit,
+    onShippingFeeSelect: (Boolean) -> Unit,
     onNormalShippingFeeChange: (String) -> Unit,
     onHalfShippingFeeChange: (String) -> Unit,
     checkButtonEnabled: () -> Boolean,
@@ -134,8 +137,8 @@ fun SaleRegistrationScreen(
 
         item {
             RegistrationViewGroup(
-                productImageUrls = uiState.imageUris.toPersistentList(),
-                onPhotoClick = onImageSelect,
+                productImageUris = uiState.imageUris.toPersistentList(),
+                onImageSelect = onImageSelect,
                 onPhotoPress = onPhotoPress,
                 onDeleteClick = onDeleteClick,
                 productGenre = uiState.genre,
@@ -144,7 +147,6 @@ fun SaleRegistrationScreen(
                 onProductNameChange = onProductNameChange,
                 productDescription = uiState.description,
                 onProductDescriptionChange = onProductDescriptionChange,
-                modifier = Modifier,  // TODO: 마저 채우기
             )
         }
 
@@ -196,6 +198,8 @@ fun SaleRegistrationScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             ShippingFeeSelector(
+                isShippingIncluded = uiState.isShippingFeeIncluded,
+                onShippingFeeChange = onShippingFeeSelect,
                 normalShippingFee = uiState.normalShippingFee,
                 onNormalShippingFeeChange = onNormalShippingFeeChange,
                 halfShippingFee = uiState.halfShippingFee,
@@ -205,7 +209,9 @@ fun SaleRegistrationScreen(
         }
 
         item {
-            Spacer(modifier = Modifier.height(if (uiState.isShippingFeeIncluded) 60.dp else 20.dp))
+            val spacerHeight = if (uiState.isShippingFeeIncluded == false) 60.dp else 20.dp
+
+            Spacer(modifier = Modifier.height(spacerHeight))
 
             Box(
                 modifier = Modifier
@@ -221,7 +227,7 @@ fun SaleRegistrationScreen(
                 NapzakButton(
                     text = stringResource(register),
                     onClick = onRegisterClick,
-                    enabled = false,
+                    enabled = isButtonEnabled,
                 )
             }
         }
@@ -243,6 +249,7 @@ private fun SaleRegistrationScreenPreview() {
             onProductDescriptionChange = {},
             onProductConditionSelect = {},
             onPriceChange = {},
+            onShippingFeeSelect = {},
             onNormalShippingFeeChange = {},
             onHalfShippingFeeChange = {},
             checkButtonEnabled = { true },

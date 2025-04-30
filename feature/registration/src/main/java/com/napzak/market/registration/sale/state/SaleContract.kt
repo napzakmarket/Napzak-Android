@@ -17,7 +17,7 @@ class SaleContract {
         val description: String = "",
         val condition: ProductConditionType? = null,
         val price: String = "",
-        val isShippingFeeIncluded: Boolean = false,
+        val isShippingFeeIncluded: Boolean? = null,
         val normalShippingFee: String = "",
         val halfShippingFee: String = "",
     )

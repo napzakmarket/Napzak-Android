@@ -67,6 +67,12 @@ class SaleRegistrationViewModel @Inject constructor(
         currentState.copy(price = price)
     }
 
+    fun updateShippingFeeInclusion(isShippingFeeIncluded: Boolean) {
+        _uiState.update { currentState ->
+            currentState.copy(isShippingFeeIncluded = isShippingFeeIncluded)
+        }
+    }
+
     fun updateNormalShippingFee(normalShippingFee: String) = _uiState.update { currentState ->
         currentState.copy(normalShippingFee = normalShippingFee)
     }
@@ -77,7 +83,8 @@ class SaleRegistrationViewModel @Inject constructor(
 
     fun updateButtonState(): Boolean = with(_uiState.value) {
         return !(imageUris.isEmpty() || genre.isEmpty() || title.isEmpty() || description.isEmpty()
-                || price.isEmpty() || price.toIntOrNull()?.rem(1000) != 0)
+                || condition == null || price.isEmpty() || isShippingFeeIncluded == null
+                || (isShippingFeeIncluded == false && (normalShippingFee.isEmpty() && halfShippingFee.isEmpty())))
     }
 
     fun registerProduct() {
