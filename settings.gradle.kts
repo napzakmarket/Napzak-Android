@@ -35,9 +35,11 @@ include(
     ":data:remote",
     ":data:local",
     ":data:dummy",
+    ":data:genre",
 )
 include(
     ":domain:dummy",
+    ":domain:genre",
 )
 include(
     ":feature:main",
@@ -52,5 +54,3 @@ include(
     ":feature:store",
     ":feature:detail",
 )
-include(":domain:genre")
-include(":data:genre")
