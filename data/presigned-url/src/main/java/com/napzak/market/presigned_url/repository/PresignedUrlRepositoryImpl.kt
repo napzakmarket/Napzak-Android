@@ -22,4 +22,11 @@ class PresignedUrlRepositoryImpl @Inject constructor(
             imageTitles = imageTitles,
         ).toPresignedUrlMap().presignedUrls
     }
+
+    override suspend fun putViaPresignedUrl(
+        presignedUrl: String,
+        imageUri: String,
+    ): Result<Unit> = runCatching {
+        presignedUrlDataSource.putViaPresignedUrl(presignedUrl, imageUri)
+    }
 }
