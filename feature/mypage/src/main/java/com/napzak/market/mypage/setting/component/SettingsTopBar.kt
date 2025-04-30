@@ -22,11 +22,13 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_arrow_left_9
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.settings_topbar_back_button_description
 import com.napzak.market.feature.mypage.R.string.settings_topbar_title
+import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 internal fun SettingsTopBar(
@@ -46,12 +48,14 @@ internal fun SettingsTopBar(
         ) {
             IconButton(
                 onClick = onBackClick,
-                modifier = Modifier.size(36.dp),
+                modifier = Modifier.size(24.dp),
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(ic_arrow_left_9),
                     contentDescription = stringResource(id = settings_topbar_back_button_description),
-                    tint = Color.Unspecified,
+                    modifier = Modifier
+                        .noRippleClickable(onBackClick),
+                    tint = Color.Unspecified
                 )
             }
 
