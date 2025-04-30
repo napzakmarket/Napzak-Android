@@ -83,3 +83,13 @@ internal fun SettingsTopBar(
         )
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+private fun SettingsTopBarPreview() {
+    NapzakMarketTheme {
+        SettingsTopBar(
+            onBackClick = {}
+        )
+    }
+}
