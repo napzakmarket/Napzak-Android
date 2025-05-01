@@ -2,8 +2,10 @@ package com.napzak.market.product.di
 
 import com.napzak.market.product.repository.ProductExploreRepository
 import com.napzak.market.product.repository.ProductRecommendationRepository
+import com.napzak.market.product.repository.ProductStoreRepository
 import com.napzak.market.product.repositoryimpl.ProductExploreRepositoryImpl
 import com.napzak.market.product.repositoryimpl.ProductRecommendationRepositoryImpl
+import com.napzak.market.product.repositoryimpl.ProductStoreRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -24,4 +26,10 @@ abstract class RepositoryModule {
     abstract fun bindProductExploreRepository(
         repositoryImpl: ProductExploreRepositoryImpl,
     ): ProductExploreRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindProductStoreRepository(
+        repositoryImpl: ProductStoreRepositoryImpl,
+    ): ProductStoreRepository
 }
