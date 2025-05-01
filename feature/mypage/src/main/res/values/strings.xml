@@ -14,4 +14,20 @@
     <string name="mypage_settings">설정</string>
     <string name="mypage_help_center">고객센터</string>
     <string name="mypage_header_title">Napzak(Logo)</string>
+
+    <!-- SettingsScreen -->
+    <string name="settings_topbar_title">설정</string>
+    <string name="settings_section_service_info_title">서비스 정보</string>
+    <string name="settings_item_notice_title">공지사항</string>
+    <string name="settings_item_terms_of_use_title">이용약관</string>
+    <string name="settings_item_privacy_policy_title">개인정보 처리방침</string>
+    <string name="settings_item_version_info_title">버전 정보</string>
+    <string name="settings_button_logout">로그아웃</string>
+    <string name="settings_button_withdraw">탈퇴하기</string>
+    <string name="settings_topbar_back_button_description">뒤로가기</string>
+
+    <!-- LogoutDialog -->
+    <string name="settings_logout_dialog_title">로그아웃 하시겠어요?</string>
+    <string name="settings_logout_dialog_confirm_button">예</string>
+    <string name="settings_logout_dialog_cancel_button">아니요</string>
 </resources>
