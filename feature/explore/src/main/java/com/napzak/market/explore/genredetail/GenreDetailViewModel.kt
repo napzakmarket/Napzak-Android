@@ -25,8 +25,6 @@ class GenreDetailViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(GenreDetailUiState())
     val uiState = _uiState.asStateFlow()
-    private val _sortBottomSheetState = MutableStateFlow(false)
-    val sortBottomSheetState = _sortBottomSheetState.asStateFlow()
 
     fun updateGenreInfo() = viewModelScope.launch {
         _uiState.update { currentState ->
@@ -59,10 +57,6 @@ class GenreDetailViewModel @Inject constructor(
                 selectedTab = newTradeType,
             )
         }
-    }
-
-    fun updateSortBottomSheetVisibility() {
-        _sortBottomSheetState.update { !_sortBottomSheetState.value }
     }
 
     fun updateUnopenFilter() {

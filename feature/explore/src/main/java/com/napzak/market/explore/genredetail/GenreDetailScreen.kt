@@ -24,7 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -75,7 +78,7 @@ internal fun GenreDetailRoute(
     viewModel: GenreDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val sortBottomSheetState by viewModel.sortBottomSheetState.collectAsStateWithLifecycle()
+    var sortBottomSheetState by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.updateGenreInfo()
@@ -89,14 +92,14 @@ internal fun GenreDetailRoute(
     GenreDetailScreen(
         uiState = uiState,
         sortBottomSheetState = sortBottomSheetState,
-        onDismissRequest = viewModel::updateSortBottomSheetVisibility,
+        onDismissRequest = { sortBottomSheetState = !sortBottomSheetState },
         onBackButtonClick = onBackButtonClick,
         onHomeButtonClick = onHomeNavigate,
         onTabClick = viewModel::updateTradeType,
         onUnopenFilterClick = viewModel::updateUnopenFilter,
         onExcludeSoldOutFilterClick = viewModel::updateSoldOutFilter,
         onProductClick = onProductClick,
-        onSortOptionClick = viewModel::updateSortBottomSheetVisibility,
+        onSortOptionClick = { sortBottomSheetState = !sortBottomSheetState },
         onSortItemClick = viewModel::updateSortOption,
         onLikeButtonClick = { id, value ->
             viewModel.updateProductIsInterested(productId = id, isLiked = value)
