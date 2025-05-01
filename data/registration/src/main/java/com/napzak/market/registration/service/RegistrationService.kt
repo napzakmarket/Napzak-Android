@@ -1,5 +1,6 @@
 package com.napzak.market.registration.service
 
+import com.napzak.market.registration.dto.ProductIdDto
 import com.napzak.market.registration.dto.PurchaseRegistrationRequest
 import com.napzak.market.registration.dto.PurchaseRegistrationResponse
 import com.napzak.market.registration.dto.SaleRegistrationRequest
@@ -15,7 +16,7 @@ interface RegistrationService {
     @POST("products/sell")
     suspend fun postSaleRegistration(
         @Body request: SaleRegistrationRequest,
-    ): BaseResponse<Long>
+    ): BaseResponse<ProductIdDto>
 
     @GET("products/sell/modify/{productId}")
     suspend fun getSaleRegistration(
@@ -26,12 +27,12 @@ interface RegistrationService {
     suspend fun putSaleRegistration(
         @Path("productId") productId: Long,
         @Body request: SaleRegistrationRequest,
-    ): BaseResponse<Long>
+    ): BaseResponse<ProductIdDto>
 
     @POST("products/buy")
     suspend fun postPurchaseRegistration(
         @Body request: PurchaseRegistrationRequest,
-    ): BaseResponse<Long>
+    ): BaseResponse<ProductIdDto>
 
     @GET("products/buy/modify/{productId}")
     suspend fun getPurchaseRegistration(
@@ -42,5 +43,5 @@ interface RegistrationService {
     suspend fun putPurchaseRegistration(
         @Path("productId") productId: Long,
         @Body request: PurchaseRegistrationRequest,
-    ): BaseResponse<Long>
+    ): BaseResponse<ProductIdDto>
 }
