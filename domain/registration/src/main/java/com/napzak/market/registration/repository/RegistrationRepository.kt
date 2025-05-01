@@ -1,32 +1,32 @@
 package com.napzak.market.registration.repository
 
-import com.napzak.market.registration.model.PurchaseProduct
-import com.napzak.market.registration.model.SaleProduct
+import com.napzak.market.registration.model.PurchaseRegistrationProduct
+import com.napzak.market.registration.model.SaleRegistrationProduct
 
 interface RegistrationRepository {
     suspend fun postSaleRegistration(
-        saleProduct: SaleProduct,
+        saleRegistrationProduct: SaleRegistrationProduct,
     ): Result<Long>
 
     suspend fun getSaleRegistration(
         productId: Long,
-    ): Result<SaleProduct>
+    ): Result<SaleRegistrationProduct>
 
     suspend fun putSaleRegistration(
         productId: Long,
-        saleProduct: SaleProduct,
+        saleRegistrationProduct: SaleRegistrationProduct,
     ): Result<Unit>
 
     suspend fun postPurchaseRegistration(
-        purchaseProduct: PurchaseProduct,
+        purchaseRegistrationProduct: PurchaseRegistrationProduct,
     ): Result<Long>
 
     suspend fun getPurchaseRegistration(
         productId: Long,
-    ): Result<PurchaseProduct>
+    ): Result<PurchaseRegistrationProduct>
 
     suspend fun putPurchaseRegistration(
         productId: Long,
-        purchaseProduct: PurchaseProduct,
+        purchaseRegistrationProduct: PurchaseRegistrationProduct,
     ): Result<Unit>
 }
