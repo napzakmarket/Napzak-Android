@@ -6,7 +6,7 @@ import retrofit2.http.GET
 
 interface SettingService {
 
-    @GET("api/v1/stores/mypage/setting")
+    @GET("stores/mypage/setting")
     suspend fun getSettingInfo(
     ): BaseResponse<SettingInfoResponse>
 }

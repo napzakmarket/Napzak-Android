@@ -8,19 +8,19 @@ import retrofit2.http.GET
 import retrofit2.http.PUT
 
 interface StoreService {
-    @GET("api/v1/stores/mypage")
+    @GET("stores/mypage")
     suspend fun getStoreInfo(
     ): BaseResponse<StoreResponse>
 
-    @GET("api/v1/stores/modify/profile")
+    @GET("stores/modify/profile")
     suspend fun getStoreEditProfile(
     ): BaseResponse<StoreEditProfileResponse>
 
-    @GET("api/v1/stores/{storeId}")
+    @GET("stores/{storeId}")
     suspend fun getStoreDetail(
     ): BaseResponse<StoreDetailResponse>
 
-    @PUT("api/v1/stores/modify/profile")
+    @PUT("stores/modify/profile")
     suspend fun updateStoreProfile(
     ): BaseResponse<StoreEditProfileResponse>
 }
