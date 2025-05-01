@@ -9,8 +9,8 @@ data class PurchaseRegistrationResponse(
     val productId: Long,
     @SerialName("productPhotoList")
     val productPhotoDto: List<ProductPhotoDto>,
-    @SerialName("genreId")
-    val genreId: Long,
+    @SerialName("genreName")
+    val genreName: String,
     @SerialName("title")
     val title: String,
     @SerialName("description")
