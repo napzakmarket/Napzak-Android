@@ -9,7 +9,6 @@ class PreferredGenreDataSource @Inject constructor(
     suspend fun getPreferredGenres(cursor: Long?) =
         preferredGenreService.getPreferredGenres(cursor = cursor)
 
-
     suspend fun getPreferredGenreResults(
         searchWord: String,
         cursor: Long?,
