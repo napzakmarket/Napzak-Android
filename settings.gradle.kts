@@ -35,9 +35,11 @@ include(
     ":data:remote",
     ":data:local",
     ":data:dummy",
+    ":data:banner",
 )
 include(
     ":domain:dummy",
+    ":domain:banner",
 )
 include(
     ":feature:main",
