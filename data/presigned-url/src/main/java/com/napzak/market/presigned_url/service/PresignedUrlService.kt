@@ -1,7 +1,7 @@
 package com.napzak.market.presigned_url.service
 
-import com.napzak.market.presigned_url.dto.ProductPresignedUrlResponseDto
-import com.napzak.market.presigned_url.dto.ProfilePresignedUrlResponseDto
+import com.napzak.market.presigned_url.dto.ProductPresignedUrlResponse
+import com.napzak.market.presigned_url.dto.ProfilePresignedUrlResponse
 import com.napzak.market.remote.model.BaseResponse
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -15,12 +15,12 @@ interface PresignedUrlService {
     @GET("presigned-url/product")
     suspend fun getProductPresignedUrl(
         @Query("productImages") imageTitles: List<String>,
-    ): BaseResponse<ProductPresignedUrlResponseDto>
+    ): BaseResponse<ProductPresignedUrlResponse>
 
     @GET("presigned-url/stores")
     suspend fun getProfilePresignedUrl(
         @Query("profileImages") imageTitles: List<String>,
-    ): BaseResponse<ProfilePresignedUrlResponseDto>
+    ): BaseResponse<ProfilePresignedUrlResponse>
 
     @PUT
     suspend fun putViaPresignedUrl(

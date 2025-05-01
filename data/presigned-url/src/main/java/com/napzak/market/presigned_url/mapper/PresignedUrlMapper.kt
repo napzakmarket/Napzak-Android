@@ -1,13 +1,13 @@
 package com.napzak.market.presigned_url.mapper
 
-import com.napzak.market.presigned_url.dto.ProductPresignedUrlResponseDto
-import com.napzak.market.presigned_url.dto.ProfilePresignedUrlResponseDto
+import com.napzak.market.presigned_url.dto.ProductPresignedUrlResponse
+import com.napzak.market.presigned_url.dto.ProfilePresignedUrlResponse
 import com.napzak.market.presigned_url.model.PresignedUrlMap
 
-fun ProductPresignedUrlResponseDto.toPresignedUrlMap() = PresignedUrlMap(
+fun ProductPresignedUrlResponse.toPresignedUrlMap() = PresignedUrlMap(
     presignedUrls = LinkedHashMap(presignedUrls),
 )
 
-fun ProfilePresignedUrlResponseDto.toPresignedUrlMap() = PresignedUrlMap(
+fun ProfilePresignedUrlResponse.toPresignedUrlMap() = PresignedUrlMap(
     presignedUrls = LinkedHashMap(presignedUrls),
 )

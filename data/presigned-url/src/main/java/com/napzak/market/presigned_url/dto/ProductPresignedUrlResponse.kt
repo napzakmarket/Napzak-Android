@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ProfilePresignedUrlResponseDto(
-    @SerialName("profilePresignedUrls")
+data class ProductPresignedUrlResponse(
+    @SerialName("productPresignedUrls")
     val presignedUrls: Map<String, String>,
 )
