@@ -21,9 +21,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -37,8 +41,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.napzak.market.common.state.UiState
+import com.napzak.market.common.type.BottomSheetType
 import com.napzak.market.common.type.MarketTab
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeStatusType
@@ -60,8 +68,11 @@ import com.napzak.market.feature.store.R.string.store_product
 import com.napzak.market.store.component.BasicFilterChip
 import com.napzak.market.store.component.GenreChip
 import com.napzak.market.store.component.GenreFilterChip
+import com.napzak.market.store.component.StoreBottomSheetScreen
 import com.napzak.market.store.model.Product
 import com.napzak.market.store.model.StoreInfo
+import com.napzak.market.store.store.state.StoreBottomSheetState
+import com.napzak.market.store.store.state.StoreUiState
 import com.napzak.market.util.android.noRippleClickable
 
 @Composable
@@ -70,47 +81,139 @@ internal fun StoreRoute(
     onProfileEditNavigate: () -> Unit,
     onProductDetailNavigate: (Long) -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: StoreViewModel = hiltViewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val bottomSheetState by viewModel.bottomSheetState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.updateStoreInformation()
+        viewModel.updateGenreItemsInBottomSheet()
+    }
+
+    LaunchedEffect(uiState) {
+        viewModel.updateStoreProducts()
+    }
+
+    LaunchedEffect(viewModel.genreSearchTerm) {
+        viewModel.updateGenreSearchResult()
+    }
+
     StoreScreen(
-        selectedTab = MarketTab.SELL,
-        storeInfo = StoreInfo.mockStoreInfo,
-        filteredGenres = emptyList(),
-        sortType = SortType.RECENT,
-        productList = Product.mockMixedProduct,
+        uiState = uiState,
+        bottomSheetState = bottomSheetState,
+        onDismissRequest = viewModel::updateBottomSheetVisibility,
         onBackButtonClick = onNavigateUp,
         onMenuButtonClick = {},
         onProfileEditClick = onProfileEditNavigate,
-        onTabClicked = {},
-        onGenreFilterClick = {},
-        onFilterClick = {},
-        onSortOptionClick = {},
+        onTabClicked = viewModel::updateMarketTabType,
+        onGenreFilterClick = {
+            viewModel.updateBottomSheetVisibility(BottomSheetType.GENRE_SEARCHING)
+        },
+        onGenreBottomSheetTextChange = viewModel::updateGenreSearchTerm,
+        onGenreSelectButtonClick = viewModel::updateSelectedGenres,
+        onFilterClick = viewModel::updateIsOnSale,
+        onSortOptionClick = {
+            viewModel.updateBottomSheetVisibility(BottomSheetType.SORT)
+        },
+        onSortItemClick = viewModel::updateSortOption,
         onProductItemClick = onProductDetailNavigate,
-        onLikeButtonClick = { id, value -> },
+        onLikeButtonClick = { id, value ->
+            viewModel.updateProductIsInterested(productId = id, isLiked = value)
+        },
         modifier = modifier,
     )
 }
 
 @Composable
 private fun StoreScreen(
-    storeInfo: StoreInfo,
-    selectedTab: MarketTab,
-    filteredGenres: List<Genre>,
-    sortType: SortType,
-    productList: List<Product>,
+    uiState: StoreUiState,
+    bottomSheetState: StoreBottomSheetState,
+    onBackButtonClick: () -> Unit,
+    onMenuButtonClick: () -> Unit,
     onProfileEditClick: () -> Unit,
     onTabClicked: (MarketTab) -> Unit,
     onGenreFilterClick: () -> Unit,
+    onDismissRequest: (BottomSheetType) -> Unit,
+    onGenreBottomSheetTextChange: (String) -> Unit,
+    onGenreSelectButtonClick: (List<Genre>) -> Unit,
+    onFilterClick: () -> Unit,
+    onSortOptionClick: (SortType) -> Unit,
+    onSortItemClick: (SortType) -> Unit,
+    onProductItemClick: (Long) -> Unit,
+    onLikeButtonClick: (Long, Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    when (uiState.loadState) {
+        is UiState.Loading -> {
+        }
+
+        is UiState.Empty -> {
+        }
+
+        is UiState.Failure -> {
+        }
+
+        is UiState.Success -> {
+            with(uiState) {
+                StoreSuccessScreen(
+                    storeInfo = uiState.loadState.data.storeInfo,
+                    selectedTab = selectedTab,
+                    filteredGenres = filteredGenres,
+                    isOnSale = isOnSale,
+                    sortType = sortOption,
+                    genreItems = genreSearchResultItems,
+                    productList = uiState.loadState.data.productList,
+                    bottomSheetState = bottomSheetState,
+                    onProfileEditClick = onProfileEditClick,
+                    onTabClicked = onTabClicked,
+                    onGenreFilterClick = onGenreFilterClick,
+                    onDismissRequest = onDismissRequest,
+                    onGenreBottomSheetTextChange = onGenreBottomSheetTextChange,
+                    onGenreSelectButtonClick = onGenreSelectButtonClick,
+                    onFilterClick = onFilterClick,
+                    onBackButtonClick = onBackButtonClick,
+                    onSortOptionClick = onSortOptionClick,
+                    onSortItemClick = onSortItemClick,
+                    onProductItemClick = onProductItemClick,
+                    onLikeButtonClick = onLikeButtonClick,
+                    onMenuButtonClick = onMenuButtonClick,
+                    modifier = modifier,
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun StoreSuccessScreen(
+    storeInfo: StoreInfo,
+    selectedTab: MarketTab,
+    filteredGenres: List<Genre>,
+    isOnSale: Boolean,
+    sortType: SortType,
+    genreItems: List<Genre>,
+    productList: List<Product>,
+    bottomSheetState: StoreBottomSheetState,
+    onProfileEditClick: () -> Unit,
+    onTabClicked: (MarketTab) -> Unit,
+    onGenreFilterClick: () -> Unit,
+    onDismissRequest: (BottomSheetType) -> Unit,
+    onGenreBottomSheetTextChange: (String) -> Unit,
+    onGenreSelectButtonClick: (List<Genre>) -> Unit,
     onFilterClick: () -> Unit,
     onBackButtonClick: () -> Unit,
     onSortOptionClick: (SortType) -> Unit,
+    onSortItemClick: (SortType) -> Unit,
     onProductItemClick: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
     onMenuButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // TODO: ViewModel로 이동예정
-    val userId : Long = 0
-    val isMyStore = storeInfo.storeId == userId
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
 
     Column(
         modifier = modifier
@@ -118,16 +221,17 @@ private fun StoreScreen(
             .background(color = NapzakMarketTheme.colors.white),
     ) {
         StoreTopBar(
-            isMyStore = isMyStore,
+            isMyStore = storeInfo.isStoreOwner,
             onBackButtonClick = onBackButtonClick,
             onMenuButtonClick = onMenuButtonClick
         )
 
         StoreScrollSection(
             storeInfo = storeInfo,
-            isMyStore = isMyStore,
+            isMyStore = storeInfo.isStoreOwner,
             selectedTab = selectedTab,
             filteredGenres = filteredGenres,
+            isOnSale = isOnSale,
             sortType = sortType,
             productList = productList,
             onProfileEditClick = onProfileEditClick,
@@ -139,6 +243,18 @@ private fun StoreScreen(
             onLikeButtonClick = onLikeButtonClick,
         )
     }
+
+    StoreBottomSheetScreen(
+        storeBottomSheetState = bottomSheetState,
+        sheetState = sheetState,
+        selectedGenres = filteredGenres,
+        genreItems = genreItems,
+        sortType = sortType,
+        onDismissRequest = onDismissRequest,
+        onSortItemClick = onSortItemClick,
+        onTextChange = onGenreBottomSheetTextChange,
+        onGenreSelectButtonClick = onGenreSelectButtonClick,
+    )
 }
 
 @Composable
@@ -178,6 +294,7 @@ private fun StoreScrollSection(
     isMyStore: Boolean,
     selectedTab: MarketTab,
     filteredGenres: List<Genre>,
+    isOnSale: Boolean,
     productList: List<Product>,
     sortType: SortType,
     onProfileEditClick: () -> Unit,
@@ -234,98 +351,100 @@ private fun StoreScrollSection(
 
                     BasicFilterChip(
                         filterName = filterChipName,
-                        isClicked = false,
+                        isClicked = isOnSale,
                         onChipClick = onFilterClick,
                     )
                 }
             }
         }
 
-        item {
-            Column {
+        if (selectedTab != MarketTab.REVIEW) {
+            item {
+                Column {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 20.dp, top = 20.dp, end = 20.dp),
+                    ) {
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(style = SpanStyle(color = NapzakMarketTheme.colors.gray500)) {
+                                    append(stringResource(store_product))
+                                }
+                                withStyle(style = SpanStyle(color = NapzakMarketTheme.colors.purple500)) {
+                                    append(stringResource(store_count, productList.size))
+                                }
+                            },
+                            style = NapzakMarketTheme.typography.body14sb,
+                        )
+
+                        Spacer(Modifier.weight(1f))
+
+                        Row(
+                            modifier = Modifier.noRippleClickable { onSortOptionClick(sortType) },
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = sortType.label,
+                                style = NapzakMarketTheme.typography.caption12sb,
+                                color = NapzakMarketTheme.colors.gray200,
+                            )
+
+                            Spacer(Modifier.width(3.dp))
+
+                            Icon(
+                                imageVector = ImageVector.vectorResource(ic_down_chevron_7),
+                                contentDescription = null,
+                                tint = NapzakMarketTheme.colors.gray200,
+                                modifier = Modifier.size(width = 7.dp, height = 4.dp),
+                            )
+                        }
+                    }
+                }
+            }
+
+            itemsIndexed(productList.chunked(2)) { index, rowItems ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 20.dp, top = 20.dp, end = 20.dp),
+                        .padding(top = 20.dp)
+                        .padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(style = SpanStyle(color = NapzakMarketTheme.colors.gray500)) {
-                                append(stringResource(store_product))
-                            }
-                            withStyle(style = SpanStyle(color = NapzakMarketTheme.colors.purple500)) {
-                                append(stringResource(store_count, productList.size))
-                            }
-                        },
-                        style = NapzakMarketTheme.typography.body14sb,
-                    )
+                    rowItems.forEach { product ->
+                        with(product) {
+                            NapzakLargeProductItem(
+                                genre = genre,
+                                title = name,
+                                imgUrl = photo,
+                                price = price.toString(),
+                                createdDate = uploadTime,
+                                reviewCount = reviewCount.toString(),
+                                likeCount = likeCount.toString(),
+                                isLiked = isInterested,
+                                isMyItem = isOwnedByCurrentUser,
+                                isSellElseBuy = TradeType.valueOf(tradeType) == TradeType.SELL,
+                                isSuggestionAllowed = isPriceNegotiable,
+                                tradeStatus = TradeStatusType.get(
+                                    tradeStatus, TradeType.valueOf(tradeType)
+                                ),
+                                onLikeClick = { onLikeButtonClick(id, isInterested) },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .noRippleClickable { onProductDetailNavigate(id) },
+                            )
+                        }
+                    }
 
-                    Spacer(Modifier.weight(1f))
-
-                    Row(
-                        modifier = Modifier.noRippleClickable { onSortOptionClick(sortType) },
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = sortType.label,
-                            style = NapzakMarketTheme.typography.caption12sb,
-                            color = NapzakMarketTheme.colors.gray200,
-                        )
-
-                        Spacer(Modifier.width(3.dp))
-
-                        Icon(
-                            imageVector = ImageVector.vectorResource(ic_down_chevron_7),
-                            contentDescription = null,
-                            tint = NapzakMarketTheme.colors.gray200,
-                            modifier = Modifier.size(width = 7.dp, height = 4.dp),
-                        )
+                    if (rowItems.size == 1) {
+                        Spacer(modifier = Modifier.weight(1f))
                     }
                 }
             }
-        }
 
-        itemsIndexed(productList.chunked(2)) { index, rowItems ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp)
-                    .padding(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.spacedBy(20.dp),
-            ) {
-                rowItems.forEach { product ->
-                    with(product) {
-                        NapzakLargeProductItem(
-                            genre = genre,
-                            title = name,
-                            imgUrl = photo,
-                            price = price.toString(),
-                            createdDate = uploadTime,
-                            reviewCount = reviewCount.toString(),
-                            likeCount = likeCount.toString(),
-                            isLiked = isInterested,
-                            isMyItem = isOwnedByCurrentUser,
-                            isSellElseBuy = TradeType.valueOf(tradeType) == TradeType.SELL,
-                            isSuggestionAllowed = isPriceNegotiable,
-                            tradeStatus = TradeStatusType.get(
-                                tradeStatus, TradeType.valueOf(tradeType)
-                            ),
-                            onLikeClick = { onLikeButtonClick(id, isInterested) },
-                            modifier = Modifier
-                                .weight(1f)
-                                .noRippleClickable { onProductDetailNavigate(id) },
-                        )
-                    }
-                }
-
-                if (rowItems.size == 1) {
-                    Spacer(modifier = Modifier.weight(1f))
-                }
+            item {
+                Spacer(Modifier.padding(bottom = 32.dp))
             }
-        }
-
-        item {
-            Spacer(Modifier.padding(bottom = 32.dp))
         }
     }
 }
@@ -450,21 +569,27 @@ private fun StoreInfoSection(
 @Preview
 @Composable
 private fun StoreScreenPreview(modifier: Modifier = Modifier) {
-
     NapzakMarketTheme {
-        StoreScreen(
+        StoreSuccessScreen(
             selectedTab = MarketTab.SELL,
             storeInfo = StoreInfo.mockStoreInfo,
             filteredGenres = emptyList(),
+            isOnSale = false,
             sortType = SortType.RECENT,
+            genreItems = emptyList(),
             productList = Product.mockMixedProduct,
+            bottomSheetState = StoreBottomSheetState(),
             onBackButtonClick = {},
             onMenuButtonClick = {},
             onProfileEditClick = {},
             onTabClicked = {},
             onGenreFilterClick = {},
+            onDismissRequest = {},
+            onGenreBottomSheetTextChange = {},
+            onGenreSelectButtonClick = {},
             onFilterClick = {},
             onSortOptionClick = {},
+            onSortItemClick = {},
             onProductItemClick = {},
             onLikeButtonClick = { id, value -> },
             modifier = modifier,
