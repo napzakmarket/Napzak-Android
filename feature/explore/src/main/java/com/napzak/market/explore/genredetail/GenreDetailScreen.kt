@@ -135,6 +135,8 @@ private fun GenreDetailScreen(
                 GenreDetailSuccessScreen(
                     genreInfo = genreInfo,
                     selectedTab = selectedTab,
+                    isUnopenSelected = isUnopenSelected,
+                    isSoldOutSelected = isSoldOutSelected,
                     productList = uiState.loadState.data.productList,
                     sortType = sortOption,
                     sortBottomSheetState = sortBottomSheetState,
@@ -160,6 +162,8 @@ private fun GenreDetailScreen(
 private fun GenreDetailSuccessScreen(
     genreInfo: GenreInfo,
     selectedTab: TradeType,
+    isUnopenSelected: Boolean,
+    isSoldOutSelected: Boolean,
     productList: List<Product>,
     sortType: SortType,
     sortBottomSheetState: Boolean,
@@ -192,6 +196,8 @@ private fun GenreDetailSuccessScreen(
         GenreScrollSection(
             genreInfo = genreInfo,
             selectedTab = selectedTab,
+            isUnopenSelected = isUnopenSelected,
+            isSoldOutSelected = isSoldOutSelected,
             productList = productList,
             sortType = sortType,
             onTabClick = onTabClick,
@@ -247,6 +253,8 @@ private fun GenreTopBar(
 private fun GenreScrollSection(
     genreInfo: GenreInfo,
     selectedTab: TradeType,
+    isUnopenSelected: Boolean,
+    isSoldOutSelected: Boolean,
     productList: List<Product>,
     sortType: SortType,
     onTabClick: (TradeType) -> Unit,
@@ -347,14 +355,14 @@ private fun GenreScrollSection(
             ) {
                 BasicFilterChip(
                     filterName = stringResource(explore_unopened),
-                    isClicked = false,
+                    isClicked = isUnopenSelected,
                     onChipClick = onUnopenFilterClick,
                 )
 
                 if (selectedTab == TradeType.SELL) {
                     BasicFilterChip(
                         filterName = stringResource(explore_exclude_sold_out),
-                        isClicked = false,
+                        isClicked = isSoldOutSelected,
                         onChipClick = onExcludeSoldOutFilterClick,
                     )
                 }
@@ -458,6 +466,8 @@ private fun GenreDetailScreenPreview(modifier: Modifier = Modifier) {
         GenreDetailSuccessScreen(
             genreInfo = genreInfo,
             selectedTab = TradeType.SELL,
+            isUnopenSelected = false,
+            isSoldOutSelected = false,
             productList = Product.mockMixedProduct,
             sortType = SortType.RECENT,
             sortBottomSheetState = false,
