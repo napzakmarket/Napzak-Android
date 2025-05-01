@@ -11,4 +11,5 @@ interface StoreRepository {
 
     suspend fun fetchStoreDetail(token: String): Result<StoreDetail>
 
-    suspend fun updateEditProfile(): Result<StoreEditProfile>}
+    suspend fun updateEditProfile(): Result<StoreEditProfile>
+}
