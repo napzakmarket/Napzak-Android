@@ -8,5 +8,5 @@ data class SettingInfoResponse(
     @SerialName("noticeLink") val noticeLink: String,
     @SerialName("termsLink") val termsLink: String,
     @SerialName("privacyPolicyLink") val privacyPolicyLink: String,
-    @SerialName("versionInfoLink") val versionInfoLink: String
+    @SerialName("versionInfoLink") val versionInfoLink: String,
 )

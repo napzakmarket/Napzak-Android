@@ -7,5 +7,5 @@ fun SettingInfoResponse.toDomain(): SettingInfo = SettingInfo(
     noticeLink = noticeLink,
     termsLink = termsLink,
     privacyPolicyLink = privacyPolicyLink,
-    versionInfoLink = versionInfoLink
+    versionInfoLink = versionInfoLink,
 )

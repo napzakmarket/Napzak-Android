@@ -9,11 +9,11 @@ data class StoreEditProfileResponse(
     @SerialName("storePhoto") val storePhoto: String,
     @SerialName("storeNickName") val storeNickname: String,
     @SerialName("storeDescription") val storeDescription: String,
-    @SerialName("preferredGenreList") val preferredGenres: List<StoreEditGenreDto>
+    @SerialName("preferredGenreList") val preferredGenres: List<StoreEditGenreDto>,
 )
 
 @Serializable
 data class StoreEditGenreDto(
     @SerialName("genreId") val genreId: Long,
-    @SerialName("genreName") val genreName: String
+    @SerialName("genreName") val genreName: String,
 )

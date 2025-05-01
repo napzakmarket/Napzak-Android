@@ -10,5 +10,5 @@ data class StoreResponse(
     @SerialName("storePhoto") val storePhoto: String,
     @SerialName("totalSellCount") val totalSellCount: Int,
     @SerialName("totalBuyCount") val totalBuyCount: Int,
-    @SerialName("serviceLink") val serviceLink: String
+    @SerialName("serviceLink") val serviceLink: String,
 )

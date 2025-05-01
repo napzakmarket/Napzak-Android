@@ -7,10 +7,10 @@ data class StoreDetail(
     val photoUrl: String,
     val coverUrl: String,
     val isOwner: Boolean,
-    val genrePreferences: List<StoreDetailGenre>
+    val genrePreferences: List<StoreDetailGenre>,
 )
 
 data class StoreDetailGenre(
     val genreId: Long,
-    val genreName: String
+    val genreName: String,
 )

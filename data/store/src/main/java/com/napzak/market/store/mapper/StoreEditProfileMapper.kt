@@ -10,10 +10,10 @@ fun StoreEditProfileResponse.toDomain(): StoreEditProfile = StoreEditProfile(
     photoUrl = storePhoto,
     nickname = storeNickname,
     description = storeDescription,
-    preferredGenres = preferredGenres.map { it.toDomain() }
+    preferredGenres = preferredGenres.map { it.toDomain() },
 )
 
 fun StoreEditGenreDto.toDomain(): StoreEditGenre = StoreEditGenre(
     genreId = genreId,
-    genreName = genreName
+    genreName = genreName,
 )

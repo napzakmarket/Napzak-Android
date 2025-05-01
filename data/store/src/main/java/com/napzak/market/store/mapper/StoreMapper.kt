@@ -9,5 +9,5 @@ fun StoreResponse.toDomain(): StoreInfo = StoreInfo(
     photoUrl = storePhoto,
     salesCount = totalSellCount,
     purchaseCount = totalBuyCount,
-    serviceLink = serviceLink
+    serviceLink = serviceLink,
 )

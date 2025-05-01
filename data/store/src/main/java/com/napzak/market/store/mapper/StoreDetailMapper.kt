@@ -12,10 +12,10 @@ fun StoreDetailResponse.toDomain(): StoreDetail = StoreDetail(
     photoUrl = storePhoto,
     coverUrl = storeCover,
     isOwner = isStoreOwner,
-    genrePreferences = genrePreferences.map { it.toDomain() }
+    genrePreferences = genrePreferences.map { it.toDomain() },
 )
 
 fun StoreDetailGenreDto.toDomain(): StoreDetailGenre = StoreDetailGenre(
     genreId = genreId,
-    genreName = genreName
+    genreName = genreName,
 )

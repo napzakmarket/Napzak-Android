@@ -5,10 +5,10 @@ data class StoreEditProfile(
     val photoUrl: String,
     val nickname: String,
     val description: String,
-    val preferredGenres: List<StoreEditGenre>
+    val preferredGenres: List<StoreEditGenre>,
 )
 
 data class StoreEditGenre(
     val genreId: Long,
-    val genreName: String
+    val genreName: String,
 )

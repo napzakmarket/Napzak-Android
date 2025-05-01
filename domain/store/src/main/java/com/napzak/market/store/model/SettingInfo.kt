@@ -4,5 +4,5 @@ data class SettingInfo(
     val noticeLink: String,
     val termsLink: String,
     val privacyPolicyLink: String,
-    val versionInfoLink: String
+    val versionInfoLink: String,
 )

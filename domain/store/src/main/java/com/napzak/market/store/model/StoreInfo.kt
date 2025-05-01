@@ -6,5 +6,5 @@ data class StoreInfo(
     val photoUrl: String,
     val salesCount: Int,
     val purchaseCount: Int,
-    val serviceLink: String
+    val serviceLink: String,
 )

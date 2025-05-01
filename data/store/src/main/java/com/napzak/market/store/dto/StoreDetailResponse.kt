@@ -11,11 +11,11 @@ data class StoreDetailResponse(
     @SerialName("storePhoto") val storePhoto: String,
     @SerialName("storeCover") val storeCover: String,
     @SerialName("isStoreOwner") val isStoreOwner: Boolean,
-    @SerialName("genrePreferences") val genrePreferences: List<StoreDetailGenreDto>
+    @SerialName("genrePreferences") val genrePreferences: List<StoreDetailGenreDto>,
 )
 
 @Serializable
 data class StoreDetailGenreDto(
     @SerialName("genreId") val genreId: Long,
-    @SerialName("genreName") val genreName: String
+    @SerialName("genreName") val genreName: String,
 )
