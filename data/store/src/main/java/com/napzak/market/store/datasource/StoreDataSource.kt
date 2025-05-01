@@ -20,4 +20,8 @@ class StoreDataSource @Inject constructor(
     suspend fun getEditProfile(): StoreEditProfileResponse {
         return storeService.getStoreEditProfile().data
     }
+
+    suspend fun updateEditProfile(): StoreEditProfileResponse {
+        return storeService.updateStoreProfile().data
+    }
 }

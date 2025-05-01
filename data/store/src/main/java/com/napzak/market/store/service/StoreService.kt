@@ -4,7 +4,9 @@ import com.napzak.market.remote.model.BaseResponse
 import com.napzak.market.store.dto.StoreDetailResponse
 import com.napzak.market.store.dto.StoreEditProfileResponse
 import com.napzak.market.store.dto.StoreResponse
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PUT
 
 interface StoreService {
     @GET("api/v1/stores/mypage")
@@ -19,4 +21,7 @@ interface StoreService {
     suspend fun getStoreDetail(
     ): BaseResponse<StoreDetailResponse>
 
+    @PUT("api/v1/stores/modify/profile")
+    suspend fun updateStoreProfile(
+    ): BaseResponse<StoreEditProfileResponse>
 }
