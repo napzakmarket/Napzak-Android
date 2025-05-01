@@ -2,6 +2,7 @@ package com.napzak.market.registration.service
 
 import com.napzak.market.registration.dto.Product
 import com.napzak.market.registration.dto.PurchaseRegistrationRequest
+import com.napzak.market.registration.dto.SaleRegistrationRequest
 import com.napzak.market.remote.model.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -12,7 +13,7 @@ import retrofit2.http.Path
 interface RegistrationService {
     @POST("products/sell")
     suspend fun postSaleRegistration(
-        @Body request: PurchaseRegistrationRequest,
+        @Body request: SaleRegistrationRequest,
     ): BaseResponse<Product>
 
     @GET("products/sell/modify/{productId}")
@@ -23,7 +24,7 @@ interface RegistrationService {
     @PUT("products/sell/modify/{productId}")
     suspend fun putSaleRegistration(
         @Path("productId") productId: Long,
-        @Body request: PurchaseRegistrationRequest,
+        @Body request: SaleRegistrationRequest,
     ): BaseResponse<Product>
 
     @POST("products/buy")
