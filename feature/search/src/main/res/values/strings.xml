@@ -4,4 +4,5 @@
     <string name="search_suggested_genre">추천 장르</string>
     <string name="search_genre">장르</string>
     <string name="search_hint">원하는 장르를 직접 검색해보세요!</string>
+    <string name="search_ellipsis">%s…</string>
 </resources>
