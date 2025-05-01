@@ -10,6 +10,8 @@ data class SaleRegistrationResponse(
     val productId: Long,
     @SerialName("productPhotoList")
     val productPhotoDto: List<ProductPhotoDto>,
+    @SerialName("genreId")
+    val genreId: Long,
     @SerialName("genreName")
     val genreName: String,
     @SerialName("title")
@@ -19,7 +21,7 @@ data class SaleRegistrationResponse(
     @SerialName("price")
     val price: Int,
     @SerialName("productCondition")
-    val productCondition: ProductConditionType,
+    val productCondition: String,
     @SerialName("isDeliveryIncluded")
     val isDeliveryIncluded: Boolean,
     @SerialName("standardDeliveryFee")
