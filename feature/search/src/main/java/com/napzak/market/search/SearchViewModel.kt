@@ -8,6 +8,7 @@ import com.napzak.market.search.state.SearchRecommendation
 import com.napzak.market.search.state.SearchUiState
 import com.napzak.market.search.state.SearchWord
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -65,6 +66,7 @@ class SearchViewModel @Inject constructor(
         _searchTerm.update { searchTerm }
     }
 
+    @OptIn(FlowPreview::class)
     fun updateSearchResult() = viewModelScope.launch {
         _searchTerm
             .debounce(DEBOUNCE_DELAY)
