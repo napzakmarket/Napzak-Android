@@ -12,6 +12,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.common)
     implementation(projects.data.remote)
     implementation(projects.domain.registration)
 
