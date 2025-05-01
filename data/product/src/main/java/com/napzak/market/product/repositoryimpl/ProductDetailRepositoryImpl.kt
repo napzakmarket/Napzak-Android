@@ -18,7 +18,6 @@ class ProductDetailRepositoryImpl @Inject constructor(
             responseData.toDomain(isInterested = isInterested)
         }
 
-
     override suspend fun patchTradeStatus(productId: Long, tradeStatus: String): Result<Unit> =
         runCatching {
             productDetailDataSource.patchTradeStatus(
