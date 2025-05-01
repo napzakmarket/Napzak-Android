@@ -1,5 +1,6 @@
 package com.napzak.market.product.di
 
+import com.napzak.market.product.service.ProductDetailService
 import com.napzak.market.product.service.ProductExploreService
 import com.napzak.market.product.service.ProductRecommendationService
 import com.napzak.market.product.service.ProductStoreService
@@ -27,5 +28,10 @@ object ServiceModule {
     @Provides
     @Singleton
     fun provideProductStoreService(retrofit: Retrofit): ProductStoreService =
+        retrofit.create()
+
+    @Provides
+    @Singleton
+    fun provideProductDetailService(retrofit: Retrofit): ProductDetailService =
         retrofit.create()
 }
