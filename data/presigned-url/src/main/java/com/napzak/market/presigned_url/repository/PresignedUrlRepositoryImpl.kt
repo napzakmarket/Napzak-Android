@@ -1,7 +1,8 @@
 package com.napzak.market.presigned_url.repository
 
 import com.napzak.market.presigned_url.datasource.PresignedUrlDataSource
-import com.napzak.market.presigned_url.mapper.toPresignedUrlMap
+import com.napzak.market.presigned_url.mapper.toDomain
+import com.napzak.market.presigned_url.model.PresignedUrl
 import javax.inject.Inject
 
 class PresignedUrlRepositoryImpl @Inject constructor(
@@ -9,18 +10,14 @@ class PresignedUrlRepositoryImpl @Inject constructor(
 ) : PresignedUrlRepository {
     override suspend fun getProductPresignedUrls(
         imageTitles: List<String>,
-    ): Result<Map<String, String>> = runCatching {
-        presignedUrlDataSource.getProductPresignedUrl(
-            imageTitles = imageTitles,
-        ).toPresignedUrlMap().presignedUrls
+    ): Result<PresignedUrl> = runCatching {
+        presignedUrlDataSource.getProductPresignedUrl(imageTitles = imageTitles).toDomain()
     }
 
     override suspend fun getProfilePresignedUrls(
         imageTitles: List<String>,
-    ): Result<Map<String, String>> = runCatching {
-        presignedUrlDataSource.getProfilePresignedUrl(
-            imageTitles = imageTitles,
-        ).toPresignedUrlMap().presignedUrls
+    ): Result<PresignedUrl> = runCatching {
+        presignedUrlDataSource.getProfilePresignedUrl(imageTitles = imageTitles).toDomain()
     }
 
     override suspend fun putViaPresignedUrl(

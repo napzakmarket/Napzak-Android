@@ -1,9 +1,11 @@
 package com.napzak.market.presigned_url.repository
 
-interface PresignedUrlRepository {
-    suspend fun getProductPresignedUrls(imageTitles: List<String>): Result<Map<String, String>>
+import com.napzak.market.presigned_url.model.PresignedUrl
 
-    suspend fun getProfilePresignedUrls(imageTitles: List<String>): Result<Map<String, String>>
+interface PresignedUrlRepository {
+    suspend fun getProductPresignedUrls(imageTitles: List<String>): Result<PresignedUrl>
+
+    suspend fun getProfilePresignedUrls(imageTitles: List<String>): Result<PresignedUrl>
 
     suspend fun putViaPresignedUrl(presignedUrl: String, imageUri: String): Result<Unit>
 }
