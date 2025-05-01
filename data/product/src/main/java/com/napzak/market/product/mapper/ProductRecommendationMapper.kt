@@ -10,6 +10,8 @@ fun ProductHomeRecommendResponse.toProducts() = products.map { product -> produc
 fun ProductHomeSellResponse.toProducts() = products.map { product -> product.toDomain() }
 fun ProductHomeBuyResponse.toProducts() = products.map { product -> product.toDomain() }
 
+fun List<ProductResponse>.toProducts() = map { product -> product.toDomain() }
+
 fun ProductResponse.toDomain() = with(this) {
     Product(
         productId = productId ?: 0,
