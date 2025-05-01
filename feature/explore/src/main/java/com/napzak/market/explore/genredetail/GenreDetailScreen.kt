@@ -2,6 +2,7 @@ package com.napzak.market.explore.genredetail
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -318,7 +320,20 @@ private fun GenreScrollSection(
                         GenreLabel()
 
                         if (tag != null) {
-                            // TODO: 추후 "지금핫한" 과 같은 키워드 칩 추가
+                            Spacer(Modifier.width(4.dp))
+
+                            Text(
+                                text = tag,
+                                style = NapzakMarketTheme.typography.caption10sb,
+                                color = NapzakMarketTheme.colors.red,
+                                modifier = Modifier
+                                    .border(
+                                        width = 1.dp,
+                                        color = NapzakMarketTheme.colors.red,
+                                        shape = RoundedCornerShape(4.dp)
+                                    )
+                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                            )
                         }
                     }
 
@@ -460,7 +475,7 @@ private fun GenreScrollSection(
 @Preview
 @Composable
 private fun GenreDetailScreenPreview(modifier: Modifier = Modifier) {
-    val genreInfo = GenreInfo(0, "산리오", "", "")
+    val genreInfo = GenreInfo(0, "산리오", "지금 핫한", "")
 
     NapzakMarketTheme {
         GenreDetailSuccessScreen(
