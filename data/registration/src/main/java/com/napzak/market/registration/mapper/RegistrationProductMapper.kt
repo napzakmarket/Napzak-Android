@@ -6,7 +6,6 @@ import com.napzak.market.registration.dto.PurchaseRegistrationRequest
 import com.napzak.market.registration.dto.PurchaseRegistrationResponse
 import com.napzak.market.registration.dto.SaleRegistrationRequest
 import com.napzak.market.registration.dto.SaleRegistrationResponse
-import com.napzak.market.registration.model.Genre
 import com.napzak.market.registration.model.ProductImage
 import com.napzak.market.registration.model.PurchaseRegistrationProduct
 import com.napzak.market.registration.model.SaleRegistrationProduct
