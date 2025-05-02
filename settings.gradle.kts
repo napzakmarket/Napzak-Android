@@ -38,6 +38,7 @@ include(
 )
 include(
     ":domain:dummy",
+    ":domain:interest",
 )
 include(
     ":feature:main",
@@ -52,3 +53,4 @@ include(
     ":feature:store",
     ":feature:detail",
 )
+include()
