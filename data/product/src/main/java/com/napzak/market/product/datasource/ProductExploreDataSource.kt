@@ -11,7 +11,7 @@ class ProductExploreDataSource @Inject constructor(
     suspend fun getExploreSellProducts(parameters: ExploreParameters) =
         productExploreService.getExploreSellProducts(
             sort = parameters.sort,
-            genreId = parameters.genreId,
+            genreIds = parameters.genreIds,
             isOnSale = parameters.isOnSale,
             isUnopened = parameters.isUnopened,
             cursor = parameters.cursor,
@@ -20,7 +20,7 @@ class ProductExploreDataSource @Inject constructor(
     suspend fun getExploreBuyProducts(parameters: ExploreParameters) =
         productExploreService.getExploreBuyProducts(
             sort = parameters.sort,
-            genreId = parameters.genreId,
+            genreIds = parameters.genreIds,
             isOnSale = parameters.isOnSale,
             cursor = parameters.cursor,
         )
@@ -29,7 +29,7 @@ class ProductExploreDataSource @Inject constructor(
         productExploreService.getSearchSellProducts(
             searchWord = parameters.searchWord,
             sort = parameters.sort,
-            genreId = parameters.genreId,
+            genreIds = parameters.genreIds,
             isOnSale = parameters.isOnSale,
             isUnopened = parameters.isUnopened,
             cursor = parameters.cursor,
@@ -39,7 +39,7 @@ class ProductExploreDataSource @Inject constructor(
         productExploreService.getSearchBuyProducts(
             searchWord = parameters.searchWord,
             sort = parameters.sort,
-            genreId = parameters.genreId,
+            genreIds = parameters.genreIds,
             isOnSale = parameters.isOnSale,
             cursor = parameters.cursor,
         )

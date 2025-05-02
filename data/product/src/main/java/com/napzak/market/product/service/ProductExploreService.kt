@@ -10,7 +10,7 @@ interface ProductExploreService {
     @GET("products/sell")
     suspend fun getExploreSellProducts(
         @Query("sortOption") sort: String,
-        @Query("genreId") genreId: Long?,
+        @Query("genreId") genreIds: List<Long>?,
         @Query("isOnSale") isOnSale: Boolean,
         @Query("isUnopened") isUnopened: Boolean,
         @Query("cursor") cursor: String?,
@@ -19,7 +19,7 @@ interface ProductExploreService {
     @GET("products/buy")
     suspend fun getExploreBuyProducts(
         @Query("sort") sort: String,
-        @Query("genreId") genreId: Long?,
+        @Query("genreId") genreIds: List<Long>?,
         @Query("isOnSale") isOnSale: Boolean,
         @Query("cursor") cursor: String?,
     ): BaseResponse<ProductExploreBuyResponse>
@@ -28,7 +28,7 @@ interface ProductExploreService {
     suspend fun getSearchSellProducts(
         @Query("searchWord") searchWord: String,
         @Query("sort") sort: String,
-        @Query("genreId") genreId: Long?,
+        @Query("genreId") genreIds: List<Long>?,
         @Query("isOnSale") isOnSale: Boolean,
         @Query("isUnopened") isUnopened: Boolean,
         @Query("cursor") cursor: String?,
@@ -38,7 +38,7 @@ interface ProductExploreService {
     suspend fun getSearchBuyProducts(
         @Query("searchWord") searchWord: String,
         @Query("sort") sort: String,
-        @Query("genreId") genreId: Long?,
+        @Query("genreId") genreIds: List<Long>?,
         @Query("isOnSale") isOnSale: Boolean,
         @Query("cursor") cursor: String?,
     ): BaseResponse<ProductExploreBuyResponse>

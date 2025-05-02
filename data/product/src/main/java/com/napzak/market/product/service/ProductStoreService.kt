@@ -12,7 +12,7 @@ interface ProductStoreService {
     suspend fun getStoreSellProducts(
         @Path("storeId") storeId: Long,
         @Query("sort") sort: String,
-        @Query("genreId") genreId: Long?,
+        @Query("genreId") genreIds: List<Long>?,
         @Query("isOnSale") isOnSale: Boolean,
         @Query("isUnopened") isUnopened: Boolean,
         @Query("cursor") cursor: String?,
@@ -22,7 +22,7 @@ interface ProductStoreService {
     suspend fun getStoreBuyProducts(
         @Path("storeId") storeId: Long,
         @Query("sort") sort: String,
-        @Query("genreId") genreId: Long?,
+        @Query("genreId") genreIds: List<Long>?,
         @Query("isOnSale") isOnSale: Boolean,
         @Query("cursor") cursor: String?,
     ): BaseResponse<ProductExploreBuyResponse>

@@ -11,7 +11,7 @@ class ProductStoreDataSource @Inject constructor(
         productStoreService.getStoreSellProducts(
             storeId = storeId,
             sort = parameters.sort,
-            genreId = parameters.genreId,
+            genreIds = parameters.genreIds,
             isOnSale = parameters.isOnSale,
             isUnopened = parameters.isUnopened,
             cursor = parameters.cursor,
@@ -21,7 +21,7 @@ class ProductStoreDataSource @Inject constructor(
         productStoreService.getStoreBuyProducts(
             storeId = storeId,
             sort = parameters.sort,
-            genreId = parameters.genreId,
+            genreIds = parameters.genreIds,
             isOnSale = parameters.isOnSale,
             cursor = parameters.cursor,
         )
