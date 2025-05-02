@@ -14,8 +14,8 @@ class StoreDataSource @Inject constructor(
         return storeService.getStoreInfo().data
     }
 
-    suspend fun getStoreDetail(): StoreDetailResponse {
-        return storeService.getStoreDetail().data
+    suspend fun getStoreDetail(storeId: Long): StoreDetailResponse {
+        return storeService.getStoreDetail(storeId).data
     }
 
     suspend fun getEditProfile(): StoreEditProfileResponse {

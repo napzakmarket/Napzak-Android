@@ -20,8 +20,8 @@ class StoreRepositoryImpl @Inject constructor(
         dataSource.getEditProfile().toDomain()
     }
 
-    override suspend fun fetchStoreDetail(): Result<StoreDetail> = runCatching {
-        dataSource.getStoreDetail().toDomain()
+    override suspend fun fetchStoreDetail(storeId: Long): Result<StoreDetail> = runCatching {
+        dataSource.getStoreDetail(storeId).toDomain()
     }
 
     override suspend fun updateEditProfile(request: StoreEditProfile): Result<StoreEditProfile> = runCatching {

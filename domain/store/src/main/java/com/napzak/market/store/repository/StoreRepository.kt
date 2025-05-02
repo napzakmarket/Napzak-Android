@@ -9,7 +9,7 @@ interface StoreRepository {
 
     suspend fun fetchEditProfile(): Result<StoreEditProfile>
 
-    suspend fun fetchStoreDetail(): Result<StoreDetail>
+    suspend fun fetchStoreDetail(storeId: Long): Result<StoreDetail>
 
     suspend fun updateEditProfile(request: StoreEditProfile): Result<StoreEditProfile>
 }

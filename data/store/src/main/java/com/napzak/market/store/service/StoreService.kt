@@ -8,6 +8,7 @@ import com.napzak.market.store.dto.StoreResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PUT
+import retrofit2.http.Path
 
 interface StoreService {
     @GET("stores/mypage")
@@ -17,7 +18,9 @@ interface StoreService {
     suspend fun getStoreEditProfile(): BaseResponse<StoreEditProfileResponse>
 
     @GET("stores/{storeId}")
-    suspend fun getStoreDetail(): BaseResponse<StoreDetailResponse>
+    suspend fun getStoreDetail(
+        @Path("storeId") storeId: Long
+    ): BaseResponse<StoreDetailResponse>
 
     @PUT("stores/modify/profile")
     suspend fun updateStoreProfile(
