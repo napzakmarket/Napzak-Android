@@ -35,6 +35,7 @@ include(
     ":data:remote",
     ":data:local",
     ":data:dummy",
+    ":data:interest",
 )
 include(
     ":domain:dummy",
@@ -53,4 +54,3 @@ include(
     ":feature:store",
     ":feature:detail",
 )
-include()
