@@ -20,7 +20,7 @@ fun PurchaseRegistrationProduct.toData() = PurchaseRegistrationRequest(
     productPhotoDto = imageUrls.map(ProductImage::toData),
     genreId = genreId,
     title = title.trim(),
-    description = description,
+    description = description.trim(),
     price = price,
     isPriceNegotiable = isPriceNegotiable,
 )
@@ -29,7 +29,7 @@ fun SaleRegistrationProduct.toData() = SaleRegistrationRequest(
     productPhotoDto = imageUrls.map(ProductImage::toData),
     genreId = genreId,
     title = title.trim(),
-    description = description,
+    description = description.trim(),
     price = price,
     productCondition = fromCondition(productCondition),
     isDeliveryIncluded = isDeliveryIncluded,
