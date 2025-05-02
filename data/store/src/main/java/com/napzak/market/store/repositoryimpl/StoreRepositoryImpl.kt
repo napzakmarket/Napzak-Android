@@ -2,6 +2,7 @@ package com.napzak.market.store.repositoryimpl
 
 import com.napzak.market.store.datasource.StoreDataSource
 import com.napzak.market.store.mapper.toDomain
+import com.napzak.market.store.mapper.toRequest
 import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.model.StoreEditProfile
 import com.napzak.market.store.model.StoreInfo
@@ -23,7 +24,7 @@ class StoreRepositoryImpl @Inject constructor(
         dataSource.getStoreDetail().toDomain()
     }
 
-    override suspend fun updateEditProfile(): Result<StoreEditProfile> = runCatching {
-        dataSource.updateEditProfile().toDomain()
+    override suspend fun updateEditProfile(request: StoreEditProfile): Result<StoreEditProfile> = runCatching {
+        dataSource.updateEditProfile(request.toRequest()).toDomain()
     }
 }

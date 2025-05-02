@@ -1,6 +1,7 @@
 package com.napzak.market.store.datasource
 
 import com.napzak.market.store.dto.StoreDetailResponse
+import com.napzak.market.store.dto.StoreEditProfileRequest
 import com.napzak.market.store.dto.StoreEditProfileResponse
 import com.napzak.market.store.dto.StoreResponse
 import com.napzak.market.store.service.StoreService
@@ -21,7 +22,7 @@ class StoreDataSource @Inject constructor(
         return storeService.getStoreEditProfile().data
     }
 
-    suspend fun updateEditProfile(): StoreEditProfileResponse {
-        return storeService.updateStoreProfile().data
+    suspend fun updateEditProfile(request: StoreEditProfileRequest): StoreEditProfileResponse {
+        return storeService.updateStoreProfile(request).data
     }
 }
