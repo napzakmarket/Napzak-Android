@@ -12,26 +12,23 @@ import javax.inject.Inject
 class StoreDataSource @Inject constructor(
     private val storeService: StoreService,
 ) {
-    suspend fun getValidateNickname(nickname: String): BaseResponse<Unit> {
-        return storeService.getNicknameValidation(NicknameRequest(nickname))
+    suspend fun getValidateNickname(request: NicknameRequest): BaseResponse<Unit> {
+        return storeService.getNicknameValidation(request)
     }
 
-    suspend fun postRegistrationNickname(nickname: String): BaseResponse<Unit> {
-        return storeService.postNicknameRegistration(NicknameRequest(nickname))
+    suspend fun postRegistrationNickname(request: NicknameRequest): BaseResponse<Unit> {
+        return storeService.postNicknameRegistration(request)
     }
 
-    suspend fun getRegistrationGenre(genreIds: List<Long>): BaseResponse<GenreRegistrationResponse> {
-        return storeService.getGenresRegistration(GenreRegistrationRequest(genreIds))
+    suspend fun getRegistrationGenre(request: GenreRegistrationRequest): BaseResponse<GenreRegistrationResponse> {
+        return storeService.getGenresRegistration(request)
     }
 
     suspend fun logout(): BaseResponse<Unit> {
         return storeService.postLogout()
     }
 
-    suspend fun withdraw(
-        title: String,
-        description: String?,
-    ): BaseResponse<WithdrawResponse> {
-        return storeService.postWithdraw(WithdrawRequest(title, description))
+    suspend fun withdraw(request: WithdrawRequest): BaseResponse<WithdrawResponse> {
+        return storeService.postWithdraw(request)
     }
 }

@@ -1,8 +1,12 @@
 package com.napzak.market.store.repositoryimpl
 
 import com.napzak.market.store.datasource.StoreDataSource
-import com.napzak.market.store.dto.response.GenreRegistrationResponse
-import com.napzak.market.store.dto.response.WithdrawResponse
+import com.napzak.market.store.dto.request.GenreRegistrationRequest
+import com.napzak.market.store.dto.request.NicknameRequest
+import com.napzak.market.store.dto.request.WithdrawRequest
+import com.napzak.market.store.mapper.toDomain
+import com.napzak.market.store.model.Genre
+import com.napzak.market.store.model.UserWithdrawal
 import com.napzak.market.store.repository.StoreRepository
 import javax.inject.Inject
 
@@ -11,27 +15,28 @@ class StoreRepositoryImpl @Inject constructor(
 ) : StoreRepository {
 
     override suspend fun getValidateNickname(nickname: String): Result<Unit> = runCatching {
-        val response = storeDataSource.getValidateNickname(nickname)
-        if (response.isSuccess) Unit else throw Exception(response.message)
+        storeDataSource.getValidateNickname(NicknameRequest(nickname))
+        Unit
     }
 
     override suspend fun postRegisterNickname(nickname: String): Result<Unit> = runCatching {
-        val response = storeDataSource.postRegistrationNickname(nickname)
-        if (response.isSuccess) Unit else throw Exception(response.message)
+        storeDataSource.postRegistrationNickname(NicknameRequest(nickname))
+        Unit
     }
 
-    override suspend fun postRegisterGenres(genreIds: List<Long>): Result<GenreRegistrationResponse> = runCatching {
-        val response = storeDataSource.getRegistrationGenre(genreIds)
-        if (response.isSuccess) response.data else throw Exception(response.message)
+    override suspend fun postRegisterGenres(genreIds: List<Long>): Result<Genre> = runCatching {
+        val response = storeDataSource.getRegistrationGenre(GenreRegistrationRequest(genreIds))
+        response.data.genreList.first().toDomain()
     }
 
     override suspend fun logout(): Result<Unit> = runCatching {
-        val response = storeDataSource.logout()
-        if (response.isSuccess) Unit else throw Exception(response.message)
+        storeDataSource.logout()
+        Unit
     }
 
-    override suspend fun withdraw(title: String, description: String?): Result<WithdrawResponse> = runCatching {
-        val response = storeDataSource.withdraw(title, description)
-        if (response.isSuccess) response.data else throw Exception(response.message)
+    override suspend fun withdraw(title: String, description: String?): Result<UserWithdrawal> =
+        runCatching {
+            val response = storeDataSource.withdraw(WithdrawRequest(title, description))
+            response.data.toDomain()
     }
 }
