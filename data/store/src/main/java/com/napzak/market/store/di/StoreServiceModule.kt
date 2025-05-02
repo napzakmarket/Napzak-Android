@@ -1,5 +1,6 @@
 package com.napzak.market.store.di
 
+import com.napzak.market.store.service.SettingService
 import com.napzak.market.store.service.StoreService
 import dagger.Module
 import dagger.Provides
@@ -16,4 +17,8 @@ object StoreServiceModule {
     @Provides
     @Singleton
     fun provideStoreService(retrofit: Retrofit): StoreService = retrofit.create()
+
+    @Provides
+    @Singleton
+    fun provideSettingService(retrofit: Retrofit): SettingService = retrofit.create()
 }
