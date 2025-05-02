@@ -9,18 +9,14 @@ import retrofit2.http.PUT
 
 interface StoreService {
     @GET("stores/mypage")
-    suspend fun getStoreInfo(
-    ): BaseResponse<StoreResponse>
+    suspend fun getStoreInfo(): BaseResponse<StoreResponse>
 
     @GET("stores/modify/profile")
-    suspend fun getStoreEditProfile(
-    ): BaseResponse<StoreEditProfileResponse>
+    suspend fun getStoreEditProfile(): BaseResponse<StoreEditProfileResponse>
 
     @GET("stores/{storeId}")
-    suspend fun getStoreDetail(
-    ): BaseResponse<StoreDetailResponse>
+    suspend fun getStoreDetail(): BaseResponse<StoreDetailResponse>
 
     @PUT("stores/modify/profile")
-    suspend fun updateStoreProfile(
-    ): BaseResponse<StoreEditProfileResponse>
+    suspend fun updateStoreProfile(): BaseResponse<StoreEditProfileResponse>
 }

@@ -3,5 +3,5 @@ package com.napzak.market.store.repository
 import com.napzak.market.store.model.SettingInfo
 
 interface SettingRepository {
-    suspend fun fetchSettingInfo(token: String): Result<SettingInfo>
+    suspend fun fetchSettingInfo(): Result<SettingInfo>
 }

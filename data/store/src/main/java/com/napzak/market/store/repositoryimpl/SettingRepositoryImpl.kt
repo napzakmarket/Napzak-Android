@@ -10,7 +10,7 @@ class SettingRepositoryImpl @Inject constructor(
     private val dataSource: SettingDataSource
 ) : SettingRepository {
 
-    override suspend fun fetchSettingInfo(token: String): Result<SettingInfo> = runCatching {
+    override suspend fun fetchSettingInfo(): Result<SettingInfo> = runCatching {
         dataSource.getSettingInfo().toDomain()
     }
 }

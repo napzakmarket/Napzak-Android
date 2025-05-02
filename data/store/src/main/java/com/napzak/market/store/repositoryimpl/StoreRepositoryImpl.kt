@@ -11,15 +11,15 @@ import javax.inject.Inject
 class StoreRepositoryImpl @Inject constructor(
     private val dataSource: StoreDataSource
 ) : StoreRepository {
-    override suspend fun fetchStoreInfo(token: String): Result<StoreInfo> = runCatching {
+    override suspend fun fetchStoreInfo(): Result<StoreInfo> = runCatching {
         dataSource.getStoreInfo().toDomain()
     }
 
-    override suspend fun fetchEditProfile(token: String): Result<StoreEditProfile> = runCatching {
+    override suspend fun fetchEditProfile(): Result<StoreEditProfile> = runCatching {
         dataSource.getEditProfile().toDomain()
     }
 
-    override suspend fun fetchStoreDetail(token: String): Result<StoreDetail> = runCatching {
+    override suspend fun fetchStoreDetail(): Result<StoreDetail> = runCatching {
         dataSource.getStoreDetail().toDomain()
     }
 
