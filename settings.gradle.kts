@@ -40,6 +40,7 @@ include(
     ":data:registration",
     ":data:genre",
     ":data:interest",
+    ":data:banner",
 )
 include(
     ":domain:dummy",
@@ -48,6 +49,7 @@ include(
     ":domain:registration",
     ":domain:genre",
     ":domain:interest",
+    ":domain:banner",
 )
 include(
     ":feature:main",
