@@ -40,6 +40,7 @@ import com.napzak.market.feature.home.R.string.home_search_text_field_hint
 import com.napzak.market.home.component.HorizontalAutoScrolledImages
 import com.napzak.market.home.component.HorizontalScrollableProducts
 import com.napzak.market.home.component.VerticalGridProducts
+import com.napzak.market.home.state.HomeUiState
 import com.napzak.market.product.model.Product
 import com.napzak.market.type.HomeBannerType
 import com.napzak.market.util.android.ScreenPreview
