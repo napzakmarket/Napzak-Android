@@ -1,21 +1,21 @@
 package com.napzak.market.home
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -80,7 +80,6 @@ internal fun HomeRoute(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HomeScreen(
     uiState: HomeUiState,
@@ -91,29 +90,37 @@ private fun HomeScreen(
     onMostInterestedBuyNavigate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    CompositionLocalProvider(LocalOverscrollConfiguration provides null) {
-        Column(
-            modifier = modifier.background(NapzakMarketTheme.colors.white)
+    Column(
+        modifier = modifier.background(NapzakMarketTheme.colors.white),
+    ) {
+        Box(
+            contentAlignment = Alignment.CenterStart,
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            // TODO: 로고 탑바 추가
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 20.dp, vertical = 17.dp)
+                    .size(width = 101.dp, height = 33.dp)
+                    .background(NapzakMarketTheme.colors.purple500),
+            )
+        }
 
-            when (uiState.isLoaded) {
-                is UiState.Success -> HomeSuccessScreen(
-                    productRecommends = (uiState.recommendProductLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
-                    sellProducts = (uiState.popularSellLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
-                    buyProducts = (uiState.popularBuyLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
-                    banners = (uiState.bannerLoadState as UiState.Success<Map<HomeBannerType, List<Banner>>>).data.toImmutableMap(),
-                    onSearchTextFieldClick = onSearchTextFieldClick,
-                    onProductClick = onProductClick,
-                    onLikeButtonClick = onLikeButtonClick,
-                    onMostInterestedSellNavigate = onMostInterestedSellNavigate,
-                    onMostInterestedBuyNavigate = onMostInterestedBuyNavigate,
-                )
+        when (uiState.isLoaded) {
+            is UiState.Success -> HomeSuccessScreen(
+                productRecommends = (uiState.recommendProductLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
+                sellProducts = (uiState.popularSellLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
+                buyProducts = (uiState.popularBuyLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
+                banners = (uiState.bannerLoadState as UiState.Success<Map<HomeBannerType, List<Banner>>>).data.toImmutableMap(),
+                onSearchTextFieldClick = onSearchTextFieldClick,
+                onProductClick = onProductClick,
+                onLikeButtonClick = onLikeButtonClick,
+                onMostInterestedSellNavigate = onMostInterestedSellNavigate,
+                onMostInterestedBuyNavigate = onMostInterestedBuyNavigate,
+            )
 
-                is UiState.Failure -> {}
-                is UiState.Loading -> {}
-                is UiState.Empty -> {}
-            }
+            is UiState.Failure -> {}
+            is UiState.Loading -> {}
+            is UiState.Empty -> {}
         }
     }
 }
@@ -135,9 +142,17 @@ private fun HomeSuccessScreen(
     val context = LocalContext.current
 
     Column(modifier = modifier.verticalScroll(scrollState)) {
-        HomeSearchTextField(
-            onClick = onSearchTextFieldClick,
-            modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 17.dp),
+        SearchTextField(
+            text = "",
+            hint = stringResource(home_search_text_field_hint),
+            onTextChange = {},
+            onSearchClick = {},
+            onResetClick = {},
+            enabled = false,
+            readOnly = true,
+            modifier = Modifier
+                .noRippleClickable(onSearchTextFieldClick)
+                .padding(horizontal = 20.dp),
         )
 
         banners[HomeBannerType.TOP]?.let { topBanners ->
@@ -164,10 +179,10 @@ private fun HomeSuccessScreen(
             modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 32.dp),
         )
 
-        banners[HomeBannerType.MIDDLE]?.let { middleBanner ->
+        banners[HomeBannerType.MIDDLE]?.let { banner ->
             HomeSingleBanner(
-                banner = middleBanner.first(),
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 50.dp),
+                banner = banner.first(),
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 40.dp),
             )
         }
 
@@ -184,6 +199,13 @@ private fun HomeSuccessScreen(
                 .padding(start = 20.dp, end = 20.dp, top = 32.dp, bottom = 20.dp),
         )
 
+        banners[HomeBannerType.BOTTOM]?.let { banner ->
+            HomeSingleBanner(
+                banner = banner.first(),
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 40.dp),
+            )
+        }
+
         VerticalGridProducts(
             products = buyProducts,
             title = stringResource(home_list_interested_buy_title),
@@ -191,30 +213,16 @@ private fun HomeSuccessScreen(
             onProductClick = onProductClick,
             onLikeClick = onLikeButtonClick,
             onMoreClick = onMostInterestedBuyNavigate,
-            modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 40.dp),
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 40.dp),
         )
 
-        Spacer(modifier = Modifier.height(185.dp))
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(165.dp)
+                .background(NapzakMarketTheme.colors.gray10)
+        )
     }
-}
-
-@Composable
-private fun HomeSearchTextField(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    SearchTextField(
-        text = "",
-        hint = stringResource(home_search_text_field_hint),
-        onTextChange = {},
-        onSearchClick = {},
-        onResetClick = {},
-        enabled = false,
-        readOnly = true,
-        modifier = Modifier
-            .noRippleClickable(onClick)
-            .then(modifier),
-    )
 }
 
 @Composable
