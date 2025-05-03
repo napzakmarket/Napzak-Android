@@ -9,7 +9,7 @@ fun RecommendedSearchWordGenreResponse.toDomain(): RecommendedSearchWordGenre =
         searchWordList = searchWordList.map {
             RecommendedSearchWordGenre.SearchWord(
                 searchWordId = it.searchWordId,
-                searchWord = it.searchWord
+                searchWord = it.searchWord,
             )
         },
         genreList = genreList.map {
@@ -17,7 +17,6 @@ fun RecommendedSearchWordGenreResponse.toDomain(): RecommendedSearchWordGenre =
                 genreId = it.genreId,
                 genreName = it.genreName,
                 genrePhoto = it.genrePhoto,
-                nextCursor = it.nextCursor
             )
         }
     )

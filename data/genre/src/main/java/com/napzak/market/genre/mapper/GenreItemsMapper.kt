@@ -11,6 +11,5 @@ fun GenreResponse.toGenre() = with(this) {
         genreId = genreId,
         genreName = genreName,
         genrePhoto = genrePhoto,
-        nextCursor = nextCursor
     )
 }
