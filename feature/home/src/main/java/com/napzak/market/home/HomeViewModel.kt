@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.banner.Banner
 import com.napzak.market.common.state.UiState
+import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.product.model.Product
 import com.napzak.market.product.repository.ProductRecommendationRepository
 import com.napzak.market.repository.BannerRepository
@@ -15,12 +16,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 internal class HomeViewModel @Inject constructor(
     private val productRepository: ProductRecommendationRepository,
     private val bannerRepository: BannerRepository,
+    private val interestProductUseCase: SetInterestProductUseCase,
 ) : ViewModel() {
     private val _bannerLoadState =
         MutableStateFlow<UiState<Map<HomeBannerType, List<Banner>>>>(UiState.Loading)
@@ -52,28 +55,42 @@ internal class HomeViewModel @Inject constructor(
         )
     )
 
-    fun getBanners() = viewModelScope.launch {
+    suspend fun getHomeProducts() {
+        getRecommendedProducts()
+        getPopularSellProducts()
+        getPopularBuyProducts()
+    }
+
+    suspend fun getBanners() {
         bannerRepository.getHomeBanner()
             .onSuccess { _bannerLoadState.value = UiState.Success(it) }
             .onFailure { _bannerLoadState.value = UiState.Failure(it.message.toString()) }
     }
 
-    fun getRecommendedProducts() = viewModelScope.launch {
+    private suspend fun getRecommendedProducts() {
         productRepository.getRecommendedProducts()
             .onSuccess { _recommendProductLoadState.value = UiState.Success(it.second) }
             .onFailure { _recommendProductLoadState.value = UiState.Failure(it.message.toString()) }
     }
 
-    fun getPopularSellProducts() = viewModelScope.launch {
+    private suspend fun getPopularSellProducts() {
         productRepository.getPopularSellProducts()
             .onSuccess { _popularSellLoadState.value = UiState.Success(it) }
             .onFailure { _popularSellLoadState.value = UiState.Failure(it.message.toString()) }
     }
 
-    fun getPopularBuyProducts() = viewModelScope.launch {
+    private suspend fun getPopularBuyProducts() {
         productRepository.getPopularBuyProducts()
             .onSuccess { _popularBuyLoadState.value = UiState.Success(it) }
             .onFailure { _popularBuyLoadState.value = UiState.Failure(it.message.toString()) }
+    }
+
+    fun setInterest(productId: Long, isInterest: Boolean) = viewModelScope.launch {
+        interestProductUseCase(productId, isInterest)
+            .onSuccess {
+                getHomeProducts()
+            }
+            .onFailure(Timber::e)
     }
 }
 

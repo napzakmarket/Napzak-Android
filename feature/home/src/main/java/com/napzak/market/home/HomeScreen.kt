@@ -57,16 +57,14 @@ internal fun HomeRoute(
     onMostInterestedSellNavigate: () -> Unit,
     onMostInterestedBuyNavigate: () -> Unit,
     modifier: Modifier = Modifier,
-    homeViewModel: HomeViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
-    val uiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.homeUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        with(homeViewModel) {
+        with(viewModel) {
             getBanners()
-            getRecommendedProducts()
-            getPopularSellProducts()
-            getPopularBuyProducts()
+            getHomeProducts()
         }
     }
 
@@ -74,7 +72,7 @@ internal fun HomeRoute(
         uiState = uiState,
         onSearchTextFieldClick = onSearchNavigate,
         onProductClick = onProductDetailNavigate,
-        onLikeButtonClick = { _, _ -> },
+        onLikeButtonClick = viewModel::setInterest,
         onMostInterestedSellNavigate = onMostInterestedSellNavigate,
         onMostInterestedBuyNavigate = onMostInterestedBuyNavigate,
         modifier = modifier,
