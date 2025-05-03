@@ -1,5 +1,5 @@
 plugins {
-    id("com.napzak.market.buildlogic.convention.kotlin")
+    id("org.jetbrains.kotlin.android")
     id("com.android.library")
 }
 
