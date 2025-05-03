@@ -40,6 +40,13 @@ include(
 include(
     ":domain:dummy",
     ":domain:store",
+    ":data:presigned-url",
+    ":data:registration",
+)
+include(
+    ":domain:dummy",
+    ":domain:presigned-url",
+    ":domain:registration",
 )
 include(
     ":feature:main",
