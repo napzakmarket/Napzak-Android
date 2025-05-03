@@ -28,5 +28,4 @@ class ReportRepositoryImpl @Inject constructor(
             request = reportParameters.toRequest()
         )
     }
-
 }
