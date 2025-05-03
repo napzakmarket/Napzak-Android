@@ -37,11 +37,13 @@ include(
     ":data:dummy",
     ":data:presigned-url",
     ":data:registration",
+    ":data:genre",
 )
 include(
     ":domain:dummy",
     ":domain:presigned-url",
     ":domain:registration",
+    ":domain:genre",
 )
 include(
     ":feature:main",
