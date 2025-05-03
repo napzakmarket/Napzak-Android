@@ -14,6 +14,7 @@ dependencies {
     implementation(projects.data.local)
     implementation(projects.data.dummy)
     implementation(projects.data.presignedUrl)
+    implementation(projects.data.genre)
 
     implementation(libs.androidx.appcompat)
     implementation(libs.timber)
