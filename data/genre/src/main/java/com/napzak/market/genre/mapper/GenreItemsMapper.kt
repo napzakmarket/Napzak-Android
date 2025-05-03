@@ -7,10 +7,9 @@ import com.napzak.market.genre.model.Genre
 fun GenreItemsResponse.toDomain(): Pair<List<Genre>, String?> =
     genreList.map { it.toGenre() } to nextCursor
 
-fun GenreResponse.toGenre() = with(this) {
+fun GenreResponse.toGenre() =
     Genre(
         genreId = genreId,
         genreName = genreName,
         genrePhoto = genrePhoto,
     )
-}
