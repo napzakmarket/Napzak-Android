@@ -3,7 +3,6 @@ package com.napzak.market.home
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -19,10 +18,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.napzak.market.banner.Banner
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.component.textfield.SearchTextField
@@ -41,6 +44,7 @@ import com.napzak.market.product.model.Product
 import com.napzak.market.type.HomeBannerType
 import com.napzak.market.util.android.ScreenPreview
 import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.util.common.openUrl
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
@@ -108,8 +112,8 @@ private fun HomeScreen(
                 )
 
                 is UiState.Failure -> {}
-                UiState.Loading -> {}
-                UiState.Empty -> {}
+                is UiState.Loading -> {}
+                is UiState.Empty -> {}
             }
         }
     }
@@ -129,6 +133,7 @@ private fun HomeSuccessScreen(
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
 
     Column(modifier = modifier.verticalScroll(scrollState)) {
         HomeSearchTextField(
@@ -136,17 +141,23 @@ private fun HomeSuccessScreen(
             modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 17.dp),
         )
 
-        HorizontalAutoScrolledImages(
-            images = listOf("", "", "").toImmutableList(), // TODO: 이미지 URL 리스트 대체
-            onImageClick = { },
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(360 / 216f)
-                .padding(top = 20.dp),
-        )
+        banners[HomeBannerType.TOP]?.let { topBanners ->
+            HorizontalAutoScrolledImages(
+                images = topBanners.map { it.imageUrl }.toImmutableList(),
+                onImageClick = { index ->
+                    runCatching {
+                        context.openUrl(topBanners[index].linkUrl)
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(360 / 216f)
+                    .padding(top = 20.dp),
+            )
+        }
 
         HorizontalScrollableProducts(
-            products = productRecommends, // TODO: Product 리스트 대체
+            products = productRecommends,
             title = stringResource(home_list_customized_title),
             subTitle = stringResource(home_list_customized_sub_title),
             onProductClick = onProductClick,
@@ -154,12 +165,15 @@ private fun HomeSuccessScreen(
             modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 32.dp),
         )
 
-        HomeSingleBanner(
-            modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 50.dp),
-        )
+        banners[HomeBannerType.MIDDLE]?.let { middleBanner ->
+            HomeSingleBanner(
+                banner = middleBanner.first(),
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 50.dp),
+            )
+        }
 
         VerticalGridProducts(
-            products = sellProducts, // TODO: Product 리스트 대체
+            products = sellProducts,
             title = stringResource(home_list_interested_sell_title),
             subTitle = stringResource(home_list_interested_sell_sub_title),
             onProductClick = onProductClick,
@@ -172,7 +186,7 @@ private fun HomeSuccessScreen(
         )
 
         VerticalGridProducts(
-            products = buyProducts, // TODO: Product 리스트 대체
+            products = buyProducts,
             title = stringResource(home_list_interested_buy_title),
             subTitle = stringResource(home_list_interested_buy_sub_title),
             onProductClick = onProductClick,
@@ -206,14 +220,23 @@ private fun HomeSearchTextField(
 
 @Composable
 private fun HomeSingleBanner(
+    banner: Banner,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    val context = LocalContext.current
+
+    AsyncImage(
+        model = ImageRequest
+            .Builder(context)
+            .data(banner.imageUrl)
+            .build(),
+        contentDescription = null, // TODO: description 추가
+        contentScale = ContentScale.FillBounds,
         modifier = modifier
+            .noRippleClickable { context.openUrl(banner.linkUrl) }
             .fillMaxWidth()
             .height(110.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(color = NapzakMarketTheme.colors.gray100),
+            .clip(RoundedCornerShape(16.dp)),
     )
 }
 
