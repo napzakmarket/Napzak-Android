@@ -4,7 +4,8 @@ import com.napzak.market.genre.dto.GenreItemsResponse
 import com.napzak.market.genre.dto.GenreResponse
 import com.napzak.market.genre.model.Genre
 
-fun GenreItemsResponse.toGenres() = genreList.map { it.toGenre() }
+fun GenreItemsResponse.toDomain(): Pair<List<Genre>, String?> =
+    genreList.map { it.toGenre() } to nextCursor
 
 fun GenreResponse.toGenre() = with(this) {
     Genre(

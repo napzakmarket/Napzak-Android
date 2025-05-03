@@ -6,12 +6,12 @@ import javax.inject.Inject
 class GenreNameDataSource @Inject constructor(
     private val genreNameService: GenreNameService,
 ) {
-    suspend fun getGenreNames(cursor: Long?) =
-        genreNameService.getGenreNames(cursor = cursor)
+    suspend fun getGenreNames(cursor: String?, size: Int?) =
+        genreNameService.getGenreNames(cursor = cursor, size = size)
 
     suspend fun getGenreNameResults(
         searchWord: String,
-        cursor: Long?,
+        cursor: String?,
     ) = genreNameService.getGenreNameResults(
         searchWord = searchWord,
         cursor = cursor,
