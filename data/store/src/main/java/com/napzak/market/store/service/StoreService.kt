@@ -6,9 +6,15 @@ import com.napzak.market.store.dto.request.NicknameRequest
 import com.napzak.market.store.dto.request.WithdrawRequest
 import com.napzak.market.store.dto.response.GenreRegistrationResponse
 import com.napzak.market.store.dto.response.WithdrawResponse
+import com.napzak.market.store.dto.StoreDetailResponse
+import com.napzak.market.store.dto.StoreEditProfileRequest
+import com.napzak.market.store.dto.StoreEditProfileResponse
+import com.napzak.market.store.dto.StoreResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
 
 interface StoreService {
     @GET("stores/nickname/check")
@@ -33,4 +39,20 @@ interface StoreService {
 
     @POST("stores/logout")
     suspend fun postLogout(): BaseResponse<Unit>
+
+    @GET("stores/mypage")
+    suspend fun getStoreInfo(): BaseResponse<StoreResponse>
+
+    @GET("stores/modify/profile")
+    suspend fun getStoreEditProfile(): BaseResponse<StoreEditProfileResponse>
+
+    @GET("stores/{storeId}")
+    suspend fun getStoreDetail(
+        @Path("storeId") storeId: Long
+    ): BaseResponse<StoreDetailResponse>
+
+    @PUT("stores/modify/profile")
+    suspend fun updateStoreProfile(
+        @Body request: StoreEditProfileRequest
+    ): BaseResponse<StoreEditProfileResponse>
 }

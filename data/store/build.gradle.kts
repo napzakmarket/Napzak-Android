@@ -13,6 +13,8 @@ android {
 
 dependencies {
     implementation(projects.data.remote)
+    implementation(projects.domain.store)
+
     implementation(libs.timber)
     implementation(project(":domain:store"))
 }

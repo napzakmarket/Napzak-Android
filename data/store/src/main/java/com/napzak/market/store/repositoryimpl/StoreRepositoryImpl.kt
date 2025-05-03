@@ -7,6 +7,10 @@ import com.napzak.market.store.dto.request.WithdrawRequest
 import com.napzak.market.store.mapper.toDomain
 import com.napzak.market.store.model.Genre
 import com.napzak.market.store.model.UserWithdrawal
+import com.napzak.market.store.mapper.toRequest
+import com.napzak.market.store.model.StoreDetail
+import com.napzak.market.store.model.StoreEditProfile
+import com.napzak.market.store.model.StoreInfo
 import com.napzak.market.store.repository.StoreRepository
 import javax.inject.Inject
 
@@ -38,5 +42,21 @@ class StoreRepositoryImpl @Inject constructor(
         runCatching {
             val response = storeDataSource.withdraw(WithdrawRequest(title, description))
             response.data.toDomain()
+    }
+
+    override suspend fun fetchStoreInfo(): Result<StoreInfo> = runCatching {
+        storeDataSource.getStoreInfo().toDomain()
+    }
+
+    override suspend fun fetchEditProfile(): Result<StoreEditProfile> = runCatching {
+        storeDataSource.getEditProfile().toDomain()
+    }
+
+    override suspend fun fetchStoreDetail(storeId: Long): Result<StoreDetail> = runCatching {
+        storeDataSource.getStoreDetail(storeId).toDomain()
+    }
+
+    override suspend fun updateEditProfile(request: StoreEditProfile): Result<StoreEditProfile> = runCatching {
+        storeDataSource.updateEditProfile(request.toRequest()).toDomain()
     }
 }

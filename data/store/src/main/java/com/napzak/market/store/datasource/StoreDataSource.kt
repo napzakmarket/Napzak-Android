@@ -1,5 +1,9 @@
 package com.napzak.market.store.datasource
 
+import com.napzak.market.store.dto.StoreDetailResponse
+import com.napzak.market.store.dto.StoreEditProfileRequest
+import com.napzak.market.store.dto.StoreEditProfileResponse
+import com.napzak.market.store.dto.StoreResponse
 import com.napzak.market.remote.model.BaseResponse
 import com.napzak.market.store.dto.request.GenreRegistrationRequest
 import com.napzak.market.store.dto.request.NicknameRequest
@@ -30,5 +34,21 @@ class StoreDataSource @Inject constructor(
 
     suspend fun withdraw(request: WithdrawRequest): BaseResponse<WithdrawResponse> {
         return storeService.postWithdraw(request)
+    }
+
+    suspend fun getStoreInfo(): StoreResponse {
+        return storeService.getStoreInfo().data
+    }
+
+    suspend fun getStoreDetail(storeId: Long): StoreDetailResponse {
+        return storeService.getStoreDetail(storeId).data
+    }
+
+    suspend fun getEditProfile(): StoreEditProfileResponse {
+        return storeService.getStoreEditProfile().data
+    }
+
+    suspend fun updateEditProfile(request: StoreEditProfileRequest): StoreEditProfileResponse {
+        return storeService.updateStoreProfile(request).data
     }
 }

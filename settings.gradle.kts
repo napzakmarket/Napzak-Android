@@ -31,16 +31,33 @@ include(
     ":core:designsystem",
     ":core:util",
 )
+
 include(
     ":data:remote",
     ":data:local",
     ":data:dummy",
     ":data:store",
+    ":data:product",
+    ":data:registration",
+    ":data:genre",
+    ":data:banner",
+    ":data:report",
+    ":data:interest",
+    ":data:presigned-url",
 )
+
 include(
     ":domain:dummy",
     ":domain:store",
+    ":domain:product",
+    ":domain:registration",
+    ":domain:genre",
+    ":domain:banner",
+    ":domain:report",
+    ":domain:interest",
+    ":domain:presigned-url",
 )
+
 include(
     ":feature:main",
     ":feature:dummy",
