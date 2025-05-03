@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.data.presignedUrl)
     implementation(projects.data.genre)
     implementation(projects.data.banner)
+    implementation(projects.data.report)
 
     implementation(libs.androidx.appcompat)
     implementation(libs.timber)

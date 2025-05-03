@@ -41,6 +41,7 @@ include(
     ":data:genre",
     ":data:interest",
     ":data:banner",
+    ":data:report",
 )
 include(
     ":domain:dummy",
@@ -50,6 +51,7 @@ include(
     ":domain:genre",
     ":domain:interest",
     ":domain:banner",
+    ":domain:report",
 )
 include(
     ":feature:main",
