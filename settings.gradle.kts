@@ -35,9 +35,11 @@ include(
     ":data:remote",
     ":data:local",
     ":data:dummy",
+    ":data:presigned-url",
 )
 include(
     ":domain:dummy",
+    ":domain:presigned-url",
 )
 include(
     ":feature:main",
