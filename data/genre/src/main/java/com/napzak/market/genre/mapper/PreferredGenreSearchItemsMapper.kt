@@ -5,7 +5,7 @@ import com.napzak.market.genre.model.PreferredGenreSearchItems
 
 fun PreferredGenreSearchItemsResponse.toDomain(): PreferredGenreSearchItems =
     PreferredGenreSearchItems(
-        genreList = genreList.map { genre -> genre.toGenre() },
+        genreList = genreList.map { it.toGenre() },
         nextCursor = nextCursor,
         externalLink = externalLink,
     )
