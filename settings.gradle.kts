@@ -35,10 +35,22 @@ include(
     ":data:remote",
     ":data:local",
     ":data:dummy",
+    ":data:store",
+    ":data:presigned-url",
+    ":data:registration",
+    ":data:genre",
+    ":data:interest",
+    ":data:banner",
     ":data:report",
 )
 include(
     ":domain:dummy",
+    ":domain:store",
+    ":domain:presigned-url",
+    ":domain:registration",
+    ":domain:genre",
+    ":domain:interest",
+    ":domain:banner",
     ":domain:report",
 )
 include(
