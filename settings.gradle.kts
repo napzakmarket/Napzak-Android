@@ -36,19 +36,18 @@ include(
     ":data:local",
     ":data:dummy",
     ":data:store",
+    ":data:presigned-url",
+    ":data:registration",
+    ":data:genre",
+    ":data:interest",
 )
 include(
     ":domain:dummy",
     ":domain:store",
-    ":data:presigned-url",
-    ":data:registration",
-    ":data:genre",
-)
-include(
-    ":domain:dummy",
     ":domain:presigned-url",
     ":domain:registration",
     ":domain:genre",
+    ":domain:interest",
 )
 include(
     ":feature:main",
