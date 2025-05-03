@@ -35,10 +35,12 @@ include(
     ":data:remote",
     ":data:local",
     ":data:dummy",
+    ":data:presigned-url",
     ":data:registration",
 )
 include(
     ":domain:dummy",
+    ":domain:presigned-url",
     ":domain:registration",
 )
 include(
