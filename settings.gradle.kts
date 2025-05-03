@@ -31,38 +31,43 @@ include(
     ":core:designsystem",
     ":core:util",
 )
+
 include(
+    ":data:dummy",
     ":data:remote",
     ":data:local",
-    ":data:dummy",
+    ":data:product",
     ":data:store",
-    ":data:presigned-url",
     ":data:registration",
     ":data:genre",
-    ":data:interest",
     ":data:banner",
     ":data:report",
+    ":data:interest",
+    ":data:presigned-url",
 )
+
 include(
     ":domain:dummy",
+    ":domain:product",
     ":domain:store",
-    ":domain:presigned-url",
     ":domain:registration",
     ":domain:genre",
-    ":domain:interest",
     ":domain:banner",
     ":domain:report",
+    ":domain:interest",
+    ":domain:presigned-url",
 )
+
 include(
-    ":feature:main",
     ":feature:dummy",
-    ":feature:home",
-    ":feature:mypage",
-    ":feature:explore",
+    ":feature:main",
     ":feature:onboarding",
+    ":feature:home",
+    ":feature:explore",
     ":feature:search",
-    ":feature:report",
     ":feature:registration",
+    ":feature:mypage",
     ":feature:store",
     ":feature:detail",
+    ":feature:report",
 )

@@ -61,7 +61,7 @@ import com.napzak.market.store.component.BasicFilterChip
 import com.napzak.market.store.component.GenreChip
 import com.napzak.market.store.component.GenreFilterChip
 import com.napzak.market.store.model.Product
-import com.napzak.market.store.model.StoreInfo
+import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.util.android.noRippleClickable
 
 @Composable
@@ -73,7 +73,7 @@ internal fun StoreRoute(
 ) {
     StoreScreen(
         selectedTab = MarketTab.SELL,
-        storeInfo = StoreInfo.mockStoreInfo,
+        storeDetail = StoreDetail.mockStoreInfo,
         filteredGenres = emptyList(),
         sortType = SortType.RECENT,
         productList = Product.mockMixedProduct,
@@ -92,7 +92,7 @@ internal fun StoreRoute(
 
 @Composable
 private fun StoreScreen(
-    storeInfo: StoreInfo,
+    storeDetail: StoreDetail,
     selectedTab: MarketTab,
     filteredGenres: List<Genre>,
     sortType: SortType,
@@ -110,7 +110,7 @@ private fun StoreScreen(
 ) {
     // TODO: ViewModel로 이동예정
     val userId : Long = 0
-    val isMyStore = storeInfo.storeId == userId
+    val isMyStore = storeDetail.storeId == userId
 
     Column(
         modifier = modifier
@@ -124,7 +124,7 @@ private fun StoreScreen(
         )
 
         StoreScrollSection(
-            storeInfo = storeInfo,
+            storeDetail = storeDetail,
             isMyStore = isMyStore,
             selectedTab = selectedTab,
             filteredGenres = filteredGenres,
@@ -174,7 +174,7 @@ private fun StoreTopBar(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun StoreScrollSection(
-    storeInfo: StoreInfo,
+    storeDetail: StoreDetail,
     isMyStore: Boolean,
     selectedTab: MarketTab,
     filteredGenres: List<Genre>,
@@ -202,7 +202,7 @@ private fun StoreScrollSection(
     ) {
         item {
             StoreInfoSection(
-                storeInfo = storeInfo,
+                storeInfo = storeDetail,
                 isMyStore = isMyStore,
                 onProfileEditClick = onProfileEditClick,
             )
@@ -332,7 +332,7 @@ private fun StoreScrollSection(
 
 @Composable
 private fun StoreInfoSection(
-    storeInfo: StoreInfo,
+    storeInfo: StoreDetail,
     isMyStore: Boolean,
     onProfileEditClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -351,7 +351,7 @@ private fun StoreInfoSection(
                     AsyncImage(
                         model = ImageRequest
                             .Builder(context)
-                            .data(storeCover)
+                            .data(coverUrl)
                             .build(),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
@@ -390,7 +390,7 @@ private fun StoreInfoSection(
             AsyncImage(
                 model = ImageRequest
                     .Builder(context)
-                    .data(storePhoto)
+                    .data(photoUrl)
                     .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -411,7 +411,7 @@ private fun StoreInfoSection(
         Spacer(Modifier.height(9.dp))
 
         Text(
-            text = storeNickName,
+            text = nickname,
             style = NapzakMarketTheme.typography.body16sb,
             color = NapzakMarketTheme.colors.gray500,
             textAlign = TextAlign.Center,
@@ -421,7 +421,7 @@ private fun StoreInfoSection(
         Spacer(Modifier.height(12.dp))
 
         Text(
-            text = storeDescription,
+            text = description,
             style = NapzakMarketTheme.typography.caption10sb,
             color = NapzakMarketTheme.colors.gray500,
             textAlign = TextAlign.Center,
@@ -454,7 +454,7 @@ private fun StoreScreenPreview(modifier: Modifier = Modifier) {
     NapzakMarketTheme {
         StoreScreen(
             selectedTab = MarketTab.SELL,
-            storeInfo = StoreInfo.mockStoreInfo,
+            storeDetail = StoreDetail.mockStoreInfo,
             filteredGenres = emptyList(),
             sortType = SortType.RECENT,
             productList = Product.mockMixedProduct,
