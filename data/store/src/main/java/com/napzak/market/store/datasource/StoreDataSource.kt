@@ -1,14 +1,15 @@
 package com.napzak.market.store.datasource
 
-import com.napzak.market.store.dto.response.StoreDetailResponse
-import com.napzak.market.store.dto.request.StoreEditProfileRequest
-import com.napzak.market.store.dto.response.StoreEditProfileResponse
-import com.napzak.market.store.dto.response.StoreResponse
 import com.napzak.market.remote.model.BaseResponse
+import com.napzak.market.remote.model.EmptyDataResponse
 import com.napzak.market.store.dto.request.GenreRegistrationRequest
 import com.napzak.market.store.dto.request.NicknameRequest
+import com.napzak.market.store.dto.request.StoreEditProfileRequest
 import com.napzak.market.store.dto.request.WithdrawRequest
 import com.napzak.market.store.dto.response.GenreRegistrationResponse
+import com.napzak.market.store.dto.response.StoreDetailResponse
+import com.napzak.market.store.dto.response.StoreEditProfileResponse
+import com.napzak.market.store.dto.response.StoreResponse
 import com.napzak.market.store.dto.response.WithdrawResponse
 import com.napzak.market.store.service.StoreService
 import javax.inject.Inject
@@ -16,11 +17,11 @@ import javax.inject.Inject
 class StoreDataSource @Inject constructor(
     private val storeService: StoreService,
 ) {
-    suspend fun getValidateNickname(request: NicknameRequest): BaseResponse<Unit> {
+    suspend fun getValidateNickname(request: NicknameRequest): EmptyDataResponse {
         return storeService.getNicknameValidation(request)
     }
 
-    suspend fun postRegistrationNickname(request: NicknameRequest): BaseResponse<Unit> {
+    suspend fun postRegistrationNickname(request: NicknameRequest): EmptyDataResponse {
         return storeService.postNicknameRegistration(request)
     }
 
@@ -28,7 +29,7 @@ class StoreDataSource @Inject constructor(
         return storeService.getGenresRegistration(request)
     }
 
-    suspend fun logout(): BaseResponse<Unit> {
+    suspend fun logout(): EmptyDataResponse {
         return storeService.postLogout()
     }
 
