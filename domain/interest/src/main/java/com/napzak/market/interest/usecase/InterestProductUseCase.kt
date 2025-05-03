@@ -7,7 +7,7 @@ class SetInterestProductUseCase @Inject constructor(
     private val interestProductRepository: InterestProductRepository,
 ) {
     suspend operator fun invoke(productId: Long, isInterested: Boolean): Result<Unit> {
-        return if (isInterested) interestProductRepository.setInterestProduct(productId)
-        else interestProductRepository.unsetInterestProduct(productId)
+        return if (isInterested) interestProductRepository.unsetInterestProduct(productId)
+        else interestProductRepository.setInterestProduct(productId)
     }
 }
