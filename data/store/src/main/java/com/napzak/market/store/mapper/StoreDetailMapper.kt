@@ -1,7 +1,7 @@
 package com.napzak.market.store.mapper
 
-import com.napzak.market.store.dto.StoreDetailGenreDto
-import com.napzak.market.store.dto.StoreDetailResponse
+import com.napzak.market.store.dto.response.StoreDetailGenreDto
+import com.napzak.market.store.dto.response.StoreDetailResponse
 import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.model.StoreDetailGenre
 

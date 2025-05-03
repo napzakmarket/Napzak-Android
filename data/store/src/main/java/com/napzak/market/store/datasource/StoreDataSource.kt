@@ -1,9 +1,9 @@
 package com.napzak.market.store.datasource
 
-import com.napzak.market.store.dto.StoreDetailResponse
-import com.napzak.market.store.dto.StoreEditProfileRequest
-import com.napzak.market.store.dto.StoreEditProfileResponse
-import com.napzak.market.store.dto.StoreResponse
+import com.napzak.market.store.dto.response.StoreDetailResponse
+import com.napzak.market.store.dto.request.StoreEditProfileRequest
+import com.napzak.market.store.dto.response.StoreEditProfileResponse
+import com.napzak.market.store.dto.response.StoreResponse
 import com.napzak.market.remote.model.BaseResponse
 import com.napzak.market.store.dto.request.GenreRegistrationRequest
 import com.napzak.market.store.dto.request.NicknameRequest

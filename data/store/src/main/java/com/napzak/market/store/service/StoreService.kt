@@ -6,10 +6,10 @@ import com.napzak.market.store.dto.request.NicknameRequest
 import com.napzak.market.store.dto.request.WithdrawRequest
 import com.napzak.market.store.dto.response.GenreRegistrationResponse
 import com.napzak.market.store.dto.response.WithdrawResponse
-import com.napzak.market.store.dto.StoreDetailResponse
-import com.napzak.market.store.dto.StoreEditProfileRequest
-import com.napzak.market.store.dto.StoreEditProfileResponse
-import com.napzak.market.store.dto.StoreResponse
+import com.napzak.market.store.dto.response.StoreDetailResponse
+import com.napzak.market.store.dto.request.StoreEditProfileRequest
+import com.napzak.market.store.dto.response.StoreEditProfileResponse
+import com.napzak.market.store.dto.response.StoreResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST

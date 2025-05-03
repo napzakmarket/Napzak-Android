@@ -1,6 +1,6 @@
 package com.napzak.market.store.datasource
 
-import com.napzak.market.store.dto.SettingInfoResponse
+import com.napzak.market.store.dto.response.SettingInfoResponse
 import com.napzak.market.store.service.SettingService
 import javax.inject.Inject
 
