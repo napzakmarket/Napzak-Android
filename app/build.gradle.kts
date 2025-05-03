@@ -14,6 +14,7 @@ dependencies {
     implementation(projects.data.local)
     implementation(projects.data.banner)
     implementation(projects.data.dummy)
+    implementation(projects.data.store)
     implementation(projects.data.genre)
     implementation(projects.data.interest)
     implementation(projects.data.presignedUrl)

@@ -1,7 +1,7 @@
 package com.napzak.market.store.service
 
 import com.napzak.market.remote.model.BaseResponse
-import com.napzak.market.store.dto.SettingInfoResponse
+import com.napzak.market.store.dto.response.SettingInfoResponse
 import retrofit2.http.GET
 
 interface SettingService {

@@ -16,4 +16,5 @@ dependencies {
     implementation(projects.domain.store)
 
     implementation(libs.timber)
+    implementation(project(":domain:store"))
 }
