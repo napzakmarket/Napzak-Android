@@ -48,7 +48,7 @@ internal fun ProductImageGroup(
     val context = LocalContext.current
     val pagerState = rememberPagerState(
         initialPage = 0,
-        pageCount = { Int.MAX_VALUE }
+        pageCount = { Int.MAX_VALUE.takeIf { imageUrls.size > 1 } ?: 1 }
     )
     val currentPage = remember(pagerState.currentPage) {
         pagerState.currentPage % imageUrls.size
@@ -71,6 +71,7 @@ internal fun ProductImageGroup(
                     .build(),
                 contentDescription = contentDescription,
                 contentScale = ContentScale.FillBounds,
+                modifier = Modifier.fillMaxSize()
             )
         }
 

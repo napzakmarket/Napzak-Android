@@ -36,9 +36,9 @@ import com.napzak.market.detail.component.group.ProductInformationGroup
 import com.napzak.market.detail.component.group.ProductInformationSellGroup
 import com.napzak.market.detail.component.group.ProductMarketGroup
 import com.napzak.market.detail.component.topbar.DetailTopBar
-import com.napzak.market.detail.model.ProductPhoto
-import com.napzak.market.detail.model.StoreInfo
 import com.napzak.market.product.model.ProductDetail
+import com.napzak.market.product.model.ProductDetail.ProductPhoto
+import com.napzak.market.product.model.ProductDetail.StoreInfo
 import com.napzak.market.util.common.formatToPriceString
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -112,8 +112,8 @@ fun ProductDetailScreen(
 
             ProductDetailSuccessScreen(
                 productDetail = productDetail,
-                productPhotos = ProductPhoto.mockList.toImmutableList(),
-                marketInfo = StoreInfo.mock,
+                productPhotos = productPhotos.toImmutableList(),
+                marketInfo = storeInfo,
                 isInterested = isInterested,
                 onMarketClick = onMarketClick,
                 onChatButtonClick = { onChatButtonClick(productDetail.productId) },
@@ -290,17 +290,22 @@ private fun ProductDetailScreenPreview() {
                 isOwnedByCurrentUser = true,
                 isInterested = false,
                 productPhotos = emptyList(),
-                storeInfo = ProductDetail.StoreInfo(
+                storeInfo = StoreInfo(
                     userId = 1,
                     storePhoto = "",
                     nickname = "닉네임",
                     totalSellCount = 1000,
                     totalBuyCount = 1000,
-
-                    )
+                )
             ),
-            productPhotos = ProductPhoto.mockList.toImmutableList(),
-            marketInfo = StoreInfo.mock,
+            productPhotos = emptyList<ProductPhoto>().toImmutableList(),
+            marketInfo = StoreInfo(
+                userId = 1,
+                storePhoto = "",
+                nickname = "닉네임",
+                totalSellCount = 1000,
+                totalBuyCount = 1000,
+            ),
             onMarketClick = {},
             onChatButtonClick = {},
             onBackButtonClick = {},
