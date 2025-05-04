@@ -26,8 +26,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -93,10 +93,6 @@ internal fun StoreRoute(
 
     LaunchedEffect(uiState) {
         viewModel.updateStoreProducts()
-    }
-
-    LaunchedEffect(viewModel.genreSearchTerm) {
-        viewModel.updateGenreSearchResult()
     }
 
     StoreScreen(

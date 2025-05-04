@@ -37,7 +37,6 @@ class StoreViewModel @Inject constructor(
     val bottomSheetState: StateFlow<StoreBottomSheetState> = _bottomSheetState.asStateFlow()
 
     private val _genreSearchTerm = MutableStateFlow("")
-    val genreSearchTerm = _genreSearchTerm.asStateFlow()
 
     fun updateStoreInformation() = viewModelScope.launch {
         with(uiState.value) {
@@ -108,10 +107,11 @@ class StoreViewModel @Inject constructor(
 
     fun updateGenreSearchTerm(searchTerm: String) {
         _genreSearchTerm.update { searchTerm }
+        updateGenreSearchResult()
     }
 
     @OptIn(FlowPreview::class)
-    fun updateGenreSearchResult() = viewModelScope.launch {
+    private fun updateGenreSearchResult() = viewModelScope.launch {
         _genreSearchTerm
             .debounce(DEBOUNCE_DELAY)
             .collectLatest { debounce ->
