@@ -3,6 +3,8 @@ package com.napzak.market.report
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.napzak.market.report.model.ReportParameters
+import com.napzak.market.report.repository.ReportRepository
 import com.napzak.market.report.type.ReportType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -14,6 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class ReportViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val reportRepository: ReportRepository,
 ) : ViewModel() {
     private val _sideEffect = Channel<ReportSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
@@ -26,39 +29,49 @@ internal class ReportViewModel @Inject constructor(
         detail: String,
         contact: String,
     ) = viewModelScope.launch {
-        when (reportType) {
-            ReportType.PRODUCT -> sendProductReport(
-                reason = reason,
-                detail = detail,
+        runCatching {
+            val reportParameters = ReportParameters(
+                title = reason,
+                description = detail,
                 contact = contact,
             )
 
-            ReportType.USER -> sendUserReport(
-                reason = reason,
-                detail = detail,
-                contact = contact,
-            )
-        }
+            when (reportType) {
+                ReportType.PRODUCT -> sendProductReport(
+                    productId = id!!,
+                    reportParameters = reportParameters,
+                )
+
+                ReportType.USER -> sendUserReport(
+                    userId = id!!,
+                    reportParameters = reportParameters,
+                )
+            }
+        }.onSuccess {
+            Timber.tag("ReportViewModel")
+                .d("checking if this message appears at the end of the log")
+            _sideEffect.send(ReportSideEffect.NavigateUp)
+        }.onFailure(Timber::e)
     }
 
     private suspend fun sendProductReport(
-        reason: String,
-        detail: String,
-        contact: String,
+        productId: Long,
+        reportParameters: ReportParameters,
     ) {
-        // TODO: 물품 신고 API 호출
-        Timber.tag("ReportViewModel")
-            .d("sendProductReport called with reason: $reason, detail: $detail, contact: $contact and id: $id")
+        reportRepository.sendProductReport(
+            productId = productId,
+            reportParameters = reportParameters,
+        )
     }
 
     private suspend fun sendUserReport(
-        reason: String,
-        detail: String,
-        contact: String,
+        userId: Long,
+        reportParameters: ReportParameters,
     ) {
-        // TODO: 마켓 신고 API 호출
-        Timber.tag("ReportViewModel")
-            .d("sendUserReport called with reason: $reason, detail: $detail, contact: $contact and id: $id")
+        reportRepository.sendStoreReport(
+            storeId = userId,
+            reportParameters = reportParameters,
+        )
     }
 
     companion object {
