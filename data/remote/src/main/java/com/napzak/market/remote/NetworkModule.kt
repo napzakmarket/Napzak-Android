@@ -1,6 +1,7 @@
 package com.napzak.market.remote
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.napzak.market.local.datastore.TokenDataStore
 import com.napzak.market.remote.qualifier.DUMMY
 import com.napzak.market.remote.qualifier.JWT
 import dagger.Module
@@ -63,7 +64,9 @@ object NetworkModule {
     @JWT
     @Provides
     @Singleton
-    fun providerHeaderInterceptor(): Interceptor = HeaderInterceptor()
+    fun providerHeaderInterceptor(
+        tokenDataStore: TokenDataStore,
+    ): Interceptor = HeaderInterceptor(tokenDataStore)
 
     @Provides
     @Singleton
