@@ -1,14 +1,9 @@
 package com.napzak.market.detail
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
-import com.napzak.market.detail.model.ProductPhoto
-import com.napzak.market.detail.model.StoreInfo
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.repository.ProductDetailRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,16 +30,7 @@ internal class ProductDetailViewModel @Inject constructor(
         MutableStateFlow(UiState.Empty)
     val productDetail = _productDetail.asStateFlow()
 
-    // TODO: 더미 데이터. API 연결 후 삭제
-    var productPhotos by mutableStateOf(ProductPhoto.mockList)
-        private set
-
-    // TODO: 더미 데이터. API 연결 후 삭제
-    var marketInfo by mutableStateOf(StoreInfo.mock)
-        private set
-
-    private val _isInterested =
-        MutableStateFlow(com.napzak.market.detail.model.ProductDetail.mock.isInterested)
+    private val _isInterested = MutableStateFlow(false)
     val isInterested = _isInterested.asStateFlow()
 
     private val _sideEffect = Channel<ProductDetailSideEffect>()

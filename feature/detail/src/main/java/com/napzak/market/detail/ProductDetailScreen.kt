@@ -80,7 +80,7 @@ internal fun ProductDetailRoute(
     ProductDetailScreen(
         uiState = uiState,
         isInterested = isInterested,
-        onMarketClick = { onMarketNavigate(viewModel.marketInfo.userId) },
+        onMarketClick = onMarketNavigate,
         onChatButtonClick = onChatNavigate,
         onLikeButtonClick = { viewModel.updateIsInterested(!isInterested) },
         onBackButtonClick = onNavigateUp,
@@ -95,7 +95,7 @@ internal fun ProductDetailRoute(
 fun ProductDetailScreen(
     uiState: UiState<ProductDetail>,
     isInterested: Boolean,
-    onMarketClick: () -> Unit,
+    onMarketClick: (userId: Long) -> Unit,
     onChatButtonClick: (productId: Long) -> Unit,
     onLikeButtonClick: (productId: Long) -> Unit,
     onBackButtonClick: () -> Unit,
@@ -115,7 +115,7 @@ fun ProductDetailScreen(
                 productPhotos = productPhotos.toImmutableList(),
                 marketInfo = storeInfo,
                 isInterested = isInterested,
-                onMarketClick = onMarketClick,
+                onMarketClick = { onMarketClick(storeInfo.userId) },
                 onChatButtonClick = { onChatButtonClick(productDetail.productId) },
                 onLikeButtonClick = { onLikeButtonClick(productDetail.productId) },
                 onBackButtonClick = onBackButtonClick,
