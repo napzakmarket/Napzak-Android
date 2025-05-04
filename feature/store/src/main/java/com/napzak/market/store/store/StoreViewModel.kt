@@ -54,10 +54,13 @@ class StoreViewModel @Inject constructor(
     fun updateStoreProducts() = viewModelScope.launch {
         var newProductList: List<Product> = Product.mockMixedProduct // TODO : 추후 API로 변경
 
-        _uiState.update { currentState ->
-            val currentInfo = (currentState.loadState as UiState.Success).data
-            val updatedInfo = currentInfo.copy(productList = newProductList)
-            currentState.copy(loadState = UiState.Success(updatedInfo))
+        if (uiState.value.loadState is UiState.Success) {
+            _uiState.update { currentState ->
+                val currentInfo =
+                    (uiState.value.loadState as UiState.Success<StoreInformation>).data
+                val updatedInfo = currentInfo.copy(productList = newProductList)
+                currentState.copy(loadState = UiState.Success(updatedInfo))
+            }
         }
     }
 
