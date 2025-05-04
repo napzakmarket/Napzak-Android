@@ -6,9 +6,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.napzak.market.detail.model.ProductDetail
+import com.napzak.market.common.state.UiState
 import com.napzak.market.detail.model.ProductPhoto
 import com.napzak.market.detail.model.StoreInfo
+import com.napzak.market.product.model.ProductDetail
+import com.napzak.market.product.repository.ProductDetailRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
@@ -25,12 +27,13 @@ import javax.inject.Inject
 @HiltViewModel
 internal class ProductDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val productDetailRepository: ProductDetailRepository,
 ) : ViewModel() {
-    private val productId: Long? = savedStateHandle.get<Long>(PRODUCT_ID_KEY)
+    val productId: Long? = savedStateHandle.get<Long>(PRODUCT_ID_KEY)
 
-    // TODO: 더미 데이터. API 연결 후 삭제
-    var productDetail by mutableStateOf(ProductDetail.mock)
-        private set
+    private val _productDetail: MutableStateFlow<UiState<ProductDetail>> =
+        MutableStateFlow(UiState.Empty)
+    val productDetail = _productDetail.asStateFlow()
 
     // TODO: 더미 데이터. API 연결 후 삭제
     var productPhotos by mutableStateOf(ProductPhoto.mockList)
@@ -40,11 +43,26 @@ internal class ProductDetailViewModel @Inject constructor(
     var marketInfo by mutableStateOf(StoreInfo.mock)
         private set
 
-    private val _isInterested = MutableStateFlow(ProductDetail.mock.isInterested)
+    private val _isInterested =
+        MutableStateFlow(com.napzak.market.detail.model.ProductDetail.mock.isInterested)
     val isInterested = _isInterested.asStateFlow()
 
     private val _sideEffect = Channel<ProductDetailSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
+
+    suspend fun getProductDetail() {
+        if (productId != null) {
+            productDetailRepository.getProductDetail(productId)
+                .onSuccess { response ->
+                    _productDetail.update { UiState.Success(response) }
+                    _isInterested.update { response.isInterested }
+                }
+                .onFailure {
+                    Timber.e(it)
+                    _productDetail.value = UiState.Failure(it.toString())
+                }
+        }
+    }
 
     @OptIn(FlowPreview::class)
     fun debounceIsInterested() = viewModelScope.launch {
@@ -56,7 +74,7 @@ internal class ProductDetailViewModel @Inject constructor(
 
     fun updateIsInterested(isInterested: Boolean) = _isInterested.update { isInterested }
 
-    fun deleteProduct() = viewModelScope.launch {
+    fun deleteProduct(productId: Long) = viewModelScope.launch {
         runCatching {
             Timber.tag("ProductDetail").d("delete product")
         }.onSuccess {

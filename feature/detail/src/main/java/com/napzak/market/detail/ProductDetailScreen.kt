@@ -19,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.ProductConditionType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
@@ -35,9 +36,9 @@ import com.napzak.market.detail.component.group.ProductInformationGroup
 import com.napzak.market.detail.component.group.ProductInformationSellGroup
 import com.napzak.market.detail.component.group.ProductMarketGroup
 import com.napzak.market.detail.component.topbar.DetailTopBar
-import com.napzak.market.detail.model.ProductDetail
 import com.napzak.market.detail.model.ProductPhoto
 import com.napzak.market.detail.model.StoreInfo
+import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.util.common.formatToPriceString
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -54,7 +55,12 @@ internal fun ProductDetailRoute(
     viewModel: ProductDetailViewModel = hiltViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
+    val uiState by viewModel.productDetail.collectAsStateWithLifecycle()
     val isInterested by viewModel.isInterested.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.getProductDetail()
+    }
 
     LaunchedEffect(viewModel) {
         viewModel.debounceIsInterested()
@@ -72,23 +78,62 @@ internal fun ProductDetailRoute(
     }
 
     ProductDetailScreen(
-        productDetail = viewModel.productDetail,
-        productPhotos = viewModel.productPhotos.toImmutableList(),
-        marketInfo = viewModel.marketInfo,
+        uiState = uiState,
         isInterested = isInterested,
         onMarketClick = { onMarketNavigate(viewModel.marketInfo.userId) },
-        onChatButtonClick = { onChatNavigate(viewModel.productDetail.productId) },
+        onChatButtonClick = onChatNavigate,
         onLikeButtonClick = { viewModel.updateIsInterested(!isInterested) },
         onBackButtonClick = onNavigateUp,
-        onModifyProductClick = { onModifyNavigate(viewModel.productDetail.productId) },
+        onModifyProductClick = onModifyNavigate,
         onDeleteProductClick = viewModel::deleteProduct,
-        onReportProductClick = { onReportNavigate(viewModel.productDetail.productId) },
+        onReportProductClick = onReportNavigate,
         modifier = modifier,
     )
 }
 
 @Composable
 fun ProductDetailScreen(
+    uiState: UiState<ProductDetail>,
+    isInterested: Boolean,
+    onMarketClick: () -> Unit,
+    onChatButtonClick: (productId: Long) -> Unit,
+    onLikeButtonClick: (productId: Long) -> Unit,
+    onBackButtonClick: () -> Unit,
+    onModifyProductClick: (productId: Long) -> Unit,
+    onDeleteProductClick: (productId: Long) -> Unit,
+    onReportProductClick: (productId: Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    when (uiState) {
+        is UiState.Success -> {
+            val productDetail = uiState.data
+            val productPhotos = uiState.data.productPhotos
+            val storeInfo = uiState.data.storeInfo
+
+            ProductDetailSuccessScreen(
+                productDetail = productDetail,
+                productPhotos = ProductPhoto.mockList.toImmutableList(),
+                marketInfo = StoreInfo.mock,
+                isInterested = isInterested,
+                onMarketClick = onMarketClick,
+                onChatButtonClick = { onChatButtonClick(productDetail.productId) },
+                onLikeButtonClick = { onLikeButtonClick(productDetail.productId) },
+                onBackButtonClick = onBackButtonClick,
+                onModifyProductClick = { onModifyProductClick(productDetail.productId) },
+                onDeleteProductClick = { onDeleteProductClick(productDetail.productId) },
+                onReportProductClick = { onReportProductClick(productDetail.productId) },
+                modifier = modifier,
+            )
+        }
+
+        is UiState.Failure -> {}
+        is UiState.Empty -> {}
+        is UiState.Loading -> {}
+    }
+}
+
+@Composable
+private fun ProductDetailSuccessScreen(
     productDetail: ProductDetail,
     productPhotos: ImmutableList<ProductPhoto>,
     marketInfo: StoreInfo,
@@ -223,10 +268,37 @@ private fun ProductDetailScreenPreview() {
     NapzakMarketTheme {
         var isLiked by remember { mutableStateOf(false) }
 
-        ProductDetailScreen(
+        ProductDetailSuccessScreen(
             isInterested = isLiked,
             onLikeButtonClick = { isLiked = !isLiked },
-            productDetail = ProductDetail.mock,
+            productDetail = ProductDetail(
+                productId = 1,
+                tradeType = "SELL",
+                genreName = "은혼",
+                productName = "은혼 긴토키 히지카타 룩업은혼 긴토키 히지카타 룩",
+                price = 125000,
+                uploadTime = "1일전",
+                chatCount = 1000,
+                interestCount = 1000,
+                description = "은혼 긴토키 히지카타 룩업",
+                productCondition = "LIKE_NEW",
+                standardDeliveryFee = 3600,
+                halfDeliveryFee = 1800,
+                isDeliveryIncluded = false,
+                isPriceNegotiable = true,
+                tradeStatus = "BEFORE_TRADE",
+                isOwnedByCurrentUser = true,
+                isInterested = false,
+                productPhotos = emptyList(),
+                storeInfo = ProductDetail.StoreInfo(
+                    userId = 1,
+                    storePhoto = "",
+                    nickname = "닉네임",
+                    totalSellCount = 1000,
+                    totalBuyCount = 1000,
+
+                    )
+            ),
             productPhotos = ProductPhoto.mockList.toImmutableList(),
             marketInfo = StoreInfo.mock,
             onMarketClick = {},
