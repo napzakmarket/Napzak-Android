@@ -17,10 +17,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -87,6 +90,10 @@ private fun ReportScreen(
 ) {
     val scrollState = rememberScrollState()
 
+    val focusManager = LocalFocusManager.current
+    val dropdownEnabled = remember { mutableStateOf(false) }
+    val disableDropDown = { dropdownEnabled.value = false }
+
     Scaffold(
         topBar = {
             ReportTopBar(
@@ -105,7 +112,11 @@ private fun ReportScreen(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .verticalScroll(scrollState),
+                .verticalScroll(scrollState)
+                .noRippleClickable {
+                    focusManager.clearFocus()
+                    disableDropDown()
+                }
         ) {
             Spacer(Modifier.height(40.dp))
 
@@ -121,6 +132,8 @@ private fun ReportScreen(
 
             ReportReasonSection(
                 reportState = reportState,
+                dropdownEnabled = dropdownEnabled.value,
+                onDropdownClick = { dropdownEnabled.value = it },
                 modifier = Modifier.padding(horizontal = 20.dp),
             )
 
@@ -128,6 +141,7 @@ private fun ReportScreen(
 
             ReportDetailSection(
                 reportState = reportState,
+                onTextFieldFocus = disableDropDown,
                 modifier = Modifier.padding(horizontal = 20.dp),
             )
 
@@ -135,6 +149,7 @@ private fun ReportScreen(
 
             ReportContactSection(
                 reportState = reportState,
+                onTextFieldFocus = disableDropDown,
                 modifier = Modifier.padding(horizontal = 20.dp),
             )
 
