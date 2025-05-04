@@ -89,7 +89,7 @@ internal fun ProductDetailRoute(
 }
 
 @Composable
-fun ProductDetailScreen(
+private fun ProductDetailScreen(
     uiState: UiState<ProductDetail>,
     isInterested: Boolean,
     onMarketClick: (userId: Long) -> Unit,
@@ -267,47 +267,43 @@ private fun ProductDetailSuccessScreen(
 @Preview(showBackground = true, heightDp = 780, widthDp = 360)
 @Composable
 private fun ProductDetailScreenPreview() {
+    val mockProductDetail = ProductDetail(
+        productId = 1,
+        tradeType = "SELL",
+        genreName = "은혼",
+        productName = "은혼 긴토키 히지카타 룩업은혼 긴토키 히지카타 룩",
+        price = 125000,
+        uploadTime = "1일전",
+        chatCount = 1000,
+        interestCount = 1000,
+        description = "은혼 긴토키 히지카타 룩업",
+        productCondition = "LIKE_NEW",
+        standardDeliveryFee = 3600,
+        halfDeliveryFee = 1800,
+        isDeliveryIncluded = false,
+        isPriceNegotiable = true,
+        tradeStatus = "BEFORE_TRADE",
+        isOwnedByCurrentUser = true,
+        isInterested = false,
+        productPhotos = emptyList(),
+        storeInfo = StoreInfo(
+            userId = 1,
+            storePhoto = "",
+            nickname = "닉네임",
+            totalSellCount = 1000,
+            totalBuyCount = 1000,
+        )
+    )
+
     NapzakMarketTheme {
         var isLiked by remember { mutableStateOf(false) }
 
         ProductDetailSuccessScreen(
             isInterested = isLiked,
             onLikeButtonClick = { isLiked = !isLiked },
-            productDetail = ProductDetail(
-                productId = 1,
-                tradeType = "SELL",
-                genreName = "은혼",
-                productName = "은혼 긴토키 히지카타 룩업은혼 긴토키 히지카타 룩",
-                price = 125000,
-                uploadTime = "1일전",
-                chatCount = 1000,
-                interestCount = 1000,
-                description = "은혼 긴토키 히지카타 룩업",
-                productCondition = "LIKE_NEW",
-                standardDeliveryFee = 3600,
-                halfDeliveryFee = 1800,
-                isDeliveryIncluded = false,
-                isPriceNegotiable = true,
-                tradeStatus = "BEFORE_TRADE",
-                isOwnedByCurrentUser = true,
-                isInterested = false,
-                productPhotos = emptyList(),
-                storeInfo = StoreInfo(
-                    userId = 1,
-                    storePhoto = "",
-                    nickname = "닉네임",
-                    totalSellCount = 1000,
-                    totalBuyCount = 1000,
-                )
-            ),
-            productPhotos = emptyList<ProductPhoto>().toImmutableList(),
-            marketInfo = StoreInfo(
-                userId = 1,
-                storePhoto = "",
-                nickname = "닉네임",
-                totalSellCount = 1000,
-                totalBuyCount = 1000,
-            ),
+            productDetail = mockProductDetail,
+            productPhotos = mockProductDetail.productPhotos.toImmutableList(),
+            marketInfo = mockProductDetail.storeInfo,
             onMarketClick = {},
             onChatButtonClick = {},
             onBackButtonClick = {},

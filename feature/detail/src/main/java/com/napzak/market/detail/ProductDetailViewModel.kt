@@ -67,7 +67,8 @@ internal class ProductDetailViewModel @Inject constructor(
     }
 
     fun updateIsInterested(isInterested: Boolean) = _isInterested.update { isInterested }
-    private fun setInterested(productId: Long?, isInterested: Boolean) = viewModelScope.launch {
+
+    private suspend fun setInterested(productId: Long?, isInterested: Boolean) {
         if (initialLoading) {
             initialLoading = false
         } else if (productId != null) {
@@ -84,9 +85,11 @@ internal class ProductDetailViewModel @Inject constructor(
     }
 
     fun deleteProduct(productId: Long) = viewModelScope.launch {
-        productDetailRepository.deleteProduct(productId).onSuccess {
-            _sideEffect.send(ProductDetailSideEffect.NavigateUp)
-        }.onFailure(Timber::e)
+        productDetailRepository.deleteProduct(productId)
+            .onSuccess {
+                _sideEffect.send(ProductDetailSideEffect.NavigateUp)
+            }
+            .onFailure(Timber::e)
     }
 
     companion object {
