@@ -66,10 +66,6 @@ internal fun SearchRoute(
         viewModel.updateRecommendedSearchWordGenres()
     }
 
-    LaunchedEffect(searchText) {
-        viewModel.updateSearchResult()
-    }
-
     SearchScreen(
         uiState = uiState,
         searchText = searchText,

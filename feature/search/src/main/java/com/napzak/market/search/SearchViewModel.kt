@@ -64,10 +64,11 @@ class SearchViewModel @Inject constructor(
 
     fun updateSearchTerm(searchTerm: String) {
         _searchTerm.update { searchTerm }
+        updateSearchResult()
     }
 
     @OptIn(FlowPreview::class)
-    fun updateSearchResult() = viewModelScope.launch {
+    private fun updateSearchResult() = viewModelScope.launch {
         _searchTerm
             .debounce(DEBOUNCE_DELAY)
             .collectLatest { debounce ->
