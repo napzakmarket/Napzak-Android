@@ -1,8 +1,8 @@
 package com.napzak.market.store.mapper
 
-import com.napzak.market.store.dto.StoreEditGenreDto
-import com.napzak.market.store.dto.StoreEditProfileRequest
-import com.napzak.market.store.dto.StoreEditProfileResponse
+import com.napzak.market.store.dto.response.StoreEditGenreDto
+import com.napzak.market.store.dto.request.StoreEditProfileRequest
+import com.napzak.market.store.dto.response.StoreEditProfileResponse
 import com.napzak.market.store.model.StoreEditGenre
 import com.napzak.market.store.model.StoreEditProfile
 

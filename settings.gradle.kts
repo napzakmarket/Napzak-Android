@@ -33,11 +33,11 @@ include(
 )
 
 include(
-    ":data:dummy",
     ":data:remote",
     ":data:local",
-    ":data:product",
+    ":data:dummy",
     ":data:store",
+    ":data:product",
     ":data:registration",
     ":data:genre",
     ":data:banner",
@@ -48,8 +48,8 @@ include(
 
 include(
     ":domain:dummy",
-    ":domain:product",
     ":domain:store",
+    ":domain:product",
     ":domain:registration",
     ":domain:genre",
     ":domain:banner",
@@ -59,15 +59,15 @@ include(
 )
 
 include(
-    ":feature:dummy",
     ":feature:main",
-    ":feature:onboarding",
+    ":feature:dummy",
     ":feature:home",
-    ":feature:explore",
-    ":feature:search",
-    ":feature:registration",
     ":feature:mypage",
+    ":feature:explore",
+    ":feature:onboarding",
+    ":feature:search",
+    ":feature:report",
+    ":feature:registration",
     ":feature:store",
     ":feature:detail",
-    ":feature:report",
 )

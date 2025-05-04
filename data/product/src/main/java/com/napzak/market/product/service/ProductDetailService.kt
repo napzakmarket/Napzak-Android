@@ -3,6 +3,7 @@ package com.napzak.market.product.service
 import com.napzak.market.product.dto.ProductGetDetailResponse
 import com.napzak.market.product.dto.ProductPatchTradeStatusRequest
 import com.napzak.market.remote.model.BaseResponse
+import com.napzak.market.remote.model.EmptyDataResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -19,10 +20,10 @@ interface ProductDetailService {
     suspend fun patchTradeStatus(
         @Path("productId") productId: Long,
         @Body request: ProductPatchTradeStatusRequest,
-    ): BaseResponse<Unit>
+    ): EmptyDataResponse
 
     @DELETE("products/{productId}")
     suspend fun deleteProduct(
         @Path("productId") productId: Long,
-    ): BaseResponse<Unit>
+    ): EmptyDataResponse
 }
