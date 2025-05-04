@@ -41,6 +41,7 @@ import com.napzak.market.report.component.ReportReasonSection
 import com.napzak.market.report.state.ReportState
 import com.napzak.market.report.state.rememberReportState
 import com.napzak.market.report.type.ReportType
+import com.napzak.market.util.android.LocalSnackBarController
 import com.napzak.market.util.android.noRippleClickable
 
 @Composable
@@ -54,6 +55,7 @@ internal fun ReportRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val reportState = rememberReportState(reportType)
+    val snackBarController = LocalSnackBarController.current
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
@@ -61,6 +63,10 @@ internal fun ReportRoute(
                 when (sideEffect) {
                     ReportSideEffect.NavigateUp -> {
                         navigateUp()
+                    }
+
+                    is ReportSideEffect.ShowSnackBar -> {
+                        snackBarController.show(sideEffect.message)
                     }
                 }
             }
