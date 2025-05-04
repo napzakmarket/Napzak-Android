@@ -84,11 +84,9 @@ internal class ProductDetailViewModel @Inject constructor(
     }
 
     fun deleteProduct(productId: Long) = viewModelScope.launch {
-        runCatching {
-            Timber.tag("ProductDetail").d("delete product")
-        }.onSuccess {
+        productDetailRepository.deleteProduct(productId).onSuccess {
             _sideEffect.send(ProductDetailSideEffect.NavigateUp)
-        }
+        }.onFailure(Timber::e)
     }
 
     companion object {
