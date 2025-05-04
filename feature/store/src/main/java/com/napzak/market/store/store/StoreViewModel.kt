@@ -9,7 +9,7 @@ import com.napzak.market.common.type.MarketTab
 import com.napzak.market.common.type.SortType
 import com.napzak.market.designsystem.component.bottomsheet.Genre
 import com.napzak.market.store.model.Product
-import com.napzak.market.store.model.StoreInfo
+import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.store.state.StoreBottomSheetState
 import com.napzak.market.store.store.state.StoreInformation
 import com.napzak.market.store.store.state.StoreUiState
@@ -44,7 +44,7 @@ class StoreViewModel @Inject constructor(
             updateLoadState(
                 UiState.Success(
                     StoreInformation(
-                        storeInfo = StoreInfo.mockStoreInfo,
+                        storeDetail = StoreDetail.mockStoreInfo,
                     )
                 )
             )

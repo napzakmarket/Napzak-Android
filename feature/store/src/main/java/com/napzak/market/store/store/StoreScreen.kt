@@ -70,7 +70,7 @@ import com.napzak.market.store.component.GenreChip
 import com.napzak.market.store.component.GenreFilterChip
 import com.napzak.market.store.component.StoreBottomSheetScreen
 import com.napzak.market.store.model.Product
-import com.napzak.market.store.model.StoreInfo
+import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.store.state.StoreBottomSheetState
 import com.napzak.market.store.store.state.StoreUiState
 import com.napzak.market.util.android.noRippleClickable
@@ -158,7 +158,7 @@ private fun StoreScreen(
         is UiState.Success -> {
             with(uiState) {
                 StoreSuccessScreen(
-                    storeInfo = uiState.loadState.data.storeInfo,
+                    storeDetail = uiState.loadState.data.storeDetail,
                     selectedTab = selectedTab,
                     filteredGenres = filteredGenres,
                     isOnSale = isOnSale,
@@ -189,7 +189,7 @@ private fun StoreScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StoreSuccessScreen(
-    storeInfo: StoreInfo,
+    storeDetail: StoreDetail,
     selectedTab: MarketTab,
     filteredGenres: List<Genre>,
     isOnSale: Boolean,
@@ -222,14 +222,14 @@ private fun StoreSuccessScreen(
             .background(color = NapzakMarketTheme.colors.white),
     ) {
         StoreTopBar(
-            isMyStore = storeInfo.isStoreOwner,
+            isOwner = storeDetail.isOwner,
             onBackButtonClick = onBackButtonClick,
             onMenuButtonClick = onMenuButtonClick
         )
 
         StoreScrollSection(
-            storeInfo = storeInfo,
-            isMyStore = storeInfo.isStoreOwner,
+            storeDetail = storeDetail,
+            isOwner = storeDetail.isOwner,
             selectedTab = selectedTab,
             filteredGenres = filteredGenres,
             isOnSale = isOnSale,
@@ -260,7 +260,7 @@ private fun StoreSuccessScreen(
 
 @Composable
 private fun StoreTopBar(
-    isMyStore: Boolean,
+    isOwner: Boolean,
     onBackButtonClick: () -> Unit,
     onMenuButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -277,7 +277,7 @@ private fun StoreTopBar(
 
         Spacer(Modifier.weight(1f))
 
-        if (!isMyStore) {
+        if (!isOwner) {
             Icon(
                 imageVector = ImageVector.vectorResource(ic_kebap),
                 contentDescription = null,
@@ -291,8 +291,8 @@ private fun StoreTopBar(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun StoreScrollSection(
-    storeInfo: StoreInfo,
-    isMyStore: Boolean,
+    storeDetail: StoreDetail,
+    isOwner: Boolean,
     selectedTab: MarketTab,
     filteredGenres: List<Genre>,
     isOnSale: Boolean,
@@ -320,8 +320,8 @@ private fun StoreScrollSection(
     ) {
         item {
             StoreInfoSection(
-                storeInfo = storeInfo,
-                isMyStore = isMyStore,
+                storeDetail = storeDetail,
+                isMyStore = isOwner,
                 onProfileEditClick = onProfileEditClick,
             )
         }
@@ -452,14 +452,14 @@ private fun StoreScrollSection(
 
 @Composable
 private fun StoreInfoSection(
-    storeInfo: StoreInfo,
+    storeDetail: StoreDetail,
     isMyStore: Boolean,
     onProfileEditClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
 
-    with(storeInfo) {
+    with(storeDetail) {
         Box(
             modifier = modifier,
             contentAlignment = Alignment.BottomCenter,
@@ -471,7 +471,7 @@ private fun StoreInfoSection(
                     AsyncImage(
                         model = ImageRequest
                             .Builder(context)
-                            .data(storeCover)
+                            .data(coverUrl)
                             .build(),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
@@ -510,7 +510,7 @@ private fun StoreInfoSection(
             AsyncImage(
                 model = ImageRequest
                     .Builder(context)
-                    .data(storePhoto)
+                    .data(photoUrl)
                     .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -531,7 +531,7 @@ private fun StoreInfoSection(
         Spacer(Modifier.height(9.dp))
 
         Text(
-            text = storeNickName,
+            text = nickname,
             style = NapzakMarketTheme.typography.body16sb,
             color = NapzakMarketTheme.colors.gray500,
             textAlign = TextAlign.Center,
@@ -541,7 +541,7 @@ private fun StoreInfoSection(
         Spacer(Modifier.height(12.dp))
 
         Text(
-            text = storeDescription,
+            text = description,
             style = NapzakMarketTheme.typography.caption10sb,
             color = NapzakMarketTheme.colors.gray500,
             textAlign = TextAlign.Center,
@@ -573,7 +573,7 @@ private fun StoreScreenPreview(modifier: Modifier = Modifier) {
     NapzakMarketTheme {
         StoreSuccessScreen(
             selectedTab = MarketTab.SELL,
-            storeInfo = StoreInfo.mockStoreInfo,
+            storeDetail = StoreDetail.mockStoreInfo,
             filteredGenres = emptyList(),
             isOnSale = false,
             sortType = SortType.RECENT,

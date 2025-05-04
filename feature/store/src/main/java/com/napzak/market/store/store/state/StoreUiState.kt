@@ -6,7 +6,7 @@ import com.napzak.market.common.type.MarketTab
 import com.napzak.market.common.type.SortType
 import com.napzak.market.designsystem.component.bottomsheet.Genre
 import com.napzak.market.store.model.Product
-import com.napzak.market.store.model.StoreInfo
+import com.napzak.market.store.model.StoreDetail
 
 @Immutable
 data class StoreUiState(
@@ -20,6 +20,6 @@ data class StoreUiState(
 )
 
 data class StoreInformation(
-    val storeInfo: StoreInfo,
+    val storeDetail: StoreDetail,
     val productList: List<Product> = emptyList(),
 )
