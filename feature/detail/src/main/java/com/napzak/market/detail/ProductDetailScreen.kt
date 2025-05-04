@@ -102,59 +102,9 @@ private fun ProductDetailScreen(
     onTradeStatusChange: (productId: Long, tradeStatus: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when (uiState) {
-        is UiState.Success -> {
-            val productDetail = uiState.data
-            val productPhotos = uiState.data.productPhotos
-            val storeInfo = uiState.data.storeInfo
-
-            ProductDetailSuccessScreen(
-                productDetail = productDetail,
-                productPhotos = productPhotos.toImmutableList(),
-                marketInfo = storeInfo,
-                isInterested = isInterested,
-                onMarketClick = { onMarketClick(storeInfo.userId) },
-                onChatButtonClick = { onChatButtonClick(productDetail.productId) },
-                onLikeButtonClick = { onLikeButtonClick(productDetail.productId) },
-                onBackButtonClick = onBackButtonClick,
-                onModifyProductClick = { onModifyProductClick(productDetail.productId) },
-                onTradeStatusChange = { tradeStatus ->
-                    onTradeStatusChange(productDetail.productId, tradeStatus.typeName)
-                },
-                onDeleteProductClick = { onDeleteProductClick(productDetail.productId) },
-                onReportProductClick = { onReportProductClick(productDetail.productId) },
-                modifier = modifier,
-            )
-        }
-
-        is UiState.Failure -> {}
-        is UiState.Empty -> {}
-        is UiState.Loading -> {}
-    }
-}
-
-@Composable
-private fun ProductDetailSuccessScreen(
-    productDetail: ProductDetail,
-    productPhotos: ImmutableList<ProductPhoto>,
-    marketInfo: StoreInfo,
-    isInterested: Boolean,
-    onMarketClick: () -> Unit,
-    onChatButtonClick: () -> Unit,
-    onLikeButtonClick: () -> Unit,
-    onBackButtonClick: () -> Unit,
-    onModifyProductClick: () -> Unit,
-    onDeleteProductClick: () -> Unit,
-    onReportProductClick: () -> Unit,
-    onTradeStatusChange: (TradeStatusType) -> Unit,
-    modifier: Modifier = Modifier,
-) {
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
     var sheetVisibility by remember { mutableStateOf(false) }
-
-    val tradeType = TradeType.fromName(productDetail.tradeType)
-    val tradeStatus = TradeStatusType.get(productDetail.tradeStatus, tradeType)
 
     Scaffold(
         topBar = {
@@ -164,18 +114,21 @@ private fun ProductDetailSuccessScreen(
             )
         },
         bottomBar = {
-            ProductDetailBottomBar(
-                isLiked = isInterested,
-                onChatButtonClick = onChatButtonClick,
-                onLikeButtonClick = {
-                    onLikeButtonClick()
-                    coroutineScope.launch {
-                        // NOTE: debounce 처리로 인해 스낵바 조건이 바뀜
-                        if (!isInterested) snackBarHostState.showSnackbar("")
-                        else snackBarHostState.currentSnackbarData?.dismiss()
-                    }
-                },
-            )
+            if (uiState is UiState.Success) {
+                val productId = uiState.data.productId
+                ProductDetailBottomBar(
+                    isLiked = isInterested,
+                    onChatButtonClick = { onChatButtonClick(productId) },
+                    onLikeButtonClick = {
+                        onLikeButtonClick(productId)
+                        coroutineScope.launch {
+                            // NOTE: debounce 처리로 인해 스낵바 조건이 바뀜
+                            if (!isInterested) snackBarHostState.showSnackbar("")
+                            else snackBarHostState.currentSnackbarData?.dismiss()
+                        }
+                    },
+                )
+            }
         },
         snackbarHost = {
             SnackbarHost(hostState = snackBarHostState) {
@@ -185,79 +138,116 @@ private fun ProductDetailSuccessScreen(
         containerColor = NapzakMarketTheme.colors.white,
         modifier = modifier,
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier.padding(innerPadding),
-        ) {
-            item {
-                ProductImageGroup(
-                    imageUrls = productPhotos.map { it.photoUrl }.toImmutableList(),
-                    contentDescription = productDetail.productName,
-                    tradeStatusType = tradeStatus,
+        when (uiState) {
+            is UiState.Success -> {
+                val productDetail = uiState.data
+                val productPhotos = uiState.data.productPhotos
+                val storeInfo = uiState.data.storeInfo
+
+                val tradeType = TradeType.fromName(productDetail.tradeType)
+                val tradeStatus = TradeStatusType.get(productDetail.tradeStatus, tradeType)
+
+                ProductDetailSuccessScreen(
+                    productDetail = productDetail,
+                    productPhotos = productPhotos.toImmutableList(),
+                    marketInfo = storeInfo,
+                    tradeType = tradeType,
+                    tradeStatus = tradeStatus,
+                    onMarketClick = { onMarketClick(storeInfo.userId) },
+                    modifier = Modifier.padding(innerPadding),
                 )
 
-                with(productDetail) {
-                    ProductInformationGroup(
-                        tradeType = tradeType,
-                        isPriceNegotiable = isPriceNegotiable,
-                        commentCount = chatCount,
-                        likeCount = interestCount,
-                        genre = genreName,
-                        title = productName,
-                        price = price.toString().formatToPriceString(),
-                        updatedDate = uploadTime,
-                        description = description,
-                        modifier = Modifier,
-                    )
-
-                    SectionDivider()
-
-                    when (tradeType) {
-                        TradeType.BUY -> {
-                            ProductInformationBuyGroup(
-                                productCondition = ProductConditionType.fromConditionByName(
-                                    productCondition
-                                ),
-                                isDeliveryIncluded = isDeliveryIncluded,
-                                standardDeliveryFee = standardDeliveryFee,
-                                halfDeliveryFee = halfDeliveryFee,
-                            )
-                        }
-
-                        TradeType.SELL -> {
-                            ProductInformationSellGroup(
-                                isPriceNegotiable = isPriceNegotiable,
-                            )
-                        }
+                if (sheetVisibility) {
+                    if (productDetail.isOwnedByCurrentUser) {
+                        MyProductBottomSheet(
+                            tradeType = tradeType,
+                            tradeStatus = tradeStatus,
+                            onDismissRequest = { sheetVisibility = false },
+                            onModifyClick = { onModifyProductClick(productDetail.productId) },
+                            onStatusChange = { newStatus ->
+                                onTradeStatusChange(productDetail.productId, newStatus.typeName)
+                            },
+                            onDeleteClick = { onDeleteProductClick(productDetail.productId) },
+                        )
+                    } else {
+                        ProductBottomSheet(
+                            onReportClick = { onReportProductClick(productDetail.productId) },
+                            onDismissRequest = { sheetVisibility = false },
+                        )
                     }
                 }
+            }
+
+            is UiState.Failure -> {}
+            is UiState.Empty -> {}
+            is UiState.Loading -> {}
+        }
+    }
+}
+
+@Composable
+private fun ProductDetailSuccessScreen(
+    productDetail: ProductDetail,
+    productPhotos: ImmutableList<ProductPhoto>,
+    tradeType: TradeType,
+    tradeStatus: TradeStatusType,
+    marketInfo: StoreInfo,
+    onMarketClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(modifier = modifier) {
+        item {
+            ProductImageGroup(
+                imageUrls = productPhotos.map { it.photoUrl }.toImmutableList(),
+                contentDescription = productDetail.productName,
+                tradeStatusType = tradeStatus,
+            )
+
+            with(productDetail) {
+                ProductInformationGroup(
+                    tradeType = tradeType,
+                    isPriceNegotiable = isPriceNegotiable,
+                    commentCount = chatCount,
+                    likeCount = interestCount,
+                    genre = genreName,
+                    title = productName,
+                    price = price.toString().formatToPriceString(),
+                    updatedDate = uploadTime,
+                    description = description,
+                    modifier = Modifier,
+                )
 
                 SectionDivider()
 
-                with(marketInfo) {
-                    ProductMarketGroup(
-                        marketImage = storePhoto,
-                        marketName = nickname,
-                        sellCount = totalSellCount.toString(),
-                        buyCount = totalBuyCount.toString(),
-                        onMarketProfileClick = onMarketClick,
-                    )
+                when (tradeType) {
+                    TradeType.BUY -> {
+                        ProductInformationBuyGroup(
+                            productCondition = ProductConditionType.fromConditionByName(
+                                productCondition
+                            ),
+                            isDeliveryIncluded = isDeliveryIncluded,
+                            standardDeliveryFee = standardDeliveryFee,
+                            halfDeliveryFee = halfDeliveryFee,
+                        )
+                    }
+
+                    TradeType.SELL -> {
+                        ProductInformationSellGroup(
+                            isPriceNegotiable = isPriceNegotiable,
+                        )
+                    }
                 }
             }
-        }
-        if (sheetVisibility) {
-            if (productDetail.isOwnedByCurrentUser) {
-                MyProductBottomSheet(
-                    tradeType = tradeType,
-                    tradeStatus = tradeStatus,
-                    onDismissRequest = { sheetVisibility = false },
-                    onModifyClick = onModifyProductClick,
-                    onStatusChange = onTradeStatusChange,
-                    onDeleteClick = onDeleteProductClick,
-                )
-            } else {
-                ProductBottomSheet(
-                    onReportClick = onReportProductClick,
-                    onDismissRequest = { sheetVisibility = false },
+
+            SectionDivider()
+
+            with(marketInfo) {
+                ProductMarketGroup(
+                    marketImage = storePhoto,
+                    marketName = nickname,
+                    sellCount = totalSellCount.toString(),
+                    buyCount = totalBuyCount.toString(),
+                    onMarketProfileClick = onMarketClick,
                 )
             }
         }
@@ -285,7 +275,13 @@ private fun ProductDetailScreenPreview() {
         tradeStatus = "BEFORE_TRADE",
         isOwnedByCurrentUser = true,
         isInterested = false,
-        productPhotos = emptyList(),
+        productPhotos = listOf(
+            ProductPhoto(
+                photoId = 1,
+                photoUrl = "",
+                photoSequence = 1,
+            )
+        ),
         storeInfo = StoreInfo(
             userId = 1,
             storePhoto = "",
@@ -295,23 +291,18 @@ private fun ProductDetailScreenPreview() {
         )
     )
 
-    NapzakMarketTheme {
-        var isLiked by remember { mutableStateOf(false) }
+    val tradeType = TradeType.fromName(mockProductDetail.tradeType)
+    val tradeStatus = TradeStatusType.get(mockProductDetail.tradeStatus, tradeType)
 
+    NapzakMarketTheme {
         ProductDetailSuccessScreen(
-            isInterested = isLiked,
-            onLikeButtonClick = { isLiked = !isLiked },
             productDetail = mockProductDetail,
             productPhotos = mockProductDetail.productPhotos.toImmutableList(),
             marketInfo = mockProductDetail.storeInfo,
             onMarketClick = {},
-            onChatButtonClick = {},
-            onBackButtonClick = {},
-            onModifyProductClick = {},
-            onDeleteProductClick = {},
-            onReportProductClick = {},
-            onTradeStatusChange = {},
             modifier = Modifier,
+            tradeType = tradeType,
+            tradeStatus = tradeStatus,
         )
     }
 }
