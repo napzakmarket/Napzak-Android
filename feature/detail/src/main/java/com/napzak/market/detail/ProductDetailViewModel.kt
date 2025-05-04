@@ -1,9 +1,13 @@
 package com.napzak.market.detail
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
+import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.repository.ProductDetailRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,15 +27,28 @@ import javax.inject.Inject
 internal class ProductDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val productDetailRepository: ProductDetailRepository,
+    private val setInterestProductUseCase: SetInterestProductUseCase,
 ) : ViewModel() {
-    val productId: Long? = savedStateHandle.get<Long>(PRODUCT_ID_KEY)
+    private val productId: Long? = savedStateHandle.get<Long>(PRODUCT_ID_KEY)
 
     private val _productDetail: MutableStateFlow<UiState<ProductDetail>> =
         MutableStateFlow(UiState.Empty)
     val productDetail = _productDetail.asStateFlow()
 
-    private val _isInterested = MutableStateFlow(false)
-    val isInterested = _isInterested.asStateFlow()
+    // NOTE: 뷰모델이 처음 생성될 때 좋아요 로직이 불리는 것을 방지하기 위해 initialLoading을 사용한다.
+    private var initialLoading by mutableStateOf(true)
+
+    private val _isInterested = MutableStateFlow(true)
+
+    @OptIn(FlowPreview::class)
+    val isInterested = _isInterested.asStateFlow().apply {
+        viewModelScope.launch {
+            this@apply.debounce(DEBOUNCE_DELAY).collectLatest { debounced ->
+                // NOTE: UI의 Interest는 이미 설정된 상태이므로, 반대로 요청을 보내야 한다.
+                setInterested(productId, !debounced)
+            }
+        }
+    }
 
     private val _sideEffect = Channel<ProductDetailSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
@@ -50,15 +67,14 @@ internal class ProductDetailViewModel @Inject constructor(
         }
     }
 
-    @OptIn(FlowPreview::class)
-    fun debounceIsInterested() = viewModelScope.launch {
-        _isInterested.debounce(DEBOUNCE_DELAY)
-            .collectLatest { debounced ->
-                Timber.tag("ProductDetail").d("isInterested: $debounced")
-            }
-    }
-
     fun updateIsInterested(isInterested: Boolean) = _isInterested.update { isInterested }
+    private fun setInterested(productId: Long?, isInterested: Boolean) = viewModelScope.launch {
+        if (initialLoading) {
+            initialLoading = false
+        } else if (productId != null) {
+            setInterestProductUseCase(productId, isInterested)
+        }
+    }
 
     fun deleteProduct(productId: Long) = viewModelScope.launch {
         runCatching {

@@ -59,11 +59,8 @@ internal fun ProductDetailRoute(
     val isInterested by viewModel.isInterested.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
+        //viewModel.debounceIsInterested()
         viewModel.getProductDetail()
-    }
-
-    LaunchedEffect(viewModel) {
-        viewModel.debounceIsInterested()
     }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
