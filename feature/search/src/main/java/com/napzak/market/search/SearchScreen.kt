@@ -1,6 +1,5 @@
 package com.napzak.market.search
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,12 +18,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -41,8 +40,8 @@ import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.search.R.drawable.ic_left_chevron
 import com.napzak.market.feature.search.R.string.search_hint
-import com.napzak.market.feature.search.R.string.search_suggested_search_text
 import com.napzak.market.feature.search.R.string.search_suggested_genre
+import com.napzak.market.feature.search.R.string.search_suggested_search_text
 import com.napzak.market.search.component.GenreNavigationButton
 import com.napzak.market.search.component.SuggestedGenreCard
 import com.napzak.market.search.component.SuggestedKeywordChip
@@ -52,7 +51,6 @@ import com.napzak.market.util.android.noRippleClickable
 
 const val EMPTY_TEXT = ""
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 internal fun SearchRoute(
     onBackButtonClick: () -> Unit,
@@ -68,7 +66,7 @@ internal fun SearchRoute(
         viewModel.updateRecommendedSearchWordGenres()
     }
 
-    LaunchedEffect(viewModel.searchTerm) {
+    LaunchedEffect(searchText) {
         viewModel.updateSearchResult()
     }
 
