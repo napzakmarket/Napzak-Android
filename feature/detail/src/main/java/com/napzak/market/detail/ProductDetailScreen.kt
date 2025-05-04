@@ -59,7 +59,6 @@ internal fun ProductDetailRoute(
     val isInterested by viewModel.isInterested.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        //viewModel.debounceIsInterested()
         viewModel.getProductDetail()
     }
 
@@ -84,6 +83,7 @@ internal fun ProductDetailRoute(
         onModifyProductClick = onModifyNavigate,
         onDeleteProductClick = viewModel::deleteProduct,
         onReportProductClick = onReportNavigate,
+        onTradeStatusChange = viewModel::updateTradeStatus,
         modifier = modifier,
     )
 }
@@ -99,6 +99,7 @@ fun ProductDetailScreen(
     onModifyProductClick: (productId: Long) -> Unit,
     onDeleteProductClick: (productId: Long) -> Unit,
     onReportProductClick: (productId: Long) -> Unit,
+    onTradeStatusChange: (productId: Long, tradeStatus: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (uiState) {
@@ -117,6 +118,9 @@ fun ProductDetailScreen(
                 onLikeButtonClick = { onLikeButtonClick(productDetail.productId) },
                 onBackButtonClick = onBackButtonClick,
                 onModifyProductClick = { onModifyProductClick(productDetail.productId) },
+                onTradeStatusChange = { tradeStatus ->
+                    onTradeStatusChange(productDetail.productId, tradeStatus.typeName)
+                },
                 onDeleteProductClick = { onDeleteProductClick(productDetail.productId) },
                 onReportProductClick = { onReportProductClick(productDetail.productId) },
                 modifier = modifier,
@@ -142,14 +146,15 @@ private fun ProductDetailSuccessScreen(
     onModifyProductClick: () -> Unit,
     onDeleteProductClick: () -> Unit,
     onReportProductClick: () -> Unit,
+    onTradeStatusChange: (TradeStatusType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val tradeType = remember(productDetail) { TradeType.fromName(productDetail.tradeType) }
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
-
-    var tradeStatus by remember { mutableStateOf(TradeStatusType.valueOf(productDetail.tradeStatus)) }
     var sheetVisibility by remember { mutableStateOf(false) }
+
+    val tradeType = TradeType.fromName(productDetail.tradeType)
+    val tradeStatus = TradeStatusType.get(productDetail.tradeStatus, tradeType)
 
     Scaffold(
         topBar = {
@@ -165,7 +170,7 @@ private fun ProductDetailSuccessScreen(
                 onLikeButtonClick = {
                     onLikeButtonClick()
                     coroutineScope.launch {
-                        // debounce 처리로 인해 스낵바 조건이 바뀜
+                        // NOTE: debounce 처리로 인해 스낵바 조건이 바뀜
                         if (!isInterested) snackBarHostState.showSnackbar("")
                         else snackBarHostState.currentSnackbarData?.dismiss()
                     }
@@ -246,7 +251,7 @@ private fun ProductDetailSuccessScreen(
                     tradeStatus = tradeStatus,
                     onDismissRequest = { sheetVisibility = false },
                     onModifyClick = onModifyProductClick,
-                    onStatusChange = { tradeStatus = it },
+                    onStatusChange = onTradeStatusChange,
                     onDeleteClick = onDeleteProductClick,
                 )
             } else {
@@ -309,6 +314,8 @@ private fun ProductDetailScreenPreview() {
             onModifyProductClick = {},
             onDeleteProductClick = {},
             onReportProductClick = {},
+            onTradeStatusChange = {},
+            modifier = Modifier,
         )
     }
 }

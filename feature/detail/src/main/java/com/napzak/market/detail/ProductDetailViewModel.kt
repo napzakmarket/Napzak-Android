@@ -37,14 +37,13 @@ internal class ProductDetailViewModel @Inject constructor(
 
     // NOTE: 뷰모델이 처음 생성될 때 좋아요 로직이 불리는 것을 방지하기 위해 initialLoading을 사용한다.
     private var initialLoading by mutableStateOf(true)
-
     private val _isInterested = MutableStateFlow(true)
 
     @OptIn(FlowPreview::class)
     val isInterested = _isInterested.asStateFlow().apply {
         viewModelScope.launch {
             this@apply.debounce(DEBOUNCE_DELAY).collectLatest { debounced ->
-                // NOTE: UI의 Interest는 이미 설정된 상태이므로, 반대로 요청을 보내야 한다.
+                // NOTE: debounce 처리로 인해 좋아요 조건이 바뀜
                 setInterested(productId, !debounced)
             }
         }
@@ -74,6 +73,14 @@ internal class ProductDetailViewModel @Inject constructor(
         } else if (productId != null) {
             setInterestProductUseCase(productId, isInterested)
         }
+    }
+
+    fun updateTradeStatus(productId: Long, tradeStatus: String) = viewModelScope.launch {
+        productDetailRepository.patchTradeStatus(productId, tradeStatus)
+            .onSuccess {
+                getProductDetail()
+            }
+            .onFailure(Timber::e)
     }
 
     fun deleteProduct(productId: Long) = viewModelScope.launch {
