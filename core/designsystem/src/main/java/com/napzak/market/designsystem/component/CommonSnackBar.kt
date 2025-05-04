@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,22 +33,24 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
  * 주로 사용자에게 피드백 메시지를 보여줄 때 사용됩니다.
  *
  * @param message 스낵바에 표시될 메시지 문자열
+ * @param modifier Modifier를 통해 외부에서 스타일을 지정할 수 있습니다 (기본값: Modifier)
  * @param backgroundColor 스낵바의 배경 색상
  * @param textColor 메시지 텍스트 색상
  * @param textStyle 메시지 텍스트 스타일
- * @param modifier Modifier를 통해 외부에서 스타일을 지정할 수 있습니다 (기본값: Modifier)
  * @param icon 메시지 앞에 표시할 아이콘 (기본값: null, 없을 경우 아이콘 미표시)
+ * @param contentPadding 스낵바의 내부 패딩 값
  * @param shape 스낵바의 모양을 결정하는 Shape (기본값: 14dp의 라운드 코너)
  */
 
 @Composable
 fun CommonSnackBar(
     message: String,
+    modifier: Modifier = Modifier,
     backgroundColor: Color = NapzakMarketTheme.colors.transBlack,
     textColor: Color = NapzakMarketTheme.colors.white,
     textStyle: TextStyle = NapzakMarketTheme.typography.body14sb,
-    modifier: Modifier = Modifier,
     icon: ImageVector? = null,
+    contentPadding: PaddingValues = PaddingValues(vertical = 13.dp),
     shape: Shape = RoundedCornerShape(14.dp),
 ) {
     Box(
@@ -57,9 +60,7 @@ fun CommonSnackBar(
                 color = backgroundColor,
                 shape = shape,
             )
-            .padding(
-                vertical = 13.dp,
-            ),
+            .padding(contentPadding),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
