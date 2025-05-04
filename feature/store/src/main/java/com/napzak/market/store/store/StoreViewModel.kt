@@ -49,6 +49,7 @@ class StoreViewModel @Inject constructor(
                 )
             )
         }
+        updateStoreProducts()
     }
 
     fun updateStoreProducts() = viewModelScope.launch {
