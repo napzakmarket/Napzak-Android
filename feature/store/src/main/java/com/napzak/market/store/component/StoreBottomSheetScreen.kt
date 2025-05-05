@@ -23,6 +23,7 @@ internal fun StoreBottomSheetScreen(
     onSortItemClick: (SortType) -> Unit,
     onTextChange: (String) -> Unit,
     onGenreSelectButtonClick: (List<Genre>) -> Unit,
+    onStoreReportButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     with(storeBottomSheetState) {
@@ -49,6 +50,18 @@ internal fun StoreBottomSheetScreen(
                     onSortItemClick(newSortOption)
                     onDismissRequest(BottomSheetType.SORT)
                 },
+            )
+        }
+
+        if (isStoreReportBottomSheetVisible) {
+            StoreReportBottomSheet(
+                sheetState = sheetState,
+                onDismissRequest = { onDismissRequest(BottomSheetType.STORE_REPORT) },
+                onReportButtonClick = {
+                    onStoreReportButtonClick()
+                    onDismissRequest(BottomSheetType.STORE_REPORT)
+                },
+                modifier = modifier,
             )
         }
     }

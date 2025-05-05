@@ -2,6 +2,7 @@ package com.napzak.market.store.component
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,15 +19,15 @@ import com.napzak.market.feature.store.R.string.store_report
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun StoreBottomSheet(
+internal fun StoreReportBottomSheet(
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit,
     onReportButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val sheetState = rememberModalBottomSheetState()
-
     DragHandleBottomSheet(
         sheetState = sheetState,
-        onDismissRequest = { },
+        onDismissRequest = onDismissRequest,
         modifier = modifier.height(140.dp),
     ) {
         BottomSheetMenuItem(
@@ -38,11 +39,17 @@ internal fun StoreBottomSheet(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 private fun StoreBottomSheetPreview(modifier: Modifier = Modifier) {
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
     NapzakMarketTheme {
-        StoreBottomSheet(
+        StoreReportBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = {},
             onReportButtonClick = {},
             modifier = modifier
         )

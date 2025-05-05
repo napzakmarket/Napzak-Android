@@ -80,6 +80,7 @@ internal fun StoreRoute(
     onNavigateUp: () -> Unit,
     onProfileEditNavigate: () -> Unit,
     onProductDetailNavigate: (Long) -> Unit,
+    onStoreReportNavigate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: StoreViewModel = hiltViewModel(),
 ) {
@@ -105,7 +106,9 @@ internal fun StoreRoute(
         bottomSheetState = bottomSheetState,
         onDismissRequest = viewModel::updateBottomSheetVisibility,
         onBackButtonClick = onNavigateUp,
-        onMenuButtonClick = {},
+        onMenuButtonClick = {
+            viewModel.updateBottomSheetVisibility(BottomSheetType.STORE_REPORT)
+        },
         onProfileEditClick = onProfileEditNavigate,
         onTabClicked = viewModel::updateMarketTabType,
         onGenreFilterClick = {
@@ -121,6 +124,10 @@ internal fun StoreRoute(
         onProductItemClick = onProductDetailNavigate,
         onLikeButtonClick = { id, value ->
             viewModel.updateProductIsInterested(productId = id, isLiked = value)
+        },
+        onStoreReportButtonClick = {
+            viewModel.updateBottomSheetVisibility(BottomSheetType.STORE_REPORT)
+            onStoreReportNavigate()
         },
         modifier = modifier,
     )
@@ -143,6 +150,7 @@ private fun StoreScreen(
     onSortItemClick: (SortType) -> Unit,
     onProductItemClick: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
+    onStoreReportButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (uiState.loadState) {
@@ -179,6 +187,7 @@ private fun StoreScreen(
                     onProductItemClick = onProductItemClick,
                     onLikeButtonClick = onLikeButtonClick,
                     onMenuButtonClick = onMenuButtonClick,
+                    onStoreReportButtonClick = onStoreReportButtonClick,
                     modifier = modifier,
                 )
             }
@@ -210,6 +219,7 @@ private fun StoreSuccessScreen(
     onProductItemClick: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
     onMenuButtonClick: () -> Unit,
+    onStoreReportButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val sheetState = rememberModalBottomSheetState(
@@ -255,6 +265,7 @@ private fun StoreSuccessScreen(
         onSortItemClick = onSortItemClick,
         onTextChange = onGenreBottomSheetTextChange,
         onGenreSelectButtonClick = onGenreSelectButtonClick,
+        onStoreReportButtonClick = onStoreReportButtonClick,
     )
 }
 
@@ -593,6 +604,7 @@ private fun StoreScreenPreview(modifier: Modifier = Modifier) {
             onSortItemClick = {},
             onProductItemClick = {},
             onLikeButtonClick = { id, value -> },
+            onStoreReportButtonClick = {},
             modifier = modifier,
         )
     }

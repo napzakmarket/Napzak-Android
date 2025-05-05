@@ -86,6 +86,14 @@ class StoreViewModel @Inject constructor(
                     it.copy(isSortBottomSheetVisible = !_bottomSheetState.value.isSortBottomSheetVisible)
                 }
             }
+
+            BottomSheetType.STORE_REPORT -> {
+                _bottomSheetState.update {
+                    it.copy(isStoreReportBottomSheetVisible = !_bottomSheetState.value.isSortBottomSheetVisible)
+                }
+            }
+
+            else -> {}
         }
     }
 
