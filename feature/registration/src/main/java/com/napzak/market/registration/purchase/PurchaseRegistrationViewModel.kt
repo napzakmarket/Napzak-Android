@@ -2,6 +2,7 @@ package com.napzak.market.registration.purchase
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import com.napzak.market.designsystem.component.bottomsheet.Genre
 import com.napzak.market.registration.purchase.state.PurchaseContract.PurchaseSideEffect
 import com.napzak.market.registration.purchase.state.PurchaseContract.PurchaseUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -46,7 +47,7 @@ class PurchaseRegistrationViewModel @Inject constructor(
         )
     }
 
-    fun updateGenre(genre: String) = _uiState.update { currentState ->
+    fun updateGenre(genre: Genre) = _uiState.update { currentState ->
         currentState.copy(genre = genre)
     }
 
@@ -62,13 +63,12 @@ class PurchaseRegistrationViewModel @Inject constructor(
         currentState.copy(price = price)
     }
 
-
     fun updateNegotiable(isNegotiable: Boolean) = _uiState.update { currentState ->
         currentState.copy(isNegotiable = isNegotiable)
     }
 
     fun updateButtonState(): Boolean = with(_uiState.value) {
-        return !(imageUris.isEmpty() || genre.isEmpty() || title.isEmpty() || description.isEmpty()
+        return !(imageUris.isEmpty() || genre == null || title.isEmpty() || description.isEmpty()
                 || price.isEmpty() || price.toIntOrNull()?.rem(1000) != 0)
     }
 

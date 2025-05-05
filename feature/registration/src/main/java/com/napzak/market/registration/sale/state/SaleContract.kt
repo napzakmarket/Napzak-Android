@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.runtime.Immutable
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.ProductConditionType
+import com.napzak.market.genre.model.Genre
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -12,7 +13,7 @@ class SaleContract {
     data class SaleUiState(
         val loadState: UiState<Nothing> = UiState.Loading,
         val imageUris: ImmutableList<Uri> = persistentListOf(),
-        val genre: String = "",
+        val genre: Genre? = null,
         val title: String = "",
         val description: String = "",
         val price: String = "",

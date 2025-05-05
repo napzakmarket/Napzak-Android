@@ -3,15 +3,16 @@ package com.napzak.market.registration.purchase.state
 import android.net.Uri
 import androidx.compose.runtime.Immutable
 import com.napzak.market.common.state.UiState
+import com.napzak.market.designsystem.component.bottomsheet.Genre
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 class PurchaseContract {
     @Immutable
-    data class PurchaseUiState (
+    data class PurchaseUiState(
         val loadState: UiState<Nothing> = UiState.Loading,
         val imageUris: ImmutableList<Uri> = persistentListOf(),
-        val genre: String = "",
+        val genre: Genre? = null,
         val title: String = "",
         val description: String = "",
         val price: String = "",
@@ -20,6 +21,6 @@ class PurchaseContract {
 
     sealed class PurchaseSideEffect {
         // TODO: API 연결 후 상세 페이지 연동 필요
-        data class NavigateToDetail(val productId: Long): PurchaseSideEffect()
+        data class NavigateToDetail(val productId: Long) : PurchaseSideEffect()
     }
 }

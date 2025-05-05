@@ -3,6 +3,7 @@ package com.napzak.market.registration.sale
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.napzak.market.common.type.ProductConditionType
+import com.napzak.market.genre.model.Genre
 import com.napzak.market.registration.sale.state.SaleContract.SaleSideEffect
 import com.napzak.market.registration.sale.state.SaleContract.SaleUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,7 +48,7 @@ class SaleRegistrationViewModel @Inject constructor(
         )
     }
 
-    fun updateGenre(genre: String) = _uiState.update { currentState ->
+    fun updateGenre(genre: Genre) = _uiState.update { currentState ->
         currentState.copy(genre = genre)
     }
 
