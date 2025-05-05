@@ -9,21 +9,23 @@ import kotlinx.collections.immutable.persistentListOf
 
 class SaleContract {
     @Immutable
-    data class SaleUiState (
+    data class SaleUiState(
         val loadState: UiState<Nothing> = UiState.Loading,
         val imageUris: ImmutableList<Uri> = persistentListOf(),
         val genre: String = "",
         val title: String = "",
         val description: String = "",
-        val condition: ProductConditionType? = null,
         val price: String = "",
+        val condition: ProductConditionType? = null,
         val isShippingFeeIncluded: Boolean? = null,
+        val isNormalShippingChecked: Boolean = false,
         val normalShippingFee: String = "",
+        val isHalfShippingChecked: Boolean = false,
         val halfShippingFee: String = "",
     )
 
     sealed class SaleSideEffect {
         // TODO: API 연결 후 상세 페이지 연동 필요
-        data class NavigateToDetail(val productId: Long): SaleSideEffect()
+        data class NavigateToDetail(val productId: Long) : SaleSideEffect()
     }
 }

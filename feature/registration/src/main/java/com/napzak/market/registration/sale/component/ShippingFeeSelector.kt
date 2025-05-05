@@ -45,19 +45,21 @@ private const val EMPTY_STRING = ""
 @Composable
 internal fun ShippingFeeSelector(
     isShippingIncluded: Boolean?,
-    onShippingFeeChange: (Boolean) -> Unit,
+    onShippingFeeSelect: (Boolean) -> Unit,
+    isNormalShippingChecked: Boolean,
+    onNormalShippingSelect: (Boolean) -> Unit,
     normalShippingFee: String,
     onNormalShippingFeeChange: (String) -> Unit,
+    isHalfShippingChecked: Boolean,
+    onHalfShippingSelect: (Boolean) -> Unit,
     halfShippingFee: String,
     onHalfShippingFeeChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var isNormalShippingChecked by remember { mutableStateOf(false) }
-    var isHalfShippingChecked by remember { mutableStateOf(false) }
     val resetShippingExcluded = remember {
         {
-            isNormalShippingChecked = false
-            isHalfShippingChecked = false
+            onNormalShippingSelect(false)
+            onHalfShippingSelect(false)
             onNormalShippingFeeChange(EMPTY_STRING)
             onHalfShippingFeeChange(EMPTY_STRING)
         }
@@ -71,7 +73,7 @@ internal fun ShippingFeeSelector(
             isChecked = isShippingIncluded == true,
             onCheckChange = {
                 if (isShippingIncluded != true) {
-                    onShippingFeeChange(true)
+                    onShippingFeeSelect(true)
                     resetShippingExcluded()
                 }
             },
@@ -95,7 +97,7 @@ internal fun ShippingFeeSelector(
                     isChecked = isShippingIncluded == false,
                     onCheckChange = {
                         if (isShippingIncluded != false) {
-                            onShippingFeeChange(false)
+                            onShippingFeeSelect(false)
                         }
                     },
                 )
@@ -107,7 +109,7 @@ internal fun ShippingFeeSelector(
                         ExpandedShippingFee(
                             title = stringResource(normal_shipping),
                             isChecked = isNormalShippingChecked,
-                            onCheckChange = { isNormalShippingChecked = !it },
+                            onCheckChange = onNormalShippingSelect,
                             shippingFee = normalShippingFee,
                             onShippingFeeChange = onNormalShippingFeeChange,
                             hint = stringResource(normal_shipping_hint),
@@ -115,7 +117,7 @@ internal fun ShippingFeeSelector(
                         ExpandedShippingFee(
                             title = stringResource(half_priced_shipping),
                             isChecked = isHalfShippingChecked,
-                            onCheckChange = { isHalfShippingChecked = !it },
+                            onCheckChange = onHalfShippingSelect,
                             shippingFee = halfShippingFee,
                             onShippingFeeChange = onHalfShippingFeeChange,
                             hint = stringResource(half_priced_shipping_hint),
@@ -191,7 +193,7 @@ fun ExpandedShippingFee(
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier.noRippleClickable {
-                    onCheckChange(isChecked)
+                    onCheckChange(!isChecked)
                     if (isChecked) onShippingFeeChange(EMPTY_STRING)
                 },
             )
@@ -220,9 +222,13 @@ private fun ShippingFeeSelectorPreview() {
 
         ShippingFeeSelector(
             isShippingIncluded = true,
-            onShippingFeeChange = { },
+            onShippingFeeSelect = { },
+            isNormalShippingChecked = true,
+            onNormalShippingSelect = {},
             normalShippingFee = normalShippingFee,
             onNormalShippingFeeChange = { normalShippingFee = it },
+            isHalfShippingChecked = true,
+            onHalfShippingSelect = {},
             halfShippingFee = halfShippingFee,
             onHalfShippingFeeChange = { halfShippingFee = it },
             modifier = Modifier,

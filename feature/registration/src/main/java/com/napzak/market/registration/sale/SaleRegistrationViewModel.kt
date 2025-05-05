@@ -67,14 +67,20 @@ class SaleRegistrationViewModel @Inject constructor(
         currentState.copy(price = price)
     }
 
-    fun updateShippingFeeInclusion(isShippingFeeIncluded: Boolean) {
-        _uiState.update { currentState ->
-            currentState.copy(isShippingFeeIncluded = isShippingFeeIncluded)
-        }
+    fun updateShippingFeeInclusion(isShippingFeeIncluded: Boolean) = _uiState.update { currentState ->
+        currentState.copy(isShippingFeeIncluded = isShippingFeeIncluded)
+    }
+
+    fun updateNormalShippingFeeInclusion(isNormalShippingChecked: Boolean) = _uiState.update { currentState ->
+        currentState.copy(isNormalShippingChecked = isNormalShippingChecked)
     }
 
     fun updateNormalShippingFee(normalShippingFee: String) = _uiState.update { currentState ->
         currentState.copy(normalShippingFee = normalShippingFee)
+    }
+
+    fun updateHalfShippingFeeInclusion(isExpressShippingChecked: Boolean) = _uiState.update { currentState ->
+        currentState.copy(isHalfShippingChecked = isExpressShippingChecked)
     }
 
     fun updateHalfShippingFee(expressShippingFee: String) = _uiState.update { currentState ->
@@ -82,9 +88,10 @@ class SaleRegistrationViewModel @Inject constructor(
     }
 
     fun updateButtonState(): Boolean = with(_uiState.value) {
-        return !(imageUris.isEmpty() || genre.isEmpty() || title.isEmpty() || description.isEmpty()
+        return !(imageUris.isEmpty() || genre == null || title.isEmpty() || description.isEmpty()
                 || condition == null || price.isEmpty() || isShippingFeeIncluded == null
-                || (isShippingFeeIncluded == false && (normalShippingFee.isEmpty() && halfShippingFee.isEmpty())))
+                || (isShippingFeeIncluded == false && (normalShippingFee.isEmpty() && halfShippingFee.isEmpty()))
+                || (isNormalShippingChecked && normalShippingFee.isEmpty()) || (isHalfShippingChecked && halfShippingFee.isEmpty()))
     }
 
     fun registerProduct() {
