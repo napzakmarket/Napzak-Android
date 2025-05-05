@@ -32,7 +32,7 @@ internal fun GenreNavigationButton(
     onBlockClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val genre = if (genreName.length > MAX_LENGTH) genreName.ellipsis(MAX_LENGTH) else genreName
+    val genre = genreName.ellipsis(MAX_LENGTH)
 
     Row(
         modifier = modifier
