@@ -70,6 +70,8 @@ internal class ExploreViewModel @Inject constructor(
                     it.copy(isSortBottomSheetVisible = !_bottomSheetState.value.isSortBottomSheetVisible)
                 }
             }
+
+            else -> {}
         }
     }
 
