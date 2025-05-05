@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -27,6 +28,8 @@ fun GenreListItem(
         text = genreName,
         style = textStyle,
         color = textColor,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
         modifier = Modifier
             .padding(vertical = 15.dp)
             .noRippleClickable(onGenreItemClick),
@@ -39,7 +42,7 @@ private fun GenreListItemPrivate(modifier: Modifier = Modifier) {
     NapzakMarketTheme {
         GenreListItem(
             isSelected = false,
-            genreName = "산리오",
+            genreName = "산리오산리오산리오",
             onGenreItemClick = {},
             modifier = modifier,
         )
