@@ -2,9 +2,9 @@ package com.napzak.market.store.model
 
 data class StoreInfo(
     val storeId: Long,
-    val nickname: String,
-    val photoUrl: String,
-    val salesCount: Int,
-    val purchaseCount: Int,
+    val storeNickname: String,
+    val storePhoto: String,
+    val totalSellCount: Int,
+    val totalBuyCount: Int,
     val serviceLink: String,
 )

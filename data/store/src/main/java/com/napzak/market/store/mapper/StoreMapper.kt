@@ -24,9 +24,9 @@ fun WithdrawResponse.toDomain(): UserWithdrawal {
 
 fun StoreResponse.toDomain(): StoreInfo = StoreInfo(
     storeId = storeId,
-    nickname = storeNickname,
-    photoUrl = storePhoto,
-    salesCount = totalSellCount,
-    purchaseCount = totalBuyCount,
+    storeNickname = storeNickName,
+    storePhoto = storePhoto,
+    totalSellCount = totalSellCount,
+    totalBuyCount = totalBuyCount,
     serviceLink = serviceLink,
 )
