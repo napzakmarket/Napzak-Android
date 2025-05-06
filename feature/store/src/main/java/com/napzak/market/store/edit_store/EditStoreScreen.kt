@@ -154,6 +154,7 @@ private fun EditStoreScreen(
                         onStoreNameChange = onStoreNameChange,
                         onStoreIntroductionChange = onStoreIntroductionChange,
                         onNameValidityCheckClick = onNameValidityCheckClick,
+                        onGenreSelectButtonClick = { bottomSheetVisibility.value = true },
                         modifier = modifier.padding(innerPadding)
                     )
                 }
@@ -204,10 +205,10 @@ private fun SuccessScreen(
     onStoreNameChange: (String) -> Unit,
     onStoreIntroductionChange: (String) -> Unit,
     onNameValidityCheckClick: () -> Unit,
+    onGenreSelectButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
-    val bottomSheetVisibility = remember { mutableStateOf(false) }
     val nameCheckButtonEnabled = remember { mutableStateOf(false) }
 
     Column(
@@ -244,7 +245,7 @@ private fun SuccessScreen(
 
         EditInterestedGenreSection(
             genres = storeGenres.map { it.genreName },
-            onGenreSelectButtonClick = { bottomSheetVisibility.value = true },
+            onGenreSelectButtonClick = onGenreSelectButtonClick,
         )
 
         Spacer(Modifier.height(18.dp))
@@ -583,6 +584,7 @@ private fun EditStoreScreenPreview() {
             onStoreNameChange = { storeName = it },
             onStoreIntroductionChange = { storeIntroduction = it },
             onNameValidityCheckClick = {},
+            onGenreSelectButtonClick = {},
             modifier = Modifier.fillMaxSize(),
         )
     }
