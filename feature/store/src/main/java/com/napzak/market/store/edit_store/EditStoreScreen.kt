@@ -31,6 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,8 +46,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.component.bottomsheet.Genre
 import com.napzak.market.designsystem.component.bottomsheet.GenreSearchBottomSheet
 import com.napzak.market.designsystem.component.button.NapzakButton
@@ -68,6 +72,8 @@ import com.napzak.market.feature.store.R.string.store_edit_sub_title_name
 import com.napzak.market.feature.store.R.string.store_edit_title_genre
 import com.napzak.market.feature.store.R.string.store_edit_title_introduction
 import com.napzak.market.feature.store.R.string.store_edit_title_name
+import com.napzak.market.store.edit_store.state.EditStoreUiState
+import com.napzak.market.store.model.StoreEditGenre
 import com.napzak.market.util.android.noRippleClickable
 
 private const val DESCRIPTION_MAX_LENGTH = 200
@@ -76,23 +82,23 @@ private const val DESCRIPTION_MAX_LENGTH = 200
 internal fun EditStoreRoute(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: EditStoreViewModel = hiltViewModel()
 ) {
-    var storeName by remember { mutableStateOf("") }
-    var storeIntroduction by remember { mutableStateOf("") }
-    var storeGenres by remember { mutableStateOf(emptyList<Genre>()) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.getEditProfile()
+    }
 
     EditStoreScreen(
-        storeCover = "",
-        storeProfile = "",
-        storeName = storeName,
-        storeIntroduction = storeIntroduction,
-        storeGenres = storeGenres,
-        onStoreNameChange = { storeName = it },
-        onStoreIntroductionChange = { storeIntroduction = it },
+        uiState = uiState,
+        onStoreNameChange = { viewModel.updateStoreDetail(name = it) },
+        onStoreIntroductionChange = { viewModel.updateStoreDetail(description = it) },
+        onStoreGenreChange = { viewModel.updateStoreDetail(genres = it) },
         onGenreSearchTextChange = { }, // TODO: 장르 검색 API 연결
         onBackButtonClick = onNavigateUp,
-        onNameValidityCheckClick = { }, // TODO: 이름 유효성 검사 API 연결
-        onProceedButtonClick = { }, // TODO: 마켓 수정 API 연결
+        onNameValidityCheckClick = viewModel::checkNicknameValidity,
+        onProceedButtonClick = viewModel::saveEditedProfile, // TODO: 마켓 수정 API 연결
         modifier = modifier,
     )
 }
@@ -100,24 +106,18 @@ internal fun EditStoreRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EditStoreScreen(
-    storeCover: String,
-    storeProfile: String,
-    storeName: String,
-    storeIntroduction: String,
-    storeGenres: List<Genre>,
+    uiState: EditStoreUiState,
     onStoreNameChange: (String) -> Unit,
     onStoreIntroductionChange: (String) -> Unit,
+    onStoreGenreChange: (List<StoreEditGenre>) -> Unit,
     onGenreSearchTextChange: (String) -> Unit,
     onBackButtonClick: () -> Unit,
     onNameValidityCheckClick: () -> Unit,
     onProceedButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scrollState = rememberScrollState()
-    val bottomSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
-    var bottomSheetVisibility by remember { mutableStateOf(false) }
+    val initialLoading = remember { mutableStateOf(true) }
+    val submitButtonEnabled = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -128,73 +128,126 @@ private fun EditStoreScreen(
         bottomBar = {
             EditStoreProceedButton(
                 onClick = onProceedButtonClick,
+                enabled = submitButtonEnabled.value,
             )
         },
         containerColor = NapzakMarketTheme.colors.white,
         modifier = modifier.fillMaxSize(),
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(scrollState),
-        ) {
-            EditStorePhotoSection(
-                storeCover = storeCover,
-                storePhoto = storeProfile,
-                onEditClick = {},
-            )
+        when (uiState.loadState) {
+            is UiState.Success -> {
+                val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+                val bottomSheetVisibility = remember { mutableStateOf(false) }
 
-            Spacer(Modifier.height(24.dp))
+                LaunchedEffect(uiState.storeDetail) {
+                    if (initialLoading.value) initialLoading.value = false
+                    else submitButtonEnabled.value = true
+                }
 
-            EditStoreNameSection(
-                marketName = storeName,
-                onNameChange = onStoreNameChange,
-                onNameValidityCheckClick = onNameValidityCheckClick,
-                checkEnabled = false,
-            )
+                with(uiState.storeDetail) {
+                    SuccessScreen(
+                        storeCover = coverUrl,
+                        storeProfile = photoUrl,
+                        storeName = nickname,
+                        storeIntroduction = description,
+                        storeGenres = preferredGenres,
+                        onStoreNameChange = onStoreNameChange,
+                        onStoreIntroductionChange = onStoreIntroductionChange,
+                        onNameValidityCheckClick = onNameValidityCheckClick,
+                        modifier = modifier.padding(innerPadding)
+                    )
+                }
 
-            SectionDivider()
+                if (bottomSheetVisibility.value) {
+                    val bottomSheetGenres = uiState.storeDetail.preferredGenres.map {
+                        Genre(
+                            genreId = it.genreId,
+                            genreName = it.genreName
+                        )
+                    }
+                    GenreSearchBottomSheet(
+                        initialSelectedGenreList = bottomSheetGenres,
+                        genreItems = bottomSheetGenres,
+                        sheetState = bottomSheetState,
+                        onDismissRequest = {
+                            bottomSheetVisibility.value = false
+                        },
+                        onTextChange = onGenreSearchTextChange,
+                        onButtonClick = { genres ->
+                            onStoreGenreChange(genres.map { genre ->
+                                StoreEditGenre(
+                                    genreId = genre.genreId,
+                                    genreName = genre.genreName,
+                                )
+                            })
+                            bottomSheetVisibility.value = false
+                        },
+                    )
+                }
 
-            EditStoreIntroductionSection(
-                introduction = storeIntroduction,
-                onIntroductionChange = onStoreIntroductionChange,
-            )
+            }
 
-            SectionDivider()
-
-            EditInterestedGenreSection(
-                genres = storeGenres.map { it.genreName },
-                onGenreSelectButtonClick = { bottomSheetVisibility = true },
-            )
-
-            Spacer(Modifier.height(18.dp))
+            else -> {
+                // TODO: 다양한 UiState에 대한 화면 처리
+            }
         }
+    }
+}
 
-        if (bottomSheetVisibility) {
-            GenreSearchBottomSheet(
-                initialSelectedGenreList = storeGenres,
-                genreItems = listOf(
-                    Genre(0, "산리오"),
-                    Genre(1, "주술회전"),
-                    Genre(2, "진격의 거인"),
-                    Genre(3, "산리오1"),
-                    Genre(4, "주술회전1"),
-                    Genre(5, "진격의 거인1"),
-                    Genre(6, "산리오2"),
-                    Genre(7, "주술회전2"),
-                    Genre(8, "진격의 거인2"),
-                    Genre(9, "산리오3"),
-                    Genre(10, "주술회전3"),
-                ),
-                sheetState = bottomSheetState,
-                onDismissRequest = {
-                    bottomSheetVisibility = false
-                },
-                onTextChange = onGenreSearchTextChange,
-                onButtonClick = { bottomSheetVisibility = false },
-            )
-        }
+@Composable
+private fun SuccessScreen(
+    storeCover: String,
+    storeProfile: String,
+    storeName: String,
+    storeIntroduction: String,
+    storeGenres: List<StoreEditGenre>,
+    onStoreNameChange: (String) -> Unit,
+    onStoreIntroductionChange: (String) -> Unit,
+    onNameValidityCheckClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val scrollState = rememberScrollState()
+    val bottomSheetVisibility = remember { mutableStateOf(false) }
+    val nameCheckButtonEnabled = remember { mutableStateOf(false) }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState),
+    ) {
+        EditStorePhotoSection(
+            storeCover = storeCover,
+            storePhoto = storeProfile,
+            onEditClick = {},
+        )
+
+        Spacer(Modifier.height(24.dp))
+
+        EditStoreNameSection(
+            marketName = storeName,
+            onNameChange = {
+                onStoreNameChange(it)
+                nameCheckButtonEnabled.value = it.isNotEmpty()
+            },
+            onNameValidityCheckClick = onNameValidityCheckClick,
+            checkEnabled = nameCheckButtonEnabled.value,
+        )
+
+        SectionDivider()
+
+        EditStoreIntroductionSection(
+            introduction = storeIntroduction,
+            onIntroductionChange = onStoreIntroductionChange,
+        )
+
+        SectionDivider()
+
+        EditInterestedGenreSection(
+            genres = storeGenres.map { it.genreName },
+            onGenreSelectButtonClick = { bottomSheetVisibility.value = true },
+        )
+
+        Spacer(Modifier.height(18.dp))
     }
 }
 
@@ -205,7 +258,7 @@ private fun EditStoreTopBar(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(start = 20.dp, top = 62.dp, end = 20.dp, bottom = 22.dp),
+        modifier = modifier.padding(vertical = 22.dp, horizontal = 20.dp),
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(ic_left_chevron),
@@ -228,17 +281,18 @@ private fun EditStoreTopBar(
 @Composable
 private fun EditStoreProceedButton(
     onClick: () -> Unit,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
-            .padding(bottom = 63.dp, top = 13.dp),
+            .padding(horizontal = 20.dp, vertical = 13.dp),
     ) {
         NapzakButton(
             text = stringResource(store_edit_button_proceed),
             onClick = onClick,
+            enabled = enabled,
             modifier = Modifier.align(Alignment.Center),
         )
     }
@@ -518,9 +572,9 @@ private fun EditStoreScreenPreview() {
     NapzakMarketTheme {
         var storeName by remember { mutableStateOf("") }
         var storeIntroduction by remember { mutableStateOf("") }
-        var storeGenres by remember { mutableStateOf(emptyList<Genre>()) }
+        var storeGenres by remember { mutableStateOf(emptyList<StoreEditGenre>()) }
 
-        EditStoreScreen(
+        SuccessScreen(
             storeCover = "",
             storeProfile = "",
             storeName = storeName,
@@ -528,11 +582,8 @@ private fun EditStoreScreenPreview() {
             storeGenres = storeGenres,
             onStoreNameChange = { storeName = it },
             onStoreIntroductionChange = { storeIntroduction = it },
-            onGenreSearchTextChange = { },
-            onBackButtonClick = {},
             onNameValidityCheckClick = {},
-            onProceedButtonClick = {},
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
