@@ -17,8 +17,8 @@ import javax.inject.Inject
 class StoreDataSource @Inject constructor(
     private val storeService: StoreService,
 ) {
-    suspend fun getValidateNickname(request: NicknameRequest): EmptyDataResponse {
-        return storeService.getNicknameValidation(request)
+    suspend fun getValidateNickname(nickname: String): EmptyDataResponse {
+        return storeService.getNicknameValidation(NicknameRequest(nickname))
     }
 
     suspend fun postRegistrationNickname(request: NicknameRequest): EmptyDataResponse {
