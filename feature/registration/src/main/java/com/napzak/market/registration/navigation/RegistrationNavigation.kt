@@ -44,7 +44,7 @@ fun NavGraphBuilder.registrationGraph(
         )
     }
 
-    composable<GenreSearch> { backStackEntry ->
+    composable<GenreSearch> {
         GenreSearchRoute(
             navigateToUp = navigateToUp,
             modifier = modifier,

@@ -32,11 +32,12 @@ import com.napzak.market.feature.registration.R.string.purchase_price_descriptio
 import com.napzak.market.feature.registration.R.string.purchase_price_tag
 import com.napzak.market.feature.registration.R.string.register
 import com.napzak.market.feature.registration.R.string.title
+import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect.NavigateToDetail
+import com.napzak.market.registration.RegistrationContract.RegistrationUiState
 import com.napzak.market.registration.component.PriceSettingGroup
 import com.napzak.market.registration.component.RegistrationTopBar
 import com.napzak.market.registration.component.RegistrationViewGroup
 import com.napzak.market.registration.purchase.component.PriceNegotiationGroup
-import com.napzak.market.registration.purchase.state.PurchaseContract.PurchaseSideEffect.NavigateToDetail
 import com.napzak.market.registration.purchase.state.PurchaseContract.PurchaseUiState
 import com.napzak.market.util.android.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
@@ -50,7 +51,8 @@ fun PurchaseRegistrationRoute(
     modifier: Modifier = Modifier,
     viewModel: PurchaseRegistrationViewModel = hiltViewModel(),
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val registrationUiState by viewModel.registrationUiState.collectAsStateWithLifecycle()
+    val purchaseUiState by viewModel.purchaseUiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
@@ -63,7 +65,8 @@ fun PurchaseRegistrationRoute(
     }
 
     PurchaseRegistrationScreen(
-        uiState = uiState,
+        registrationUiState = registrationUiState,
+        purchaseUiState = purchaseUiState,
         onCloseClick = navigateToUp,
         onImageSelect = viewModel::updatePhotos,
         onPhotoPress = viewModel::updateRepresentPhoto,
@@ -82,7 +85,8 @@ fun PurchaseRegistrationRoute(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PurchaseRegistrationScreen(
-    uiState: PurchaseUiState,
+    registrationUiState: RegistrationUiState,
+    purchaseUiState: PurchaseUiState,
     onCloseClick: () -> Unit,
     onImageSelect: (ImmutableList<Uri>) -> Unit,
     onPhotoPress: (Int) -> Unit,
@@ -99,12 +103,12 @@ fun PurchaseRegistrationScreen(
     val paddedModifier = Modifier.padding(horizontal = 20.dp)
     val focusManager = LocalFocusManager.current
     val isButtonEnabled = remember(
-        uiState.imageUris,
-        uiState.genre,
-        uiState.title,
-        uiState.description,
-        uiState.price,
-        uiState.isNegotiable,
+        registrationUiState.imageUris,
+        registrationUiState.genre,
+        registrationUiState.title,
+        registrationUiState.description,
+        registrationUiState.price,
+        purchaseUiState.isNegotiable,
     ) { checkButtonEnabled() }
 
     LazyColumn(
@@ -124,15 +128,15 @@ fun PurchaseRegistrationScreen(
 
         item {
             RegistrationViewGroup(
-                productImageUris = uiState.imageUris.toPersistentList(),
+                productImageUris = registrationUiState.imageUris.toPersistentList(),
                 onImageSelect = onImageSelect,
                 onPhotoPress = onPhotoPress,
                 onDeleteClick = onDeleteClick,
-                productGenre = uiState.genre?.genreName.orEmpty(),
+                productGenre = registrationUiState.genre?.genreName.orEmpty(),
                 onGenreClick = onGenreClick,
-                productName = uiState.title,
+                productName = registrationUiState.title,
                 onProductNameChange = onProductNameChange,
-                productDescription = uiState.description,
+                productDescription = registrationUiState.description,
                 onProductDescriptionChange = onProductDescriptionChange,
             )
         }
@@ -144,7 +148,7 @@ fun PurchaseRegistrationScreen(
                 tradeType = TradeType.BUY,
                 title = stringResource(purchase_price),
                 description = stringResource(purchase_price_description),
-                price = uiState.price,
+                price = registrationUiState.price,
                 onPriceChange = onPriceChange,
                 priceTag = stringResource(purchase_price_tag),
                 modifier = paddedModifier,
@@ -155,7 +159,7 @@ fun PurchaseRegistrationScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             PriceNegotiationGroup(
-                isNegotiable = uiState.isNegotiable,
+                isNegotiable = purchaseUiState.isNegotiable,
                 onNegotiableChange = onNegotiableChange,
                 modifier = paddedModifier.fillMaxWidth(),
             )
@@ -188,7 +192,8 @@ fun PurchaseRegistrationScreen(
 private fun PurchaseRegistrationScreenPreview() {
     NapzakMarketTheme {
         PurchaseRegistrationScreen(
-            uiState = PurchaseUiState(),
+            registrationUiState = RegistrationUiState(),
+            purchaseUiState = PurchaseUiState(),
             onCloseClick = {},
             onImageSelect = {},
             onPhotoPress = {},

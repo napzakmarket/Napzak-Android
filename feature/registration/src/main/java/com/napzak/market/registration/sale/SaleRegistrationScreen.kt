@@ -36,12 +36,13 @@ import com.napzak.market.feature.registration.R.string.sale_price_description
 import com.napzak.market.feature.registration.R.string.sale_price_tag
 import com.napzak.market.feature.registration.R.string.shipping_method
 import com.napzak.market.feature.registration.R.string.title
+import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect.NavigateToDetail
+import com.napzak.market.registration.RegistrationContract.RegistrationUiState
 import com.napzak.market.registration.component.PriceSettingGroup
 import com.napzak.market.registration.component.RegistrationTopBar
 import com.napzak.market.registration.component.RegistrationViewGroup
 import com.napzak.market.registration.sale.component.ProductConditionGridButton
 import com.napzak.market.registration.sale.component.ShippingFeeSelector
-import com.napzak.market.registration.sale.state.SaleContract.SaleSideEffect.NavigateToDetail
 import com.napzak.market.registration.sale.state.SaleContract.SaleUiState
 import com.napzak.market.util.android.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
@@ -55,7 +56,8 @@ fun SaleRegistrationRoute(
     modifier: Modifier = Modifier,
     viewModel: SaleRegistrationViewModel = hiltViewModel(),
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val registrationUiState by viewModel.registrationUiState.collectAsStateWithLifecycle()
+    val saleUiState by viewModel.saleUiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
@@ -68,7 +70,8 @@ fun SaleRegistrationRoute(
     }
 
     SaleRegistrationScreen(
-        uiState = uiState,
+        registrationUiState = registrationUiState,
+        saleUiState = saleUiState,
         onCloseClick = navigateToUp,
         onImageSelect = viewModel::updatePhotos,
         onPhotoPress = viewModel::updateRepresentPhoto,
@@ -92,7 +95,8 @@ fun SaleRegistrationRoute(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SaleRegistrationScreen(
-    uiState: SaleUiState,
+    registrationUiState: RegistrationUiState,
+    saleUiState: SaleUiState,
     onCloseClick: () -> Unit,
     onImageSelect: (ImmutableList<Uri>) -> Unit,
     onPhotoPress: (Int) -> Unit,
@@ -114,16 +118,16 @@ fun SaleRegistrationScreen(
     val paddedModifier = Modifier.padding(horizontal = 20.dp)
     val focusManager = LocalFocusManager.current
     val isButtonEnabled = remember(
-        uiState.imageUris,
-        uiState.genre,
-        uiState.title,
-        uiState.description,
-        uiState.price,
-        uiState.isShippingFeeIncluded,
-        uiState.isNormalShippingChecked,
-        uiState.normalShippingFee,
-        uiState.isHalfShippingChecked,
-        uiState.halfShippingFee,
+        registrationUiState.imageUris,
+        registrationUiState.genre,
+        registrationUiState.title,
+        registrationUiState.description,
+        registrationUiState.price,
+        saleUiState.isShippingFeeIncluded,
+        saleUiState.isNormalShippingChecked,
+        saleUiState.normalShippingFee,
+        saleUiState.isHalfShippingChecked,
+        saleUiState.halfShippingFee,
     ) { checkButtonEnabled() }
 
     LazyColumn(
@@ -144,15 +148,15 @@ fun SaleRegistrationScreen(
 
         item {
             RegistrationViewGroup(
-                productImageUris = uiState.imageUris.toPersistentList(),
+                productImageUris = registrationUiState.imageUris.toPersistentList(),
                 onImageSelect = onImageSelect,
                 onPhotoPress = onPhotoPress,
                 onDeleteClick = onDeleteClick,
-                productGenre = uiState.genre?.genreName.orEmpty(),
+                productGenre = registrationUiState.genre?.genreName.orEmpty(),
                 onGenreClick = onGenreClick,
-                productName = uiState.title,
+                productName = registrationUiState.title,
                 onProductNameChange = onProductNameChange,
-                productDescription = uiState.description,
+                productDescription = registrationUiState.description,
                 onProductDescriptionChange = onProductDescriptionChange,
             )
         }
@@ -171,7 +175,7 @@ fun SaleRegistrationScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             ProductConditionGridButton(
-                selectedCondition = uiState.condition,
+                selectedCondition = saleUiState.condition,
                 onConditionSelect = onProductConditionSelect,
                 modifier = paddedModifier,
             )
@@ -184,7 +188,7 @@ fun SaleRegistrationScreen(
                 tradeType = TradeType.SELL,
                 title = stringResource(sale_price),
                 description = stringResource(sale_price_description),
-                price = uiState.price,
+                price = registrationUiState.price,
                 onPriceChange = onPriceChange,
                 priceTag = stringResource(sale_price_tag),
                 modifier = paddedModifier,
@@ -205,22 +209,22 @@ fun SaleRegistrationScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             ShippingFeeSelector(
-                isShippingIncluded = uiState.isShippingFeeIncluded,
+                isShippingIncluded = saleUiState.isShippingFeeIncluded,
                 onShippingFeeSelect = onShippingFeeSelect,
-                isNormalShippingChecked = uiState.isNormalShippingChecked,
+                isNormalShippingChecked = saleUiState.isNormalShippingChecked,
                 onNormalShippingSelect = onNormalShippingFeeSelect,
-                normalShippingFee = uiState.normalShippingFee,
+                normalShippingFee = saleUiState.normalShippingFee,
                 onNormalShippingFeeChange = onNormalShippingFeeChange,
-                isHalfShippingChecked = uiState.isHalfShippingChecked,
+                isHalfShippingChecked = saleUiState.isHalfShippingChecked,
                 onHalfShippingSelect = onHalfShippingFeeSelect,
-                halfShippingFee = uiState.halfShippingFee,
+                halfShippingFee = saleUiState.halfShippingFee,
                 onHalfShippingFeeChange = onHalfShippingFeeChange,
                 modifier = paddedModifier,
             )
         }
 
         item {
-            val spacerHeight = if (uiState.isShippingFeeIncluded == false) 60.dp else 20.dp
+            val spacerHeight = if (saleUiState.isShippingFeeIncluded == false) 60.dp else 20.dp
 
             Spacer(modifier = Modifier.height(spacerHeight))
 
@@ -250,7 +254,8 @@ fun SaleRegistrationScreen(
 private fun SaleRegistrationScreenPreview() {
     NapzakMarketTheme {
         SaleRegistrationScreen(
-            uiState = SaleUiState(),
+            registrationUiState = RegistrationUiState(),
+            saleUiState = SaleUiState(),
             onCloseClick = {},
             onImageSelect = {},
             onPhotoPress = {},
