@@ -68,7 +68,7 @@ fun NicknameScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(NapzakMarketTheme.colors.white)
-            .padding(horizontal = 20.dp, vertical = 50.dp),
+            .padding(horizontal = 20.dp, vertical = 40.dp),
     ) {
         NicknameTopBar(onBackClick = onBackClick)
 
@@ -162,7 +162,7 @@ private fun NicknameTopBar(
             imageVector = ImageVector.vectorResource(ic_second_step_indicator),
             contentDescription = null,
             tint = Color.Unspecified,
-            modifier = Modifier.size(12.dp),
+            modifier = Modifier.size(20.dp),
         )
     }
 }

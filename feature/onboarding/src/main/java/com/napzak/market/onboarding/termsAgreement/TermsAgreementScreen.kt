@@ -71,7 +71,7 @@ fun TermsAgreementScreen(
         modifier = modifier
             .fillMaxSize()
             .background(NapzakMarketTheme.colors.white)
-            .padding(horizontal = 20.dp, vertical = 50.dp),
+            .padding(horizontal = 20.dp, vertical = 40.dp),
     ) {
         TermsAgreementTopBar(
             onBackClick = onBackClick,
@@ -150,7 +150,7 @@ private fun TermsAgreementTopBar(
             imageVector = ImageVector.vectorResource(ic_first_step_indicator),
             contentDescription = null,
             tint = Color.Unspecified,
-            modifier = Modifier.size(12.dp),
+            modifier = Modifier.size(20.dp),
         )
     }
 }
