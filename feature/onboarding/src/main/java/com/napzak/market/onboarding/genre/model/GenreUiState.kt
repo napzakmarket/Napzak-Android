@@ -8,8 +8,8 @@ data class GenreUiState(
         get() = genres.filter { it.isSelected }
 
     val isMaxSelected: Boolean
-        get() = selectedGenres.size >= 7
+        get() = selectedGenres.size > 7
 
     val isCompleted: Boolean
-        get() = selectedGenres.isNotEmpty()
+        get() = selectedGenres.isNotEmpty() && selectedGenres.size <= 7
 }
