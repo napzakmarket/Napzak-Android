@@ -2,7 +2,7 @@ package com.napzak.market.onboarding.genre.model
 
 data class GenreUiState(
     val genres: List<GenreUiModel> = emptyList(),
-    val searchQuery: String = "",
+    val searchText: String = "",
 ) {
     val selectedGenres: List<GenreUiModel>
         get() = genres.filter { it.isSelected }
