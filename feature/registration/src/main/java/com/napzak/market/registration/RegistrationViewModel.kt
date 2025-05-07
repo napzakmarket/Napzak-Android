@@ -45,10 +45,6 @@ open class RegistrationViewModel @Inject constructor(
         currentState.copy(genre = genre)
     }
 
-    fun updateSearchTerm(searchTerm: String) = _uiState.update { currentState ->
-        currentState.copy(searchTerm = searchTerm)
-    }
-
     fun updateTitle(title: String) = _uiState.update { currentState ->
         currentState.copy(title = title)
     }

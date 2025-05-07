@@ -13,8 +13,6 @@ class RegistrationContract {
         val loadState: UiState<Nothing> = UiState.Loading,
         val imageUris: ImmutableList<Uri> = persistentListOf(),
         val genre: Genre? = null,
-        val searchTerm: String = "",
-        val genres: List<Genre> = emptyList(),
         val title: String = "",
         val description: String = "",
         val price: String = "",
