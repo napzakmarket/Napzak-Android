@@ -35,7 +35,7 @@ fun NavGraphBuilder.onboardingGraph(
 
     composable<Nickname> {
         NicknameRoute(
-            onBackClick = { navController.navigateToNickname() },
+            onBackClick = { navController.navigateToTerms() },
             onNextClick = { navController.navigateToGenre() },
         )
     }
