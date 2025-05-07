@@ -1,6 +1,7 @@
 package com.napzak.market.onboarding.nickname
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,22 +45,30 @@ import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 internal fun NicknameRoute(
+    viewModel: NicknameViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
 ) {
-    val viewModel: NicknameViewModel = hiltViewModel()
-
     NicknameScreen(
         uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
         onNicknameChanged = viewModel::onNicknameChanged,
+        onCheckDuplicationClick = viewModel::checkNicknameDuplication,
         onBackClick = onBackClick,
-        onNextClick = onNextClick,
+        onNextClick = {
+            viewModel.updateNickname(
+                onSuccess = onNextClick,
+                onError = {
+                    //TODO 추후 구현
+                }
+            )
+        },
     )
 }
 
 @Composable
 fun NicknameScreen(
     uiState: NicknameUiState,
+    onCheckDuplicationClick: () -> Unit,
     onNicknameChanged: (String) -> Unit,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
@@ -108,22 +117,30 @@ fun NicknameScreen(
                 Box(
                     modifier = Modifier
                         .background(
-                            NapzakMarketTheme.colors.gray200,
-                            RoundedCornerShape(10.dp)
+                            if (uiState.nickname.isNotBlank()) NapzakMarketTheme.colors.purple500
+                            else NapzakMarketTheme.colors.gray200,
+                            RoundedCornerShape(10.dp),
                         )
+                        .clickable(enabled = uiState.nickname.isNotBlank()) {
+                            onCheckDuplicationClick()
+                        }
                         .padding(horizontal = 12.dp, vertical = 8.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = stringResource(onboarding_nickname_validation_button),
                         style = NapzakMarketTheme.typography.caption12sb,
-                        color = NapzakMarketTheme.colors.gray50,
+                        color = NapzakMarketTheme.colors.white,
                     )
                 }
             },
         )
 
-        NicknameValidationResultMessage(validationResult = uiState.validationResult)
+        NicknameValidationResultMessage(
+            validationResult = uiState.validationResult,
+            duplicationError = uiState.duplicationError,
+            isAvailable = uiState.isAvailable,
+        )
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -168,21 +185,34 @@ private fun NicknameTopBar(
 }
 
 @Composable
-private fun NicknameValidationResultMessage(validationResult: NicknameValidationResult) {
-    when (validationResult) {
-        is NicknameValidationResult.Invalid -> {
+private fun NicknameValidationResultMessage(
+    validationResult: NicknameValidationResult,
+    duplicationError: String?,
+    isAvailable: Boolean?,
+) {
+    when {
+        duplicationError != null -> {
             ValidationText(
-                message = validationResult.errorType.message,
+                message = duplicationError,
                 color = NapzakMarketTheme.colors.red,
             )
         }
-        NicknameValidationResult.Valid -> {
+
+        isAvailable == true -> {
             ValidationText(
                 message = stringResource(onboarding_nickname_success),
                 color = NapzakMarketTheme.colors.green,
             )
         }
-        NicknameValidationResult.Empty -> {
+
+        validationResult is NicknameValidationResult.Invalid -> {
+            ValidationText(
+                message = validationResult.errorType.message,
+                color = NapzakMarketTheme.colors.red,
+            )
+        }
+
+        else -> {
             Spacer(modifier = Modifier.height(8.dp))
         }
     }
@@ -223,6 +253,7 @@ private fun NicknameScreenPreview() {
                 validationResult = NicknameValidationResult.Valid,
             ),
             onNicknameChanged = {},
+            onCheckDuplicationClick = {},
             onBackClick = {},
             onNextClick = {},
         )
