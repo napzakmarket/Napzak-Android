@@ -41,14 +41,12 @@ import com.napzak.market.util.common.openUrl
 
 @Composable
 fun TermsAgreementRoute(
+    viewModel: TermsAgreementViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
 ) {
-    val viewModel: TermsAgreementViewModel = hiltViewModel()
-    val uiState = viewModel.uiState.collectAsState().value
-
     TermsAgreementScreen(
-        uiState = uiState,
+        uiState = viewModel.uiState.collectAsState().value,
         onAllAgreementClick = viewModel::onAllAgreementClick,
         onAgreementClick = viewModel::onAgreementClick,
         onBackClick = onBackClick,
