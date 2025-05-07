@@ -3,7 +3,9 @@ package com.napzak.market.registration.genre
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -23,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.registration.event.GenreEventBus
+import com.napzak.market.registration.genre.component.GenreSearchEmptyView
 import com.napzak.market.registration.genre.component.GenreSearchHeader
 import com.napzak.market.util.android.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
@@ -71,44 +74,55 @@ fun GenreSearchScreen(
     var isClickable by remember { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
 
-    LazyColumn(
-        modifier = modifier.background(NapzakMarketTheme.colors.gray10),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(NapzakMarketTheme.colors.gray10),
     ) {
-        stickyHeader {
-            GenreSearchHeader(
-                onBackClick = onBackClick,
-                searchTerm = searchTerm,
-                onSearchTermChange = onSearchTermChange,
-                onSearchButtonClick = onSearchButtonClick,
-            )
-        }
-
-        itemsIndexed(
-            items = genreList,
-            key = { item, _ -> item },
-        ) { index, genre ->
-            Row(
-                modifier = Modifier.padding(horizontal = 18.dp, vertical = 4.dp),
-            ) {
-                Text(
-                    text = genre.genreName,
-                    style = NapzakMarketTheme.typography.body14r.copy(
-                        color = NapzakMarketTheme.colors.gray400,
-                    ),
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .noRippleClickable {
-                            if (isClickable) {
-                                isClickable = false
-                                coroutineScope.launch {
-                                    delay(200L)
-                                    onGenreSelect(genre)
-                                    isClickable = true
-                                }
-                            }
-                        },
+        LazyColumn(
+            modifier = modifier.background(NapzakMarketTheme.colors.gray10),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            stickyHeader {
+                GenreSearchHeader(
+                    onBackClick = onBackClick,
+                    searchTerm = searchTerm,
+                    onSearchTermChange = onSearchTermChange,
+                    onSearchButtonClick = onSearchButtonClick,
                 )
+            }
+            if (genreList.isEmpty()) {
+                item {
+                    GenreSearchEmptyView()
+                }
+            } else {
+                itemsIndexed(
+                    items = genreList,
+                    key = { item, _ -> item },
+                ) { index, genre ->
+                    Row(
+                        modifier = Modifier.padding(horizontal = 18.dp, vertical = 4.dp),
+                    ) {
+                        Text(
+                            text = genre.genreName,
+                            style = NapzakMarketTheme.typography.body14r.copy(
+                                color = NapzakMarketTheme.colors.gray400,
+                            ),
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .noRippleClickable {
+                                    if (isClickable) {
+                                        isClickable = false
+                                        coroutineScope.launch {
+                                            delay(200L)
+                                            onGenreSelect(genre)
+                                            isClickable = true
+                                        }
+                                    }
+                                },
+                        )
+                    }
+                }
             }
         }
     }
