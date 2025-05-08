@@ -10,16 +10,51 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.mypage_header_title
 import com.napzak.market.mypage.component.MyMarketButton
 import com.napzak.market.mypage.component.MyPageMenuCard
 import com.napzak.market.mypage.component.MyPageProfileSection
+import com.napzak.market.mypage.model.MyPageViewModel
+
+
+@Composable
+fun MyPageRoute(
+    onMyMarketClick: () -> Unit,
+    onSalesClick: () -> Unit,
+    onPurchaseClick: () -> Unit,
+    onRecentClick: () -> Unit,
+    onFavoriteClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onHelpClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: MyPageViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    MyPageScreen(
+        nickname = uiState.nickname,
+        profileImageUrl = uiState.profileImageUrl,
+        salesCount = uiState.salesCount,
+        purchaseCount = uiState.purchaseCount,
+        onMyMarketClick = onMyMarketClick,
+        onSalesClick = onSalesClick,
+        onPurchaseClick = onPurchaseClick,
+        onRecentClick = onRecentClick,
+        onFavoriteClick = onFavoriteClick,
+        onSettingsClick = onSettingsClick,
+        onHelpClick = onHelpClick,
+        modifier = modifier,
+    )
+}
 
 @Composable
 fun MyPageScreen(
