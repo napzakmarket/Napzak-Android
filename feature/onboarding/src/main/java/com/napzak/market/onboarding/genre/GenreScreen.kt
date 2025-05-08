@@ -48,10 +48,10 @@ import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 fun GenreRoute(
-    viewModel: GenreViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
     onDoneClick: () -> Unit,
     onSkipClick: () -> Unit,
+    viewModel: GenreViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
         viewModel.updateGenreList(

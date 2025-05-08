@@ -41,9 +41,9 @@ import com.napzak.market.util.common.openUrl
 
 @Composable
 fun TermsAgreementRoute(
-    viewModel: TermsAgreementViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
+    viewModel: TermsAgreementViewModel = hiltViewModel(),
 ) {
     TermsAgreementScreen(
         uiState = viewModel.uiState.collectAsState().value,
