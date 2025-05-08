@@ -28,12 +28,14 @@ fun ShippingFeeTextField(
     price: String,
     onPriceChange: (String) -> Unit,
     hint: String,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
     BasicTextField(
         value = price,
         onValueChange = onPriceChange,
         modifier = modifier,
+        enabled = enabled,
         textStyle = NapzakMarketTheme.typography.body14sb.copy(
             color = NapzakMarketTheme.colors.gray400,
             textAlign = TextAlign.End,
@@ -85,6 +87,7 @@ private fun ShippingFeeTextFieldPreview() {
             price = price,
             onPriceChange = { price = it },
             hint = "100~30,000",
+            enabled = true,
         )
     }
 }

@@ -19,6 +19,9 @@ import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
+import com.napzak.market.onboarding.navigation.Terms
+import com.napzak.market.onboarding.navigation.onboardingGraph
+import com.napzak.market.registration.navigation.navigateToGenreSearch
 import com.napzak.market.registration.navigation.navigateToPurchaseRegistration
 import com.napzak.market.registration.navigation.navigateToSaleRegistration
 import com.napzak.market.registration.navigation.registrationGraph
@@ -88,6 +91,16 @@ private fun MainNavHost(
     ) {
         dummyGraph(modifier = modifier)
 
+        onboardingGraph(
+            navController = navigator.navController,
+            onFinish = {
+                navigator.navController.navigate(Home) {
+                    popUpTo(Terms) { inclusive = true }
+                }
+            },
+            modifier = modifier,
+        )
+
         homeGraph(
             navigateToSearch = { navigator.navController.navigateToSearch() },
             navigateToProductDetail = { /*TODO: 물품 상세페이지로 이동*/ },
@@ -141,6 +154,7 @@ private fun MainNavHost(
         registrationGraph(
             navigateToUp = navigator::navigateUp,
             navigateToDetail = {}, // TODO: 물품 상세 화면으로 이동
+            navigateToGenreSearch = navigator.navController::navigateToGenreSearch,
             modifier = modifier,
         )
     }
