@@ -27,6 +27,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.designsystem.R.drawable.ic_arrow_left
 import com.napzak.market.designsystem.R.drawable.ic_third_step_indicator
 import com.napzak.market.designsystem.R.string.warning_snackbar_genre_limit_message
@@ -77,7 +78,7 @@ fun GenreRoute(
     }
 
     GenreScreen(
-        uiState = viewModel.uiState.collectAsState().value,
+        uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
         onGenreClick = viewModel::onGenreClick,
         onGenreRemove = viewModel::onGenreRemove,
         onAllGenresReset = viewModel::onResetAllGenres,
