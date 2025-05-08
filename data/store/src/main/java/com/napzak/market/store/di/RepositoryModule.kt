@@ -1,6 +1,8 @@
 package com.napzak.market.store.di
 
+import com.napzak.market.store.repository.SettingRepository
 import com.napzak.market.store.repository.StoreRepository
+import com.napzak.market.store.repositoryimpl.SettingRepositoryImpl
 import com.napzak.market.store.repositoryimpl.StoreRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -16,4 +18,10 @@ abstract class RepositoryModule {
     abstract fun bindStoreRepository(
         storeRepositoryImpl: StoreRepositoryImpl,
     ): StoreRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSettingRepository(
+        impl: SettingRepositoryImpl
+    ): SettingRepository
 }
