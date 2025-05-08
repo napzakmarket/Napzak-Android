@@ -1,22 +1,40 @@
 package com.napzak.market.onboarding.genre
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.napzak.market.genre.usecase.SetPreferredGenreUseCase
 import com.napzak.market.onboarding.genre.model.GenreUiModel
 import com.napzak.market.onboarding.genre.model.GenreUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class GenreViewModel @Inject constructor() : ViewModel() {
+class GenreViewModel @Inject constructor(
+    private val setPreferredGenreUseCase: SetPreferredGenreUseCase
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GenreUiState())
     val uiState: StateFlow<GenreUiState> = _uiState.asStateFlow()
+
+    init {
+        updatePreferredGenre()
+    }
+
+    fun updatePreferredGenre() {
+        viewModelScope.launch {
+            setPreferredGenreUseCase()
+                .onSuccess { genres ->
+                    _uiState.update {
+                        it.copy(genres = genres.map { genre -> genre.toUiModel() })
+                    }
+                }
+        }
+    }
 
     fun updateGenres(genres: List<GenreUiModel>) {
         _uiState.update { it.copy(genres = genres) }
