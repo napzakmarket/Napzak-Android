@@ -15,6 +15,10 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.util)
 
+    implementation(projects.domain.registration)
+    implementation(projects.domain.presignedUrl)
+    implementation(projects.domain.genre)
+
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
 }
