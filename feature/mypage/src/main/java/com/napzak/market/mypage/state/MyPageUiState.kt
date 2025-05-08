@@ -1,5 +1,8 @@
 package com.napzak.market.mypage.state
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class MyPageUiState(
     val nickname: String = "",
     val profileImageUrl: String = "",
