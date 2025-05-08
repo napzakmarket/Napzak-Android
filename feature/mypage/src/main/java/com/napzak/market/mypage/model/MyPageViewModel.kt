@@ -33,6 +33,10 @@ class MyPageViewModel @Inject constructor(
                     purchaseCount = storeInfo.purchaseCount,
                 )
             }
-            .onFailure {}
+            .onFailure {
+                // TODO: 실패 시 사용자에게 메시지 표시 또는 로깅 처리
+                // 예: _uiState.value = _uiState.value.copy(error = throwable.message)
+                // Timber.e(throwable, "Store 정보 가져오기 실패")
+            }
     }
 }
