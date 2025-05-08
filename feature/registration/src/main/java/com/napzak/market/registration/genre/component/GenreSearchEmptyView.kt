@@ -49,7 +49,8 @@ fun GenreSearchEmptyView(
                     width = 1.dp,
                     color = NapzakMarketTheme.colors.purple500,
                     shape = RoundedCornerShape(8.dp),
-                ).padding(horizontal = 12.dp, vertical = 8.dp),
+                )
+                .padding(horizontal = 12.dp, vertical = 8.dp),
         )
     }
 }
