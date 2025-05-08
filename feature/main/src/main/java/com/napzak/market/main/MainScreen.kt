@@ -19,6 +19,8 @@ import com.napzak.market.explore.navigation.navigateToGenreDetail
 import com.napzak.market.home.navigation.Home
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
+import com.napzak.market.onboarding.navigation.Terms
+import com.napzak.market.onboarding.navigation.onboardingGraph
 import com.napzak.market.registration.navigation.navigateToPurchaseRegistration
 import com.napzak.market.registration.navigation.navigateToSaleRegistration
 import com.napzak.market.registration.navigation.registrationGraph
@@ -87,6 +89,16 @@ private fun MainNavHost(
         startDestination = navigator.startDestination
     ) {
         dummyGraph(modifier = modifier)
+
+        onboardingGraph(
+            navController = navigator.navController,
+            onFinish = {
+                navigator.navController.navigate(Home) {
+                    popUpTo(Terms) { inclusive = true }
+                }
+            },
+            modifier = modifier,
+        )
 
         homeGraph(
             navigateToSearch = { navigator.navController.navigateToSearch() },
