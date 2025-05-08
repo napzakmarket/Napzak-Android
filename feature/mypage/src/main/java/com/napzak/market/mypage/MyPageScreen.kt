@@ -36,7 +36,7 @@ fun MyPageRoute(
     onSettingsClick: () -> Unit,
     onHelpClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: MyPageViewModel = hiltViewModel()
+    viewModel: MyPageViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
