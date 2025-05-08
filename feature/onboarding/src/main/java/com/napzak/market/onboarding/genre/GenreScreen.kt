@@ -80,7 +80,7 @@ fun GenreRoute(
         uiState = viewModel.uiState.collectAsState().value,
         onGenreClick = viewModel::onGenreClick,
         onGenreRemove = viewModel::onGenreRemove,
-        onResetAllGenres = viewModel::onResetAllGenres,
+        onAllGenresReset = viewModel::onResetAllGenres,
         onSearchTextChange = viewModel::onSearchTextChange,
         onSearchTextReset = { viewModel.onSearchTextChange("") },
         onBackClick = onBackClick,
@@ -94,7 +94,7 @@ fun GenreScreen(
     uiState: GenreUiState,
     onGenreClick: (GenreUiModel) -> Unit,
     onGenreRemove: (GenreUiModel) -> Unit,
-    onResetAllGenres: () -> Unit,
+    onAllGenresReset: () -> Unit,
     onSearchTextChange: (String) -> Unit,
     onSearchTextReset: () -> Unit,
     onBackClick: () -> Unit,
@@ -136,7 +136,7 @@ fun GenreScreen(
             if (uiState.selectedGenres.isNotEmpty()) {
                 GenreChipButtonGroup(
                     genreNames = uiState.selectedGenres.map { it.name },
-                    onResetClick = onResetAllGenres,
+                    onResetClick = onAllGenresReset,
                     onGenreClick = { name ->
                         uiState.selectedGenres.find { it.name == name }?.let { onGenreRemove(it) }
                     },
@@ -262,7 +262,7 @@ fun GenreScreenPreview() {
             ),
             onGenreClick = {},
             onGenreRemove = {},
-            onResetAllGenres = {},
+            onAllGenresReset = {},
             onSearchTextChange = {},
             onSearchTextReset = {},
             onBackClick = {},

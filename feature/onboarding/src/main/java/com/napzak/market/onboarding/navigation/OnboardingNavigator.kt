@@ -28,21 +28,21 @@ fun NavGraphBuilder.onboardingGraph(
 ) {
     composable<Terms> {
         TermsAgreementRoute(
-            onBackClick = {  },
-            onNextClick = { navController.navigateToNickname() },
+            onBackClick = navController::navigateUp,
+            onNextClick = navController::navigateToNickname,
         )
     }
 
     composable<Nickname> {
         NicknameRoute(
-            onBackClick = { navController.navigateToTerms() },
-            onNextClick = { navController.navigateToGenre() },
+            onBackClick = navController::navigateToTerms,
+            onNextClick = navController::navigateToGenre,
         )
     }
 
     composable<Genre> {
         GenreRoute(
-            onBackClick = { navController.popBackStack() },
+            onBackClick = navController::navigateUp,
             onDoneClick = onFinish,
             onSkipClick = onFinish,
         )
