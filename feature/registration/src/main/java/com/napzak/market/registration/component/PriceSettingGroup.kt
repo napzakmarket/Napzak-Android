@@ -51,8 +51,17 @@ internal fun PriceSettingGroup(
 ) {
     val transformedPrice = price.priceToNumericTransformation()
     val purchaseError = tradeType == TradeType.BUY && transformedPrice != 0 && transformedPrice % THOUSAND != 0
-    val textColor = if (purchaseError) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray400
-    val borderColor = if (purchaseError) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray100
+    val napzakColors = NapzakMarketTheme.colors
+    val textColor = if (purchaseError) napzakColors.red else napzakColors.gray400
+    val borderColor = if (purchaseError) napzakColors.red else napzakColors.gray100
+    val hintColor = remember(purchaseError, price) {
+        when {
+            purchaseError -> napzakColors.red
+            price.isEmpty() -> napzakColors.gray200
+            else -> napzakColors.gray400
+        }
+    }
+
 
     Column(
         modifier = modifier,
@@ -92,7 +101,7 @@ internal fun PriceSettingGroup(
                 Text(
                     text = priceTag,
                     style = NapzakMarketTheme.typography.body14b.copy(
-                        color = textColor,
+                        color = hintColor,
                     ),
                 )
             }
