@@ -34,10 +34,7 @@ internal fun StoreBottomSheetScreen(
                 genreItems = genreItems,
                 onDismissRequest = { onDismissRequest(BottomSheetType.GENRE_SEARCHING) },
                 onTextChange = onTextChange,
-                onButtonClick = { newGenres ->
-                    onGenreSelectButtonClick(newGenres)
-                    onDismissRequest(BottomSheetType.GENRE_SEARCHING)
-                },
+                onButtonClick = onGenreSelectButtonClick,
             )
         }
 
@@ -46,10 +43,7 @@ internal fun StoreBottomSheetScreen(
                 selectedSortType = sortType,
                 sheetState = sheetState,
                 onDismissRequest = { onDismissRequest(BottomSheetType.SORT) },
-                onSortItemClick = { newSortOption ->
-                    onSortItemClick(newSortOption)
-                    onDismissRequest(BottomSheetType.SORT)
-                },
+                onSortItemClick = onSortItemClick,
             )
         }
 
@@ -57,10 +51,7 @@ internal fun StoreBottomSheetScreen(
             StoreReportBottomSheet(
                 sheetState = sheetState,
                 onDismissRequest = { onDismissRequest(BottomSheetType.STORE_REPORT) },
-                onReportButtonClick = {
-                    onStoreReportButtonClick()
-                    onDismissRequest(BottomSheetType.STORE_REPORT)
-                },
+                onReportButtonClick = onStoreReportButtonClick,
                 modifier = modifier,
             )
         }

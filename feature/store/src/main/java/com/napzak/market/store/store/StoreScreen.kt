@@ -115,12 +115,18 @@ internal fun StoreRoute(
             viewModel.updateBottomSheetVisibility(BottomSheetType.GENRE_SEARCHING)
         },
         onGenreBottomSheetTextChange = viewModel::updateGenreSearchTerm,
-        onGenreSelectButtonClick = viewModel::updateSelectedGenres,
+        onGenreSelectButtonClick = { newGenres ->
+            viewModel.updateSelectedGenres(newGenres)
+            viewModel.updateBottomSheetVisibility(BottomSheetType.GENRE_SEARCHING)
+        },
         onFilterClick = viewModel::updateIsOnSale,
         onSortOptionClick = {
             viewModel.updateBottomSheetVisibility(BottomSheetType.SORT)
         },
-        onSortItemClick = viewModel::updateSortOption,
+        onSortItemClick = { newSortOption ->
+            viewModel.updateSortOption(newSortOption)
+            viewModel.updateBottomSheetVisibility(BottomSheetType.SORT)
+        },
         onProductItemClick = onProductDetailNavigate,
         onLikeButtonClick = { id, value ->
             viewModel.updateProductIsInterested(productId = id, isLiked = value)
