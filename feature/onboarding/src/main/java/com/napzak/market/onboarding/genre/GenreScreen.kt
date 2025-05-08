@@ -54,7 +54,7 @@ fun GenreRoute(
     viewModel: GenreViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
-        viewModel.updateGenreList(
+        viewModel.updateGenres(
             listOf(
                 GenreUiModel("김종명", "..."),
                 GenreUiModel("김채린", "..."),

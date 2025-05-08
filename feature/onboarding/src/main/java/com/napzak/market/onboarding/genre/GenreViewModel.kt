@@ -16,7 +16,7 @@ class GenreViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(GenreUiState())
     val uiState: StateFlow<GenreUiState> = _uiState.asStateFlow()
 
-    fun updateGenreList(genres: List<GenreUiModel>) {
+    fun updateGenres(genres: List<GenreUiModel>) {
         _uiState.update { it.copy(genres = genres) }
     }
 
