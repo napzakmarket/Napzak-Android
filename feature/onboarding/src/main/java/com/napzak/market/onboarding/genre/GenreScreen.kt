@@ -65,34 +65,13 @@ fun GenreRoute(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        viewModel.updateGenres(
-            listOf(
-                GenreUiModel("김종명", "..."),
-                GenreUiModel("김채린", "..."),
-                GenreUiModel("이석준", "..."),
-                GenreUiModel("이연진", "..."),
-                GenreUiModel("장재원", "..."),
-                GenreUiModel("납작마켓", "..."),
-                GenreUiModel("안드", "..."),
-                GenreUiModel("파이팅", "..."),
-                GenreUiModel("나진짜", "..."),
-                GenreUiModel("오늘", "..."),
-                GenreUiModel("안잘거야", "..."),
-                GenreUiModel("내가만약", "..."),
-                GenreUiModel("자면", "..."),
-                GenreUiModel("납작", "..."),
-                GenreUiModel("아니고", "..."),
-                GenreUiModel("넙적이야", "..."),
-            )
-        )
+        viewModel.updatePreferredGenre()
     }
 
     GenreScreen(
         uiState = uiState,
         onGenreClick = { genre ->
-            val changed = viewModel.onGenreClick(genre)
-
-            if (!changed && uiState.selectedGenres.size >= 7) {
+            if (!viewModel.onGenreClick(genre) && uiState.selectedGenres.size >= 7) {
                 isShownSnackBar = true
                 scope.launch {
                     delay(2000)
@@ -275,14 +254,7 @@ private fun GenreTitleSection() {
 fun GenreScreenPreview() {
     NapzakMarketTheme {
         GenreScreen(
-            uiState = GenreUiState(
-                genres = listOf(
-                    GenreUiModel("로맨스", "...", isSelected = true),
-                    GenreUiModel("스릴러", "...", isSelected = false),
-                    GenreUiModel("코미디", "...", isSelected = true),
-                ),
-                searchText = "",
-            ),
+            uiState = GenreUiState(),
             onGenreClick = {},
             onGenreRemove = {},
             onAllGenresReset = {},
