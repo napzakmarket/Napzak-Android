@@ -15,11 +15,6 @@ import javax.inject.Singleton
 object ServiceModule {
     @Provides
     @Singleton
-    fun providePreferredStoreService(retrofit: Retrofit): StoreService =
-        retrofit.create()
-
-    @Provides
-    @Singleton
     fun provideStoreService(retrofit: Retrofit): StoreService = retrofit.create()
 
     @Provides

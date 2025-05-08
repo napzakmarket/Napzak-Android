@@ -46,7 +46,6 @@ import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 internal fun NicknameRoute(
-    viewModel: NicknameViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
     viewModel: NicknameViewModel = hiltViewModel(),
