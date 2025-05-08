@@ -43,15 +43,17 @@ fun GenreGridList(
                 items = genres,
                 key = { it.name },
             ) { genre ->
-                GenreItem(
-                    genreName = genre.name,
-                    genreImageUrl = genre.imageUrl,
-                    isSelected = genre.isSelected,
-                    onClick = { onGenreClick(genre) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f),
-                )
+                genre.imageUrl?.let {
+                    GenreItem(
+                        genreName = genre.name,
+                        genreImageUrl = it,
+                        isSelected = genre.isSelected,
+                        onClick = { onGenreClick(genre) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f),
+                    )
+                }
             }
         }
 
@@ -68,52 +70,6 @@ fun GenreGridList(
                         ),
                     ),
                 ),
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun GenreGridListPreview() {
-    NapzakMarketTheme {
-        GenreGridList(
-            genres = listOf(
-                GenreUiModel(
-                    name = "마이멜로디",
-                    imageUrl = "",
-                    isSelected = true,
-                ),
-                GenreUiModel(
-                    name = "카드캡터체리",
-                    imageUrl = "",
-                    isSelected = false,
-                ),
-                GenreUiModel(
-                    name = "짱구는 못말려",
-                    imageUrl = "",
-                    isSelected = true,
-                ),
-                GenreUiModel(
-                    name = "도라에몽",
-                    imageUrl = "",
-                    isSelected = false,
-                ),
-                GenreUiModel(
-                    name = "포켓몬스터",
-                    imageUrl = "",
-                    isSelected = false,
-                ),
-                GenreUiModel(
-                    name = "명탐정코난",
-                    imageUrl = "",
-                    isSelected = true,
-                )
-            ),
-            onGenreClick = {},
-            modifier = Modifier
-                .fillMaxSize()
-                .background(NapzakMarketTheme.colors.white)
-                .padding(20.dp)
         )
     }
 }
