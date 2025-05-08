@@ -1,12 +1,12 @@
 package com.napzak.market.onboarding.genre
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.genre.usecase.SetPreferredGenreUseCase
 import com.napzak.market.genre.usecase.SetSearchPreferredGenresUseCase
 import com.napzak.market.onboarding.genre.model.GenreUiModel
 import com.napzak.market.onboarding.genre.model.GenreUiState
+import com.napzak.market.store.usecase.SetRegisterGenres
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -21,6 +21,7 @@ import javax.inject.Inject
 class GenreViewModel @Inject constructor(
     private val setPreferredGenreUseCase: SetPreferredGenreUseCase,
     private val setSearchPreferredGenresUseCase: SetSearchPreferredGenresUseCase,
+    private val setRegisterGenres: SetRegisterGenres,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GenreUiState())
@@ -115,6 +116,23 @@ class GenreViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(genres = genres.map { it.toUiModel() })
                     }
+                }
+        }
+    }
+
+    fun updateSelectedGenres(
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        val selectedIds = _uiState.value.selectedGenres.map { it.id }
+        if (selectedIds.isEmpty()) return
+
+        viewModelScope.launch {
+            setRegisterGenres(selectedIds)
+                .onSuccess {
+                    onSuccess()
+                }
+                .onFailure {//TODO 추구 구현}
                 }
         }
     }
