@@ -129,7 +129,6 @@ private fun GenreDetailScreen(
 ) {
     when (uiState.loadState) {
         is UiState.Loading -> {
-
         }
 
         is UiState.Empty -> {
