@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.core.util)
     implementation(projects.domain.product)
     implementation(projects.domain.interest)
+    implementation(projects.domain.genre)
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
