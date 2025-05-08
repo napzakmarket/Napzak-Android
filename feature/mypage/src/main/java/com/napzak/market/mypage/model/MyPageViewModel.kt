@@ -27,10 +27,10 @@ class MyPageViewModel @Inject constructor(
         storeRepository.fetchStoreInfo()
             .onSuccess { storeInfo ->
                 _uiState.value = MyPageUiState(
-                    nickname = storeInfo.storeNickname,
-                    profileImageUrl = storeInfo.storePhoto,
-                    salesCount = storeInfo.totalSellCount,
-                    purchaseCount = storeInfo.totalBuyCount,
+                    nickname = storeInfo.nickname,
+                    profileImageUrl = storeInfo.photoUrl,
+                    salesCount = storeInfo.salesCount,
+                    purchaseCount = storeInfo.purchaseCount,
                 )
             }
             .onFailure {}
