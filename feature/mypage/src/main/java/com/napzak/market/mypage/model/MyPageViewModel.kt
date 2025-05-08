@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,12 +27,14 @@ class MyPageViewModel @Inject constructor(
     private fun fetchStoreInfo() = viewModelScope.launch {
         storeRepository.fetchStoreInfo()
             .onSuccess { storeInfo ->
-                _uiState.value = MyPageUiState(
-                    nickname = storeInfo.nickname,
-                    profileImageUrl = storeInfo.photoUrl,
-                    salesCount = storeInfo.salesCount,
-                    purchaseCount = storeInfo.purchaseCount,
-                )
+                _uiState.update {
+                    it.copy(
+                        nickname = storeInfo.nickname,
+                        profileImageUrl = storeInfo.photoUrl,
+                        salesCount = storeInfo.salesCount,
+                        purchaseCount = storeInfo.purchaseCount,
+                    )
+                }
             }
             .onFailure {
                 // TODO: 실패 시 사용자에게 메시지 표시 또는 로깅 처리
