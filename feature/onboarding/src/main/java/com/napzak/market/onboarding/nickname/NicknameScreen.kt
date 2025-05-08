@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,6 +49,7 @@ internal fun NicknameRoute(
     viewModel: NicknameViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
+    viewModel: NicknameViewModel = hiltViewModel(),
 ) {
     NicknameScreen(
         uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
@@ -77,7 +79,7 @@ fun NicknameScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(NapzakMarketTheme.colors.white)
-            .padding(horizontal = 20.dp, vertical = 50.dp),
+            .padding(horizontal = 20.dp, vertical = 40.dp),
     ) {
         NicknameTopBar(onBackClick = onBackClick)
 
@@ -179,7 +181,7 @@ private fun NicknameTopBar(
             imageVector = ImageVector.vectorResource(ic_second_step_indicator),
             contentDescription = null,
             tint = Color.Unspecified,
-            modifier = Modifier.size(12.dp),
+            modifier = Modifier.size(20.dp),
         )
     }
 }
