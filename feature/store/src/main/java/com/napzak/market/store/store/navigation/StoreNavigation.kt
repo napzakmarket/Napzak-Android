@@ -18,7 +18,7 @@ fun NavGraphBuilder.storeGraph(
     navigateToUp: () -> Unit,
     navigateToProfileEdit: () -> Unit,
     navigateToProductDetail: (Long) -> Unit,
-    navigateToStoreReport: () -> Unit,
+    navigateToStoreReport: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<Store> {

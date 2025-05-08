@@ -80,7 +80,7 @@ internal fun StoreRoute(
     onNavigateUp: () -> Unit,
     onProfileEditNavigate: () -> Unit,
     onProductDetailNavigate: (Long) -> Unit,
-    onStoreReportNavigate: () -> Unit,
+    onStoreReportNavigate: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: StoreViewModel = hiltViewModel(),
 ) {
@@ -133,7 +133,7 @@ internal fun StoreRoute(
         },
         onStoreReportButtonClick = {
             viewModel.updateBottomSheetVisibility(BottomSheetType.STORE_REPORT)
-            onStoreReportNavigate()
+            onStoreReportNavigate(viewModel.storeId)
         },
         modifier = modifier,
     )
