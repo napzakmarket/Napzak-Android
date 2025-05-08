@@ -2,6 +2,7 @@ package com.napzak.market.explore.genredetail
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,9 +17,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -33,26 +42,31 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.ic_down_chevron
-import com.napzak.market.designsystem.component.bottomsheet.Genre
+import com.napzak.market.designsystem.component.bottomsheet.SortBottomSheet
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.explore.component.BasicFilterChip
 import com.napzak.market.explore.component.GenreLabel
+import com.napzak.market.explore.genredetail.state.GenreDetailUiState
+import com.napzak.market.explore.genredetail.state.GenreInfo
 import com.napzak.market.explore.model.Product
-import com.napzak.market.util.android.noRippleClickable
-import com.napzak.market.feature.explore.R.drawable.ic_left_chevron_24
 import com.napzak.market.feature.explore.R.drawable.ic_home
+import com.napzak.market.feature.explore.R.drawable.ic_left_chevron_24
 import com.napzak.market.feature.explore.R.string.explore_count
 import com.napzak.market.feature.explore.R.string.explore_exclude_sold_out
 import com.napzak.market.feature.explore.R.string.explore_product
 import com.napzak.market.feature.explore.R.string.explore_unopened
+import com.napzak.market.util.android.noRippleClickable
 import kotlin.collections.chunked
 
 @Composable
@@ -61,44 +75,121 @@ internal fun GenreDetailRoute(
     onHomeNavigate: () -> Unit,
     onProductClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: GenreDetailViewModel = hiltViewModel(),
 ) {
-    val genreInfo = Genre(0, "산리오", "")
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var sortBottomSheetState by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.updateGenreInfo()
+        viewModel.updateGenreDetailInformation()
+    }
+
+    LaunchedEffect(uiState) {
+        viewModel.updateGenreDetailInformation()
+    }
 
     GenreDetailScreen(
-        genreInfo = genreInfo,
-        genreTag = "",
-        selectedTab = TradeType.SELL,
-        productList = Product.mockMixedProduct,
-        sortType = SortType.RECENT,
+        uiState = uiState,
+        sortBottomSheetState = sortBottomSheetState,
+        onDismissRequest = { sortBottomSheetState = !sortBottomSheetState },
         onBackButtonClick = onBackButtonClick,
         onHomeButtonClick = onHomeNavigate,
-        onTabClick = {},
-        onUnopenFilterClick = {},
-        onExcludeSoldOutFilterClick = {},
+        onTabClick = viewModel::updateTradeType,
+        onUnopenFilterClick = viewModel::updateUnopenFilter,
+        onExcludeSoldOutFilterClick = viewModel::updateSoldOutFilter,
         onProductClick = onProductClick,
-        onSortOptionClick = {},
-        onLikeButtonClick = { id, value -> },
+        onSortOptionClick = { sortBottomSheetState = !sortBottomSheetState },
+        onSortItemClick = { newSortOption ->
+            viewModel.updateSortOption(newSortOption)
+            sortBottomSheetState = !sortBottomSheetState
+        },
+        onLikeButtonClick = { id, value ->
+            viewModel.updateProductIsInterested(productId = id, isLiked = value)
+        },
         modifier = modifier,
     )
 }
 
 @Composable
 private fun GenreDetailScreen(
-    genreInfo: Genre,
-    genreTag: String,
-    selectedTab: TradeType,
-    productList: List<Product>,
-    sortType: SortType,
+    uiState: GenreDetailUiState,
+    sortBottomSheetState: Boolean,
+    onDismissRequest: () -> Unit,
     onBackButtonClick: () -> Unit,
     onHomeButtonClick: () -> Unit,
     onTabClick: (TradeType) -> Unit,
     onUnopenFilterClick: () -> Unit,
     onExcludeSoldOutFilterClick: () -> Unit,
     onSortOptionClick: () -> Unit,
+    onSortItemClick: (SortType) -> Unit,
     onProductClick: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    when (uiState.loadState) {
+        is UiState.Loading -> {
+        }
+
+        is UiState.Empty -> {
+        }
+
+        is UiState.Failure -> {
+        }
+
+        is UiState.Success -> {
+            with(uiState) {
+                GenreDetailSuccessScreen(
+                    genreInfo = genreInfo,
+                    selectedTab = selectedTab,
+                    isUnopenSelected = isUnopenSelected,
+                    isSoldOutSelected = isSoldOutSelected,
+                    productList = uiState.loadState.data.productList,
+                    sortType = sortOption,
+                    sortBottomSheetState = sortBottomSheetState,
+                    onDismissRequest = onDismissRequest,
+                    onBackButtonClick = onBackButtonClick,
+                    onHomeButtonClick = onHomeButtonClick,
+                    onTabClick = onTabClick,
+                    onUnopenFilterClick = onUnopenFilterClick,
+                    onExcludeSoldOutFilterClick = onExcludeSoldOutFilterClick,
+                    onProductClick = onProductClick,
+                    onSortOptionClick = onSortOptionClick,
+                    onSortItemClick = onSortItemClick,
+                    onLikeButtonClick = onLikeButtonClick,
+                    modifier = modifier,
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun GenreDetailSuccessScreen(
+    genreInfo: GenreInfo,
+    selectedTab: TradeType,
+    isUnopenSelected: Boolean,
+    isSoldOutSelected: Boolean,
+    productList: List<Product>,
+    sortType: SortType,
+    sortBottomSheetState: Boolean,
+    onDismissRequest: () -> Unit,
+    onBackButtonClick: () -> Unit,
+    onHomeButtonClick: () -> Unit,
+    onTabClick: (TradeType) -> Unit,
+    onUnopenFilterClick: () -> Unit,
+    onExcludeSoldOutFilterClick: () -> Unit,
+    onSortOptionClick: () -> Unit,
+    onSortItemClick: (SortType) -> Unit,
+    onProductClick: (Long) -> Unit,
+    onLikeButtonClick: (Long, Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -111,8 +202,9 @@ private fun GenreDetailScreen(
 
         GenreScrollSection(
             genreInfo = genreInfo,
-            genreTag = genreTag,
             selectedTab = selectedTab,
+            isUnopenSelected = isUnopenSelected,
+            isSoldOutSelected = isSoldOutSelected,
             productList = productList,
             sortType = sortType,
             onTabClick = onTabClick,
@@ -121,6 +213,15 @@ private fun GenreDetailScreen(
             onSortOptionClick = onSortOptionClick,
             onProductClick = onProductClick,
             onLikeButtonClick = onLikeButtonClick,
+        )
+    }
+
+    if (sortBottomSheetState) {
+        SortBottomSheet(
+            selectedSortType = sortType,
+            sheetState = sheetState,
+            onDismissRequest = onDismissRequest,
+            onSortItemClick = onSortItemClick,
         )
     }
 }
@@ -157,9 +258,10 @@ private fun GenreTopBar(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun GenreScrollSection(
-    genreInfo: Genre,
-    genreTag: String?,
+    genreInfo: GenreInfo,
     selectedTab: TradeType,
+    isUnopenSelected: Boolean,
+    isSoldOutSelected: Boolean,
     productList: List<Product>,
     sortType: SortType,
     onTabClick: (TradeType) -> Unit,
@@ -188,7 +290,7 @@ private fun GenreScrollSection(
                         AsyncImage(
                             model = ImageRequest
                                 .Builder(context)
-                                .data(genreImgUrl)
+                                .data(cover)
                                 .build(),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
@@ -221,7 +323,23 @@ private fun GenreScrollSection(
                             .padding(start = 20.dp),
                     ) {
                         GenreLabel()
-                        // TODO: 추후 "지금핫한" 과 같은 키워드 칩 추가
+
+                        if (tag != null) {
+                            Spacer(Modifier.width(4.dp))
+
+                            Text(
+                                text = tag,
+                                style = NapzakMarketTheme.typography.caption10sb,
+                                color = NapzakMarketTheme.colors.red,
+                                modifier = Modifier
+                                    .border(
+                                        width = 1.dp,
+                                        color = NapzakMarketTheme.colors.red,
+                                        shape = RoundedCornerShape(4.dp)
+                                    )
+                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                            )
+                        }
                     }
 
                     Spacer(Modifier.height(14.dp))
@@ -257,14 +375,14 @@ private fun GenreScrollSection(
             ) {
                 BasicFilterChip(
                     filterName = stringResource(explore_unopened),
-                    isClicked = false,
+                    isClicked = isUnopenSelected,
                     onChipClick = onUnopenFilterClick,
                 )
 
                 if (selectedTab == TradeType.SELL) {
                     BasicFilterChip(
                         filterName = stringResource(explore_exclude_sold_out),
-                        isClicked = false,
+                        isClicked = isSoldOutSelected,
                         onChipClick = onExcludeSoldOutFilterClick,
                     )
                 }
@@ -362,15 +480,18 @@ private fun GenreScrollSection(
 @Preview
 @Composable
 private fun GenreDetailScreenPreview(modifier: Modifier = Modifier) {
-    val genreInfo = Genre(0, "산리오", "")
+    val genreInfo = GenreInfo(0, "산리오", "지금 핫한", "")
 
     NapzakMarketTheme {
-        GenreDetailScreen(
+        GenreDetailSuccessScreen(
             genreInfo = genreInfo,
-            genreTag = "",
             selectedTab = TradeType.SELL,
+            isUnopenSelected = false,
+            isSoldOutSelected = false,
             productList = Product.mockMixedProduct,
             sortType = SortType.RECENT,
+            sortBottomSheetState = false,
+            onDismissRequest = {},
             onBackButtonClick = {},
             onHomeButtonClick = {},
             onTabClick = {},
@@ -378,6 +499,7 @@ private fun GenreDetailScreenPreview(modifier: Modifier = Modifier) {
             onExcludeSoldOutFilterClick = {},
             onProductClick = {},
             onSortOptionClick = {},
+            onSortItemClick = {},
             onLikeButtonClick = { id, value -> },
             modifier = modifier,
         )
