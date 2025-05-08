@@ -33,22 +33,19 @@ class GenreViewModel @Inject constructor(
         viewModelScope.launch {
             setPreferredGenreUseCase()
                 .onSuccess { genres ->
-                    _uiState.update {
-                        it.copy(genres = genres.map { genre -> genre.toUiModel() })
-                    }
+                    updateGenresAllSelection(genres)
                 }
         }
     }
 
     fun onGenreClick(item: GenreUiModel): Boolean {
         var changed = false
-
         _uiState.update { state ->
             val isAlreadySelected = item.isSelected
             val canSelectMore = state.selectedGenres.size < 7
 
             val updatedGenres = state.genres.map {
-                if (it.name == item.name) {
+                if (it.id == item.id) {
                     when {
                         isAlreadySelected -> {
                             changed = true
@@ -67,14 +64,13 @@ class GenreViewModel @Inject constructor(
 
             state.copy(genres = updatedGenres)
         }
-
         return changed
     }
 
     fun onGenreRemove(genre: GenreUiModel) {
         _uiState.update { state ->
             val updated = state.genres.map {
-                if (it.name == genre.name) it.copy(isSelected = false) else it
+                if (it.id == genre.id) it.copy(isSelected = false) else it
             }
             state.copy(genres = updated)
         }
@@ -113,9 +109,10 @@ class GenreViewModel @Inject constructor(
         viewModelScope.launch {
             setSearchPreferredGenresUseCase(searchText)
                 .onSuccess { genres ->
-                    _uiState.update {
-                        it.copy(genres = genres.map { it.toUiModel() })
-                    }
+                    updateGenresAllSelection(genres)
+                }
+                .onFailure {
+                    // TODO: UI에서 메시지 처리
                 }
         }
     }
@@ -129,11 +126,27 @@ class GenreViewModel @Inject constructor(
 
         viewModelScope.launch {
             setRegisterGenres(selectedIds)
-                .onSuccess {
-                    onSuccess()
+                .onSuccess { onSuccess() }
+                .onFailure {
+                    //TODO 추후 구현
                 }
-                .onFailure {//TODO 추구 구현}
-                }
+        }
+    }
+
+    private fun updateGenresAllSelection(newGenres: List<com.napzak.market.genre.model.Genre>) {
+        val selected = _uiState.value.selectedGenres.associateBy { it.id }
+
+        val merged = newGenres.map { genre ->
+            val wasSelected = selected[genre.genreId] != null
+            genre.toUiModel(isSelected = wasSelected)
+        }
+
+        val additional = selected.values.filterNot { selectedItem ->
+            merged.any { it.id == selectedItem.id }
+        }
+
+        _uiState.update {
+            it.copy(genres = merged + additional)
         }
     }
 }
