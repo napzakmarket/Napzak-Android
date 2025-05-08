@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import com.napzak.market.onboarding.genre.model.GenreUiModel
 import com.napzak.market.onboarding.genre.model.GenreUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -20,13 +22,35 @@ class GenreViewModel @Inject constructor() : ViewModel() {
         _uiState.update { it.copy(genres = genres) }
     }
 
-    fun onGenreClick(genre: GenreUiModel) {
+    fun onGenreClick(item: GenreUiModel): Boolean {
+        var changed = false
+
         _uiState.update { state ->
-            val updated = state.genres.map {
-                if (it.name == genre.name) it.copy(isSelected = !it.isSelected) else it
+            val isAlreadySelected = item.isSelected
+            val canSelectMore = state.selectedGenres.size < 7
+
+            val updatedGenres = state.genres.map {
+                if (it.name == item.name) {
+                    when {
+                        isAlreadySelected -> {
+                            changed = true
+                            it.copy(isSelected = false)
+                        }
+
+                        canSelectMore -> {
+                            changed = true
+                            it.copy(isSelected = true)
+                        }
+
+                        else -> it
+                    }
+                } else it
             }
-            state.copy(genres = updated)
+
+            state.copy(genres = updatedGenres)
         }
+
+        return changed
     }
 
     fun onGenreRemove(genre: GenreUiModel) {

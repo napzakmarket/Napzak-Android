@@ -17,7 +17,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +50,8 @@ import com.napzak.market.onboarding.genre.component.GenreGridList
 import com.napzak.market.onboarding.genre.model.GenreUiModel
 import com.napzak.market.onboarding.genre.model.GenreUiState
 import com.napzak.market.util.android.noRippleClickable
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun GenreRoute(
@@ -54,6 +60,10 @@ fun GenreRoute(
     onSkipClick: () -> Unit,
     viewModel: GenreViewModel = hiltViewModel(),
 ) {
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
+    var isShownSnackBar by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
     LaunchedEffect(Unit) {
         viewModel.updateGenres(
             listOf(
@@ -78,8 +88,18 @@ fun GenreRoute(
     }
 
     GenreScreen(
-        uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
-        onGenreClick = viewModel::onGenreClick,
+        uiState = uiState,
+        onGenreClick = { genre ->
+            val changed = viewModel.onGenreClick(genre)
+
+            if (!changed && uiState.selectedGenres.size >= 7) {
+                isShownSnackBar = true
+                scope.launch {
+                    delay(2000)
+                    isShownSnackBar = false
+                }
+            }
+        },
         onGenreRemove = viewModel::onGenreRemove,
         onAllGenresReset = viewModel::onResetAllGenres,
         onSearchTextChange = viewModel::onSearchTextChange,
@@ -87,6 +107,7 @@ fun GenreRoute(
         onBackClick = onBackClick,
         onDoneClick = onDoneClick,
         onSkipClick = onSkipClick,
+        isShownSnackBar = isShownSnackBar,
     )
 }
 
@@ -101,6 +122,7 @@ fun GenreScreen(
     onBackClick: () -> Unit,
     onDoneClick: () -> Unit,
     onSkipClick: () -> Unit,
+    isShownSnackBar: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -164,11 +186,11 @@ fun GenreScreen(
                 .padding(horizontal = 20.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            if (uiState.isMaxSelected) {
+            if (isShownSnackBar) {
                 WarningSnackBar(
                     message = stringResource(warning_snackbar_genre_limit_message),
                     modifier = Modifier
-                        .padding(bottom = 16.dp),
+                        .padding(bottom = 16.dp)
                 )
             }
 
@@ -268,6 +290,7 @@ fun GenreScreenPreview() {
             onSearchTextReset = {},
             onBackClick = {},
             onDoneClick = {},
+            isShownSnackBar = true,
             onSkipClick = {}
         )
     }
