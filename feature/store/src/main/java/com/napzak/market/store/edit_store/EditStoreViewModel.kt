@@ -1,11 +1,13 @@
 package com.napzak.market.store.edit_store
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
 import com.napzak.market.store.edit_store.state.EditStoreUiState
+import com.napzak.market.store.edit_store.type.PhotoType
 import com.napzak.market.store.model.StoreEditGenre
 import com.napzak.market.store.repository.StoreRepository
 import com.napzak.market.util.android.getHttpExceptionMessage
@@ -69,6 +71,21 @@ internal class EditStoreViewModel @Inject constructor(
                     preferredGenres = genres
                 )
             )
+        }
+    }
+
+    fun updatePhoto(photoType: PhotoType, uri: Uri?) {
+        if (uri != null) {
+            val uriString = uri.toString()
+            when (photoType) {
+                PhotoType.COVER -> {
+                    updateStoreDetail(coverUrl = uriString)
+                }
+
+                PhotoType.PROFILE -> {
+                    updateStoreDetail(photoUrl = uriString)
+                }
+            }
         }
     }
 }

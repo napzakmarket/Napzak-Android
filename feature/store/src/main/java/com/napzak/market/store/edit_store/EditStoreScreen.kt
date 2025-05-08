@@ -1,5 +1,10 @@
 package com.napzak.market.store.edit_store
 
+import android.net.Uri
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -73,10 +79,12 @@ import com.napzak.market.feature.store.R.string.store_edit_title_genre
 import com.napzak.market.feature.store.R.string.store_edit_title_introduction
 import com.napzak.market.feature.store.R.string.store_edit_title_name
 import com.napzak.market.store.edit_store.state.EditStoreUiState
+import com.napzak.market.store.edit_store.type.PhotoType
 import com.napzak.market.store.model.StoreEditGenre
 import com.napzak.market.util.android.noRippleClickable
 
 private const val DESCRIPTION_MAX_LENGTH = 200
+private const val INPUT_TYPE = "image/*"
 
 @Composable
 internal fun EditStoreRoute(
@@ -85,6 +93,19 @@ internal fun EditStoreRoute(
     viewModel: EditStoreViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val photoType = remember { mutableStateOf(PhotoType.COVER) }
+
+    val imageStorageLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetMultipleContents()
+    ) { uris: List<Uri> ->
+        viewModel.updatePhoto(photoType.value, uris.first())
+    }
+
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        viewModel.updatePhoto(photoType.value, uri)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.getEditProfile()
@@ -97,8 +118,20 @@ internal fun EditStoreRoute(
         onStoreGenreChange = { viewModel.updateStoreDetail(genres = it) },
         onGenreSearchTextChange = { }, // TODO: 장르 검색 API 연결
         onBackButtonClick = onNavigateUp,
+        onPhotoChange = { editedPhotoType ->
+            photoType.value = editedPhotoType
+            when {
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> imageStorageLauncher.launch(
+                    INPUT_TYPE
+                )
+
+                else -> photoPickerLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+            }
+        },
         onNameValidityCheckClick = viewModel::checkNicknameValidity,
-        onProceedButtonClick = viewModel::saveEditedProfile, // TODO: 마켓 수정 API 연결
+        onProceedButtonClick = viewModel::saveEditedProfile,
         modifier = modifier,
     )
 }
@@ -112,6 +145,7 @@ private fun EditStoreScreen(
     onStoreGenreChange: (List<StoreEditGenre>) -> Unit,
     onGenreSearchTextChange: (String) -> Unit,
     onBackButtonClick: () -> Unit,
+    onPhotoChange: (PhotoType) -> Unit,
     onNameValidityCheckClick: () -> Unit,
     onProceedButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -155,6 +189,7 @@ private fun EditStoreScreen(
                         onStoreIntroductionChange = onStoreIntroductionChange,
                         onNameValidityCheckClick = onNameValidityCheckClick,
                         onGenreSelectButtonClick = { bottomSheetVisibility.value = true },
+                        onPhotoChange = onPhotoChange,
                         modifier = modifier.padding(innerPadding)
                     )
                 }
@@ -204,6 +239,7 @@ private fun SuccessScreen(
     storeGenres: List<StoreEditGenre>,
     onStoreNameChange: (String) -> Unit,
     onStoreIntroductionChange: (String) -> Unit,
+    onPhotoChange: (PhotoType) -> Unit,
     onNameValidityCheckClick: () -> Unit,
     onGenreSelectButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -219,7 +255,7 @@ private fun SuccessScreen(
         EditStorePhotoSection(
             storeCover = storeCover,
             storePhoto = storeProfile,
-            onEditClick = {},
+            onPhotoChange = onPhotoChange,
         )
 
         Spacer(Modifier.height(24.dp))
@@ -301,15 +337,17 @@ private fun EditStoreProceedButton(
 
 /**
  * 마켓 프로필 및 커버 이미지를 편집하는 컴포넌트
+ * TODO: 기디와 논의를 통해 ContentScale 설정
  */
 @Composable
 private fun EditStorePhotoSection(
     storeCover: String,
     storePhoto: String,
-    onEditClick: () -> Unit,
+    onPhotoChange: (PhotoType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val storePhotoShape = CircleShape
 
     Box(
         modifier = modifier,
@@ -320,10 +358,12 @@ private fun EditStorePhotoSection(
                 .data(storeCover)
                 .build(),
             contentDescription = null,
+            contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(2.25f)
-                .background(NapzakMarketTheme.colors.gray200),
+                .background(NapzakMarketTheme.colors.gray200)
+                .noRippleClickable { onPhotoChange(PhotoType.COVER) },
         )
 
         AsyncImage(
@@ -333,15 +373,17 @@ private fun EditStorePhotoSection(
                 .placeholder(ic_profile_basic)
                 .build(),
             contentDescription = null,
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(top = 80.dp)
                 .size(110.dp)
+                .clip(storePhotoShape)
+                .noRippleClickable { onPhotoChange(PhotoType.PROFILE) }
                 .border(
                     width = 5.dp,
                     color = NapzakMarketTheme.colors.white,
-                    shape = CircleShape,
+                    shape = storePhotoShape,
                 ),
         )
 
@@ -352,7 +394,6 @@ private fun EditStorePhotoSection(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(start = 96.dp, bottom = 16.dp)
-                .noRippleClickable(onEditClick),
         )
     }
 }
@@ -573,7 +614,7 @@ private fun EditStoreScreenPreview() {
     NapzakMarketTheme {
         var storeName by remember { mutableStateOf("") }
         var storeIntroduction by remember { mutableStateOf("") }
-        var storeGenres by remember { mutableStateOf(emptyList<StoreEditGenre>()) }
+        val storeGenres by remember { mutableStateOf(emptyList<StoreEditGenre>()) }
 
         SuccessScreen(
             storeCover = "",
@@ -585,6 +626,7 @@ private fun EditStoreScreenPreview() {
             onStoreIntroductionChange = { storeIntroduction = it },
             onNameValidityCheckClick = {},
             onGenreSelectButtonClick = {},
+            onPhotoChange = {},
             modifier = Modifier.fillMaxSize(),
         )
     }
