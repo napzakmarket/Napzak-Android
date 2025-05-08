@@ -19,7 +19,7 @@ class StoreRepositoryImpl @Inject constructor(
 ) : StoreRepository {
 
     override suspend fun getValidateNickname(nickname: String): Result<Unit> = runCatching {
-        storeDataSource.getValidateNickname(NicknameRequest(nickname))
+        storeDataSource.getValidateNickname(nickname)
         Unit
     }
 
