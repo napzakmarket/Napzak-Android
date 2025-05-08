@@ -28,6 +28,7 @@ import com.napzak.market.registration.event.GenreEventBus
 import com.napzak.market.registration.genre.component.GenreSearchEmptyView
 import com.napzak.market.registration.genre.component.GenreSearchHeader
 import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.util.android.throttledNoRippleClickable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -41,10 +42,6 @@ fun GenreSearchRoute(
     viewModel: GenreSearchViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(true) {
-        viewModel.debounce()
-    }
 
     GenreSearchScreen(
         onBackClick = navigateToUp,
@@ -110,16 +107,12 @@ fun GenreSearchScreen(
                             ),
                             modifier = Modifier
                                 .padding(10.dp)
-                                .noRippleClickable {
-                                    if (isClickable) {
-                                        isClickable = false
-                                        coroutineScope.launch {
-                                            delay(200L)
-                                            onGenreSelect(genre)
-                                            isClickable = true
-                                        }
+                                .throttledNoRippleClickable(
+                                    coroutineScope = coroutineScope,
+                                    onClick = {
+                                        onGenreSelect(genre)
                                     }
-                                },
+                                ),
                         )
                     }
                 }
