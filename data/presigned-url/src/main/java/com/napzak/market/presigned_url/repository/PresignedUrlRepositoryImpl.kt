@@ -10,13 +10,13 @@ class PresignedUrlRepositoryImpl @Inject constructor(
 ) : PresignedUrlRepository {
     override suspend fun getProductPresignedUrls(
         imageTitles: List<String>,
-    ): Result<PresignedUrl> = runCatching {
+    ): Result<List<PresignedUrl>> = runCatching {
         presignedUrlDataSource.getProductPresignedUrl(imageTitles = imageTitles).toDomain()
     }
 
     override suspend fun getProfilePresignedUrls(
         imageTitles: List<String>,
-    ): Result<PresignedUrl> = runCatching {
+    ): Result<List<PresignedUrl>> = runCatching {
         presignedUrlDataSource.getProfilePresignedUrl(imageTitles = imageTitles).toDomain()
     }
 
