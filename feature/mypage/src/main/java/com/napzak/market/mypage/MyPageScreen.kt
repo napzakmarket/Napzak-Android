@@ -24,6 +24,7 @@ import com.napzak.market.mypage.component.MyMarketButton
 import com.napzak.market.mypage.component.MyPageMenuCard
 import com.napzak.market.mypage.component.MyPageProfileSection
 import com.napzak.market.mypage.model.MyPageViewModel
+import com.napzak.market.mypage.state.MyPageUiState
 
 
 @Composable
@@ -41,10 +42,7 @@ fun MyPageRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     MyPageScreen(
-        nickname = uiState.nickname,
-        profileImageUrl = uiState.profileImageUrl,
-        salesCount = uiState.salesCount,
-        purchaseCount = uiState.purchaseCount,
+        uiState = uiState,
         onMyMarketClick = onMyMarketClick,
         onSalesClick = onSalesClick,
         onPurchaseClick = onPurchaseClick,
@@ -58,10 +56,7 @@ fun MyPageRoute(
 
 @Composable
 fun MyPageScreen(
-    nickname: String,
-    profileImageUrl: String,
-    salesCount: Int,
-    purchaseCount: Int,
+    uiState: MyPageUiState,
     onMyMarketClick: () -> Unit,
     onSalesClick: () -> Unit,
     onPurchaseClick: () -> Unit,
@@ -85,10 +80,10 @@ fun MyPageScreen(
             MyPageHeader()
             Spacer(modifier = Modifier.height(30.dp))
             MyPageProfileSection(
-                nickname = nickname,
-                profileImageUrl = profileImageUrl,
-                salesCount = salesCount,
-                purchaseCount = purchaseCount,
+                nickname = uiState.nickname,
+                profileImageUrl = uiState.profileImageUrl,
+                salesCount = uiState.salesCount,
+                purchaseCount = uiState.purchaseCount,
             )
             Spacer(modifier = Modifier.height(20.dp))
             MyMarketButton(
@@ -139,11 +134,12 @@ private fun MyPageHeader() {
 fun MyPageScreenPreview() {
     NapzakMarketTheme {
         MyPageScreen(
-            modifier = Modifier,
-            nickname = "납작한자기",
-            profileImageUrl = "https://via.placeholder.com/150",
-            salesCount = 31,
-            purchaseCount = 15,
+            uiState = MyPageUiState(
+                nickname = "납작한자기",
+                profileImageUrl = "https://via.placeholder.com/150",
+                salesCount = 31,
+                purchaseCount = 15,
+            ),
             onMyMarketClick = { println("내 마켓 보기 클릭") },
             onSalesClick = { println("판매 내역 클릭") },
             onPurchaseClick = { println("구매 내역 클릭") },
