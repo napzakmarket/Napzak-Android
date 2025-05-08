@@ -7,11 +7,14 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.BottomSheetType
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.component.bottomsheet.Genre
-import com.napzak.market.explore.model.Product
 import com.napzak.market.explore.state.ExploreBottomSheetState
 import com.napzak.market.explore.state.ExploreProducts
 import com.napzak.market.explore.state.ExploreUiState
+import com.napzak.market.genre.model.Genre
+import com.napzak.market.genre.model.extractGenreIds
+import com.napzak.market.product.model.ExploreParameters
+import com.napzak.market.product.model.SearchParameters
+import com.napzak.market.product.repository.ProductExploreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class ExploreViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val productExploreRepository: ProductExploreRepository,
 ) : ViewModel() {
     val searchTerm: String = savedStateHandle.get<String>(SEARCH_TERM_KEY) ?: ""
 
@@ -38,16 +42,57 @@ internal class ExploreViewModel @Inject constructor(
     private val _genreSearchTerm = MutableStateFlow("")
     val genreSearchTerm = _genreSearchTerm.asStateFlow()
 
-    fun updateExploreInformation() = viewModelScope.launch {
-        with(uiState.value) {
-            // TODO : 추후 API로 변경
-            updateLoadState(
-                UiState.Success(
-                    ExploreProducts(productList = Product.mockMixedProduct)
+    suspend fun updateExploreInformation() = viewModelScope.launch {
+        val parameters = with(uiState.value) {
+            if (searchTerm.isEmpty()) {
+                ExploreParameters(
+                    sort = sortOption.toString(),
+                    genreIds = filteredGenres.extractGenreIds(),
+                    isOnSale = isSoldOutSelected,
+                    isUnopened = isUnopenSelected,
+                    cursor = null, // TODO: 추후 cursor 값 변경
                 )
-            )
+            } else {
+                SearchParameters(
+                    searchWord = searchTerm,
+                    sort = sortOption.toString(),
+                    genreIds = filteredGenres.extractGenreIds(),
+                    isOnSale = isSoldOutSelected,
+                    isUnopened = isUnopenSelected,
+                    cursor = null, // TODO: 추후 cursor 값 변경
+                )
+            }
+        }
+
+        when (uiState.value.selectedTab) {
+            TradeType.BUY -> {
+                if (searchTerm.isEmpty()) {
+                    productExploreRepository.getExploreBuyProducts(parameters as ExploreParameters)
+                        .onSuccess { updateLoadState(UiState.Success(ExploreProducts(it.second))) }
+                        .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
+                } else {
+                    productExploreRepository.getSearchBuyProducts(parameters as SearchParameters)
+                        .onSuccess { updateLoadState(UiState.Success(ExploreProducts(it.second))) }
+                        .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
+                }
+            }
+
+            TradeType.SELL -> {
+                if (searchTerm.isEmpty()) {
+                    productExploreRepository.getExploreSellProducts(parameters as ExploreParameters)
+                        .onSuccess { updateLoadState(UiState.Success(ExploreProducts(it.second))) }
+                        .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
+                } else {
+                    productExploreRepository.getSearchSellProducts(parameters as SearchParameters)
+                        .onSuccess { updateLoadState(UiState.Success(ExploreProducts(it.second))) }
+                        .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
+                }
+            }
+
+            else -> {}
         }
     }
+
 
     fun updateTradeType(newTradeType: TradeType) {
         _uiState.update { currentState ->
@@ -79,32 +124,32 @@ internal class ExploreViewModel @Inject constructor(
         _uiState.update { currentState ->
             // TODO : 추후 API로 변경
             currentState.copy(
-                initGenreItems = listOf(
-                    Genre(0, "산리오"),
-                    Genre(1, "주술회전"),
-                    Genre(2, "진격의 거인"),
-                    Genre(3, "산리오1"),
-                    Genre(4, "주술회전1"),
-                    Genre(5, "진격의 거인1"),
-                    Genre(6, "산리오2"),
-                    Genre(7, "주술회전2"),
-                    Genre(8, "진격의 거인2"),
-                    Genre(9, "산리오3"),
-                    Genre(10, "주술회전3"),
-                ),
-                genreSearchResultItems = listOf(
-                    Genre(0, "산리오"),
-                    Genre(1, "주술회전"),
-                    Genre(2, "진격의 거인"),
-                    Genre(3, "산리오1"),
-                    Genre(4, "주술회전1"),
-                    Genre(5, "진격의 거인1"),
-                    Genre(6, "산리오2"),
-                    Genre(7, "주술회전2"),
-                    Genre(8, "진격의 거인2"),
-                    Genre(9, "산리오3"),
-                    Genre(10, "주술회전3"),
-                )
+//                initGenreItems = listOf(
+//                    Genre(0, "산리오"),
+//                    Genre(1, "주술회전"),
+//                    Genre(2, "진격의 거인"),
+//                    Genre(3, "산리오1"),
+//                    Genre(4, "주술회전1"),
+//                    Genre(5, "진격의 거인1"),
+//                    Genre(6, "산리오2"),
+//                    Genre(7, "주술회전2"),
+//                    Genre(8, "진격의 거인2"),
+//                    Genre(9, "산리오3"),
+//                    Genre(10, "주술회전3"),
+//                ),
+//                genreSearchResultItems = listOf(
+//                    Genre(0, "산리오"),
+//                    Genre(1, "주술회전"),
+//                    Genre(2, "진격의 거인"),
+//                    Genre(3, "산리오1"),
+//                    Genre(4, "주술회전1"),
+//                    Genre(5, "진격의 거인1"),
+//                    Genre(6, "산리오2"),
+//                    Genre(7, "주술회전2"),
+//                    Genre(8, "진격의 거인2"),
+//                    Genre(9, "산리오3"),
+//                    Genre(10, "주술회전3"),
+//                )
             )
         }
     }
@@ -118,24 +163,24 @@ internal class ExploreViewModel @Inject constructor(
         _genreSearchTerm
             .debounce(DEBOUNCE_DELAY)
             .collectLatest { debounce ->
-                val newGenreItems: List<Genre> = if (debounce.isBlank()) {
-                    _uiState.value.initGenreItems
-                } else {
-                    emptyList() // TODO: 장르 검색 API 연결
-                }
-
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        genreSearchResultItems = newGenreItems
-                    )
-                }
+//                val newGenreItems: List<Genre> = if (debounce.isBlank()) {
+//                    _uiState.value.initGenreItems
+//                } else {
+//                    emptyList() // TODO: 장르 검색 API 연결
+//                }
+//
+//                _uiState.update { currentState ->
+//                    currentState.copy(
+//                        genreSearchResultItems = newGenreItems
+//                    )
+//                }
             }
     }
 
     fun updateSelectedGenres(newGenres: List<Genre>) {
         _uiState.update { currentState ->
             currentState.copy(
-                filteredGenres = newGenres
+//                filteredGenres = newGenres
             )
         }
     }
