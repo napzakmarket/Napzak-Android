@@ -35,7 +35,6 @@ internal fun ExploreBottomSheetScreen(
                 onTextChange = onTextChange,
                 onButtonClick = { newGenres ->
                     onGenreSelectButtonClick(newGenres)
-                    onDismissRequest(BottomSheetType.GENRE_SEARCHING)
                 },
             )
         }
@@ -47,7 +46,6 @@ internal fun ExploreBottomSheetScreen(
                 onDismissRequest = { onDismissRequest(BottomSheetType.SORT) },
                 onSortItemClick = { newSortOption ->
                     onSortItemClick(newSortOption)
-                    onDismissRequest(BottomSheetType.SORT)
                 },
             )
         }
