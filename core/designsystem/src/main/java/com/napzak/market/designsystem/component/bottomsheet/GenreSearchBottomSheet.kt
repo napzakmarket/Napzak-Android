@@ -37,11 +37,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_x_button_24
+import com.napzak.market.designsystem.R.string.genre_apply_button
+import com.napzak.market.designsystem.R.string.genre_search_genre_limit_notice
 import com.napzak.market.designsystem.R.string.genre_search_hint
 import com.napzak.market.designsystem.R.string.genre_search_select_genre
-import com.napzak.market.designsystem.R.string.genre_search_genre_limit_notice
-import com.napzak.market.designsystem.R.string.genre_apply_button
 import com.napzak.market.designsystem.component.GenreChipButtonGroup
+import com.napzak.market.designsystem.component.GenreListItem
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -110,10 +111,12 @@ fun GenreSearchBottomSheet(
                         tint = Color.Unspecified,
                         modifier = Modifier
                             .noRippleClickable {
-                                coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
-                                    focusManager.clearFocus()
-                                    onDismissRequest()
-                                }
+                                coroutineScope
+                                    .launch { sheetState.hide() }
+                                    .invokeOnCompletion {
+                                        focusManager.clearFocus()
+                                        onDismissRequest()
+                                    }
                             }
                             .padding(end = 18.dp),
                     )
@@ -189,11 +192,12 @@ fun GenreSearchBottomSheet(
 
             ButtonSection(
                 onButtonClick = {
-                    coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
-                        focusManager.clearFocus()
-                        onDismissRequest()
-                        onButtonClick(selectedGenreList)
-                    }
+                    coroutineScope
+                        .launch { sheetState.hide() }
+                        .invokeOnCompletion {
+                            focusManager.clearFocus()
+                            onButtonClick(selectedGenreList)
+                        }
                 }
             )
         }
@@ -236,20 +240,11 @@ private fun GenreList(
 
         items(genreItems) { genreItem ->
             val isSelected = selectedGenreList.contains(genreItem)
-            val textStyle =
-                if (isSelected) NapzakMarketTheme.typography.body14sb
-                else NapzakMarketTheme.typography.body14r
-            val textColor =
-                if (isSelected) NapzakMarketTheme.colors.purple500
-                else NapzakMarketTheme.colors.gray400
 
-            Text(
-                text = genreItem.genreName,
-                style = textStyle,
-                color = textColor,
-                modifier = Modifier
-                    .padding(vertical = 15.dp)
-                    .noRippleClickable { onGenreItemClick(genreItem, isSelected) },
+            GenreListItem(
+                isSelected = isSelected,
+                genreName = genreItem.genreName,
+                onGenreItemClick = { onGenreItemClick(genreItem, isSelected) }
             )
         }
 
