@@ -85,7 +85,14 @@ fun GenreRoute(
         onSearchTextSubmit = viewModel::onSearchTextSubmit,
         onSearchTextReset = { viewModel.onSearchTextChange("") },
         onBackClick = onBackClick,
-        onDoneClick = onDoneClick,
+        onDoneClick = {
+            viewModel.updateSelectedGenres(
+                onSuccess = onDoneClick,
+                onError = {
+                    //TODO 추후 구현
+                }
+            )
+        },
         onSkipClick = onSkipClick,
         isShownSnackBar = isShownSnackBar,
     )
