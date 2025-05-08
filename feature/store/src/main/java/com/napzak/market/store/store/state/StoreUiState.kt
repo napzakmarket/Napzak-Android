@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.MarketTab
 import com.napzak.market.common.type.SortType
-import com.napzak.market.designsystem.component.bottomsheet.Genre
+import com.napzak.market.genre.model.Genre
 import com.napzak.market.store.model.Product
 import com.napzak.market.store.model.StoreDetail
 
