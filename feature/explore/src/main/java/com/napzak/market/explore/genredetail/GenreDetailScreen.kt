@@ -23,11 +23,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -60,13 +60,13 @@ import com.napzak.market.explore.component.GenreLabel
 import com.napzak.market.explore.genredetail.state.GenreDetailUiState
 import com.napzak.market.explore.genredetail.state.GenreInfo
 import com.napzak.market.explore.model.Product
-import com.napzak.market.util.android.noRippleClickable
-import com.napzak.market.feature.explore.R.drawable.ic_left_chevron_24
 import com.napzak.market.feature.explore.R.drawable.ic_home
+import com.napzak.market.feature.explore.R.drawable.ic_left_chevron_24
 import com.napzak.market.feature.explore.R.string.explore_count
 import com.napzak.market.feature.explore.R.string.explore_exclude_sold_out
 import com.napzak.market.feature.explore.R.string.explore_product
 import com.napzak.market.feature.explore.R.string.explore_unopened
+import com.napzak.market.util.android.noRippleClickable
 import kotlin.collections.chunked
 
 @Composable
@@ -100,7 +100,10 @@ internal fun GenreDetailRoute(
         onExcludeSoldOutFilterClick = viewModel::updateSoldOutFilter,
         onProductClick = onProductClick,
         onSortOptionClick = { sortBottomSheetState = !sortBottomSheetState },
-        onSortItemClick = viewModel::updateSortOption,
+        onSortItemClick = { newSortOption ->
+            viewModel.updateSortOption(newSortOption)
+            sortBottomSheetState = !sortBottomSheetState
+        },
         onLikeButtonClick = { id, value ->
             viewModel.updateProductIsInterested(productId = id, isLiked = value)
         },
