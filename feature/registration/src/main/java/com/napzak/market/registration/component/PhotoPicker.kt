@@ -1,10 +1,10 @@
 package com.napzak.market.registration.component
 
 import android.net.Uri
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.PickMultipleVisualMedia
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,9 +38,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 
 private const val MAX_ITEMS = 10
-private const val MIN_ITEMS = 2
 private const val ZERO = 0
-private const val INPUT_TYPE = "image/*"
 
 /**
  * Registration photo picker
@@ -52,30 +50,22 @@ private const val INPUT_TYPE = "image/*"
 @Composable
 internal fun PhotoPicker(
     imageUris: PersistentList<Uri>,
-    onImagesSelected: (ImmutableList<Uri>) -> Unit,
+    onImagesSelect: (ImmutableList<Uri>) -> Unit,
     onLongClick: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val currentImageSize = (MAX_ITEMS - imageUris.size).coerceAtLeast(MIN_ITEMS)
-
-    val imageStorageLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetMultipleContents()
-    ) { uris ->
-        onImagesSelected(uris.take(currentImageSize).map { it }.toPersistentList())
-    }
+    val remainingImageSize = MAX_ITEMS - imageUris.size
 
     val photoPickerLauncher = when (imageUris.size) {
         MAX_ITEMS - 1 -> rememberLauncherForActivityResult(
-            ActivityResultContracts.PickVisualMedia()
+            PickVisualMedia()
         ) { uri ->
-            uri?.let { onImagesSelected(listOf(it).toPersistentList()) }
+            uri?.let { onImagesSelect(listOf(it).toPersistentList()) }
         }
 
-        else -> rememberLauncherForActivityResult(
-            ActivityResultContracts.PickMultipleVisualMedia(maxItems = currentImageSize)
-        ) { uris ->
-            onImagesSelected(uris.toPersistentList())
+        else -> rememberLauncherForActivityResult(PickMultipleVisualMedia(remainingImageSize)) { uris ->
+            onImagesSelect(uris.toPersistentList())
         }
     }
 
@@ -93,13 +83,8 @@ internal fun PhotoPicker(
                         /* TODO: 최대 개수 초과 시 스낵바 처리 */
                         remainImageSize <= ZERO -> {}
 
-                        Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ->
-                            imageStorageLauncher.launch(INPUT_TYPE)
-
                         else -> photoPickerLauncher.launch(
-                            PickVisualMediaRequest(
-                                ActivityResultContracts.PickVisualMedia.ImageOnly
-                            )
+                            PickVisualMediaRequest(PickVisualMedia.ImageOnly)
                         )
                     }
                 },
@@ -176,7 +161,7 @@ private fun RegistrationPhotoPickerPreview() {
         Column {
             PhotoPicker(
                 imageUris = persistentListOf(),
-                onImagesSelected = { },
+                onImagesSelect = { },
                 onLongClick = { },
                 onDeleteClick = { },
             )
