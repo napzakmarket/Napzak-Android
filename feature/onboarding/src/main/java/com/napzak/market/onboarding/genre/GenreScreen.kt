@@ -82,6 +82,7 @@ fun GenreRoute(
         onGenreRemove = viewModel::onGenreRemove,
         onAllGenresReset = viewModel::onResetAllGenres,
         onSearchTextChange = viewModel::onSearchTextChange,
+        onSearchTextSubmit = viewModel::onSearchTextSubmit,
         onSearchTextReset = { viewModel.onSearchTextChange("") },
         onBackClick = onBackClick,
         onDoneClick = onDoneClick,
@@ -97,6 +98,7 @@ fun GenreScreen(
     onGenreRemove: (GenreUiModel) -> Unit,
     onAllGenresReset: () -> Unit,
     onSearchTextChange: (String) -> Unit,
+    onSearchTextSubmit: () -> Unit,
     onSearchTextReset: () -> Unit,
     onBackClick: () -> Unit,
     onDoneClick: () -> Unit,
@@ -127,12 +129,12 @@ fun GenreScreen(
                 onTextChange = onSearchTextChange,
                 hint = stringResource(onboarding_genre_edit_hint),
                 onResetClick = onSearchTextReset,
-                onSearchClick = {},
+                onSearchClick = onSearchTextSubmit,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
-                readOnly = true,
-                enabled = false,
+                readOnly = false,
+                enabled = true,
             )
 
             if (uiState.selectedGenres.isNotEmpty()) {
@@ -259,6 +261,7 @@ fun GenreScreenPreview() {
             onGenreRemove = {},
             onAllGenresReset = {},
             onSearchTextChange = {},
+            onSearchTextSubmit = {},
             onSearchTextReset = {},
             onBackClick = {},
             onDoneClick = {},

@@ -1,11 +1,15 @@
 package com.napzak.market.onboarding.genre
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.genre.usecase.SetPreferredGenreUseCase
+import com.napzak.market.genre.usecase.SetSearchPreferredGenresUseCase
 import com.napzak.market.onboarding.genre.model.GenreUiModel
 import com.napzak.market.onboarding.genre.model.GenreUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,15 +19,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GenreViewModel @Inject constructor(
-    private val setPreferredGenreUseCase: SetPreferredGenreUseCase
+    private val setPreferredGenreUseCase: SetPreferredGenreUseCase,
+    private val setSearchPreferredGenresUseCase: SetSearchPreferredGenresUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GenreUiState())
     val uiState: StateFlow<GenreUiState> = _uiState.asStateFlow()
 
-    init {
-        updatePreferredGenre()
-    }
+    private var searchJob: Job? = null
 
     fun updatePreferredGenre() {
         viewModelScope.launch {
@@ -34,10 +37,6 @@ class GenreViewModel @Inject constructor(
                     }
                 }
         }
-    }
-
-    fun updateGenres(genres: List<GenreUiModel>) {
-        _uiState.update { it.copy(genres = genres) }
     }
 
     fun onGenreClick(item: GenreUiModel): Boolean {
@@ -88,5 +87,35 @@ class GenreViewModel @Inject constructor(
 
     fun onSearchTextChange(text: String) {
         _uiState.update { it.copy(searchText = text) }
+
+        searchJob?.cancel()
+        if (text.isBlank()) {
+            updatePreferredGenre()
+            return
+        }
+
+        searchJob = viewModelScope.launch {
+            delay(300)
+            searchPreferredGenres(text)
+        }
+    }
+
+    fun onSearchTextSubmit() {
+        val searchText = _uiState.value.searchText
+        if (searchText.isNotBlank()) {
+            searchJob?.cancel()
+            searchPreferredGenres(searchText)
+        }
+    }
+
+    private fun searchPreferredGenres(searchText: String) {
+        viewModelScope.launch {
+            setSearchPreferredGenresUseCase(searchText)
+                .onSuccess { genres ->
+                    _uiState.update {
+                        it.copy(genres = genres.map { it.toUiModel() })
+                    }
+                }
+        }
     }
 }
