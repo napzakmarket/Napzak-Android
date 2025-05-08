@@ -192,11 +192,12 @@ fun GenreSearchBottomSheet(
 
             ButtonSection(
                 onButtonClick = {
-                    coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
-                        focusManager.clearFocus()
-                        onDismissRequest()
-                        onButtonClick(selectedGenreList)
-                    }
+                    coroutineScope
+                        .launch { sheetState.hide() }
+                        .invokeOnCompletion {
+                            focusManager.clearFocus()
+                            onButtonClick(selectedGenreList)
+                        }
                 }
             )
         }
