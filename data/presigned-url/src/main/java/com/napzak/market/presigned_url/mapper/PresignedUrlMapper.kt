@@ -7,18 +7,22 @@ import com.napzak.market.presigned_url.model.PresignedUrl
 
 /**
  * To domain
- * Map 형태의 데이터를 두 개의 List로 변환(imageNames, urls)
+ * Map 형태의 데이터를 PresignedUrl List 형태로 변환
  */
-fun ProductPresignedUrlResponse.toDomain() = PresignedUrl(
-    imageNames = presignedUrls.keys.toList(),
-    urls = presignedUrls.values.toList(),
-)
+fun ProductPresignedUrlResponse.toDomain() = presignedUrls.map { (imageName, url) ->
+    PresignedUrl(
+        imageName = imageName,
+        url = url,
+    )
+}
 
 /**
  * To domain
- * Map 형태의 데이터를 두 개의 List로 변환(imageNames, urls)
+ * Map 형태의 데이터를 PresignedUrl List 형태로 변환
  */
-fun ProfilePresignedUrlResponse.toDomain() = PresignedUrl(
-    imageNames = presignedUrls.keys.toList(),
-    urls = presignedUrls.values.toList(),
-)
+fun ProfilePresignedUrlResponse.toDomain() = presignedUrls.map { (imageName, url) ->
+    PresignedUrl(
+        imageName = imageName,
+        url = url,
+    )
+}
