@@ -5,12 +5,16 @@ import com.napzak.market.store.model.StoreEditProfile
 
 internal data class EditStoreUiState(
     val loadState: UiState<Unit> = UiState.Loading,
-    val nickNameValidState: UiState<Unit> = UiState.Loading,
-    val storeDetail: StoreEditProfile = StoreEditProfile(
-        coverUrl = "",
-        photoUrl = "",
-        nickname = "",
-        description = "",
-        preferredGenres = emptyList()
-    ),
-)
+    val nickNameValidState: UiState<String> = UiState.Empty,
+    val storeDetail: StoreEditProfile = EmptyStoreDetail,
+) {
+    companion object {
+        val EmptyStoreDetail = StoreEditProfile(
+            coverUrl = "",
+            photoUrl = "",
+            nickname = "",
+            description = "",
+            preferredGenres = emptyList()
+        )
+    }
+}

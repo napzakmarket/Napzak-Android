@@ -31,39 +31,20 @@ internal class EditStoreViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(EditStoreUiState())
     val uiState = _uiState.asStateFlow()
 
-    private var originalStoreDetail by mutableStateOf(
-        StoreEditProfile(
-            coverUrl = "",
-            photoUrl = "",
-            nickname = "",
-            description = "",
-            preferredGenres = emptyList(),
-        )
-    )
+    private var originalStoreDetail by mutableStateOf(EditStoreUiState.EmptyStoreDetail)
 
     suspend fun getEditProfile() {
         storeRepository.fetchEditProfile()
-            .onSuccess {
-                originalStoreDetail = it
+            .onSuccess { storeDetail ->
+                originalStoreDetail = storeDetail
                 updateUiState(
                     loadState = UiState.Success(Unit),
-                    coverUrl = it.coverUrl,
-                    photoUrl = it.photoUrl,
-                    name = it.nickname,
-                    description = it.description,
-                    genres = it.preferredGenres,
+                    storeDetail = storeDetail,
                 )
             }.onFailure {
                 updateUiState(
                     loadState = UiState.Failure(it.toString()),
                 )
-            }
-    }
-
-    fun checkNicknameValidity() = viewModelScope.launch {
-        storeRepository.getValidateNickname(_uiState.value.storeDetail.nickname)
-            .onFailure { exception ->
-                UiState.Failure(exception.getHttpExceptionMessage() ?: "")
             }
     }
 
@@ -94,31 +75,6 @@ internal class EditStoreViewModel @Inject constructor(
         return coverUrl to profileUrl
     }
 
-    fun updateUiState(
-        loadState: UiState<Unit> = _uiState.value.loadState,
-        coverUrl: String = _uiState.value.storeDetail.coverUrl,
-        photoUrl: String = _uiState.value.storeDetail.photoUrl,
-        name: String = _uiState.value.storeDetail.nickname,
-        description: String = _uiState.value.storeDetail.description,
-        genres: List<StoreEditGenre> = _uiState.value.storeDetail.preferredGenres
-    ) {
-        val newCoverUrl = coverUrl.toUri().buildUpon().clearQuery().build().toString()
-        val newPhotoUrl = photoUrl.toUri().buildUpon().clearQuery().build().toString()
-
-        _uiState.update { currentState ->
-            currentState.copy(
-                loadState = loadState,
-                storeDetail = currentState.storeDetail.copy(
-                    coverUrl = newCoverUrl,
-                    photoUrl = newPhotoUrl,
-                    nickname = name,
-                    description = description,
-                    preferredGenres = genres
-                )
-            )
-        }
-    }
-
     fun updatePhoto(photoType: PhotoType, uri: Uri?) {
         if (uri != null) {
             val uriString = uri.toString()
@@ -131,6 +87,74 @@ internal class EditStoreViewModel @Inject constructor(
                     updateUiState(photoUrl = uriString)
                 }
             }
+        }
+    }
+
+    fun checkNicknameValidity() = viewModelScope.launch {
+        storeRepository.getValidateNickname(_uiState.value.storeDetail.nickname)
+            .onSuccess {
+                updateUiState(
+                    nickNameValidState = UiState.Success("사용할 수 있는 이름이에요!")
+                )
+            }
+            .onFailure { exception ->
+                updateUiState(
+                    nickNameValidState = UiState.Failure(
+                        exception.getHttpExceptionMessage() ?: ""
+                    )
+                )
+            }
+    }
+
+    fun checkSubmitButton(uiState: EditStoreUiState): Boolean = with(uiState) {
+        nickNameValidState is UiState.Success
+                || storeDetail.description != originalStoreDetail.description
+                || storeDetail.preferredGenres != originalStoreDetail.preferredGenres
+                || storeDetail.coverUrl != originalStoreDetail.coverUrl
+                || storeDetail.photoUrl != originalStoreDetail.photoUrl
+    }
+
+
+    fun updateUiState(
+        loadState: UiState<Unit> = _uiState.value.loadState,
+        nickNameValidState: UiState<String> = _uiState.value.nickNameValidState,
+        storeDetail: StoreEditProfile = _uiState.value.storeDetail
+    ) {
+        updateUiState(
+            loadState = loadState,
+            nickNameValidState = nickNameValidState,
+            coverUrl = storeDetail.coverUrl,
+            photoUrl = storeDetail.photoUrl,
+            name = storeDetail.nickname,
+            description = storeDetail.description,
+            genres = storeDetail.preferredGenres
+        )
+    }
+
+    fun updateUiState(
+        loadState: UiState<Unit> = _uiState.value.loadState,
+        nickNameValidState: UiState<String> = _uiState.value.nickNameValidState,
+        coverUrl: String = _uiState.value.storeDetail.coverUrl,
+        photoUrl: String = _uiState.value.storeDetail.photoUrl,
+        name: String = _uiState.value.storeDetail.nickname,
+        description: String = _uiState.value.storeDetail.description,
+        genres: List<StoreEditGenre> = _uiState.value.storeDetail.preferredGenres
+    ) {
+        val newCoverUrl = coverUrl.toUri().buildUpon().clearQuery().build().toString()
+        val newPhotoUrl = photoUrl.toUri().buildUpon().clearQuery().build().toString()
+
+        _uiState.update { currentState ->
+            currentState.copy(
+                loadState = loadState,
+                nickNameValidState = nickNameValidState,
+                storeDetail = currentState.storeDetail.copy(
+                    coverUrl = newCoverUrl,
+                    photoUrl = newPhotoUrl,
+                    nickname = name,
+                    description = description,
+                    preferredGenres = genres
+                )
+            )
         }
     }
 }

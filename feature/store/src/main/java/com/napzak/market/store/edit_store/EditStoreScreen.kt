@@ -37,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -107,13 +108,23 @@ internal fun EditStoreRoute(
         viewModel.updatePhoto(photoType.value, uri)
     }
 
+    val submitEnabled by remember {
+        derivedStateOf { viewModel.checkSubmitButton(uiState) }
+    }
+
     LaunchedEffect(Unit) {
         viewModel.getEditProfile()
     }
 
     EditStoreScreen(
         uiState = uiState,
-        onStoreNameChange = { viewModel.updateUiState(name = it) },
+        submitEnabled = submitEnabled,
+        onStoreNameChange = {
+            viewModel.updateUiState(
+                name = it,
+                nickNameValidState = UiState.Empty
+            )
+        },
         onStoreIntroductionChange = { viewModel.updateUiState(description = it) },
         onStoreGenreChange = { viewModel.updateUiState(genres = it) },
         onGenreSearchTextChange = { }, // TODO: 장르 검색 API 연결
@@ -140,6 +151,7 @@ internal fun EditStoreRoute(
 @Composable
 private fun EditStoreScreen(
     uiState: EditStoreUiState,
+    submitEnabled: Boolean,
     onStoreNameChange: (String) -> Unit,
     onStoreIntroductionChange: (String) -> Unit,
     onStoreGenreChange: (List<StoreEditGenre>) -> Unit,
@@ -150,9 +162,6 @@ private fun EditStoreScreen(
     onProceedButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val initialLoading = remember { mutableStateOf(true) }
-    val submitButtonEnabled = remember { mutableStateOf(false) }
-
     Scaffold(
         topBar = {
             EditStoreTopBar(
@@ -162,7 +171,7 @@ private fun EditStoreScreen(
         bottomBar = {
             EditStoreProceedButton(
                 onClick = onProceedButtonClick,
-                enabled = submitButtonEnabled.value,
+                enabled = submitEnabled,
             )
         },
         containerColor = NapzakMarketTheme.colors.white,
@@ -173,11 +182,6 @@ private fun EditStoreScreen(
                 val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
                 val bottomSheetVisibility = remember { mutableStateOf(false) }
 
-                LaunchedEffect(uiState.storeDetail) {
-                    if (initialLoading.value) initialLoading.value = false
-                    else submitButtonEnabled.value = true
-                }
-
                 with(uiState.storeDetail) {
                     SuccessScreen(
                         storeCover = coverUrl,
@@ -185,6 +189,7 @@ private fun EditStoreScreen(
                         storeName = nickname,
                         storeIntroduction = description,
                         storeGenres = preferredGenres,
+                        nickNameValidState = uiState.nickNameValidState,
                         onStoreNameChange = onStoreNameChange,
                         onStoreIntroductionChange = onStoreIntroductionChange,
                         onNameValidityCheckClick = onNameValidityCheckClick,
@@ -237,6 +242,7 @@ private fun SuccessScreen(
     storeName: String,
     storeIntroduction: String,
     storeGenres: List<StoreEditGenre>,
+    nickNameValidState: UiState<String>,
     onStoreNameChange: (String) -> Unit,
     onStoreIntroductionChange: (String) -> Unit,
     onPhotoChange: (PhotoType) -> Unit,
@@ -266,18 +272,19 @@ private fun SuccessScreen(
                 onStoreNameChange(it)
                 nameCheckButtonEnabled.value = it.isNotEmpty()
             },
+            nickNameValidState = nickNameValidState,
             onNameValidityCheckClick = onNameValidityCheckClick,
             checkEnabled = nameCheckButtonEnabled.value,
         )
 
-        SectionDivider()
+        SectionDivider(Modifier.padding(bottom = 30.dp))
 
         EditStoreIntroductionSection(
             introduction = storeIntroduction,
             onIntroductionChange = onStoreIntroductionChange,
         )
 
-        SectionDivider()
+        SectionDivider(Modifier.padding(vertical = 30.dp))
 
         EditInterestedGenreSection(
             genres = storeGenres.map { it.genreName },
@@ -437,6 +444,7 @@ private fun EditStoreNameSection(
     marketName: String,
     onNameChange: (String) -> Unit,
     checkEnabled: Boolean,
+    nickNameValidState: UiState<String>,
     onNameValidityCheckClick: () -> Unit,
 ) {
     val buttonColor = with(NapzakMarketTheme.colors) {
@@ -444,41 +452,58 @@ private fun EditStoreNameSection(
         else gray200
     }
 
+    val (supportingText, supportingTextColor) = when (nickNameValidState) {
+        is UiState.Success -> "\u2022 ${nickNameValidState.data}" to NapzakMarketTheme.colors.green
+        is UiState.Failure -> "\u2022 ${nickNameValidState.msg}" to NapzakMarketTheme.colors.red
+        else -> "" to NapzakMarketTheme.colors.gray300
+    }
+
     EditStoreProfileContainer(
         title = stringResource(store_edit_title_name),
         subtitle = stringResource(store_edit_sub_title_name),
     ) {
-        NapzakDefaultTextField(
-            text = marketName,
-            onTextChange = onNameChange,
-            hint = stringResource(store_edit_hint_name),
-            textStyle = NapzakMarketTheme.typography.caption12sb,
-            hintTextStyle = NapzakMarketTheme.typography.caption12m,
-            modifier = Modifier
-                .padding(horizontal = 20.dp)
-                .fillMaxWidth()
-                .background(
-                    NapzakMarketTheme.colors.gray50,
-                    RoundedCornerShape(14.dp),
-                )
-                .padding(PaddingValues(16.dp, 10.dp, 10.dp, 10.dp)),
-            suffix = {
-                Box(
-                    modifier = Modifier
-                        .noRippleClickable { if (checkEnabled) onNameValidityCheckClick() }
-                        .background(buttonColor, RoundedCornerShape(10.dp))
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = stringResource(store_edit_button_name_check),
-                        style = NapzakMarketTheme.typography.caption12sb.copy(
-                            color = NapzakMarketTheme.colors.gray50,
-                        ),
+        Column(
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 5.dp)
+
+        ) {
+            NapzakDefaultTextField(
+                text = marketName,
+                onTextChange = onNameChange,
+                hint = stringResource(store_edit_hint_name),
+                textStyle = NapzakMarketTheme.typography.caption12sb,
+                hintTextStyle = NapzakMarketTheme.typography.caption12m,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        NapzakMarketTheme.colors.gray50,
+                        RoundedCornerShape(14.dp),
                     )
+                    .padding(PaddingValues(16.dp, 10.dp, 10.dp, 10.dp)),
+                suffix = {
+                    Box(
+                        modifier = Modifier
+                            .noRippleClickable { if (checkEnabled) onNameValidityCheckClick() }
+                            .background(buttonColor, RoundedCornerShape(10.dp))
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = stringResource(store_edit_button_name_check),
+                            style = NapzakMarketTheme.typography.caption12sb.copy(
+                                color = NapzakMarketTheme.colors.gray50,
+                            ),
+                        )
+                    }
                 }
-            }
-        )
+            )
+
+            Text(
+                text = supportingText,
+                color = supportingTextColor,
+                style = NapzakMarketTheme.typography.caption12sb,
+                modifier = Modifier.padding(top = 10.dp)
+            )
+        }
     }
 }
 
@@ -604,7 +629,7 @@ private fun SectionDivider(modifier: Modifier = Modifier) {
     HorizontalDivider(
         color = NapzakMarketTheme.colors.gray10,
         thickness = 4.dp,
-        modifier = modifier.padding(vertical = 30.dp),
+        modifier = modifier,
     )
 }
 
@@ -627,6 +652,7 @@ private fun EditStoreScreenPreview() {
             onNameValidityCheckClick = {},
             onGenreSelectButtonClick = {},
             onPhotoChange = {},
+            nickNameValidState = UiState.Success("사용할 수 있는 이름이에요!"),
             modifier = Modifier.fillMaxSize(),
         )
     }
