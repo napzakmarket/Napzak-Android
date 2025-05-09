@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,6 +25,7 @@ import com.napzak.market.report.type.ReportType
 @Composable
 internal fun ReportContactSection(
     reportState: ReportState,
+    onTextFieldFocus: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Text(
@@ -47,7 +49,10 @@ internal fun ReportContactSection(
         modifier = modifier
             .clip(RoundedCornerShape(14.dp))
             .background(NapzakMarketTheme.colors.gray50)
-            .padding(16.dp),
+            .padding(16.dp)
+            .onFocusEvent {
+                if (it.isFocused) onTextFieldFocus()
+            },
     )
 }
 
@@ -58,7 +63,8 @@ private fun ReportDetailSectionPreview() {
         val reportState = rememberReportState(ReportType.PRODUCT.toString())
         Column(Modifier.padding(horizontal = 20.dp)) {
             ReportContactSection(
-                reportState = reportState
+                reportState = reportState,
+                onTextFieldFocus = {},
             )
         }
     }

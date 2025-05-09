@@ -10,23 +10,53 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.mypage_header_title
 import com.napzak.market.mypage.component.MyMarketButton
 import com.napzak.market.mypage.component.MyPageMenuCard
 import com.napzak.market.mypage.component.MyPageProfileSection
+import com.napzak.market.mypage.model.MyPageViewModel
+import com.napzak.market.mypage.state.MyPageUiState
+
+
+@Composable
+fun MyPageRoute(
+    onMyMarketClick: () -> Unit,
+    onSalesClick: () -> Unit,
+    onPurchaseClick: () -> Unit,
+    onRecentClick: () -> Unit,
+    onFavoriteClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onHelpClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: MyPageViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    MyPageScreen(
+        uiState = uiState,
+        onMyMarketClick = onMyMarketClick,
+        onSalesClick = onSalesClick,
+        onPurchaseClick = onPurchaseClick,
+        onRecentClick = onRecentClick,
+        onFavoriteClick = onFavoriteClick,
+        onSettingsClick = onSettingsClick,
+        onHelpClick = onHelpClick,
+        modifier = modifier,
+    )
+}
 
 @Composable
 fun MyPageScreen(
-    nickname: String,
-    profileImageUrl: String,
-    salesCount: Int,
-    purchaseCount: Int,
+    uiState: MyPageUiState,
     onMyMarketClick: () -> Unit,
     onSalesClick: () -> Unit,
     onPurchaseClick: () -> Unit,
@@ -50,10 +80,10 @@ fun MyPageScreen(
             MyPageHeader()
             Spacer(modifier = Modifier.height(30.dp))
             MyPageProfileSection(
-                nickname = nickname,
-                profileImageUrl = profileImageUrl,
-                salesCount = salesCount,
-                purchaseCount = purchaseCount,
+                nickname = uiState.nickname,
+                profileImageUrl = uiState.profileImageUrl,
+                salesCount = uiState.salesCount,
+                purchaseCount = uiState.purchaseCount,
             )
             Spacer(modifier = Modifier.height(20.dp))
             MyMarketButton(
@@ -104,11 +134,12 @@ private fun MyPageHeader() {
 fun MyPageScreenPreview() {
     NapzakMarketTheme {
         MyPageScreen(
-            modifier = Modifier,
-            nickname = "납작한자기",
-            profileImageUrl = "https://via.placeholder.com/150",
-            salesCount = 31,
-            purchaseCount = 15,
+            uiState = MyPageUiState(
+                nickname = "납작한자기",
+                profileImageUrl = "https://via.placeholder.com/150",
+                salesCount = 31,
+                purchaseCount = 15,
+            ),
             onMyMarketClick = { println("내 마켓 보기 클릭") },
             onSalesClick = { println("판매 내역 클릭") },
             onPurchaseClick = { println("구매 내역 클릭") },

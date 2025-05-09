@@ -1,6 +1,5 @@
-package com.napzak.market.report.component
+package com.napzak.market.designsystem.component.spinner
 
-import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -8,9 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -19,61 +16,44 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_down_chevron
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.report.R.string.report_input_title_reason
-import com.napzak.market.report.state.ReportState
-import com.napzak.market.report.state.rememberReportState
-import com.napzak.market.report.type.ReportType
 import com.napzak.market.util.android.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
-@Composable
-internal fun ReportReasonSection(
-    reportState: ReportState,
-    dropdownEnabled: Boolean,
-    onDropdownClick: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Text(
-        text = stringResource(report_input_title_reason),
-        style = NapzakMarketTheme.typography.body14sb,
-        color = NapzakMarketTheme.colors.gray500,
-        modifier = modifier,
-    )
-
-    Spacer(modifier = modifier.height(16.dp))
-
-    ReportReasonDropDownMenu(
-        reasons = reportState.reasons.toImmutableList(),
-        selectedReason = reportState.reason,
-        onReasonSelect = { reportState.reason = it },
-        onDropdownClick = onDropdownClick,
-        dropdownEnabled = dropdownEnabled,
-        modifier = modifier
-            .fillMaxWidth(),
-    )
-}
+/**
+ * 드롭다운 메뉴 형식의 스피너 컴포넌트입니다.옵션 목록과 초기 선택지를 받아 드롭다운 메뉴를 표시합니다.
+ *
+ * @param options 드롭다운 메뉴에 표시될 옵션 목록입니다.
+ * @param initialOption 초기 선택된 옵션입니다.
+ * @param onOptionSelect 옵션이 선택될 때 호출되는 콜백입니다. 선택된 옵션을 인자로 전달합니다.
+ */
 
 @Composable
-private fun ReportReasonDropDownMenu(
-    @StringRes reasons: ImmutableList<Int>,
-    @StringRes selectedReason: Int,
-    dropdownEnabled: Boolean,
-    onDropdownClick: (Boolean) -> Unit,
-    onReasonSelect: (Int) -> Unit,
+fun NapzakSpinner(
+    options: ImmutableList<String>,
+    initialOption: String,
+    onOptionSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
+    color: TextFieldColors = spinnerDefaultColor(),
 ) {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedOption by rememberSaveable { mutableStateOf(initialOption) }
+
     val shape = RoundedCornerShape(14.dp)
     val borderModifier = Modifier.border(
         width = Dp.Hairline,
@@ -85,36 +65,39 @@ private fun ReportReasonDropDownMenu(
         modifier = modifier.then(borderModifier),
     ) {
         TextField(
-            value = stringResource(selectedReason),
-            onValueChange = { },
+            value = selectedOption,
+            onValueChange = { /*This TextField is just for displaying currently selected option*/ },
             textStyle = NapzakMarketTheme.typography.caption12sb,
+            colors = color,
             shape = shape,
-            colors = dropDownMenuColor(),
+            readOnly = true,
+            enabled = false,
             trailingIcon = {
                 Icon(
                     imageVector = ImageVector.vectorResource(ic_down_chevron),
+                    tint = NapzakMarketTheme.colors.gray200,
                     contentDescription = null,
                 )
             },
             modifier = borderModifier
                 .fillMaxWidth()
-                .noRippleClickable { onDropdownClick(!dropdownEnabled) },
-            readOnly = true,
-            enabled = false,
+                .noRippleClickable { expanded = !expanded },
         )
 
         AnimatedVisibility(
-            visible = dropdownEnabled,
+            visible = expanded,
             enter = expandVertically(expandFrom = Alignment.Top),
             exit = shrinkVertically(shrinkTowards = Alignment.Top),
         ) {
             Column(modifier = Modifier.padding(8.dp)) {
-                reasons.forEach { reason ->
+                options.forEach { menu ->
                     DropdownMenuItem(
-                        text = stringResource(reason),
-                        isSelected = reason == selectedReason,
+                        text = menu,
+                        isSelected = menu == selectedOption,
                         onClick = {
-                            onReasonSelect(reason)
+                            selectedOption = menu
+                            onOptionSelect(menu)
+                            expanded = false
                         },
                     )
                 }
@@ -128,7 +111,7 @@ private fun DropdownMenuItem(
     text: String,
     isSelected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val colorScheme = NapzakMarketTheme.colors
     val color = if (isSelected) colorScheme.purple500 else colorScheme.gray300
@@ -149,25 +132,26 @@ private fun DropdownMenuItem(
 }
 
 @Composable
-private fun dropDownMenuColor(): TextFieldColors = TextFieldDefaults.colors(
+private fun spinnerDefaultColor(): TextFieldColors = TextFieldDefaults.colors(
     disabledTextColor = NapzakMarketTheme.colors.gray300,
     disabledTrailingIconColor = NapzakMarketTheme.colors.gray300,
     disabledContainerColor = NapzakMarketTheme.colors.white,
     disabledIndicatorColor = NapzakMarketTheme.colors.white,
 )
 
-@Preview(showBackground = true, heightDp = 300)
+@Preview(showBackground = true)
 @Composable
-private fun ReportReasonSectionPreview() {
-    NapzakMarketTheme {
-        val reportState = rememberReportState(ReportType.PRODUCT.toString())
+private fun NapzakSpinnerPreview() {
+    val mockOptions = listOf("옵션1111", "옵션2222", "옵션3333", "옵션4444")
 
-        Column(modifier = Modifier.padding(20.dp)) {
-            ReportReasonSection(
-                reportState = reportState,
-                dropdownEnabled = false,
-                onDropdownClick = {},
-            )
-        }
+    NapzakMarketTheme {
+        NapzakSpinner(
+            options = mockOptions.toImmutableList(),
+            initialOption = mockOptions.first(),
+            onOptionSelect = { },
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth(),
+        )
     }
 }
