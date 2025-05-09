@@ -13,7 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.napzak.market.explore.navigation.navigateToExplore
 import com.napzak.market.home.navigation.navigateToHome
-import com.napzak.market.onboarding.navigation.Terms
+import com.napzak.market.splash.navigation.Splash
 
 class MainNavigator(
     val navController: NavHostController,
@@ -22,7 +22,7 @@ class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = Terms
+    val startDestination = Splash
 
     var isRegister: Boolean by mutableStateOf(false)
         private set
