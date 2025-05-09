@@ -19,7 +19,7 @@ class UploadStorePhotoUseCase @Inject constructor(
     suspend operator fun invoke(
         coverPhoto: String?,
         profilePhoto: String?
-    ): Result<Map<PhotoType, String>> = runCatching {
+    ): Result<Map<PhotoType, String?>> = runCatching {
         val photoMap = mapOf(
             COVER_IMAGE_TITLE to coverPhoto,
             PROFILE_IMAGE_TITLE to profilePhoto,
@@ -30,8 +30,8 @@ class UploadStorePhotoUseCase @Inject constructor(
         putImageOnS3(presignedUrlMap[PhotoType.PROFILE], profilePhoto)
 
         mapOf(
-            PhotoType.COVER to (presignedUrlMap[PhotoType.COVER] ?: ""),
-            PhotoType.PROFILE to (presignedUrlMap[PhotoType.PROFILE] ?: ""),
+            PhotoType.COVER to presignedUrlMap[PhotoType.COVER],
+            PhotoType.PROFILE to (presignedUrlMap[PhotoType.PROFILE]),
         )
     }
 
@@ -43,9 +43,8 @@ class UploadStorePhotoUseCase @Inject constructor(
      * @throws Throwable presigned url을 가져오지 못할 경우
      */
     private suspend fun getPresignedUrlMap(photoMap: Map<String, String?>): Map<PhotoType, String> {
-        val imageTitles = photoMap.map { it.value }.filterNotNull()
+        val imageTitles = photoMap.filter { it.value != null }.map { it.key }
         val presignedUrls = presignedUrlRepository.getProfilePresignedUrls(imageTitles).getOrThrow()
-
 
         // 각 케이스별로 presigned url이 있는지 확인, 없으면 -1 반환
         val coverIndex = presignedUrls.indexOfFirst { it.imageName == COVER_IMAGE_TITLE }
@@ -63,15 +62,11 @@ class UploadStorePhotoUseCase @Inject constructor(
      * @throws IllegalArgumentException presigned url 또는 image uri가 null인 경우
      */
     private suspend fun putImageOnS3(presignedUrl: String?, imageUri: String?) {
-        if (presignedUrl == null || imageUri == null) throw IllegalArgumentException(
-            ERROR_URL_NOT_AVAILABLE
-        )
+        if (presignedUrl == null || imageUri == null) return
         presignedUrlRepository.putViaPresignedUrl(presignedUrl, imageUri).getOrThrow()
     }
 
     companion object {
-        private const val ERROR_URL_NOT_AVAILABLE = "Presigned URL or image URI is not available"
-
         const val PROFILE_IMAGE_TITLE = "profile.png"
         const val COVER_IMAGE_TITLE = "cover.png"
     }

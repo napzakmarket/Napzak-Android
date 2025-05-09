@@ -1,9 +1,6 @@
 package com.napzak.market.store.edit_store
 
 import android.net.Uri
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,15 +28,15 @@ internal class EditStoreViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(EditStoreUiState())
     val uiState = _uiState.asStateFlow()
 
-    private var originalStoreDetail by mutableStateOf(EditStoreUiState.EmptyStoreDetail)
 
     suspend fun getEditProfile() {
         storeRepository.fetchEditProfile()
             .onSuccess { storeDetail ->
-                originalStoreDetail = storeDetail
                 updateUiState(
                     loadState = UiState.Success(Unit),
+                    nickNameValidState = UiState.Empty,
                     storeDetail = storeDetail,
+                    originalStoreDetail = storeDetail,
                 )
             }.onFailure {
                 updateUiState(
@@ -50,12 +47,7 @@ internal class EditStoreViewModel @Inject constructor(
 
     fun saveEditedProfile() = viewModelScope.launch {
         runCatching {
-            val (coverUrl, photoUrl) = getPresignedUrl()
-
-            val newCoverUrl = coverUrl.takeIf { it.isNotBlank() } ?: originalStoreDetail.coverUrl
-            val newPhotoUrl = photoUrl.takeIf { it.isNotBlank() } ?: originalStoreDetail.photoUrl
-            updateUiState(coverUrl = newCoverUrl, photoUrl = newPhotoUrl)
-
+            getProfilePreSignedUrl()
             storeRepository.updateEditProfile(_uiState.value.storeDetail).getOrThrow()
         }.onSuccess {
             getEditProfile() // TODO: 이전 화면으로 이동
@@ -64,15 +56,18 @@ internal class EditStoreViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getPresignedUrl(): Pair<String, String> {
-        val presignedUrls = uploadStorePhotoUseCase(
-            coverPhoto = _uiState.value.storeDetail.coverUrl.takeIf { it != originalStoreDetail.coverUrl },
-            profilePhoto = _uiState.value.storeDetail.photoUrl.takeIf { it != originalStoreDetail.photoUrl },
-        ).getOrThrow()
+    private suspend fun getProfilePreSignedUrl() = with(_uiState.value) {
+        if (isCoverUrlChanged || isPhotoUrlChanged) {
+            val presignedUrls = uploadStorePhotoUseCase(
+                coverPhoto = storeDetail.coverUrl.takeIf { isCoverUrlChanged },
+                profilePhoto = storeDetail.photoUrl.takeIf { isPhotoUrlChanged },
+            ).getOrThrow()
 
-        val coverUrl = presignedUrls[PhotoType.COVER] ?: ""
-        val profileUrl = presignedUrls[PhotoType.PROFILE] ?: ""
-        return coverUrl to profileUrl
+            val coverUrl = presignedUrls[PhotoType.COVER] ?: originalStoreDetail.coverUrl
+            val profileUrl = presignedUrls[PhotoType.PROFILE] ?: originalStoreDetail.photoUrl
+
+            updateUiState(coverUrl = coverUrl, photoUrl = profileUrl)
+        }
     }
 
     fun updatePhoto(photoType: PhotoType, uri: Uri?) {
@@ -118,11 +113,13 @@ internal class EditStoreViewModel @Inject constructor(
     fun updateUiState(
         loadState: UiState<Unit> = _uiState.value.loadState,
         nickNameValidState: UiState<String> = _uiState.value.nickNameValidState,
+        originalStoreDetail: StoreEditProfile = _uiState.value.originalStoreDetail,
         storeDetail: StoreEditProfile = _uiState.value.storeDetail
     ) {
         updateUiState(
             loadState = loadState,
             nickNameValidState = nickNameValidState,
+            originalStoreDetail = originalStoreDetail,
             coverUrl = storeDetail.coverUrl,
             photoUrl = storeDetail.photoUrl,
             name = storeDetail.nickname,
@@ -134,6 +131,7 @@ internal class EditStoreViewModel @Inject constructor(
     fun updateUiState(
         loadState: UiState<Unit> = _uiState.value.loadState,
         nickNameValidState: UiState<String> = _uiState.value.nickNameValidState,
+        originalStoreDetail: StoreEditProfile = _uiState.value.originalStoreDetail,
         coverUrl: String = _uiState.value.storeDetail.coverUrl,
         photoUrl: String = _uiState.value.storeDetail.photoUrl,
         name: String = _uiState.value.storeDetail.nickname,
@@ -147,6 +145,7 @@ internal class EditStoreViewModel @Inject constructor(
             currentState.copy(
                 loadState = loadState,
                 nickNameValidState = nickNameValidState,
+                originalStoreDetail = originalStoreDetail,
                 storeDetail = currentState.storeDetail.copy(
                     coverUrl = newCoverUrl,
                     photoUrl = newPhotoUrl,
