@@ -33,8 +33,8 @@ import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.mypage.navigation.mypageGraph
+import com.napzak.market.mypage.setting.SettingsRoute
 import com.napzak.market.mypage.setting.navigation.SETTINGS_ROUTE
-import com.napzak.market.mypage.setting.navigation.SettingsRoute
 import com.napzak.market.mypage.setting.navigation.navigateToSettings
 import com.napzak.market.onboarding.navigation.Terms
 import com.napzak.market.onboarding.navigation.onboardingGraph

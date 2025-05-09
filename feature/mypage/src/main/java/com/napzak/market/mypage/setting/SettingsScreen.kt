@@ -12,6 +12,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.settings_button_logout
@@ -30,7 +32,29 @@ import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_confirm_
 import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_cancel_button
 import com.napzak.market.mypage.setting.component.SettingItem
 import com.napzak.market.mypage.setting.component.SettingsTopBar
+import com.napzak.market.mypage.setting.model.SettingViewModel
 import com.napzak.market.util.android.noRippleClickable
+
+@Composable
+fun SettingsRoute(
+    onBackClick: () -> Unit,
+    onLogoutConfirm: () -> Unit,
+    onWithdrawClick: () -> Unit,
+    openWebLink: (String) -> Unit,
+    viewModel: SettingViewModel = hiltViewModel()
+) {
+    val state by viewModel.settingInfo.collectAsState()
+
+    SettingsScreen(
+        onBackClick = onBackClick,
+        onLogoutConfirm = onLogoutConfirm,
+        onWithdrawClick = onWithdrawClick,
+        onNoticeClick = { if (state.noticeLink.isNotBlank()) openWebLink(state.noticeLink) },
+        onTermsClick = { if (state.termsLink.isNotBlank()) openWebLink(state.termsLink) },
+        onPrivacyClick = { if (state.privacyPolicyLink.isNotBlank()) openWebLink(state.privacyPolicyLink) },
+        onVersionClick = { if (state.versionInfoLink.isNotBlank()) openWebLink(state.versionInfoLink) },
+    )
+}
 
 @Composable
 fun SettingsScreen(
