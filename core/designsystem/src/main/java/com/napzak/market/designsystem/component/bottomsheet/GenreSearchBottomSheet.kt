@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -97,7 +98,9 @@ fun GenreSearchBottomSheet(
             modifier = Modifier.fillMaxHeight(0.75f),
             contentAlignment = Alignment.BottomCenter,
         ) {
-            Column {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -156,7 +159,7 @@ fun GenreSearchBottomSheet(
 
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxSize()
                         .background(color = NapzakMarketTheme.colors.gray50)
                         .padding(horizontal = 20.dp),
                 ) {
@@ -168,7 +171,9 @@ fun GenreSearchBottomSheet(
                                 selectedGenreList =
                                     selectedGenreList.filterNot { it.genreName == genreItem.genreName }
                             } else {
-                                selectedGenreList += genreItem
+                                if (selectedGenreList.size < 7) {
+                                    selectedGenreList += genreItem
+                                }
                             }
                         },
                     )

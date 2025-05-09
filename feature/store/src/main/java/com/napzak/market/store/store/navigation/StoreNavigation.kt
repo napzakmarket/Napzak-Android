@@ -18,6 +18,7 @@ fun NavGraphBuilder.storeGraph(
     navigateToUp: () -> Unit,
     navigateToProfileEdit: () -> Unit,
     navigateToProductDetail: (Long) -> Unit,
+    navigateToStoreReport: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<Store> {
@@ -25,6 +26,7 @@ fun NavGraphBuilder.storeGraph(
             onNavigateUp = navigateToUp,
             onProfileEditNavigate = navigateToProfileEdit,
             onProductDetailNavigate = navigateToProductDetail,
+            onStoreReportNavigate = navigateToStoreReport,
             modifier = modifier,
         )
     }
