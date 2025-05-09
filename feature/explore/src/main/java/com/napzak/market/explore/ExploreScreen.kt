@@ -73,7 +73,13 @@ internal fun ExploreRoute(
         viewModel.updateGenreItemsInBottomSheet()
     }
 
-    LaunchedEffect(uiState) {
+    LaunchedEffect(
+        uiState.selectedTab,
+        uiState.filteredGenres,
+        uiState.isUnopenSelected,
+        uiState.isSoldOutSelected,
+        uiState.sortOption,
+    ) {
         viewModel.updateExploreInformation()
     }
 
