@@ -9,6 +9,7 @@ import com.napzak.market.common.type.TradeType
 import com.napzak.market.explore.genredetail.state.GenreDetailProducts
 import com.napzak.market.explore.genredetail.state.GenreDetailUiState
 import com.napzak.market.genre.repository.GenreInfoRepository
+import com.napzak.market.interest.repository.InterestProductRepository
 import com.napzak.market.product.model.ExploreParameters
 import com.napzak.market.product.repository.ProductExploreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +25,7 @@ class GenreDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val genreInfoRepository: GenreInfoRepository,
     private val productExploreRepository: ProductExploreRepository,
+    private val interestProductRepository: InterestProductRepository,
 ) : ViewModel() {
     val genreId = savedStateHandle.get<Long>(GENRE_ID_KEY) ?: 0
 
@@ -96,8 +98,28 @@ class GenreDetailViewModel @Inject constructor(
         }
     }
 
-    fun updateProductIsInterested(productId: Long, isLiked: Boolean) {
-        // TODO: 좋아요 연결 API 설정
+    fun updateProductIsInterested(productId: Long, isLiked: Boolean) = viewModelScope.launch {
+        when (val state = uiState.value.loadState) {
+            is UiState.Success -> {
+                val updatedProducts = state.data.productList.map { product ->
+                    if (product.productId == productId) {
+                        product.copy(isInterested = !product.isInterested)
+                    } else {
+                        product
+                    }
+                }
+
+                updateLoadState(loadState = UiState.Success(GenreDetailProducts(updatedProducts)))
+            }
+
+            else -> {}
+        }
+
+        if (isLiked) {
+            interestProductRepository.unsetInterestProduct(productId)
+        } else {
+            interestProductRepository.setInterestProduct(productId)
+        }
     }
 
     private fun updateLoadState(loadState: UiState<GenreDetailProducts>) =
