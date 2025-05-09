@@ -169,7 +169,7 @@ internal class ExploreViewModel @Inject constructor(
     fun updateSelectedGenres(newGenres: List<Genre>) {
         _uiState.update { currentState ->
             currentState.copy(
-                filteredGenres = newGenres
+                filteredGenres = newGenres,
             )
         }
     }
@@ -209,7 +209,6 @@ internal class ExploreViewModel @Inject constructor(
                     }
                 }
 
-
                 updateLoadState(loadState = UiState.Success(ExploreProducts(updatedProducts)))
             }
 
@@ -226,7 +225,7 @@ internal class ExploreViewModel @Inject constructor(
     private fun updateLoadState(loadState: UiState<ExploreProducts>) =
         _uiState.update { currentState ->
             currentState.copy(
-                loadState = loadState
+                loadState = loadState,
             )
         }
 
