@@ -30,6 +30,8 @@ import com.napzak.market.search.navigation.navigateToSearch
 import com.napzak.market.search.navigation.searchGraph
 import com.napzak.market.store.store.navigation.storeGraph
 import kotlinx.collections.immutable.toImmutableList
+import com.napzak.market.mypage.navigation.mypageGraph
+
 
 @Composable
 fun MainScreen(
@@ -155,6 +157,17 @@ private fun MainNavHost(
             navigateToUp = navigator::navigateUp,
             navigateToDetail = {}, // TODO: 물품 상세 화면으로 이동
             navigateToGenreSearch = navigator.navController::navigateToGenreSearch,
+            modifier = modifier,
+        )
+
+        mypageGraph(
+            navigateToMyMarket = { /* TODO: 내 마켓 화면으로 이동 */ },
+            navigateToSales = { /* TODO: 판매내역 화면으로 이동 */ },
+            navigateToPurchase = { /* TODO: 구매내역 화면으로 이동 */ },
+            navigateToRecent = { /* TODO: 최근 본 상품 화면으로 이동 */ },
+            navigateToFavorite = { /* TODO: 찜 화면으로 이동 */ },
+            navigateToSettings = { /* TODO: 설정 화면으로 이동 */ },
+            navigateToHelp = { /* TODO: 고객센터 화면으로 이동 */ },
             modifier = modifier,
         )
     }
