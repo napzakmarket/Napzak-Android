@@ -113,9 +113,9 @@ internal fun EditStoreRoute(
 
     EditStoreScreen(
         uiState = uiState,
-        onStoreNameChange = { viewModel.updateStoreDetail(name = it) },
-        onStoreIntroductionChange = { viewModel.updateStoreDetail(description = it) },
-        onStoreGenreChange = { viewModel.updateStoreDetail(genres = it) },
+        onStoreNameChange = { viewModel.updateUiState(name = it) },
+        onStoreIntroductionChange = { viewModel.updateUiState(description = it) },
+        onStoreGenreChange = { viewModel.updateUiState(genres = it) },
         onGenreSearchTextChange = { }, // TODO: 장르 검색 API 연결
         onBackButtonClick = onNavigateUp,
         onPhotoChange = { editedPhotoType ->
