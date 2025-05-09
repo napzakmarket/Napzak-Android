@@ -3,7 +3,6 @@ package com.napzak.market.main
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.napzak.market.common.navigation.MainTabRoute
 import com.napzak.market.common.navigation.Route
 import com.napzak.market.designsystem.R.drawable.ic_nav_add
@@ -19,6 +18,8 @@ import com.napzak.market.main.R.string.main_bottom_bar_my_page
 import com.napzak.market.main.R.string.main_bottom_bar_register
 import com.napzak.market.home.navigation.Home
 import com.napzak.market.explore.navigation.Explore
+import com.napzak.market.mypage.navigation.MyPageNavigation
+
 
 // TODO: 구현 시작 시 수정
 enum class MainTab(
@@ -49,7 +50,7 @@ enum class MainTab(
     MY_PAGE(
         iconRes = ic_nav_user,
         title = main_bottom_bar_my_page,
-        route = Dummy,
+        route = MyPageNavigation,
     );
 
     companion object {
