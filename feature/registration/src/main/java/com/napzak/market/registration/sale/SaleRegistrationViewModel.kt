@@ -2,6 +2,9 @@ package com.napzak.market.registration.sale
 
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.type.ProductConditionType
+import com.napzak.market.presigned_url.model.PresignedUrl
+import com.napzak.market.presigned_url.usecase.GetProductPresignedUrlUseCase
+import com.napzak.market.presigned_url.usecase.UploadImageUseCase
 import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect
 import com.napzak.market.registration.RegistrationViewModel
 import com.napzak.market.registration.event.GenreEventBus
@@ -18,7 +21,12 @@ import javax.inject.Inject
 @HiltViewModel
 class SaleRegistrationViewModel @Inject constructor(
     // TODO: Use Case 구현 필요
-) : RegistrationViewModel() {
+    getProductPresignedUrlUseCase: GetProductPresignedUrlUseCase,
+    uploadImageUseCase: UploadImageUseCase,
+) : RegistrationViewModel(
+    getProductPresignedUrlUseCase,
+    uploadImageUseCase
+) {
     private val _uiState = MutableStateFlow(SaleUiState())
     val saleUiState = _uiState.asStateFlow()
 
@@ -68,5 +76,9 @@ class SaleRegistrationViewModel @Inject constructor(
                 || registrationState.description.isEmpty() || registrationState.price.isEmpty() || saleState.condition == null
                 || saleState.isShippingFeeIncluded == null || (saleState.isShippingFeeIncluded == false && (saleState.normalShippingFee.isEmpty() && saleState.halfShippingFee.isEmpty()))
                 || (saleState.isNormalShippingChecked && saleState.normalShippingFee.isEmpty()) || (saleState.isHalfShippingChecked && saleState.halfShippingFee.isEmpty()))
+    }
+
+    override fun uploadProduct(presignedUrls: List<PresignedUrl>) = viewModelScope.launch {
+
     }
 }

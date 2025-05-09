@@ -77,7 +77,7 @@ fun PurchaseRegistrationRoute(
         onPriceChange = viewModel::updatePrice,
         onNegotiableChange = viewModel::updateNegotiable,
         checkButtonEnabled = viewModel::updateButtonState,
-        onRegisterClick = viewModel::registerProduct,
+        onRegisterClick = viewModel::getPresignedUrl,
         modifier = modifier,
     )
 }

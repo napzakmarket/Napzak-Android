@@ -87,7 +87,7 @@ fun SaleRegistrationRoute(
         onHalfShippingFeeSelect = viewModel::updateHalfShippingFeeInclusion,
         onHalfShippingFeeChange = viewModel::updateHalfShippingFee,
         checkButtonEnabled = viewModel::updateButtonState,
-        onRegisterClick = viewModel::registerProduct,
+        onRegisterClick = viewModel::getPresignedUrl,
         modifier = modifier,
     )
 }
