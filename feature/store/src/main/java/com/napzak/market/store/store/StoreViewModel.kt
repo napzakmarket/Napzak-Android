@@ -1,17 +1,18 @@
-package com.napzak.market.explore
+package com.napzak.market.store.store
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.BottomSheetType
+import com.napzak.market.common.type.MarketTab
 import com.napzak.market.common.type.SortType
-import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.component.bottomsheet.Genre
-import com.napzak.market.explore.model.Product
-import com.napzak.market.explore.state.ExploreBottomSheetState
-import com.napzak.market.explore.state.ExploreProducts
-import com.napzak.market.explore.state.ExploreUiState
+import com.napzak.market.store.model.Product
+import com.napzak.market.store.model.StoreDetail
+import com.napzak.market.store.store.state.StoreBottomSheetState
+import com.napzak.market.store.store.state.StoreInformation
+import com.napzak.market.store.store.state.StoreUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,32 +25,47 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class ExploreViewModel @Inject constructor(
+class StoreViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    val searchTerm: String = savedStateHandle.get<String>(SEARCH_TERM_KEY) ?: ""
+    val storeId: Long = savedStateHandle.get<Long>(STORE_ID_KEY) ?: 0
 
-    private val _uiState = MutableStateFlow(ExploreUiState())
+    private val _uiState = MutableStateFlow(StoreUiState())
     val uiState = _uiState.asStateFlow()
-    private val _bottomSheetState: MutableStateFlow<ExploreBottomSheetState> =
-        MutableStateFlow(ExploreBottomSheetState())
-    val bottomSheetState: StateFlow<ExploreBottomSheetState> = _bottomSheetState.asStateFlow()
+    private val _bottomSheetState: MutableStateFlow<StoreBottomSheetState> =
+        MutableStateFlow(StoreBottomSheetState())
+    val bottomSheetState: StateFlow<StoreBottomSheetState> = _bottomSheetState.asStateFlow()
 
     private val _genreSearchTerm = MutableStateFlow("")
-    val genreSearchTerm = _genreSearchTerm.asStateFlow()
 
-    fun updateExploreInformation() = viewModelScope.launch {
+    fun updateStoreInformation() = viewModelScope.launch {
         with(uiState.value) {
             // TODO : 추후 API로 변경
             updateLoadState(
                 UiState.Success(
-                    ExploreProducts(productList = Product.mockMixedProduct)
+                    StoreInformation(
+                        storeDetail = StoreDetail.mockStoreInfo,
+                    )
                 )
             )
         }
+        updateStoreProducts()
     }
 
-    fun updateTradeType(newTradeType: TradeType) {
+    fun updateStoreProducts() = viewModelScope.launch {
+        var newProductList: List<Product> = Product.mockMixedProduct // TODO : 추후 API로 변경
+
+        if (uiState.value.loadState is UiState.Success) {
+            _uiState.update { currentState ->
+                val currentInfo =
+                    (uiState.value.loadState as UiState.Success<StoreInformation>).data
+                val updatedInfo = currentInfo.copy(productList = newProductList)
+                currentState.copy(loadState = UiState.Success(updatedInfo))
+            }
+        }
+    }
+
+    fun updateMarketTabType(newTradeType: MarketTab) {
         _uiState.update { currentState ->
             currentState.copy(
                 selectedTab = newTradeType,
@@ -71,6 +87,12 @@ internal class ExploreViewModel @Inject constructor(
                 }
             }
 
+            BottomSheetType.STORE_REPORT -> {
+                _bottomSheetState.update {
+                    it.copy(isStoreReportBottomSheetVisible = !_bottomSheetState.value.isStoreReportBottomSheetVisible)
+                }
+            }
+
             else -> {}
         }
     }
@@ -86,24 +108,10 @@ internal class ExploreViewModel @Inject constructor(
                     Genre(3, "산리오1"),
                     Genre(4, "주술회전1"),
                     Genre(5, "진격의 거인1"),
-                    Genre(6, "산리오2"),
-                    Genre(7, "주술회전2"),
-                    Genre(8, "진격의 거인2"),
-                    Genre(9, "산리오3"),
-                    Genre(10, "주술회전3"),
                 ),
                 genreSearchResultItems = listOf(
                     Genre(0, "산리오"),
                     Genre(1, "주술회전"),
-                    Genre(2, "진격의 거인"),
-                    Genre(3, "산리오1"),
-                    Genre(4, "주술회전1"),
-                    Genre(5, "진격의 거인1"),
-                    Genre(6, "산리오2"),
-                    Genre(7, "주술회전2"),
-                    Genre(8, "진격의 거인2"),
-                    Genre(9, "산리오3"),
-                    Genre(10, "주술회전3"),
                 )
             )
         }
@@ -111,10 +119,11 @@ internal class ExploreViewModel @Inject constructor(
 
     fun updateGenreSearchTerm(searchTerm: String) {
         _genreSearchTerm.update { searchTerm }
+        updateGenreSearchResult()
     }
 
     @OptIn(FlowPreview::class)
-    fun updateGenreSearchResult() = viewModelScope.launch {
+    private fun updateGenreSearchResult() = viewModelScope.launch {
         _genreSearchTerm
             .debounce(DEBOUNCE_DELAY)
             .collectLatest { debounce ->
@@ -140,18 +149,10 @@ internal class ExploreViewModel @Inject constructor(
         }
     }
 
-    fun updateUnopenFilter() {
+    fun updateIsOnSale() {
         _uiState.update { currentState ->
             currentState.copy(
-                isUnopenSelected = !_uiState.value.isUnopenSelected,
-            )
-        }
-    }
-
-    fun updateSoldOutFilter() {
-        _uiState.update { currentState ->
-            currentState.copy(
-                isSoldOutSelected = !_uiState.value.isSoldOutSelected,
+                isOnSale = !_uiState.value.isOnSale
             )
         }
     }
@@ -168,7 +169,7 @@ internal class ExploreViewModel @Inject constructor(
         // TODO: 좋아요 연결 API 설정
     }
 
-    private fun updateLoadState(loadState: UiState<ExploreProducts>) =
+    private fun updateLoadState(loadState: UiState<StoreInformation>) =
         _uiState.update { currentState ->
             currentState.copy(
                 loadState = loadState
@@ -177,6 +178,6 @@ internal class ExploreViewModel @Inject constructor(
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L
-        private const val SEARCH_TERM_KEY = "searchTerm"
+        private const val STORE_ID_KEY = "storeId"
     }
 }
