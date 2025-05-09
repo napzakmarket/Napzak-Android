@@ -123,6 +123,7 @@ fun SaleRegistrationScreen(
         registrationUiState.title,
         registrationUiState.description,
         registrationUiState.price,
+        saleUiState.condition,
         saleUiState.isShippingFeeIncluded,
         saleUiState.isNormalShippingChecked,
         saleUiState.normalShippingFee,
