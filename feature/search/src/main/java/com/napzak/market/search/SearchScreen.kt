@@ -18,11 +18,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -31,16 +32,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.component.bottomsheet.Genre
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.search.R.drawable.ic_left_chevron
 import com.napzak.market.feature.search.R.string.search_hint
-import com.napzak.market.feature.search.R.string.search_suggested_search_text
 import com.napzak.market.feature.search.R.string.search_suggested_genre
+import com.napzak.market.feature.search.R.string.search_suggested_search_text
 import com.napzak.market.search.component.GenreNavigationButton
 import com.napzak.market.search.component.SuggestedGenreCard
 import com.napzak.market.search.component.SuggestedKeywordChip
+import com.napzak.market.search.state.SearchUiState
+import com.napzak.market.search.state.SearchWord
 import com.napzak.market.util.android.noRippleClickable
 
 const val EMPTY_TEXT = ""
@@ -51,34 +57,78 @@ internal fun SearchRoute(
     onSearchResultNavigate: (String) -> Unit,
     onGenreDetailNavigate: (Long) -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: SearchViewModel = hiltViewModel(),
 ) {
-    var searchText by remember { mutableStateOf("") } // TODO: viewModel로 옮길 예정
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val searchText by viewModel.searchTerm.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.updateRecommendedSearchWordGenres()
+    }
 
     SearchScreen(
+        uiState = uiState,
         searchText = searchText,
-        suggestedSearchText = emptyList(),
-        suggestedGenre = emptyList(),
-        searchResultGenres = emptyList(),
         onBackButtonClick = onBackButtonClick,
-        onTextChange = { searchText = it },
+        onTextChange = viewModel::updateSearchTerm,
         onSearchClick = { onSearchResultNavigate(searchText) },
-        onSuggestedTextClick = onSearchResultNavigate,
-        onSuggestedGenreClick = onGenreDetailNavigate,
+        onRecommendedSearchWordClick = onSearchResultNavigate,
+        onRecommendedGenreClick = onGenreDetailNavigate,
         modifier = modifier,
     )
 }
 
 @Composable
 private fun SearchScreen(
+    uiState: SearchUiState,
     searchText: String,
-    suggestedSearchText: List<String>,
-    suggestedGenre: List<Genre>,
+    onBackButtonClick: () -> Unit,
+    onTextChange: (String) -> Unit,
+    onSearchClick: () -> Unit,
+    onRecommendedSearchWordClick: (String) -> Unit,
+    onRecommendedGenreClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    when (uiState.loadState) {
+        is UiState.Loading -> {
+        }
+
+        is UiState.Empty -> {
+        }
+
+        is UiState.Failure -> {
+        }
+
+        is UiState.Success -> {
+            with(uiState) {
+                SearchSuccessScreen(
+                    searchText = searchText,
+                    recommendedSearchWords = uiState.loadState.data.recommendedSearchWords,
+                    recommendedGenres = uiState.loadState.data.recommendedGenres,
+                    searchResultGenres = searchResults,
+                    onBackButtonClick = onBackButtonClick,
+                    onTextChange = onTextChange,
+                    onSearchClick = onSearchClick,
+                    onRecommendedSearchWordClick = onRecommendedSearchWordClick,
+                    onRecommendedGenreClick = onRecommendedGenreClick,
+                    modifier = modifier,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SearchSuccessScreen(
+    searchText: String,
+    recommendedSearchWords: List<SearchWord>,
+    recommendedGenres: List<Genre>,
     searchResultGenres: List<Genre>,
     onBackButtonClick: () -> Unit,
     onTextChange: (String) -> Unit,
     onSearchClick: () -> Unit,
-    onSuggestedTextClick: (String) -> Unit,
-    onSuggestedGenreClick: (Long) -> Unit,
+    onRecommendedSearchWordClick: (String) -> Unit,
+    onRecommendedGenreClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -122,15 +172,15 @@ private fun SearchScreen(
                     .padding(top = 14.dp),
             ) {
                 SuggestedSearchTextSection(
-                    searchTexts = suggestedSearchText,
-                    onTextChipClick = onSuggestedTextClick,
+                    recommendedSearchWords = recommendedSearchWords,
+                    onTextChipClick = onRecommendedSearchWordClick,
                 )
 
                 Spacer(Modifier.height(46.dp))
 
                 SuggestedGenreSection(
-                    genres = suggestedGenre,
-                    onGenreCardClick = onSuggestedGenreClick,
+                    genres = recommendedGenres,
+                    onGenreCardClick = onRecommendedGenreClick,
                 )
             }
         } else {
@@ -142,7 +192,7 @@ private fun SearchScreen(
                 items(searchResultGenres) { genreItem ->
                     GenreNavigationButton(
                         genreName = genreItem.genreName,
-                        onBlockClick = { onSuggestedGenreClick(genreItem.genreId) },
+                        onBlockClick = { onRecommendedGenreClick(genreItem.genreId) },
                         modifier = Modifier.background(color = NapzakMarketTheme.colors.white),
                     )
 
@@ -161,7 +211,7 @@ private fun SearchScreen(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SuggestedSearchTextSection(
-    searchTexts: List<String>,
+    recommendedSearchWords: List<SearchWord>,
     onTextChipClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -180,10 +230,10 @@ private fun SuggestedSearchTextSection(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            searchTexts.forEach { searchText ->
+            recommendedSearchWords.forEach { searchWord ->
                 SuggestedKeywordChip(
-                    keyword = searchText,
-                    onKeywordChipClick = { onTextChipClick(searchText) },
+                    keyword = searchWord.searchWord,
+                    onKeywordChipClick = { onTextChipClick(searchWord.searchWord) },
                 )
             }
         }
@@ -238,42 +288,16 @@ private fun SuggestedGenreSection(
 @Composable
 private fun SearchScreenPreview(modifier: Modifier = Modifier) {
     var searchText by remember { mutableStateOf("") }
-    val suggestedSearchText = listOf(
-        "헌터x헌터 룩업", "주술회전 고죠 사토루", "웨딩 마이멜로디",
-        "짱구는 못말려 날아라 수제김밥", "은혼 긴토키", "하이큐 모찌모찌아아아아아",
-    )
-    val suggestedGenre = listOf(
-        Genre(0, "짱구는 못말려 날아라 수제김밥"),
-        Genre(1, "짱구는 못말려 날아라 수제김밥"),
-        Genre(2, "짱구는 못말려 날아라 수제김밥"),
-        Genre(3, "짱구는 못말려 날아라 수제김밥"),
-        Genre(4, "짱구는 못말려 날아라 수제김밥"),
-        Genre(5, "짱구는 못말려 날아라 수제김밥"),
-        Genre(6, "짱구는 못말려 날아라 수제김밥"),
-        Genre(7, "짱구는 못말려 날아라 수제김밥"),
-        Genre(8, "짱구는 못말려 날아라 수제김밥"),
-    )
-    val searchResultGenres = listOf(
-        Genre(0, "짱구는 못말려 날아라 수제김밥"),
-        Genre(1, "짱구는 못말려 날아라 수제김밥"),
-        Genre(2, "짱구는 못말려 날아라 수제김밥"),
-        Genre(3, "짱구는 못말려 날아라 수제김밥"),
-        Genre(4, "짱구는 못말려 날아라 수제김밥"),
-        Genre(5, "짱구는 못말려 날아라 수제김밥"),
-        Genre(6, "짱구는 못말려 날아라 수제김밥"),
-    )
 
     NapzakMarketTheme {
         SearchScreen(
+            uiState = SearchUiState(),
             searchText = searchText,
-            suggestedSearchText = suggestedSearchText,
-            suggestedGenre = suggestedGenre,
-            searchResultGenres = searchResultGenres,
             onBackButtonClick = { },
             onTextChange = { searchText = it },
             onSearchClick = { },
-            onSuggestedTextClick = { },
-            onSuggestedGenreClick = { },
+            onRecommendedSearchWordClick = { },
+            onRecommendedGenreClick = { },
             modifier = modifier,
         )
     }

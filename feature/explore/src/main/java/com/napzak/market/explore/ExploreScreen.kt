@@ -51,11 +51,11 @@ import com.napzak.market.explore.component.GenreNavigationButton
 import com.napzak.market.explore.model.Product
 import com.napzak.market.explore.state.ExploreBottomSheetState
 import com.napzak.market.explore.state.ExploreUiState
-import com.napzak.market.feature.explore.R.string.explore_search_hint
-import com.napzak.market.feature.explore.R.string.explore_unopened
+import com.napzak.market.feature.explore.R.string.explore_count
 import com.napzak.market.feature.explore.R.string.explore_exclude_sold_out
 import com.napzak.market.feature.explore.R.string.explore_product
-import com.napzak.market.feature.explore.R.string.explore_count
+import com.napzak.market.feature.explore.R.string.explore_search_hint
+import com.napzak.market.feature.explore.R.string.explore_unopened
 import com.napzak.market.util.android.noRippleClickable
 
 @Composable
@@ -92,14 +92,20 @@ internal fun ExploreRoute(
             viewModel.updateBottomSheetVisibility(BottomSheetType.GENRE_SEARCHING)
         },
         onGenreBottomSheetTextChange = viewModel::updateGenreSearchTerm,
-        onGenreSelectButtonClick = viewModel::updateSelectedGenres,
+        onGenreSelectButtonClick = { newGenre ->
+            viewModel.updateSelectedGenres(newGenre)
+            viewModel.updateBottomSheetVisibility(BottomSheetType.GENRE_SEARCHING)
+        },
         onUnopenFilterClick = viewModel::updateUnopenFilter,
         onExcludeSoldOutFilterClick = viewModel::updateSoldOutFilter,
         onGenreDetailNavigate = onGenreDetailNavigate,
         onSortOptionClick = {
             viewModel.updateBottomSheetVisibility(BottomSheetType.SORT)
         },
-        onSortItemClick = viewModel::updateSortOption,
+        onSortItemClick = { newSortOption ->
+            viewModel.updateSortOption(newSortOption)
+            viewModel.updateBottomSheetVisibility(BottomSheetType.SORT)
+        },
         onProductDetailNavigate = onProductDetailNavigate,
         onLikeButtonClick = { id, value ->
             viewModel.updateProductIsInterested(productId = id, isLiked = value)

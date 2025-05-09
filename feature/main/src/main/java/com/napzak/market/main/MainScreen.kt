@@ -28,6 +28,9 @@ import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
+import com.napzak.market.onboarding.navigation.Terms
+import com.napzak.market.onboarding.navigation.onboardingGraph
+import com.napzak.market.registration.navigation.navigateToGenreSearch
 import com.napzak.market.registration.navigation.navigateToPurchaseRegistration
 import com.napzak.market.registration.navigation.navigateToSaleRegistration
 import com.napzak.market.registration.navigation.registrationGraph
@@ -38,6 +41,8 @@ import com.napzak.market.store.store.navigation.storeGraph
 import com.napzak.market.util.android.LocalSnackBarController
 import com.napzak.market.util.android.SnackBarController
 import kotlinx.collections.immutable.toImmutableList
+import com.napzak.market.mypage.navigation.mypageGraph
+
 
 @Composable
 fun MainScreen(
@@ -119,6 +124,16 @@ private fun MainNavHost(
     ) {
         dummyGraph(modifier = modifier)
 
+        onboardingGraph(
+            navController = navigator.navController,
+            onFinish = {
+                navigator.navController.navigate(Home) {
+                    popUpTo(Terms) { inclusive = true }
+                }
+            },
+            modifier = modifier,
+        )
+
         homeGraph(
             navigateToSearch = { navigator.navController.navigateToSearch() },
             navigateToProductDetail = { /*TODO: 물품 상세페이지로 이동*/ },
@@ -151,6 +166,7 @@ private fun MainNavHost(
             navigateToUp = navigator::navigateUp,
             navigateToProfileEdit = { /* TODO: move to profile edit */ },
             navigateToProductDetail = { /* TODO: move to product detail */ },
+            navigateToStoreReport = { /* TODO: move to store report */ },
             modifier = modifier,
         )
 
@@ -171,6 +187,18 @@ private fun MainNavHost(
         registrationGraph(
             navigateToUp = navigator::navigateUp,
             navigateToDetail = {}, // TODO: 물품 상세 화면으로 이동
+            navigateToGenreSearch = navigator.navController::navigateToGenreSearch,
+            modifier = modifier,
+        )
+
+        mypageGraph(
+            navigateToMyMarket = { /* TODO: 내 마켓 화면으로 이동 */ },
+            navigateToSales = { /* TODO: 판매내역 화면으로 이동 */ },
+            navigateToPurchase = { /* TODO: 구매내역 화면으로 이동 */ },
+            navigateToRecent = { /* TODO: 최근 본 상품 화면으로 이동 */ },
+            navigateToFavorite = { /* TODO: 찜 화면으로 이동 */ },
+            navigateToSettings = { /* TODO: 설정 화면으로 이동 */ },
+            navigateToHelp = { /* TODO: 고객센터 화면으로 이동 */ },
             modifier = modifier,
         )
     }

@@ -1,0 +1,11 @@
+package com.napzak.market.mypage.state
+
+import androidx.compose.runtime.Immutable
+
+@Immutable
+data class MyPageUiState(
+    val nickname: String = "",
+    val profileImageUrl: String = "",
+    val salesCount: Int = 0,
+    val purchaseCount: Int = 0
+)
