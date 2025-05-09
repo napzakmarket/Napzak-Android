@@ -15,6 +15,8 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,10 +25,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.common.type.SortType
+import com.napzak.market.designsystem.R.drawable.ic_check_purple
+import com.napzak.market.designsystem.R.drawable.ic_x_button_24
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.util.android.noRippleClickable
-import com.napzak.market.designsystem.R.drawable.ic_x_button_24
-import com.napzak.market.designsystem.R.drawable.ic_check_purple
+import kotlinx.coroutines.launch
 
 /**
  * 정렬 BottomSheet
@@ -45,6 +48,10 @@ fun SortBottomSheet(
     onDismissRequest: () -> Unit,
     onSortItemClick: (SortType) -> Unit,
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) { sheetState.expand() }
+
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
@@ -65,7 +72,13 @@ fun SortBottomSheet(
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier
-                    .noRippleClickable(onDismissRequest),
+                    .noRippleClickable {
+                        coroutineScope
+                            .launch { sheetState.hide() }
+                            .invokeOnCompletion {
+                                onDismissRequest()
+                            }
+                    },
             )
 
             Spacer(Modifier.height(2.dp))
@@ -74,7 +87,13 @@ fun SortBottomSheet(
                 SortItem(
                     sortType = sortItem.label,
                     isSelected = sortItem == selectedSortType,
-                    onSortItemClick = { onSortItemClick(sortItem) },
+                    onSortItemClick = {
+                        coroutineScope
+                            .launch { sheetState.hide() }
+                            .invokeOnCompletion {
+                                onSortItemClick(sortItem)
+                            }
+                    },
                 )
             }
         }

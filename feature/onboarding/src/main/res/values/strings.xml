@@ -3,4 +3,15 @@
     <string name="onboarding_title">서비스 이용약관에 동의해주세요</string>
     <string name="onboarding_all_agreement_title">서비스 이용약관에 동의해주세요</string>
     <string name="onboarding_next">다음으로</string>
+    <string name="onboarding_nickname_title">납작마켓에서 사용할\n이름을 알려주세요</string>
+    <string name="onboarding_nickname_sub_title">띄어쓰기 없이 한글, 영문, 숫자만 사용할 수 있어요 (2~20자)</string>
+    <string name="onboarding_nickname_edit_hint">이름을 입력해주세요</string>
+    <string name="onboarding_nickname_success">사용할 수 있는 이름이에요!</string>
+    <string name="onboarding_nickname_validation_button">이름확인</string>
+    <string name="onboarding_genre_selected_limitation">최대 7개 선택</string>
+    <string name="onboarding_genre_title">어떤 장르를 좋아하시나요?\n취향에 딱 맞는 상품을 소개해드릴게요</string>
+    <string name="onboarding_genre_sub_title">장르 선택은 많을수록 좋아요.\n숨겨진 레어템을 발견할 기회를 놓치지 마세요!</string>
+    <string name="onboarding_genre_edit_hint">원하는 장르를 직접 검색해보세요!</string>
+    <string name="onboarding_genre_done">납작마켓 시작하기</string>
+    <string name="onboarding_genre_skip">건너뛰기</string>
 </resources>
