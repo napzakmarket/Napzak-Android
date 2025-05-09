@@ -15,7 +15,9 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.common)
     implementation(projects.core.util)
+    implementation(projects.domain.genre)
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
+    implementation(libs.timber)
 }
