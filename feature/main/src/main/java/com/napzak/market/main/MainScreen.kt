@@ -12,6 +12,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.napzak.market.designsystem.component.CommonSnackBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.detail.navigation.navigateToProductDetail
@@ -53,8 +55,17 @@ fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val systemUiController = rememberSystemUiController()
     val snackBarHostState = remember { SnackbarHostState() }
     val snackBarController = remember { SnackBarController(snackBarHostState, coroutineScope) }
+
+    val statusBarColor = NapzakMarketTheme.colors.white
+
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = statusBarColor,
+        )
+    }
 
     Scaffold(
         bottomBar = {
