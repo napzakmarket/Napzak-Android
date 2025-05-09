@@ -8,36 +8,30 @@ import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.explore.genredetail.state.GenreDetailProducts
 import com.napzak.market.explore.genredetail.state.GenreDetailUiState
-import com.napzak.market.explore.genredetail.state.GenreInfo
 import com.napzak.market.explore.model.Product
+import com.napzak.market.genre.repository.GenreInfoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class GenreDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val genreInfoRepository: GenreInfoRepository,
 ) : ViewModel() {
-    val genreId = savedStateHandle.get<Long>(GENRE_ID_KEY)
+    val genreId = savedStateHandle.get<Long>(GENRE_ID_KEY) ?: 0
 
     private val _uiState = MutableStateFlow(GenreDetailUiState())
     val uiState = _uiState.asStateFlow()
 
     fun updateGenreInfo() = viewModelScope.launch {
-        _uiState.update { currentState ->
-            // TODO : 장르 정보 검색 API
-            currentState.copy(
-                genreInfo = GenreInfo(
-                    genreId = 0,
-                    genreName = "장르명",
-                    tag = null,
-                    cover = "",
-                )
-            )
-        }
+        genreInfoRepository.getGenreInfo(genreId)
+            .onSuccess { _uiState.update { currentState -> currentState.copy(genreInfo = it) } }
+            .onFailure(Timber::e)
     }
 
     fun updateGenreDetailInformation() = viewModelScope.launch {

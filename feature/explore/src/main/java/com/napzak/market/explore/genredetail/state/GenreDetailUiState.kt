@@ -5,11 +5,12 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.explore.model.Product
+import com.napzak.market.genre.model.GenreInfo
 
 @Immutable
 data class GenreDetailUiState(
     val loadState: UiState<GenreDetailProducts> = UiState.Loading,
-    val genreInfo: GenreInfo = GenreInfo(),
+    val genreInfo: GenreInfo = GenreInfo(0, "", "", ""),
     val selectedTab: TradeType = TradeType.SELL,
     val isUnopenSelected: Boolean = false,
     val isSoldOutSelected: Boolean = false,
@@ -18,11 +19,4 @@ data class GenreDetailUiState(
 
 data class GenreDetailProducts(
     val productList: List<Product>,
-)
-
-data class GenreInfo(
-    val genreId: Long = -1,
-    val genreName: String = "",
-    val tag: String? = null,
-    val cover: String = "",
 )

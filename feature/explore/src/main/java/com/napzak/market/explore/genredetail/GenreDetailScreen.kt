@@ -58,7 +58,6 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.explore.component.BasicFilterChip
 import com.napzak.market.explore.component.GenreLabel
 import com.napzak.market.explore.genredetail.state.GenreDetailUiState
-import com.napzak.market.explore.genredetail.state.GenreInfo
 import com.napzak.market.explore.model.Product
 import com.napzak.market.feature.explore.R.drawable.ic_home
 import com.napzak.market.feature.explore.R.drawable.ic_left_chevron_24
@@ -66,6 +65,7 @@ import com.napzak.market.feature.explore.R.string.explore_count
 import com.napzak.market.feature.explore.R.string.explore_exclude_sold_out
 import com.napzak.market.feature.explore.R.string.explore_product
 import com.napzak.market.feature.explore.R.string.explore_unopened
+import com.napzak.market.genre.model.GenreInfo
 import com.napzak.market.util.android.noRippleClickable
 import kotlin.collections.chunked
 
@@ -328,7 +328,7 @@ private fun GenreScrollSection(
                             Spacer(Modifier.width(4.dp))
 
                             Text(
-                                text = tag,
+                                text = tag!!,
                                 style = NapzakMarketTheme.typography.caption10sb,
                                 color = NapzakMarketTheme.colors.red,
                                 modifier = Modifier
