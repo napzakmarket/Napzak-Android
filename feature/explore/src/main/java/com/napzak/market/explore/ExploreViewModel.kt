@@ -12,6 +12,7 @@ import com.napzak.market.explore.state.ExploreProducts
 import com.napzak.market.explore.state.ExploreUiState
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.genre.model.extractGenreIds
+import com.napzak.market.genre.repository.GenreNameRepository
 import com.napzak.market.product.model.ExploreParameters
 import com.napzak.market.product.model.SearchParameters
 import com.napzak.market.product.repository.ProductExploreRepository
@@ -24,12 +25,14 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 internal class ExploreViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val productExploreRepository: ProductExploreRepository,
+    private val genreNameRepository: GenreNameRepository,
 ) : ViewModel() {
     val searchTerm: String = savedStateHandle.get<String>(SEARCH_TERM_KEY) ?: ""
 
@@ -121,37 +124,16 @@ internal class ExploreViewModel @Inject constructor(
     }
 
     fun updateGenreItemsInBottomSheet() = viewModelScope.launch {
-        _uiState.update { currentState ->
-            // TODO : 추후 API로 변경
-            currentState.copy(
-//                initGenreItems = listOf(
-//                    Genre(0, "산리오"),
-//                    Genre(1, "주술회전"),
-//                    Genre(2, "진격의 거인"),
-//                    Genre(3, "산리오1"),
-//                    Genre(4, "주술회전1"),
-//                    Genre(5, "진격의 거인1"),
-//                    Genre(6, "산리오2"),
-//                    Genre(7, "주술회전2"),
-//                    Genre(8, "진격의 거인2"),
-//                    Genre(9, "산리오3"),
-//                    Genre(10, "주술회전3"),
-//                ),
-//                genreSearchResultItems = listOf(
-//                    Genre(0, "산리오"),
-//                    Genre(1, "주술회전"),
-//                    Genre(2, "진격의 거인"),
-//                    Genre(3, "산리오1"),
-//                    Genre(4, "주술회전1"),
-//                    Genre(5, "진격의 거인1"),
-//                    Genre(6, "산리오2"),
-//                    Genre(7, "주술회전2"),
-//                    Genre(8, "진격의 거인2"),
-//                    Genre(9, "산리오3"),
-//                    Genre(10, "주술회전3"),
-//                )
-            )
-        }
+        genreNameRepository.getGenreNames(cursor = null)
+            .onSuccess { genres ->
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        initGenreItems = genres.first,
+                        genreSearchResultItems = genres.first,
+                    )
+                }
+            }
+            .onFailure(Timber::e)
     }
 
     fun updateGenreSearchTerm(searchTerm: String) {
@@ -162,25 +144,30 @@ internal class ExploreViewModel @Inject constructor(
     fun updateGenreSearchResult() = viewModelScope.launch {
         _genreSearchTerm
             .debounce(DEBOUNCE_DELAY)
-            .collectLatest { debounce ->
-//                val newGenreItems: List<Genre> = if (debounce.isBlank()) {
-//                    _uiState.value.initGenreItems
-//                } else {
-//                    emptyList() // TODO: 장르 검색 API 연결
-//                }
-//
-//                _uiState.update { currentState ->
-//                    currentState.copy(
-//                        genreSearchResultItems = newGenreItems
-//                    )
-//                }
+            .collectLatest { searchTerm ->
+                val genreList = if (searchTerm.isBlank()) {
+                    _uiState.value.initGenreItems
+                } else {
+                    genreNameRepository.getGenreNameResults(searchTerm)
+                        .fold(
+                            onSuccess = { it.genreList },
+                            onFailure = {
+                                Timber.e(it)
+                                emptyList()
+                            }
+                        )
+                }
+
+                _uiState.update { currentState ->
+                    currentState.copy(genreSearchResultItems = genreList)
+                }
             }
     }
 
     fun updateSelectedGenres(newGenres: List<Genre>) {
         _uiState.update { currentState ->
             currentState.copy(
-//                filteredGenres = newGenres
+                filteredGenres = newGenres
             )
         }
     }
