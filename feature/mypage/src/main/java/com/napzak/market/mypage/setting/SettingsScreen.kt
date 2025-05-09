@@ -12,7 +12,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,14 +21,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.settings_button_logout
 import com.napzak.market.feature.mypage.R.string.settings_button_withdraw
-import com.napzak.market.feature.mypage.R.string.settings_section_service_info_title
-import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_title
-import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_confirm_button
 import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_cancel_button
+import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_confirm_button
+import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_title
+import com.napzak.market.feature.mypage.R.string.settings_section_service_info_title
 import com.napzak.market.mypage.setting.component.SettingItem
 import com.napzak.market.mypage.setting.component.SettingsTopBar
 import com.napzak.market.mypage.setting.model.SettingViewModel
@@ -43,7 +43,7 @@ fun SettingsRoute(
     openWebLink: (String) -> Unit,
     viewModel: SettingViewModel = hiltViewModel()
 ) {
-    val state by viewModel.settingInfo.collectAsState()
+    val state by viewModel.settingInfo.collectAsStateWithLifecycle()
 
     SettingsScreen(
         onBackClick = onBackClick,
