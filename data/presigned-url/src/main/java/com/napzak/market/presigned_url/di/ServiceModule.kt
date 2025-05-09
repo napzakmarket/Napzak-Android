@@ -1,6 +1,7 @@
 package com.napzak.market.presigned_url.di
 
 import com.napzak.market.presigned_url.service.PresignedUrlService
+import com.napzak.market.remote.qualifier.S3
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +15,6 @@ import javax.inject.Singleton
 object ServiceModule {
     @Provides
     @Singleton
-    fun providePresignedUrlService(retrofit: Retrofit): PresignedUrlService =
+    fun providePresignedUrlService(@S3 retrofit: Retrofit): PresignedUrlService =
         retrofit.create()
 }

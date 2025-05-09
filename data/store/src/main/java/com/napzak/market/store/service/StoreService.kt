@@ -18,7 +18,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface StoreService {
-    @GET("stores/nickname/check")
+    @POST("stores/nickname/check")
     suspend fun getNicknameValidation(
         @Body request: NicknameRequest,
     ): EmptyDataResponse
