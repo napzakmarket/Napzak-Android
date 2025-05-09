@@ -13,6 +13,7 @@ import com.napzak.market.explore.state.ExploreUiState
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.genre.model.extractGenreIds
 import com.napzak.market.genre.repository.GenreNameRepository
+import com.napzak.market.interest.repository.InterestProductRepository
 import com.napzak.market.product.model.ExploreParameters
 import com.napzak.market.product.model.SearchParameters
 import com.napzak.market.product.repository.ProductExploreRepository
@@ -33,6 +34,7 @@ internal class ExploreViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val productExploreRepository: ProductExploreRepository,
     private val genreNameRepository: GenreNameRepository,
+    private val interestProductRepository: InterestProductRepository,
 ) : ViewModel() {
     val searchTerm: String = savedStateHandle.get<String>(SEARCH_TERM_KEY) ?: ""
 
@@ -45,7 +47,7 @@ internal class ExploreViewModel @Inject constructor(
     private val _genreSearchTerm = MutableStateFlow("")
     val genreSearchTerm = _genreSearchTerm.asStateFlow()
 
-    suspend fun updateExploreInformation() = viewModelScope.launch {
+    fun updateExploreInformation() = viewModelScope.launch {
         val parameters = with(uiState.value) {
             if (searchTerm.isEmpty()) {
                 ExploreParameters(
@@ -196,8 +198,12 @@ internal class ExploreViewModel @Inject constructor(
         }
     }
 
-    fun updateProductIsInterested(productId: Long, isLiked: Boolean) {
-        // TODO: 좋아요 연결 API 설정
+    fun updateProductIsInterested(productId: Long, isLiked: Boolean) = viewModelScope.launch {
+        if (isLiked) {
+            interestProductRepository.unsetInterestProduct(productId)
+        } else {
+            interestProductRepository.setInterestProduct(productId)
+        }
     }
 
     private fun updateLoadState(loadState: UiState<ExploreProducts>) =
