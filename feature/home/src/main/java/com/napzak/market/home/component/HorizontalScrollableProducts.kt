@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.component.productItem.NapzakSmallProductItem
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.home.model.Product
+import com.napzak.market.product.model.Product
 import com.napzak.market.util.android.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -82,21 +82,23 @@ private fun ProductsRow(
         contentPadding = PaddingValues(horizontal = 20.dp),
     ) {
         items(products) { product ->
-            NapzakSmallProductItem(
-                title = product.name,
-                genre = product.genre,
-                imgUrl = product.photo,
-                price = product.price.toString(),
-                isSellElseBuy = false,
-                isLiked = product.isInterested,
-                isMyItem = product.isOwnedByCurrentUser,
-                isSuggestionAllowed = product.isPriceNegotiable,
-                onLikeClick = { onLikeClick(product.id, product.isInterested) },
-                modifier = Modifier
-                    .width(productWidth.dp)
-                    .aspectRatio(PRODUCT_HEIGHT_RATIO)
-                    .noRippleClickable { onItemClick(product.id) },
-            )
+            with(product) {
+                NapzakSmallProductItem(
+                    title = productName,
+                    genre = genreName,
+                    imgUrl = photo,
+                    price = price.toString(),
+                    isSellElseBuy = false,
+                    isLiked = isInterested,
+                    isMyItem = isOwnedByCurrentUser,
+                    isSuggestionAllowed = isPriceNegotiable,
+                    onLikeClick = { onLikeClick(productId, product.isInterested) },
+                    modifier = Modifier
+                        .width(productWidth.dp)
+                        .aspectRatio(PRODUCT_HEIGHT_RATIO)
+                        .noRippleClickable { onItemClick(productId) },
+                )
+            }
         }
     }
 }
@@ -107,7 +109,7 @@ private fun HorizontalScrollableProductsPreview() {
     NapzakMarketTheme {
         Column {
             HorizontalScrollableProducts(
-                products = Product.mockMixedProduct.toImmutableList(),
+                products = listOf<Product>().toImmutableList(),
                 title = "납자기님을 위한 맞춤 PICK!",
                 subTitle = "납자기님의 취향에 딱 맞는 아이템들을 모아봤어요.",
                 onLikeClick = { _, _ -> },

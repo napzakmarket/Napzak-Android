@@ -73,7 +73,7 @@ internal fun MainBottomBar(
             color = White,
             border = BorderStroke(
                 width = 1.dp,
-                color = NapzakMarketTheme.colors.gray200,
+                color = NapzakMarketTheme.colors.gray50,
             ),
         ) {
             Row(
