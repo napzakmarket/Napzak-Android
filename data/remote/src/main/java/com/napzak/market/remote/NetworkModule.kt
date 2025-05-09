@@ -4,6 +4,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import com.napzak.market.local.datastore.TokenDataStore
 import com.napzak.market.remote.qualifier.DUMMY
 import com.napzak.market.remote.qualifier.JWT
+import com.napzak.market.remote.qualifier.S3
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -68,6 +69,7 @@ object NetworkModule {
         tokenDataStore: TokenDataStore,
     ): Interceptor = HeaderInterceptor(tokenDataStore)
 
+    @JWT
     @Provides
     @Singleton
     fun provideOkHttpClient(
@@ -78,9 +80,30 @@ object NetworkModule {
         .addInterceptor(headerInterceptor)
         .build()
 
+    @S3
+    @Provides
+    @Singleton
+    fun provideOkHttpClientForS3(
+        loggingInterceptor: Interceptor,
+    ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(loggingInterceptor)
+        .build()
+
     @Provides
     @Singleton
     fun provideRetrofit(
+        @JWT client: OkHttpClient,
+        factory: Converter.Factory
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .client(client)
+        .addConverterFactory(factory)
+        .build()
+
+    @Provides
+    @Singleton
+    @S3
+    fun provideS3Retrofit(
         client: OkHttpClient,
         factory: Converter.Factory
     ): Retrofit = Retrofit.Builder()
@@ -93,7 +116,7 @@ object NetworkModule {
     @Provides
     @DUMMY
     fun provideDummyRetrofit(
-        client: OkHttpClient,
+        @S3 client: OkHttpClient,
         factory: Converter.Factory
     ): Retrofit = Retrofit.Builder()
         .baseUrl(DUMMY_URL)
