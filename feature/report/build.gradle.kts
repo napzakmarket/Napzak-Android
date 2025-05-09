@@ -15,6 +15,8 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.util)
 
+    implementation(projects.domain.report)
+
     implementation(libs.androidx.navigation.compose)
     implementation(libs.timber)
 }

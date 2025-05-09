@@ -19,10 +19,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +41,8 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 internal fun ReportReasonSection(
     reportState: ReportState,
+    dropdownEnabled: Boolean,
+    onDropdownClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Text(
@@ -60,6 +58,8 @@ internal fun ReportReasonSection(
         reasons = reportState.reasons.toImmutableList(),
         selectedReason = reportState.reason,
         onReasonSelect = { reportState.reason = it },
+        onDropdownClick = onDropdownClick,
+        dropdownEnabled = dropdownEnabled,
         modifier = modifier
             .fillMaxWidth(),
     )
@@ -69,6 +69,8 @@ internal fun ReportReasonSection(
 private fun ReportReasonDropDownMenu(
     @StringRes reasons: ImmutableList<Int>,
     @StringRes selectedReason: Int,
+    dropdownEnabled: Boolean,
+    onDropdownClick: (Boolean) -> Unit,
     onReasonSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -78,8 +80,6 @@ private fun ReportReasonDropDownMenu(
         color = NapzakMarketTheme.colors.gray200,
         shape = shape,
     )
-
-    var expanded by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier.then(borderModifier),
@@ -98,13 +98,13 @@ private fun ReportReasonDropDownMenu(
             },
             modifier = borderModifier
                 .fillMaxWidth()
-                .noRippleClickable { expanded = !expanded },
+                .noRippleClickable { onDropdownClick(!dropdownEnabled) },
             readOnly = true,
             enabled = false,
         )
 
         AnimatedVisibility(
-            visible = expanded,
+            visible = dropdownEnabled,
             enter = expandVertically(expandFrom = Alignment.Top),
             exit = shrinkVertically(shrinkTowards = Alignment.Top),
         ) {
@@ -165,6 +165,8 @@ private fun ReportReasonSectionPreview() {
         Column(modifier = Modifier.padding(20.dp)) {
             ReportReasonSection(
                 reportState = reportState,
+                dropdownEnabled = false,
+                onDropdownClick = {},
             )
         }
     }
