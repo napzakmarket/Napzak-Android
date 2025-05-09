@@ -8,8 +8,9 @@ import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.explore.genredetail.state.GenreDetailProducts
 import com.napzak.market.explore.genredetail.state.GenreDetailUiState
-import com.napzak.market.explore.model.Product
 import com.napzak.market.genre.repository.GenreInfoRepository
+import com.napzak.market.product.model.ExploreParameters
+import com.napzak.market.product.repository.ProductExploreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,6 +23,7 @@ import javax.inject.Inject
 class GenreDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val genreInfoRepository: GenreInfoRepository,
+    private val productExploreRepository: ProductExploreRepository,
 ) : ViewModel() {
     val genreId = savedStateHandle.get<Long>(GENRE_ID_KEY) ?: 0
 
@@ -36,12 +38,29 @@ class GenreDetailViewModel @Inject constructor(
 
     fun updateGenreDetailInformation() = viewModelScope.launch {
         with(uiState.value) {
-            // TODO : 장르 디테일 목록 조회 API
-            updateLoadState(
-                UiState.Success(
-                    GenreDetailProducts(productList = Product.mockMixedProduct)
-                )
+            val parameters = ExploreParameters(
+                sort = sortOption.toString(),
+                genreIds = listOf(genreId),
+                isOnSale = isSoldOutSelected,
+                isUnopened = isUnopenSelected,
+                cursor = null, // TODO: 추후 cursor 값 변경
             )
+
+            when (selectedTab) {
+                TradeType.BUY -> {
+                    productExploreRepository.getExploreBuyProducts(parameters)
+                        .onSuccess { updateLoadState(UiState.Success(GenreDetailProducts(it.second))) }
+                        .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
+                }
+
+                TradeType.SELL -> {
+                    productExploreRepository.getExploreSellProducts(parameters)
+                        .onSuccess { updateLoadState(UiState.Success(GenreDetailProducts(it.second))) }
+                        .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
+                }
+
+                else -> {}
+            }
         }
     }
 

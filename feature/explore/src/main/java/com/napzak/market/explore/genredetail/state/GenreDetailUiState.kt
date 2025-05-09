@@ -4,8 +4,8 @@ import androidx.compose.runtime.Immutable
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.explore.model.Product
 import com.napzak.market.genre.model.GenreInfo
+import com.napzak.market.product.model.Product
 
 @Immutable
 data class GenreDetailUiState(
