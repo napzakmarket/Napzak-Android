@@ -117,7 +117,7 @@ abstract class RegistrationViewModel(
     companion object {
         internal const val KEY_DELIMITER = "image_"
         internal const val VALUE_DELIMITER = "?"
-        private const val UPLOADING_PRODUCT_ERROR_MESSAGE = "failed to register product."
+        internal const val UPLOADING_PRODUCT_ERROR_MESSAGE = "failed to register product."
         private const val RETRIEVING_URL_ERROR_MESSAGE = "failed to retrieve URL."
     }
 }
