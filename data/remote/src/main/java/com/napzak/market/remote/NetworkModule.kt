@@ -80,10 +80,9 @@ object NetworkModule {
         .addInterceptor(headerInterceptor)
         .build()
 
-    @S3
     @Provides
     @Singleton
-    fun provideOkHttpClientForS3(
+    fun provideNoTokenOkHttpClient(
         loggingInterceptor: Interceptor,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
@@ -100,9 +99,9 @@ object NetworkModule {
         .addConverterFactory(factory)
         .build()
 
+    @S3
     @Provides
     @Singleton
-    @S3
     fun provideS3Retrofit(
         client: OkHttpClient,
         factory: Converter.Factory
@@ -116,7 +115,7 @@ object NetworkModule {
     @Provides
     @DUMMY
     fun provideDummyRetrofit(
-        @S3 client: OkHttpClient,
+        client: OkHttpClient,
         factory: Converter.Factory
     ): Retrofit = Retrofit.Builder()
         .baseUrl(DUMMY_URL)
