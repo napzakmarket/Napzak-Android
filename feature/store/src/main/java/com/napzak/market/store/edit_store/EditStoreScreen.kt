@@ -78,8 +78,8 @@ import com.napzak.market.feature.store.R.string.store_edit_sub_title_name
 import com.napzak.market.feature.store.R.string.store_edit_title_genre
 import com.napzak.market.feature.store.R.string.store_edit_title_introduction
 import com.napzak.market.feature.store.R.string.store_edit_title_name
+import com.napzak.market.presigned_url.type.PhotoType
 import com.napzak.market.store.edit_store.state.EditStoreUiState
-import com.napzak.market.store.edit_store.type.PhotoType
 import com.napzak.market.store.model.StoreEditGenre
 import com.napzak.market.util.android.noRippleClickable
 
