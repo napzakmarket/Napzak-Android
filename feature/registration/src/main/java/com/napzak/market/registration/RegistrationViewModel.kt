@@ -1,10 +1,9 @@
 package com.napzak.market.registration
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.registration.RegistrationContract.RegistrationUiState
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.napzak.market.registration.model.Photo
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +17,7 @@ open class RegistrationViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(RegistrationUiState())
     val registrationUiState = _uiState.asStateFlow()
 
-    fun updatePhotos(newImageUrlList: List<Uri>) = _uiState.update { currentState ->
+    fun updatePhotos(newImageUrlList: List<Photo>) = _uiState.update { currentState ->
         currentState.copy(
             imageUris = (currentState.imageUris + newImageUrlList).toImmutableList()
         )

@@ -1,6 +1,5 @@
 package com.napzak.market.registration.purchase
 
-import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -37,6 +36,7 @@ import com.napzak.market.registration.RegistrationContract.RegistrationUiState
 import com.napzak.market.registration.component.PriceSettingGroup
 import com.napzak.market.registration.component.RegistrationTopBar
 import com.napzak.market.registration.component.RegistrationViewGroup
+import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.purchase.component.PriceNegotiationGroup
 import com.napzak.market.registration.purchase.state.PurchaseContract.PurchaseUiState
 import com.napzak.market.util.android.noRippleClickable
@@ -88,7 +88,7 @@ fun PurchaseRegistrationScreen(
     registrationUiState: RegistrationUiState,
     purchaseUiState: PurchaseUiState,
     onCloseClick: () -> Unit,
-    onImageSelect: (ImmutableList<Uri>) -> Unit,
+    onImageSelect: (ImmutableList<Photo>) -> Unit,
     onPhotoPress: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
     onGenreClick: () -> Unit,
