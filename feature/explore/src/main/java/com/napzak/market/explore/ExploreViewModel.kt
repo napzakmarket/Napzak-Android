@@ -199,6 +199,23 @@ internal class ExploreViewModel @Inject constructor(
     }
 
     fun updateProductIsInterested(productId: Long, isLiked: Boolean) = viewModelScope.launch {
+        when (val state = uiState.value.loadState) {
+            is UiState.Success -> {
+                val updatedProducts = state.data.productList.map { product ->
+                    if (product.productId == productId) {
+                        product.copy(isInterested = !product.isInterested)
+                    } else {
+                        product
+                    }
+                }
+
+
+                updateLoadState(loadState = UiState.Success(ExploreProducts(updatedProducts)))
+            }
+
+            else -> {}
+        }
+
         if (isLiked) {
             interestProductRepository.unsetInterestProduct(productId)
         } else {
