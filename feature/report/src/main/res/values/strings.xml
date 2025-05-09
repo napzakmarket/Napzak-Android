@@ -26,12 +26,5 @@
     <string name="report_user_skirmish">거래 과정에서 분쟁이 발생했어요</string>
     <string name="report_user_slang_used">욕설/비속어 등 불쾌한 표현을 사용했어요</string>
     <string name="report_user_miscellaneous">기타 문제가 있어요</string>
-
-    <string name="report_snack_bar_message">
-        소중한 신고 감사합니다! 🙏\n\n
-        신고 내용을 꼼꼼히 검토하여\n
-        입력하신 연락처로 결과를 안내해드릴게요.\n
-        추가 정보가 필요할 경우 동일한 연락처로 문의드릴 수 있어요.
-    </string>
     <string name="report_button_submit">제출하기</string>
 </resources>
