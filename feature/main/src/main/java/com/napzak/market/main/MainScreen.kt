@@ -1,5 +1,7 @@
 package com.napzak.market.main
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
@@ -9,8 +11,10 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.napzak.market.detail.navigation.productDetailGraph
 import com.napzak.market.dummy.navigation.dummyGraph
 import com.napzak.market.explore.navigation.exploreGraph
@@ -19,6 +23,10 @@ import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
+import com.napzak.market.mypage.navigation.mypageGraph
+import com.napzak.market.mypage.setting.navigation.SETTINGS_ROUTE
+import com.napzak.market.mypage.setting.navigation.SettingsRoute
+import com.napzak.market.mypage.setting.navigation.navigateToSettings
 import com.napzak.market.onboarding.navigation.Terms
 import com.napzak.market.onboarding.navigation.onboardingGraph
 import com.napzak.market.registration.navigation.navigateToGenreSearch
@@ -30,7 +38,6 @@ import com.napzak.market.search.navigation.navigateToSearch
 import com.napzak.market.search.navigation.searchGraph
 import com.napzak.market.store.store.navigation.storeGraph
 import kotlinx.collections.immutable.toImmutableList
-import com.napzak.market.mypage.navigation.mypageGraph
 
 
 @Composable
@@ -166,9 +173,23 @@ private fun MainNavHost(
             navigateToPurchase = { /* TODO: 구매내역 화면으로 이동 */ },
             navigateToRecent = { /* TODO: 최근 본 상품 화면으로 이동 */ },
             navigateToFavorite = { /* TODO: 찜 화면으로 이동 */ },
-            navigateToSettings = { /* TODO: 설정 화면으로 이동 */ },
+            navigateToSettings = { navigator.navController.navigateToSettings()},
             navigateToHelp = { /* TODO: 고객센터 화면으로 이동 */ },
             modifier = modifier,
         )
+
+        composable(route = SETTINGS_ROUTE) {
+            val context = LocalContext.current
+
+            SettingsRoute(
+                onBackClick = { navigator.navigateUp() },
+                onLogoutConfirm = { /* TODO: 로그아웃 처리 */},
+                onWithdrawClick = { /* TODO: 탈퇴 처리 */ },
+                openWebLink = { url ->
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    context.startActivity(intent)
+                }
+            )
+        }
     }
 }
