@@ -40,29 +40,43 @@ import com.napzak.market.feature.registration.R.string.shipping_included
 import com.napzak.market.registration.component.ShippingFeeTextField
 import com.napzak.market.util.android.noRippleClickable
 
+private const val EMPTY_STRING = ""
+
 @Composable
 internal fun ShippingFeeSelector(
-    isShippingFeeIncluded: Boolean,
-    onShippingFeeIncludedChange: (Boolean) -> Unit,
-    isShippingFeeExcluded: Boolean,
-    onShippingFeeExcludedChange: (Boolean) -> Unit,
+    isShippingIncluded: Boolean?,
+    onShippingFeeSelect: (Boolean) -> Unit,
     isNormalShippingChecked: Boolean,
-    onNormalShippingCheckChange: (Boolean) -> Unit,
+    onNormalShippingSelect: (Boolean) -> Unit,
     normalShippingFee: String,
     onNormalShippingFeeChange: (String) -> Unit,
     isHalfShippingChecked: Boolean,
-    onHalfShippingCheckChange: (Boolean) -> Unit,
+    onHalfShippingSelect: (Boolean) -> Unit,
     halfShippingFee: String,
     onHalfShippingFeeChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val resetShippingExcluded = remember {
+        {
+            onNormalShippingSelect(false)
+            onHalfShippingSelect(false)
+            onNormalShippingFeeChange(EMPTY_STRING)
+            onHalfShippingFeeChange(EMPTY_STRING)
+        }
+    }
+
     Column(
         modifier = modifier,
     ) {
         SelectorButton(
             title = stringResource(shipping_included),
-            isChecked = isShippingFeeIncluded,
-            onCheckChange = onShippingFeeIncludedChange,
+            isChecked = isShippingIncluded == true,
+            onCheckChange = {
+                if (isShippingIncluded != true) {
+                    onShippingFeeSelect(true)
+                    resetShippingExcluded()
+                }
+            },
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -80,18 +94,22 @@ internal fun ShippingFeeSelector(
             Column {
                 SelectorButton(
                     title = stringResource(shipping_excluded),
-                    isChecked = isShippingFeeExcluded,
-                    onCheckChange = onShippingFeeExcludedChange,
+                    isChecked = isShippingIncluded == false,
+                    onCheckChange = {
+                        if (isShippingIncluded != false) {
+                            onShippingFeeSelect(false)
+                        }
+                    },
                 )
 
                 AnimatedVisibility(
-                    visible = isShippingFeeExcluded,
+                    visible = isShippingIncluded == false,
                 ) {
                     Column {
                         ExpandedShippingFee(
                             title = stringResource(normal_shipping),
                             isChecked = isNormalShippingChecked,
-                            onCheckChange = onNormalShippingCheckChange,
+                            onCheckChange = onNormalShippingSelect,
                             shippingFee = normalShippingFee,
                             onShippingFeeChange = onNormalShippingFeeChange,
                             hint = stringResource(normal_shipping_hint),
@@ -99,7 +117,7 @@ internal fun ShippingFeeSelector(
                         ExpandedShippingFee(
                             title = stringResource(half_priced_shipping),
                             isChecked = isHalfShippingChecked,
-                            onCheckChange = onHalfShippingCheckChange,
+                            onCheckChange = onHalfShippingSelect,
                             shippingFee = halfShippingFee,
                             onShippingFeeChange = onHalfShippingFeeChange,
                             hint = stringResource(half_priced_shipping_hint),
@@ -120,35 +138,29 @@ private fun SelectorButton(
 ) {
     val checkIcon = if (isChecked) ic_checked_box else ic_unchecked_box
 
-    Column(
+    Row(
         modifier = modifier
+            .fillMaxWidth()
             .background(
                 color = NapzakMarketTheme.colors.gray50,
                 shape = RoundedCornerShape(14.dp),
-            ),
+            )
+            .padding(horizontal = 10.dp, vertical = 12.dp)
+            .noRippleClickable { onCheckChange(isChecked) },
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 10.dp, vertical = 12.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(checkIcon),
-                contentDescription = null,
-                tint = Color.Unspecified,
-                modifier = Modifier.noRippleClickable {
-                    onCheckChange(isChecked)
-                },
-            )
-            Text(
-                text = title,
-                style = NapzakMarketTheme.typography.body14b.copy(
-                    color = NapzakMarketTheme.colors.gray400,
-                ),
-            )
-        }
+        Icon(
+            imageVector = ImageVector.vectorResource(checkIcon),
+            contentDescription = null,
+            tint = Color.Unspecified,
+        )
+        Text(
+            text = title,
+            style = NapzakMarketTheme.typography.body14b.copy(
+                color = NapzakMarketTheme.colors.gray400,
+            ),
+        )
     }
 }
 
@@ -172,7 +184,7 @@ fun ExpandedShippingFee(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
-            modifier = Modifier,
+
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -181,7 +193,8 @@ fun ExpandedShippingFee(
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier.noRippleClickable {
-                    onCheckChange(isChecked)
+                    onCheckChange(!isChecked)
+                    if (isChecked) onShippingFeeChange(EMPTY_STRING)
                 },
             )
             Text(
@@ -195,6 +208,7 @@ fun ExpandedShippingFee(
             price = shippingFee,
             onPriceChange = onShippingFeeChange,
             hint = hint,
+            enabled = isChecked,
         )
     }
 }
@@ -203,24 +217,18 @@ fun ExpandedShippingFee(
 @Composable
 private fun ShippingFeeSelectorPreview() {
     NapzakMarketTheme {
-        var feeIncluded by remember { mutableStateOf(false) }
-        var feeExcluded by remember { mutableStateOf(false) }
-        var normalShippingChecked by remember { mutableStateOf(false) }
         var normalShippingFee by remember { mutableStateOf("") }
-        var halfShippingChecked by remember { mutableStateOf(false) }
         var halfShippingFee by remember { mutableStateOf("") }
 
         ShippingFeeSelector(
-            isShippingFeeIncluded = feeIncluded,
-            onShippingFeeIncludedChange = { feeIncluded = !feeIncluded },
-            isShippingFeeExcluded = feeExcluded,
-            onShippingFeeExcludedChange = { feeExcluded = !feeExcluded },
-            isNormalShippingChecked = normalShippingChecked,
-            onNormalShippingCheckChange = { normalShippingChecked = !normalShippingChecked },
+            isShippingIncluded = true,
+            onShippingFeeSelect = { },
+            isNormalShippingChecked = true,
+            onNormalShippingSelect = {},
             normalShippingFee = normalShippingFee,
             onNormalShippingFeeChange = { normalShippingFee = it },
-            isHalfShippingChecked = halfShippingChecked,
-            onHalfShippingCheckChange = { halfShippingChecked = !halfShippingChecked },
+            isHalfShippingChecked = true,
+            onHalfShippingSelect = {},
             halfShippingFee = halfShippingFee,
             onHalfShippingFeeChange = { halfShippingFee = it },
             modifier = Modifier,

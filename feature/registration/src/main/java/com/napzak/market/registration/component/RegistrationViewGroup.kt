@@ -37,11 +37,11 @@ private const val MAX_PRODUCT_DESCRIPTION = 430
 @Composable
 internal fun RegistrationViewGroup(
     productImageUris: PersistentList<Uri>,
-    onImageSelected: (ImmutableList<Uri>) -> Unit,
+    onImageSelect: (ImmutableList<Uri>) -> Unit,
     onPhotoPress: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
     productGenre: String,
-    onGenreSelect: (String) -> Unit,
+    onGenreClick: () -> Unit,
     productName: String,
     onProductNameChange: (String) -> Unit,
     productDescription: String,
@@ -77,7 +77,7 @@ internal fun RegistrationViewGroup(
 
         PhotoPicker(
             imageUris = productImageUris,
-            onImagesSelected = onImageSelected,
+            onImagesSelect = onImageSelect,
             onLongClick = onPhotoPress,
             onDeleteClick = onDeleteClick,
         )
@@ -86,7 +86,7 @@ internal fun RegistrationViewGroup(
 
         RegistrationGenreButton(
             selectedGenre = productGenre,
-            onGenreClick = onGenreSelect,
+            onGenreClick = onGenreClick,
             modifier = paddedModifier
                 .padding(vertical = 8.dp),
         )
@@ -179,11 +179,11 @@ private fun RegistrationViewGroupPreview() {
 
         RegistrationViewGroup(
             productImageUris = persistentListOf(),
-            onImageSelected = { },
+            onImageSelect = { },
             onPhotoPress = { },
             onDeleteClick = { },
             productGenre = "사카모토데이즈",
-            onGenreSelect = { },
+            onGenreClick = { },
             productName = name,
             onProductNameChange = { name = it },
             productDescription = content,

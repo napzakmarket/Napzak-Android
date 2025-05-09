@@ -13,19 +13,22 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
 import com.napzak.market.detail.navigation.productDetailGraph
 import com.napzak.market.dummy.navigation.dummyGraph
-import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.explore.navigation.exploreGraph
 import com.napzak.market.explore.navigation.navigateToGenreDetail
 import com.napzak.market.home.navigation.Home
+import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
+import com.napzak.market.onboarding.navigation.Terms
+import com.napzak.market.onboarding.navigation.onboardingGraph
+import com.napzak.market.registration.navigation.navigateToGenreSearch
 import com.napzak.market.registration.navigation.navigateToPurchaseRegistration
 import com.napzak.market.registration.navigation.navigateToSaleRegistration
 import com.napzak.market.registration.navigation.registrationGraph
+import com.napzak.market.report.navigation.reportGraph
 import com.napzak.market.search.navigation.navigateToSearch
 import com.napzak.market.search.navigation.searchGraph
 import com.napzak.market.store.store.navigation.storeGraph
-import com.napzak.market.report.navigation.reportGraph
 import kotlinx.collections.immutable.toImmutableList
 import com.napzak.market.mypage.navigation.mypageGraph
 
@@ -90,6 +93,16 @@ private fun MainNavHost(
     ) {
         dummyGraph(modifier = modifier)
 
+        onboardingGraph(
+            navController = navigator.navController,
+            onFinish = {
+                navigator.navController.navigate(Home) {
+                    popUpTo(Terms) { inclusive = true }
+                }
+            },
+            modifier = modifier,
+        )
+
         homeGraph(
             navigateToSearch = { navigator.navController.navigateToSearch() },
             navigateToProductDetail = { /*TODO: 물품 상세페이지로 이동*/ },
@@ -122,6 +135,7 @@ private fun MainNavHost(
             navigateToUp = navigator::navigateUp,
             navigateToProfileEdit = { /* TODO: move to profile edit */ },
             navigateToProductDetail = { /* TODO: move to product detail */ },
+            navigateToStoreReport = { /* TODO: move to store report */ },
             modifier = modifier,
         )
 
@@ -142,6 +156,7 @@ private fun MainNavHost(
         registrationGraph(
             navigateToUp = navigator::navigateUp,
             navigateToDetail = {}, // TODO: 물품 상세 화면으로 이동
+            navigateToGenreSearch = navigator.navController::navigateToGenreSearch,
             modifier = modifier,
         )
 

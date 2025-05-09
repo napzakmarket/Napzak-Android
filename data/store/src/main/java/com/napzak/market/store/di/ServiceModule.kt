@@ -12,8 +12,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object StoreServiceModule {
-
+object ServiceModule {
     @Provides
     @Singleton
     fun provideStoreService(retrofit: Retrofit): StoreService = retrofit.create()
