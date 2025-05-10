@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">NapzakMarket</string>
+    <string name="login_kakao">카카오 로그인하기</string>
 </resources>
