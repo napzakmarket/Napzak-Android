@@ -6,9 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.napzak.market.common.type.BottomSheetType
 import com.napzak.market.common.type.SortType
-import com.napzak.market.designsystem.component.bottomsheet.Genre
 import com.napzak.market.designsystem.component.bottomsheet.GenreSearchBottomSheet
 import com.napzak.market.designsystem.component.bottomsheet.SortBottomSheet
+import com.napzak.market.genre.model.Genre
 import com.napzak.market.store.store.state.StoreBottomSheetState
 
 @OptIn(ExperimentalMaterial3Api::class)
