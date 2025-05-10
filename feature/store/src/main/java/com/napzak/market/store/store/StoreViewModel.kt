@@ -7,19 +7,25 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.BottomSheetType
 import com.napzak.market.common.type.MarketTab
 import com.napzak.market.common.type.SortType
-import com.napzak.market.designsystem.component.bottomsheet.Genre
-import com.napzak.market.store.model.Product
+import com.napzak.market.genre.model.Genre
+import com.napzak.market.genre.model.extractGenreIds
+import com.napzak.market.product.model.Product
+import com.napzak.market.product.usecase.GetStoreProductsUseCase
 import com.napzak.market.store.model.StoreDetail
+import com.napzak.market.store.repository.StoreRepository
 import com.napzak.market.store.store.state.StoreBottomSheetState
-import com.napzak.market.store.store.state.StoreInformation
+import com.napzak.market.store.store.state.StoreOptionState
 import com.napzak.market.store.store.state.StoreUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,46 +33,67 @@ import javax.inject.Inject
 @HiltViewModel
 class StoreViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val storeRepository: StoreRepository,
+    private val getProductStoreUseCase: GetStoreProductsUseCase,
 ) : ViewModel() {
     val storeId: Long = savedStateHandle.get<Long>(STORE_ID_KEY) ?: 0
 
-    private val _uiState = MutableStateFlow(StoreUiState())
-    val uiState = _uiState.asStateFlow()
+    private val _genreSearchTerm = MutableStateFlow("")
+    private val _storeDetailState = MutableStateFlow<UiState<StoreDetail>>(UiState.Loading)
+    private val _storeProductsState = MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
+    private val _storeOptionState: MutableStateFlow<StoreOptionState> =
+        MutableStateFlow(StoreOptionState())
+    val storeOptionState = _storeOptionState.asStateFlow()
     private val _bottomSheetState: MutableStateFlow<StoreBottomSheetState> =
         MutableStateFlow(StoreBottomSheetState())
     val bottomSheetState: StateFlow<StoreBottomSheetState> = _bottomSheetState.asStateFlow()
 
-    private val _genreSearchTerm = MutableStateFlow("")
+    val storeUiState: StateFlow<StoreUiState> = combine(
+        _storeDetailState,
+        _storeProductsState,
+    ) { storeDetailState, storeProductsState ->
+        StoreUiState(
+            storeDetailState = storeDetailState,
+            storeProductsState = storeProductsState,
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = StoreUiState(
+            storeDetailState = UiState.Loading,
+            storeProductsState = UiState.Loading,
+        )
+    )
 
-    fun updateStoreInformation() = viewModelScope.launch {
-        with(uiState.value) {
-            // TODO : 추후 API로 변경
-            updateLoadState(
-                UiState.Success(
-                    StoreInformation(
-                        storeDetail = StoreDetail.mockStoreInfo,
-                    )
-                )
-            )
-        }
+    fun getStoreInformation() {
+        updateStoreDetail()
         updateStoreProducts()
     }
 
-    fun updateStoreProducts() = viewModelScope.launch {
-        var newProductList: List<Product> = Product.mockMixedProduct // TODO : 추후 API로 변경
+    fun updateStoreDetail() = viewModelScope.launch {
+        storeRepository.fetchStoreDetail(storeId)
+            .onSuccess { _storeDetailState.value = UiState.Success(it) }
+            .onFailure { _storeDetailState.value = UiState.Failure(it.message.toString()) }
+    }
 
-        if (uiState.value.loadState is UiState.Success) {
-            _uiState.update { currentState ->
-                val currentInfo =
-                    (uiState.value.loadState as UiState.Success<StoreInformation>).data
-                val updatedInfo = currentInfo.copy(productList = newProductList)
-                currentState.copy(loadState = UiState.Success(updatedInfo))
-            }
+    fun updateStoreProducts() = viewModelScope.launch {
+        with(_storeOptionState.value) {
+            val result = getProductStoreUseCase(
+                storeId = storeId,
+                isMarketTypeSell = selectedTab == MarketTab.SELL,
+                filteredGenres = filteredGenres.extractGenreIds(),
+                isOnSale = isOnSale,
+                sortOption = sortOption.name,
+            )
+
+            result
+                .onSuccess { (_, it) -> _storeProductsState.value = UiState.Success(it) }
+                .onFailure { _storeProductsState.value = UiState.Failure(it.message.toString()) }
         }
     }
 
     fun updateMarketTabType(newTradeType: MarketTab) {
-        _uiState.update { currentState ->
+        _storeOptionState.update { currentState ->
             currentState.copy(
                 selectedTab = newTradeType,
             )
@@ -98,21 +125,11 @@ class StoreViewModel @Inject constructor(
     }
 
     fun updateGenreItemsInBottomSheet() = viewModelScope.launch {
-        _uiState.update { currentState ->
+        _storeOptionState.update { currentState ->
             // TODO : 추후 API로 변경
             currentState.copy(
-                initGenreItems = listOf(
-                    Genre(0, "산리오"),
-                    Genre(1, "주술회전"),
-                    Genre(2, "진격의 거인"),
-                    Genre(3, "산리오1"),
-                    Genre(4, "주술회전1"),
-                    Genre(5, "진격의 거인1"),
-                ),
-                genreSearchResultItems = listOf(
-                    Genre(0, "산리오"),
-                    Genre(1, "주술회전"),
-                )
+                initGenreItems = emptyList(),
+                genreSearchResultItems = emptyList()
             )
         }
     }
@@ -128,12 +145,12 @@ class StoreViewModel @Inject constructor(
             .debounce(DEBOUNCE_DELAY)
             .collectLatest { debounce ->
                 val newGenreItems: List<Genre> = if (debounce.isBlank()) {
-                    _uiState.value.initGenreItems
+                    _storeOptionState.value.initGenreItems
                 } else {
                     emptyList() // TODO: 장르 검색 API 연결
                 }
 
-                _uiState.update { currentState ->
+                _storeOptionState.update { currentState ->
                     currentState.copy(
                         genreSearchResultItems = newGenreItems
                     )
@@ -142,7 +159,7 @@ class StoreViewModel @Inject constructor(
     }
 
     fun updateSelectedGenres(newGenres: List<Genre>) {
-        _uiState.update { currentState ->
+        _storeOptionState.update { currentState ->
             currentState.copy(
                 filteredGenres = newGenres
             )
@@ -150,15 +167,15 @@ class StoreViewModel @Inject constructor(
     }
 
     fun updateIsOnSale() {
-        _uiState.update { currentState ->
+        _storeOptionState.update { currentState ->
             currentState.copy(
-                isOnSale = !_uiState.value.isOnSale
+                isOnSale = !_storeOptionState.value.isOnSale
             )
         }
     }
 
     fun updateSortOption(newSortOption: SortType) {
-        _uiState.update { currentState ->
+        _storeOptionState.update { currentState ->
             currentState.copy(
                 sortOption = newSortOption,
             )
@@ -168,13 +185,6 @@ class StoreViewModel @Inject constructor(
     fun updateProductIsInterested(productId: Long, isLiked: Boolean) {
         // TODO: 좋아요 연결 API 설정
     }
-
-    private fun updateLoadState(loadState: UiState<StoreInformation>) =
-        _uiState.update { currentState ->
-            currentState.copy(
-                loadState = loadState
-            )
-        }
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L
