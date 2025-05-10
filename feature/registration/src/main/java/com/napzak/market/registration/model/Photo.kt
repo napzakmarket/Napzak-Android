@@ -5,5 +5,6 @@ import java.util.UUID
 
 data class Photo(
     val uri: Uri,
-    val uuid: String = UUID.randomUUID().toString()
+    val uuid: String = UUID.randomUUID().toString(),
+    val photoId: Long? = null
 )
