@@ -1,5 +1,6 @@
 package com.napzak.market.main
 
+import android.content.Intent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -28,6 +30,8 @@ import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
+import com.napzak.market.mypage.navigation.mypageGraph
+import com.napzak.market.mypage.signout.navigation.signOutGraph
 import com.napzak.market.onboarding.navigation.Terms
 import com.napzak.market.onboarding.navigation.onboardingGraph
 import com.napzak.market.registration.navigation.navigateToGenreSearch
@@ -41,7 +45,6 @@ import com.napzak.market.store.store.navigation.storeGraph
 import com.napzak.market.util.android.LocalSnackBarController
 import com.napzak.market.util.android.SnackBarController
 import kotlinx.collections.immutable.toImmutableList
-import com.napzak.market.mypage.navigation.mypageGraph
 
 
 @Composable
@@ -106,6 +109,8 @@ private fun MainNavHost(
     navigator: MainNavigator,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     NavHost(
         enterTransition = {
             EnterTransition.None
@@ -199,6 +204,20 @@ private fun MainNavHost(
             navigateToFavorite = { /* TODO: 찜 화면으로 이동 */ },
             navigateToSettings = { /* TODO: 설정 화면으로 이동 */ },
             navigateToHelp = { /* TODO: 고객센터 화면으로 이동 */ },
+            modifier = modifier,
+        )
+
+        signOutGraph(
+            navController = navigator.navController,
+            onNavigateUp = navigator::navigateUp,
+            restartApp = {
+                Intent(context, MainActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context.startActivity(this)
+                }
+
+            },
             modifier = modifier,
         )
     }
