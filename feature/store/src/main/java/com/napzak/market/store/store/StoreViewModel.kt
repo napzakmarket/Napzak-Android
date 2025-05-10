@@ -39,15 +39,16 @@ class StoreViewModel @Inject constructor(
     val storeId: Long = savedStateHandle.get<Long>(STORE_ID_KEY) ?: 0
 
     private val _genreSearchTerm = MutableStateFlow("")
-    private val _storeDetailState = MutableStateFlow<UiState<StoreDetail>>(UiState.Loading)
-    private val _storeProductsState = MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
     private val _storeOptionState: MutableStateFlow<StoreOptionState> =
         MutableStateFlow(StoreOptionState())
     val storeOptionState = _storeOptionState.asStateFlow()
+
     private val _bottomSheetState: MutableStateFlow<StoreBottomSheetState> =
         MutableStateFlow(StoreBottomSheetState())
     val bottomSheetState: StateFlow<StoreBottomSheetState> = _bottomSheetState.asStateFlow()
 
+    private val _storeDetailState = MutableStateFlow<UiState<StoreDetail>>(UiState.Loading)
+    private val _storeProductsState = MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
     val storeUiState: StateFlow<StoreUiState> = combine(
         _storeDetailState,
         _storeProductsState,
@@ -161,7 +162,7 @@ class StoreViewModel @Inject constructor(
     fun updateSelectedGenres(newGenres: List<Genre>) {
         _storeOptionState.update { currentState ->
             currentState.copy(
-                filteredGenres = newGenres
+                filteredGenres = newGenres,
             )
         }
     }
@@ -169,7 +170,7 @@ class StoreViewModel @Inject constructor(
     fun updateIsOnSale() {
         _storeOptionState.update { currentState ->
             currentState.copy(
-                isOnSale = !_storeOptionState.value.isOnSale
+                isOnSale = !_storeOptionState.value.isOnSale,
             )
         }
     }
