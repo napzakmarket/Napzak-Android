@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +30,7 @@ private const val DETAIL_LENGTH_MAX = 200
 @Composable
 internal fun ReportDetailSection(
     reportState: ReportState,
+    onTextFieldFocus: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Text(
@@ -44,7 +46,11 @@ internal fun ReportDetailSection(
         text = reportState.detail,
         onTextChange = reportState::onDetailChange,
         hint = stringResource(report_input_place_holder_detail),
-        modifier = modifier.defaultMinSize(minHeight = MinHeight),
+        modifier = modifier
+            .defaultMinSize(minHeight = MinHeight)
+            .onFocusEvent {
+                if (it.isFocused) onTextFieldFocus()
+            },
         textStyle = NapzakMarketTheme.typography.caption12sb,
         textColor = NapzakMarketTheme.colors.gray400,
         hintTextStyle = NapzakMarketTheme.typography.caption12m,
@@ -79,6 +85,7 @@ private fun ReportDetailSectionPreview() {
         Column {
             ReportDetailSection(
                 reportState = reportState,
+                onTextFieldFocus = {},
             )
         }
     }

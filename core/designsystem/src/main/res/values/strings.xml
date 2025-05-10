@@ -36,4 +36,7 @@
     <!--AlertDialog-->
     <string name="dialog_text_confirm">예</string>
     <string name="dialog_text_dismiss">아니오</string>
+
+    <!--TopBar-->
+    <string name="top_bar_navigate_up">뒤로가기</string>
 </resources>
