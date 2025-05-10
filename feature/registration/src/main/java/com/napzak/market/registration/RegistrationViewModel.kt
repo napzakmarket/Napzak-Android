@@ -126,8 +126,7 @@ abstract class RegistrationViewModel(
                 }.awaitAll()
 
                 if (uploadResults.all { results -> results.isSuccess }) {
-                    val sortedPresignedUrls = (presignedUrls + remotePresignedUrls).sortedBy { it.imageName.substringAfter(KEY_DELIMITER).toInt() }
-                    uploadProduct(sortedPresignedUrls)
+                    uploadProduct(presignedUrls + remotePresignedUrls)
                 } else {
                     updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
                 }
