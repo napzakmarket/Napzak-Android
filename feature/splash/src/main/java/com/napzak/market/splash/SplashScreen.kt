@@ -2,25 +2,31 @@ package com.napzak.market.splash
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import com.napzak.market.designsystem.R.drawable.ic_logo
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.napzak.market.designsystem.R.drawable.ic_logo
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashRoute(
-    modifier: Modifier = Modifier,
     onNavigateToOnboarding: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val systemUiController = rememberSystemUiController()
     val splashColor = NapzakMarketTheme.colors.purple500
-    val originalColor = Color.White
+    val originalColor = NapzakMarketTheme.colors.white
     val originalDarkIcons = true
 
     SideEffect {
@@ -53,8 +59,8 @@ fun SplashRoute(
 
 @Composable
 private fun SplashScreen(
+    backgroundColor: Color,
     modifier: Modifier = Modifier,
-    backgroundColor: Color
 ) {
     Box(
         modifier = modifier
