@@ -99,7 +99,8 @@ class GenreDetailViewModel @Inject constructor(
     }
 
     fun updateProductIsInterested(productId: Long, isLiked: Boolean) = viewModelScope.launch {
-        when (val state = uiState.value.loadState) {
+        val state = uiState.value.loadState
+        when (state) {
             is UiState.Success -> {
                 val updatedProducts = state.data.productList.map { product ->
                     if (product.productId == productId) {
