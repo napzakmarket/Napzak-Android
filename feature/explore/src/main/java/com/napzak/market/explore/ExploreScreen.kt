@@ -249,19 +249,19 @@ private fun ExploreSuccessScreen(
                 onChipClick = onGenreFilterClick,
             )
 
-            BasicFilterChip(
-                filterName = stringResource(explore_unopened),
-                isClicked = isUnopenSelected,
-                onChipClick = onUnopenFilterClick,
-            )
-
             if (selectedTab == TradeType.SELL) {
                 BasicFilterChip(
-                    filterName = stringResource(explore_exclude_sold_out),
-                    isClicked = isSoldOutSelected,
-                    onChipClick = onExcludeSoldOutFilterClick,
+                    filterName = stringResource(explore_unopened),
+                    isClicked = isUnopenSelected,
+                    onChipClick = onUnopenFilterClick,
                 )
             }
+
+            BasicFilterChip(
+                filterName = stringResource(explore_exclude_sold_out),
+                isClicked = isSoldOutSelected,
+                onChipClick = onExcludeSoldOutFilterClick,
+            )
         }
 
         GenreAndProductList(
