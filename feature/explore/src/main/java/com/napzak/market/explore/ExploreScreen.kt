@@ -39,7 +39,6 @@ import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.ic_down_chevron
-import com.napzak.market.designsystem.component.bottomsheet.Genre
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
 import com.napzak.market.designsystem.component.textfield.SearchTextField
@@ -48,7 +47,6 @@ import com.napzak.market.explore.component.BasicFilterChip
 import com.napzak.market.explore.component.ExploreBottomSheetScreen
 import com.napzak.market.explore.component.GenreFilterChip
 import com.napzak.market.explore.component.GenreNavigationButton
-import com.napzak.market.explore.model.Product
 import com.napzak.market.explore.state.ExploreBottomSheetState
 import com.napzak.market.explore.state.ExploreUiState
 import com.napzak.market.feature.explore.R.string.explore_count
@@ -56,6 +54,8 @@ import com.napzak.market.feature.explore.R.string.explore_exclude_sold_out
 import com.napzak.market.feature.explore.R.string.explore_product
 import com.napzak.market.feature.explore.R.string.explore_search_hint
 import com.napzak.market.feature.explore.R.string.explore_unopened
+import com.napzak.market.genre.model.Genre
+import com.napzak.market.product.model.Product
 import com.napzak.market.util.android.noRippleClickable
 
 @Composable
@@ -70,10 +70,18 @@ internal fun ExploreRoute(
     val bottomSheetState by viewModel.bottomSheetState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
+        viewModel.updateSortOption(viewModel.sortType)
+        viewModel.updateTradeType(viewModel.tradeType)
         viewModel.updateGenreItemsInBottomSheet()
     }
 
-    LaunchedEffect(uiState) {
+    LaunchedEffect(
+        uiState.selectedTab,
+        uiState.filteredGenres,
+        uiState.isUnopenSelected,
+        uiState.isSoldOutSelected,
+        uiState.sortOption,
+    ) {
         viewModel.updateExploreInformation()
     }
 
@@ -92,8 +100,8 @@ internal fun ExploreRoute(
             viewModel.updateBottomSheetVisibility(BottomSheetType.GENRE_SEARCHING)
         },
         onGenreBottomSheetTextChange = viewModel::updateGenreSearchTerm,
-        onGenreSelectButtonClick = { newGenre ->
-            viewModel.updateSelectedGenres(newGenre)
+        onGenreSelectButtonClick = { newGenres ->
+            viewModel.updateSelectedGenres(newGenres)
             viewModel.updateBottomSheetVisibility(BottomSheetType.GENRE_SEARCHING)
         },
         onUnopenFilterClick = viewModel::updateUnopenFilter,
@@ -154,6 +162,7 @@ private fun ExploreScreen(
                     isSoldOutSelected = isSoldOutSelected,
                     sortOption = sortOption,
                     genreItems = genreSearchResultItems,
+                    products = uiState.loadState.data.productList,
                     bottomSheetState = bottomSheetState,
                     onSearchNavigate = onSearchNavigate,
                     onTabClick = onTabClick,
@@ -187,6 +196,7 @@ private fun ExploreSuccessScreen(
     isSoldOutSelected: Boolean,
     sortOption: SortType,
     genreItems: List<Genre>,
+    products: List<Product>,
     bottomSheetState: ExploreBottomSheetState,
     onSearchNavigate: () -> Unit,
     onTabClick: (TradeType) -> Unit,
@@ -241,24 +251,24 @@ private fun ExploreSuccessScreen(
                 onChipClick = onGenreFilterClick,
             )
 
-            BasicFilterChip(
-                filterName = stringResource(explore_unopened),
-                isClicked = isUnopenSelected,
-                onChipClick = onUnopenFilterClick,
-            )
-
             if (selectedTab == TradeType.SELL) {
                 BasicFilterChip(
-                    filterName = stringResource(explore_exclude_sold_out),
-                    isClicked = isSoldOutSelected,
-                    onChipClick = onExcludeSoldOutFilterClick,
+                    filterName = stringResource(explore_unopened),
+                    isClicked = isUnopenSelected,
+                    onChipClick = onUnopenFilterClick,
                 )
             }
+
+            BasicFilterChip(
+                filterName = stringResource(explore_exclude_sold_out),
+                isClicked = isSoldOutSelected,
+                onChipClick = onExcludeSoldOutFilterClick,
+            )
         }
 
         GenreAndProductList(
             genreList = filteredGenres,
-            productList = Product.mockMixedProduct,
+            productList = products,
             sortType = sortOption,
             onGenreButtonClick = onGenreDetailNavigate,
             onSortOptionClick = { onSortOptionClick(sortOption) },
@@ -381,13 +391,13 @@ private fun GenreAndProductList(
                 rowItems.forEach { product ->
                     with(product) {
                         NapzakLargeProductItem(
-                            genre = genre,
-                            title = name,
+                            genre = genreName,
+                            title = productName,
                             imgUrl = photo,
                             price = price.toString(),
                             createdDate = uploadTime,
-                            reviewCount = reviewCount.toString(),
-                            likeCount = likeCount.toString(),
+                            reviewCount = chatCount.toString(),
+                            likeCount = interestCount.toString(),
                             isLiked = isInterested,
                             isMyItem = isOwnedByCurrentUser,
                             isSellElseBuy = TradeType.valueOf(tradeType) == TradeType.SELL,
@@ -395,10 +405,10 @@ private fun GenreAndProductList(
                             tradeStatus = TradeStatusType.get(
                                 tradeStatus, TradeType.valueOf(tradeType)
                             ),
-                            onLikeClick = { onLikeButtonClick(id, isInterested) },
+                            onLikeClick = { onLikeButtonClick(productId, isInterested) },
                             modifier = Modifier
                                 .weight(1f)
-                                .noRippleClickable { onProductClick(id) },
+                                .noRippleClickable { onProductClick(productId) },
                         )
                     }
                 }

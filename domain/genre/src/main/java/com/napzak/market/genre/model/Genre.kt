@@ -5,3 +5,5 @@ data class Genre(
     val genreName: String,
     val genrePhoto: String? = null,
 )
+
+fun List<Genre>.extractGenreIds(): List<Long> = this.map { it.genreId }
