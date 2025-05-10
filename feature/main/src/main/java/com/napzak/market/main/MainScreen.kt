@@ -38,6 +38,8 @@ import com.napzak.market.registration.navigation.registrationGraph
 import com.napzak.market.report.navigation.reportGraph
 import com.napzak.market.search.navigation.navigateToSearch
 import com.napzak.market.search.navigation.searchGraph
+import com.napzak.market.splash.navigation.Splash
+import com.napzak.market.splash.navigation.splashGraph
 import com.napzak.market.store.store.navigation.storeGraph
 import com.napzak.market.util.android.LocalSnackBarController
 import com.napzak.market.util.android.SnackBarController
@@ -124,6 +126,15 @@ private fun MainNavHost(
         startDestination = navigator.startDestination
     ) {
         dummyGraph(modifier = modifier)
+
+        splashGraph(
+            onNavigateToOnboarding = {
+                navigator.navController.navigate(Login) {
+                    popUpTo<Splash> { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+        )
 
         loginGraph(
             navController = navigator.navController,

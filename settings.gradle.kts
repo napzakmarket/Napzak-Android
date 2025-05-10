@@ -70,5 +70,6 @@ include(
     ":feature:registration",
     ":feature:store",
     ":feature:detail",
+    ":feature:splash",
     ":feature:login",
 )
