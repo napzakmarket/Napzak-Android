@@ -13,6 +13,7 @@ android {
 dependencies {
     implementation(projects.core.util)
     implementation(projects.core.common)
+    implementation(projects.domain.genre)
 
     // Miscellaneous libraries
     implementation(libs.coil.compose)
