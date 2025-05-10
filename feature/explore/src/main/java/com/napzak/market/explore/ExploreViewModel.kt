@@ -37,6 +37,7 @@ internal class ExploreViewModel @Inject constructor(
     private val setInterestProductUseCase: SetInterestProductUseCase,
 ) : ViewModel() {
     val searchTerm: String = savedStateHandle.get<String>(SEARCH_TERM_KEY) ?: ""
+    val sortType: SortType = savedStateHandle.get<SortType>(SORT_TYPE_KEY) ?: SortType.RECENT
 
     private val _uiState = MutableStateFlow(ExploreUiState())
     val uiState = _uiState.asStateFlow()
@@ -48,6 +49,8 @@ internal class ExploreViewModel @Inject constructor(
     val genreSearchTerm = _genreSearchTerm.asStateFlow()
 
     fun updateExploreInformation() = viewModelScope.launch {
+        updateSortOption(sortType)
+
         val parameters = with(uiState.value) {
             if (searchTerm.isEmpty()) {
                 ExploreParameters(
@@ -228,5 +231,6 @@ internal class ExploreViewModel @Inject constructor(
     companion object {
         private const val DEBOUNCE_DELAY = 500L
         private const val SEARCH_TERM_KEY = "searchTerm"
+        private const val SORT_TYPE_KEY = "sortType"
     }
 }
