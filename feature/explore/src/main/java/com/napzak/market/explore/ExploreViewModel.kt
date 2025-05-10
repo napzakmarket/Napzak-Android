@@ -49,8 +49,6 @@ internal class ExploreViewModel @Inject constructor(
     val genreSearchTerm = _genreSearchTerm.asStateFlow()
 
     fun updateExploreInformation() = viewModelScope.launch {
-        updateSortOption(sortType)
-
         val parameters = with(uiState.value) {
             if (searchTerm.isEmpty()) {
                 ExploreParameters(

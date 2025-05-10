@@ -70,6 +70,7 @@ internal fun ExploreRoute(
     val bottomSheetState by viewModel.bottomSheetState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
+        viewModel.updateSortOption(viewModel.sortType)
         viewModel.updateGenreItemsInBottomSheet()
     }
 
