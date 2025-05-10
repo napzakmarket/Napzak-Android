@@ -1,46 +1,21 @@
+import com.napzak.market.buildlogic.dsl.setNameSpace
+
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    id("com.napzak.market.buildlogic.convention.feature")
+    id("com.napzak.market.buildlogic.convention.compose")
+    id("com.napzak.market.buildlogic.primitive.hilt")
 }
 
 android {
-    namespace = "com.napzak.market.login"
-    compileSdk = 34
-
-    defaultConfig {
-        applicationId = "com.napzak.market.login"
-        minSdk = 29
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+    setNameSpace("feature.login")
 }
 
 dependencies {
+    implementation(projects.core.designsystem)
+    implementation(projects.core.common)
+    implementation(projects.core.util)
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.coil.compose)
+    implementation(libs.lottie.compose)
 }
