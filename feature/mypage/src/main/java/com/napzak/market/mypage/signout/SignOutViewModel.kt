@@ -8,6 +8,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,6 +20,9 @@ class SignOutViewModel @Inject constructor(
     private val storeId
         get() = savedStateHandle.get<Long>(STORE_ID) ?: 0
 
+    private val _sideEffect = MutableSharedFlow<SignOutSideEffect>()
+    val sideEffect = _sideEffect.asSharedFlow()
+
     var signOutReason by mutableStateOf("")
     var signOutDescription by mutableStateOf("")
 
@@ -26,6 +31,7 @@ class SignOutViewModel @Inject constructor(
             "SignOutViewModel",
             "signOutId: $storeId\nsignOutReason: $signOutReason\nsignOutDescription: $signOutDescription"
         )
+        _sideEffect.emit(SignOutSideEffect.SignOutComplete)
     }
 
     companion object {
