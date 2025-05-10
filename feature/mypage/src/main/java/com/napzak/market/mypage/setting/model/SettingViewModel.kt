@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import timber.log.Timber
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
@@ -26,6 +27,8 @@ class SettingViewModel @Inject constructor(
     private fun fetchSettingInfo() = viewModelScope.launch {
         settingRepository.fetchSettingInfo()
             .onSuccess { _settingInfo.value = it }
-            .onFailure { /* 에러 무시 */ }
+            .onFailure { throwable ->
+                Timber.e(throwable, "설정 정보 가져오기 실패")
+            }
     }
 }
