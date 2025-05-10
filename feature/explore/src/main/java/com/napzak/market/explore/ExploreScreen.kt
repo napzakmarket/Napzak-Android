@@ -71,6 +71,7 @@ internal fun ExploreRoute(
 
     LaunchedEffect(Unit) {
         viewModel.updateSortOption(viewModel.sortType)
+        viewModel.updateTradeType(viewModel.tradeType)
         viewModel.updateGenreItemsInBottomSheet()
     }
 

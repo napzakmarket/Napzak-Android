@@ -38,6 +38,7 @@ internal class ExploreViewModel @Inject constructor(
 ) : ViewModel() {
     val searchTerm: String = savedStateHandle.get<String>(SEARCH_TERM_KEY) ?: ""
     val sortType: SortType = savedStateHandle.get<SortType>(SORT_TYPE_KEY) ?: SortType.RECENT
+    val tradeType: TradeType = savedStateHandle.get<TradeType>(TRADE_TYPE_KEY) ?: TradeType.SELL
 
     private val _uiState = MutableStateFlow(ExploreUiState())
     val uiState = _uiState.asStateFlow()
@@ -230,5 +231,6 @@ internal class ExploreViewModel @Inject constructor(
         private const val DEBOUNCE_DELAY = 500L
         private const val SEARCH_TERM_KEY = "searchTerm"
         private const val SORT_TYPE_KEY = "sortType"
+        private const val TRADE_TYPE_KEY = "tradeType"
     }
 }
