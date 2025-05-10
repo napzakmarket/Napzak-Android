@@ -3,7 +3,6 @@ package com.napzak.market.mypage.signout
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.store.repository.StoreRepository
@@ -15,12 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignOutViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
     private val storeRepository: StoreRepository,
 ) : ViewModel() {
-    private val storeId
-        get() = savedStateHandle.get<Long>(STORE_ID) ?: 0
-
     private val _sideEffect = MutableSharedFlow<SignOutSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
