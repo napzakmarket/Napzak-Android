@@ -26,6 +26,7 @@ import com.napzak.market.explore.navigation.exploreGraph
 import com.napzak.market.explore.navigation.navigateToGenreDetail
 import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.homeGraph
+import com.napzak.market.login.navigation.loginGraph
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.onboarding.navigation.Terms
@@ -123,6 +124,13 @@ private fun MainNavHost(
         startDestination = navigator.startDestination
     ) {
         dummyGraph(modifier = modifier)
+
+        loginGraph(
+            navController = navigator.navController,
+            onKakaoLoginClick = {
+                navigator.navController.navigate(Terms)
+            }
+        )
 
         onboardingGraph(
             navController = navigator.navController,
