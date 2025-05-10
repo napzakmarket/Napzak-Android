@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 abstract class RegistrationViewModel(
-    // TODO: 등록 정보 수정 API 연결
     protected val getProductPresignedUrlUseCase: GetProductPresignedUrlUseCase,
     protected val uploadImageUseCase: UploadImageUseCase,
 ) : ViewModel() {
@@ -71,50 +70,76 @@ abstract class RegistrationViewModel(
     }
 
     fun getPresignedUrl() = viewModelScope.launch {
-        val result = getProductPresignedUrlUseCase(_uiState.value.imageUris.map { it.uri.toString() })
         updateLoadState(UiState.Loading)
+        val imageUris = _uiState.value.imageUris
+        val localImages = imageUris.mapIndexedNotNull { index, photo ->
+            if (!photo.uri.toString().startsWith(REMOTE_URL_KEY)) {
+                index to photo.uri.toString()
+            } else null
+        }
 
-        result.onSuccess { presignedUrls ->
-            uploadImageViaPresignedUrl(presignedUrls = presignedUrls)
+        if (localImages.isEmpty()) {
+            val remoteImages = imageUris.mapIndexed { index, photo ->
+                PresignedUrl(
+                    imageName = "${KEY_DELIMITER}${index + 1}",
+                    url = photo.uri.toString(),
+                )
+            }
+            uploadProduct(remoteImages)
+            return@launch
+        }
+
+        getProductPresignedUrlUseCase(localImages.map { it.second }).onSuccess { presignedUrls ->
+            val originalIndexedPresignedUrls = presignedUrls.zip(localImages) { presignedUrl, (originalIndex, _) ->
+                presignedUrl.copy(
+                    imageName = "${KEY_DELIMITER}${originalIndex + 1}"
+                )
+            }
+            uploadImageViaPresignedUrl(originalIndexedPresignedUrls)
         }.onFailure {
             updateLoadState(UiState.Failure(RETRIEVING_URL_ERROR_MESSAGE))
         }
     }
 
-    private fun uploadImageViaPresignedUrl(presignedUrls: List<PresignedUrl>) =
-        viewModelScope.launch {
-            val imageUris = _uiState.value.imageUris
+    private fun uploadImageViaPresignedUrl(presignedUrls: List<PresignedUrl>) = viewModelScope.launch {
+        val imageUris = _uiState.value.imageUris
 
-            val sortedPresignedUrls = presignedUrls.sortedBy {
-                it.imageName.substringAfter(KEY_DELIMITER).toInt()
-            }
+        val (remoteImages, localImages) = imageUris.mapIndexed { index, photo ->
+            index to photo.uri.toString()
+        }.partition { (_, uri) -> uri.startsWith(REMOTE_URL_KEY) }
 
-            val productPhotos = sortedPresignedUrls.zip(imageUris) { presignedUrl, photo ->
-                presignedUrl.url to photo.uri.toString()
-            }
+        val localPresignedUrls = presignedUrls.zip(localImages) { presignedUrl, (_, uri) ->
+            presignedUrl to uri
+        }
 
-            runCatching {
-                coroutineScope {
-                    val uploadResults = productPhotos.map { (presignedUrl, imageUri) ->
-                        async { uploadImageUseCase(presignedUrl, imageUri) }
-                    }.awaitAll()
+        val remotePresignedUrls = remoteImages.map { (index, uri) ->
+            PresignedUrl(
+                imageName = "${KEY_DELIMITER}${index + 1}",
+                url = uri
+            )
+        }
 
-                    if (uploadResults.all { results -> results.isSuccess }) {
-                        uploadProduct(sortedPresignedUrls)
-                    } else {
-                        updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
-                    }
+        runCatching {
+            coroutineScope {
+                val uploadResults = localPresignedUrls.map { (presignedUrl, photoUri) ->
+                    async { uploadImageUseCase(presignedUrl.url, photoUri) }
+                }.awaitAll()
+
+                if (uploadResults.all { results -> results.isSuccess }) {
+                    val sortedPresignedUrls = (presignedUrls + remotePresignedUrls).sortedBy { it.imageName.substringAfter(KEY_DELIMITER).toInt() }
+                    uploadProduct(sortedPresignedUrls)
+                } else {
+                    updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
                 }
             }
         }
-
-    fun editRegisteredProduct() {
-        // TODO: API 연결
     }
 
     protected abstract fun uploadProduct(presignedUrls: List<PresignedUrl>): Job
 
     companion object {
+        private const val REMOTE_URL_KEY = "https://"
+        internal const val PRODUCT_ID_KEY = "productId"
         internal const val KEY_DELIMITER = "image_"
         internal const val VALUE_DELIMITER = "?"
         internal const val UPLOADING_PRODUCT_ERROR_MESSAGE = "failed to register product."
