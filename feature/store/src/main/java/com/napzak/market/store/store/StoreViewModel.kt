@@ -7,7 +7,7 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.BottomSheetType
 import com.napzak.market.common.type.MarketTab
 import com.napzak.market.common.type.SortType
-import com.napzak.market.designsystem.component.bottomsheet.Genre
+import com.napzak.market.genre.model.Genre
 import com.napzak.market.store.model.Product
 import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.store.state.StoreBottomSheetState
@@ -101,18 +101,8 @@ class StoreViewModel @Inject constructor(
         _uiState.update { currentState ->
             // TODO : 추후 API로 변경
             currentState.copy(
-                initGenreItems = listOf(
-                    Genre(0, "산리오"),
-                    Genre(1, "주술회전"),
-                    Genre(2, "진격의 거인"),
-                    Genre(3, "산리오1"),
-                    Genre(4, "주술회전1"),
-                    Genre(5, "진격의 거인1"),
-                ),
-                genreSearchResultItems = listOf(
-                    Genre(0, "산리오"),
-                    Genre(1, "주술회전"),
-                )
+                initGenreItems = emptyList(),
+                genreSearchResultItems = emptyList()
             )
         }
     }
@@ -127,17 +117,17 @@ class StoreViewModel @Inject constructor(
         _genreSearchTerm
             .debounce(DEBOUNCE_DELAY)
             .collectLatest { debounce ->
-                val newGenreItems: List<Genre> = if (debounce.isBlank()) {
-                    _uiState.value.initGenreItems
-                } else {
-                    emptyList() // TODO: 장르 검색 API 연결
-                }
-
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        genreSearchResultItems = newGenreItems
-                    )
-                }
+//                val newGenreItems: List<Genre> = if (debounce.isBlank()) {
+//                    _uiState.value.initGenreItems
+//                } else {
+//                    emptyList() // TODO: 장르 검색 API 연결
+//                }
+//
+//                _uiState.update { currentState ->
+//                    currentState.copy(
+//                        genreSearchResultItems = newGenreItems
+//                    )
+//                }
             }
     }
 
