@@ -9,12 +9,12 @@ import retrofit2.http.Query
 interface PreferredGenreService {
     @GET("onboarding/genres")
     suspend fun getPreferredGenres(
-        @Query("cursor") cursor: Long?,
+        @Query("cursor") cursor: String?,
     ): BaseResponse<PreferredGenreItemsResponse>
 
     @GET("onboarding/genres/search")
     suspend fun getPreferredGenreResults(
         @Query("searchWord") searchWord: String,
-        @Query("cursor") cursor: Long?,
+        @Query("cursor") cursor: String?,
     ): BaseResponse<PreferredGenreSearchItemsResponse>
 }
