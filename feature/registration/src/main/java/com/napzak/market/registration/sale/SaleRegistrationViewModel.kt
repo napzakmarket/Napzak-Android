@@ -21,6 +21,7 @@ import com.napzak.market.registration.sale.state.SaleContract.SaleUiState
 import com.napzak.market.registration.usecase.EditRegisteredProductUseCase
 import com.napzak.market.registration.usecase.GetRegisteredSaleProductUseCase
 import com.napzak.market.registration.usecase.RegisterProductUseCase
+import com.napzak.market.util.android.priceToNumericTransformation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -113,8 +114,8 @@ class SaleRegistrationViewModel @Inject constructor(
             price = registrationState.price.toInt(),
             productCondition = saleState.condition?.label,
             isDeliveryIncluded = saleState.isShippingFeeIncluded == true,
-            standardDeliveryFee = saleState.normalShippingFee.toInt(),
-            halfDeliveryFee = saleState.halfShippingFee.toInt(),
+            standardDeliveryFee = saleState.normalShippingFee.priceToNumericTransformation(),
+            halfDeliveryFee = saleState.halfShippingFee.priceToNumericTransformation(),
         )
 
         productId?.let { id ->
