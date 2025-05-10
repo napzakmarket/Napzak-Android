@@ -70,4 +70,5 @@ include(
     ":feature:registration",
     ":feature:store",
     ":feature:detail",
+    ":feature:login",
 )
