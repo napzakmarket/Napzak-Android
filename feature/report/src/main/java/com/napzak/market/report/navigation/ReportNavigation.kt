@@ -7,21 +7,20 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.napzak.market.common.navigation.Route
 import com.napzak.market.report.ReportRoute
+import com.napzak.market.report.type.ReportType
 import kotlinx.serialization.Serializable
 
 private const val REPORT_TYPE_KEY = "reportType"
-private const val PRODUCT_REPORT = "PRODUCT"
-private const val USER_REPORT = "USER"
 
 fun NavController.navigateToProductReport(productId: Long, navOptions: NavOptions? = null) =
     navigate(
-        route = Report(id = productId, reportType = PRODUCT_REPORT),
+        route = Report(id = productId, reportType = ReportType.PRODUCT.name),
         navOptions = navOptions,
     )
 
 fun NavController.navigateToUserReport(userId: Long, navOptions: NavOptions? = null) =
     navigate(
-        route = Report(id = userId, reportType = USER_REPORT),
+        route = Report(id = userId, reportType = ReportType.USER.name),
         navOptions = navOptions,
     )
 
@@ -30,7 +29,8 @@ fun NavGraphBuilder.reportGraph(
     modifier: Modifier = Modifier,
 ) {
     composable<Report> { backStackEntry ->
-        val reportType = backStackEntry.arguments?.getString(REPORT_TYPE_KEY) ?: PRODUCT_REPORT
+        val reportType =
+            backStackEntry.arguments?.getString(REPORT_TYPE_KEY) ?: ReportType.PRODUCT.name
 
         ReportRoute(
             reportType = reportType,

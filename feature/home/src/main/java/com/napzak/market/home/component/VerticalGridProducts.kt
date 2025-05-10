@@ -27,7 +27,7 @@ import com.napzak.market.designsystem.R.drawable.ic_home_forward
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.home.R.string.home_button_more
-import com.napzak.market.home.model.Product
+import com.napzak.market.product.model.Product
 import com.napzak.market.util.android.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -99,13 +99,13 @@ internal fun VerticalGridProducts(
                     productRow.forEach { product ->
                         with(product) {
                             NapzakLargeProductItem(
-                                genre = genre,
-                                title = name,
+                                genre = genreName,
+                                title = productName,
                                 imgUrl = photo,
                                 price = price.toString(),
                                 createdDate = uploadTime,
-                                reviewCount = reviewCount.toString(),
-                                likeCount = likeCount.toString(),
+                                reviewCount = chatCount.toString(),
+                                likeCount = interestCount.toString(),
                                 isLiked = isInterested,
                                 isMyItem = isOwnedByCurrentUser,
                                 isSellElseBuy = TradeType.valueOf(tradeType) == TradeType.SELL,
@@ -113,10 +113,10 @@ internal fun VerticalGridProducts(
                                 tradeStatus = TradeStatusType.get(
                                     tradeStatus, TradeType.valueOf(tradeType)
                                 ),
-                                onLikeClick = { onLikeClick(id, isInterested) },
+                                onLikeClick = { onLikeClick(productId, isInterested) },
                                 modifier = Modifier
                                     .weight(1f)
-                                    .noRippleClickable { onProductClick(id) },
+                                    .noRippleClickable { onProductClick(productId) },
                             )
                         }
                     }
@@ -136,7 +136,7 @@ private fun VerticalGridProductsPreview() {
     NapzakMarketTheme {
         Column {
             VerticalGridProducts(
-                products = Product.mockMixedProduct.toImmutableList(),
+                products = listOf<Product>().toImmutableList(),
                 title = "지금 가장 많이 찜한 납작템",
                 subTitle = "놓치면 아쉬운 인기 아이템들을 구경해볼까요?",
                 onLikeClick = { _, _ -> },
