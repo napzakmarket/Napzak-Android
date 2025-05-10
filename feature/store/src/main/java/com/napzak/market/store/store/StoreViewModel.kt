@@ -9,6 +9,7 @@ import com.napzak.market.common.type.MarketTab
 import com.napzak.market.common.type.SortType
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.genre.model.extractGenreIds
+import com.napzak.market.genre.repository.GenreNameRepository
 import com.napzak.market.product.model.Product
 import com.napzak.market.product.usecase.GetStoreProductsUseCase
 import com.napzak.market.store.model.StoreDetail
@@ -28,6 +29,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,6 +37,7 @@ class StoreViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val storeRepository: StoreRepository,
     private val getProductStoreUseCase: GetStoreProductsUseCase,
+    private val genreNameRepository: GenreNameRepository,
 ) : ViewModel() {
     val storeId: Long = savedStateHandle.get<Long>(STORE_ID_KEY) ?: 0
 
@@ -126,13 +129,16 @@ class StoreViewModel @Inject constructor(
     }
 
     fun updateGenreItemsInBottomSheet() = viewModelScope.launch {
-        _storeOptionState.update { currentState ->
-            // TODO : 추후 API로 변경
-            currentState.copy(
-                initGenreItems = emptyList(),
-                genreSearchResultItems = emptyList()
-            )
-        }
+        genreNameRepository.getGenreNames(cursor = null)
+            .onSuccess { genres ->
+                _storeOptionState.update { currentState ->
+                    currentState.copy(
+                        initGenreItems = genres.first,
+                        genreSearchResultItems = genres.first,
+                    )
+                }
+            }
+            .onFailure(Timber::e)
     }
 
     fun updateGenreSearchTerm(searchTerm: String) {
@@ -144,17 +150,22 @@ class StoreViewModel @Inject constructor(
     private fun updateGenreSearchResult() = viewModelScope.launch {
         _genreSearchTerm
             .debounce(DEBOUNCE_DELAY)
-            .collectLatest { debounce ->
-                val newGenreItems: List<Genre> = if (debounce.isBlank()) {
+            .collectLatest { searchTerm ->
+                val genreList = if (searchTerm.isBlank()) {
                     _storeOptionState.value.initGenreItems
                 } else {
-                    emptyList() // TODO: 장르 검색 API 연결
+                    genreNameRepository.getGenreNameResults(searchTerm)
+                        .fold(
+                            onSuccess = { it.genreList },
+                            onFailure = {
+                                Timber.e(it)
+                                emptyList()
+                            }
+                        )
                 }
 
                 _storeOptionState.update { currentState ->
-                    currentState.copy(
-                        genreSearchResultItems = newGenreItems
-                    )
+                    currentState.copy(genreSearchResultItems = genreList)
                 }
             }
     }
