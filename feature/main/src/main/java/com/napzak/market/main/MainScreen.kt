@@ -1,7 +1,5 @@
 package com.napzak.market.main
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
@@ -18,12 +16,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
 import com.napzak.market.designsystem.component.CommonSnackBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import androidx.navigation.compose.composable
 import com.napzak.market.detail.navigation.productDetailGraph
 import com.napzak.market.dummy.navigation.dummyGraph
 import com.napzak.market.explore.navigation.exploreGraph
@@ -33,9 +29,8 @@ import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.mypage.navigation.mypageGraph
-import com.napzak.market.mypage.setting.SettingsRoute
-import com.napzak.market.mypage.setting.navigation.SETTINGS_ROUTE
 import com.napzak.market.mypage.setting.navigation.navigateToSettings
+import com.napzak.market.mypage.setting.navigation.settingsGraph
 import com.napzak.market.onboarding.navigation.Terms
 import com.napzak.market.onboarding.navigation.onboardingGraph
 import com.napzak.market.registration.navigation.navigateToGenreSearch
@@ -209,18 +204,10 @@ private fun MainNavHost(
             modifier = modifier,
         )
 
-        composable(route = SETTINGS_ROUTE) {
-            val context = LocalContext.current
-
-            SettingsRoute(
-                onBackClick = { navigator.navigateUp() },
-                onLogoutConfirm = { /* TODO: 로그아웃 처리 */},
-                onWithdrawClick = { /* TODO: 탈퇴 처리 */ },
-                openWebLink = { url ->
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    context.startActivity(intent)
-                }
-            )
-        }
+        settingsGraph(
+            navigateToBack = navigator::navigateUp,
+            onLogoutConfirm = { /* TODO: 로그아웃 처리 */ },
+            onWithdrawClick = { /* TODO: 탈퇴 처리 */ }
+        )
     }
 }
