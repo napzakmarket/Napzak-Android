@@ -10,6 +10,7 @@ import com.napzak.market.common.type.SortType
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.genre.model.extractGenreIds
 import com.napzak.market.genre.repository.GenreNameRepository
+import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.product.model.Product
 import com.napzak.market.product.usecase.GetStoreProductsUseCase
 import com.napzak.market.store.model.StoreDetail
@@ -38,6 +39,7 @@ class StoreViewModel @Inject constructor(
     private val storeRepository: StoreRepository,
     private val getProductStoreUseCase: GetStoreProductsUseCase,
     private val genreNameRepository: GenreNameRepository,
+    private val setInterestProductUseCase: SetInterestProductUseCase,
 ) : ViewModel() {
     val storeId: Long = savedStateHandle.get<Long>(STORE_ID_KEY) ?: 0
 
@@ -194,8 +196,25 @@ class StoreViewModel @Inject constructor(
         }
     }
 
-    fun updateProductIsInterested(productId: Long, isLiked: Boolean) {
-        // TODO: 좋아요 연결 API 설정
+    fun updateProductIsInterested(productId: Long, isLiked: Boolean) = viewModelScope.launch {
+        val state = storeUiState.value.storeProductsState
+        when (state) {
+            is UiState.Success -> {
+                val updatedProducts = state.data.map { product ->
+                    if (product.productId == productId) {
+                        product.copy(isInterested = !product.isInterested)
+                    } else {
+                        product
+                    }
+                }
+
+                _storeProductsState.update { UiState.Success(updatedProducts) }
+            }
+
+            else -> {}
+        }
+
+        setInterestProductUseCase(productId, isLiked)
     }
 
     companion object {
