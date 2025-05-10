@@ -58,14 +58,14 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.explore.component.BasicFilterChip
 import com.napzak.market.explore.component.GenreLabel
 import com.napzak.market.explore.genredetail.state.GenreDetailUiState
-import com.napzak.market.explore.genredetail.state.GenreInfo
-import com.napzak.market.explore.model.Product
 import com.napzak.market.feature.explore.R.drawable.ic_home
 import com.napzak.market.feature.explore.R.drawable.ic_left_chevron_24
 import com.napzak.market.feature.explore.R.string.explore_count
 import com.napzak.market.feature.explore.R.string.explore_exclude_sold_out
 import com.napzak.market.feature.explore.R.string.explore_product
 import com.napzak.market.feature.explore.R.string.explore_unopened
+import com.napzak.market.genre.model.GenreInfo
+import com.napzak.market.product.model.Product
 import com.napzak.market.util.android.noRippleClickable
 import kotlin.collections.chunked
 
@@ -82,10 +82,14 @@ internal fun GenreDetailRoute(
 
     LaunchedEffect(Unit) {
         viewModel.updateGenreInfo()
-        viewModel.updateGenreDetailInformation()
     }
 
-    LaunchedEffect(uiState) {
+    LaunchedEffect(
+        uiState.selectedTab,
+        uiState.isUnopenSelected,
+        uiState.isSoldOutSelected,
+        uiState.sortOption,
+    ) {
         viewModel.updateGenreDetailInformation()
     }
 
@@ -324,11 +328,11 @@ private fun GenreScrollSection(
                     ) {
                         GenreLabel()
 
-                        if (tag != null) {
+                        tag?.let {
                             Spacer(Modifier.width(4.dp))
 
                             Text(
-                                text = tag,
+                                text = it,
                                 style = NapzakMarketTheme.typography.caption10sb,
                                 color = NapzakMarketTheme.colors.red,
                                 modifier = Modifier
@@ -373,19 +377,19 @@ private fun GenreScrollSection(
                     .padding(top = 15.dp, bottom = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                BasicFilterChip(
-                    filterName = stringResource(explore_unopened),
-                    isClicked = isUnopenSelected,
-                    onChipClick = onUnopenFilterClick,
-                )
-
                 if (selectedTab == TradeType.SELL) {
                     BasicFilterChip(
-                        filterName = stringResource(explore_exclude_sold_out),
-                        isClicked = isSoldOutSelected,
-                        onChipClick = onExcludeSoldOutFilterClick,
+                        filterName = stringResource(explore_unopened),
+                        isClicked = isUnopenSelected,
+                        onChipClick = onUnopenFilterClick,
                     )
                 }
+
+                BasicFilterChip(
+                    filterName = stringResource(explore_exclude_sold_out),
+                    isClicked = isSoldOutSelected,
+                    onChipClick = onExcludeSoldOutFilterClick,
+                )
             }
         }
 
@@ -442,13 +446,13 @@ private fun GenreScrollSection(
                 rowItems.forEach { product ->
                     with(product) {
                         NapzakLargeProductItem(
-                            genre = genre,
-                            title = name,
+                            genre = genreName,
+                            title = productName,
                             imgUrl = photo,
                             price = price.toString(),
                             createdDate = uploadTime,
-                            reviewCount = reviewCount.toString(),
-                            likeCount = likeCount.toString(),
+                            reviewCount = chatCount.toString(),
+                            likeCount = interestCount.toString(),
                             isLiked = isInterested,
                             isMyItem = isOwnedByCurrentUser,
                             isSellElseBuy = TradeType.valueOf(tradeType) == TradeType.SELL,
@@ -456,10 +460,10 @@ private fun GenreScrollSection(
                             tradeStatus = TradeStatusType.get(
                                 tradeStatus, TradeType.valueOf(tradeType)
                             ),
-                            onLikeClick = { onLikeButtonClick(id, isInterested) },
+                            onLikeClick = { onLikeButtonClick(productId, isInterested) },
                             modifier = Modifier
                                 .weight(1f)
-                                .noRippleClickable { onProductClick(id) },
+                                .noRippleClickable { onProductClick(productId) },
                         )
                     }
                 }
@@ -488,7 +492,7 @@ private fun GenreDetailScreenPreview(modifier: Modifier = Modifier) {
             selectedTab = TradeType.SELL,
             isUnopenSelected = false,
             isSoldOutSelected = false,
-            productList = Product.mockMixedProduct,
+            productList = emptyList(),
             sortType = SortType.RECENT,
             sortBottomSheetState = false,
             onDismissRequest = {},
