@@ -26,6 +26,7 @@ import com.napzak.market.explore.navigation.exploreGraph
 import com.napzak.market.explore.navigation.navigateToGenreDetail
 import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.homeGraph
+import com.napzak.market.login.navigation.Login
 import com.napzak.market.login.navigation.loginGraph
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
