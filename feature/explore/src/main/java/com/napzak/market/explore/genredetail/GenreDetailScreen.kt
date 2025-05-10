@@ -328,11 +328,11 @@ private fun GenreScrollSection(
                     ) {
                         GenreLabel()
 
-                        if (tag != null) {
+                        tag?.let {
                             Spacer(Modifier.width(4.dp))
 
                             Text(
-                                text = tag!!,
+                                text = it,
                                 style = NapzakMarketTheme.typography.caption10sb,
                                 color = NapzakMarketTheme.colors.red,
                                 modifier = Modifier
