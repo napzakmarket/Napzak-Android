@@ -2,6 +2,7 @@
 agp = "8.7.2"
 minSdk = "28"
 targetSdk = "35"
+accompanist = "0.30.1"
 compileSdk = "35"
 jvmTarget = "17"
 versionCode = "1"
@@ -52,6 +53,7 @@ uiAndroid = "1.7.8"
 [libraries]
 ## android
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
