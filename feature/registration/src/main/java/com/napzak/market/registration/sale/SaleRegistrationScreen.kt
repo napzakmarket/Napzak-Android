@@ -1,6 +1,5 @@
 package com.napzak.market.registration.sale
 
-import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -41,6 +40,7 @@ import com.napzak.market.registration.RegistrationContract.RegistrationUiState
 import com.napzak.market.registration.component.PriceSettingGroup
 import com.napzak.market.registration.component.RegistrationTopBar
 import com.napzak.market.registration.component.RegistrationViewGroup
+import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.sale.component.ProductConditionGridButton
 import com.napzak.market.registration.sale.component.ShippingFeeSelector
 import com.napzak.market.registration.sale.state.SaleContract.SaleUiState
@@ -87,7 +87,7 @@ fun SaleRegistrationRoute(
         onHalfShippingFeeSelect = viewModel::updateHalfShippingFeeInclusion,
         onHalfShippingFeeChange = viewModel::updateHalfShippingFee,
         checkButtonEnabled = viewModel::updateButtonState,
-        onRegisterClick = viewModel::registerProduct,
+        onRegisterClick = viewModel::getPresignedUrl,
         modifier = modifier,
     )
 }
@@ -98,7 +98,7 @@ fun SaleRegistrationScreen(
     registrationUiState: RegistrationUiState,
     saleUiState: SaleUiState,
     onCloseClick: () -> Unit,
-    onImageSelect: (ImmutableList<Uri>) -> Unit,
+    onImageSelect: (ImmutableList<Photo>) -> Unit,
     onPhotoPress: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
     onGenreClick: () -> Unit,
@@ -123,6 +123,7 @@ fun SaleRegistrationScreen(
         registrationUiState.title,
         registrationUiState.description,
         registrationUiState.price,
+        saleUiState.condition,
         saleUiState.isShippingFeeIncluded,
         saleUiState.isNormalShippingChecked,
         saleUiState.normalShippingFee,

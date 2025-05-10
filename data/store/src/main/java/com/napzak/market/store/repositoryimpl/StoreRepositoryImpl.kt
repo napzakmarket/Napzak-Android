@@ -29,7 +29,7 @@ class StoreRepositoryImpl @Inject constructor(
     }
 
     override suspend fun postRegisterGenres(genreIds: List<Long>): Result<Genre> = runCatching {
-        val response = storeDataSource.getRegistrationGenre(GenreRegistrationRequest(genreIds))
+        val response = storeDataSource.postRegistrationGenre(GenreRegistrationRequest(genreIds))
         response.data.genreList.first().toDomain()
     }
 
