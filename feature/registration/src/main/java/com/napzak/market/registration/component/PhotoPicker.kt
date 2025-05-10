@@ -1,6 +1,5 @@
 package com.napzak.market.registration.component
 
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickMultipleVisualMedia
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_import_24
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.photo_count
+import com.napzak.market.registration.model.Photo
 import com.napzak.market.util.android.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
@@ -49,8 +49,8 @@ private const val ZERO = 0
  */
 @Composable
 internal fun PhotoPicker(
-    imageUris: PersistentList<Uri>,
-    onImagesSelect: (ImmutableList<Uri>) -> Unit,
+    imageUris: PersistentList<Photo>,
+    onImagesSelect: (ImmutableList<Photo>) -> Unit,
     onLongClick: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -61,11 +61,11 @@ internal fun PhotoPicker(
         MAX_ITEMS - 1 -> rememberLauncherForActivityResult(
             PickVisualMedia()
         ) { uri ->
-            uri?.let { onImagesSelect(listOf(it).toPersistentList()) }
+            uri?.let { onImagesSelect(listOf(Photo(it)).toPersistentList()) }
         }
 
         else -> rememberLauncherForActivityResult(PickMultipleVisualMedia(remainingImageSize)) { uris ->
-            onImagesSelect(uris.toPersistentList())
+            onImagesSelect(uris.map { Photo(it) }.toPersistentList())
         }
     }
 
@@ -95,13 +95,13 @@ internal fun PhotoPicker(
 
         itemsIndexed(
             items = imageUris,
-            key = { index, _ -> index },
-        ) { index, url ->
+            key = { _, photo -> photo.uuid },
+        ) { index, photo ->
             val padEnd = if (index == imageUris.lastIndex) 20.dp else 8.dp
 
             PhotoContainer(
                 index = index,
-                imageUri = url,
+                imageUri = photo.uri,
                 onDeleteClick = onDeleteClick,
                 onLongClick = { onLongClick(index) },
                 modifier = Modifier
