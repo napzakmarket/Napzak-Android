@@ -28,6 +28,7 @@ import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
+import com.napzak.market.mypage.navigation.mypageGraph
 import com.napzak.market.onboarding.navigation.Terms
 import com.napzak.market.onboarding.navigation.onboardingGraph
 import com.napzak.market.registration.navigation.navigateToGenreSearch
@@ -37,11 +38,11 @@ import com.napzak.market.registration.navigation.registrationGraph
 import com.napzak.market.report.navigation.reportGraph
 import com.napzak.market.search.navigation.navigateToSearch
 import com.napzak.market.search.navigation.searchGraph
+import com.napzak.market.store.store.navigation.navigateToStore
 import com.napzak.market.store.store.navigation.storeGraph
 import com.napzak.market.util.android.LocalSnackBarController
 import com.napzak.market.util.android.SnackBarController
 import kotlinx.collections.immutable.toImmutableList
-import com.napzak.market.mypage.navigation.mypageGraph
 
 
 @Composable
@@ -192,7 +193,9 @@ private fun MainNavHost(
         )
 
         mypageGraph(
-            navigateToMyMarket = { /* TODO: 내 마켓 화면으로 이동 */ },
+            navigateToMyMarket = { storeId ->
+                navigator.navController.navigateToStore(storeId)
+            },
             navigateToSales = { /* TODO: 판매내역 화면으로 이동 */ },
             navigateToPurchase = { /* TODO: 구매내역 화면으로 이동 */ },
             navigateToRecent = { /* TODO: 최근 본 상품 화면으로 이동 */ },
