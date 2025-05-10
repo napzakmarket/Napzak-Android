@@ -173,20 +173,8 @@ private fun EditStoreScreen(
 
         if (bottomSheetVisibility) {
             GenreSearchBottomSheet(
-                initialSelectedGenreList = storeGenres,
-                genreItems = listOf(
-                    Genre(0, "산리오"),
-                    Genre(1, "주술회전"),
-                    Genre(2, "진격의 거인"),
-                    Genre(3, "산리오1"),
-                    Genre(4, "주술회전1"),
-                    Genre(5, "진격의 거인1"),
-                    Genre(6, "산리오2"),
-                    Genre(7, "주술회전2"),
-                    Genre(8, "진격의 거인2"),
-                    Genre(9, "산리오3"),
-                    Genre(10, "주술회전3"),
-                ),
+                initialSelectedGenreList = emptyList(),
+                genreItems = emptyList(),
                 sheetState = bottomSheetState,
                 onDismissRequest = {
                     bottomSheetVisibility = false
