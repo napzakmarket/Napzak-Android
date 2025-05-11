@@ -47,6 +47,7 @@ import com.napzak.market.designsystem.component.GenreListItem
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.genre.model.Genre
 import com.napzak.market.util.android.noRippleClickable
 import kotlinx.coroutines.launch
 

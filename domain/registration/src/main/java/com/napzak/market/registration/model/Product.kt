@@ -9,7 +9,7 @@ data class SaleRegistrationProduct(
     val title: String,
     val description: String,
     val price: Int,
-    val productCondition: String,
+    val productCondition: String?,
     val isDeliveryIncluded: Boolean,
     val standardDeliveryFee: Int,
     val halfDeliveryFee: Int,
@@ -26,7 +26,7 @@ data class PurchaseRegistrationProduct(
 ) : Product
 
 data class ProductImage(
-    val photoId: Long?,
+    val photoId: Long? = null,
     val imageUrl: String,
     val sequence: Int,
 )

@@ -3,14 +3,23 @@ package com.napzak.market.main
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
+import com.napzak.market.designsystem.component.CommonSnackBar
+import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.detail.navigation.productDetailGraph
 import com.napzak.market.dummy.navigation.dummyGraph
 import com.napzak.market.explore.navigation.exploreGraph
@@ -19,6 +28,9 @@ import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
+import com.napzak.market.mypage.navigation.mypageGraph
+import com.napzak.market.mypage.setting.navigation.navigateToSettings
+import com.napzak.market.mypage.setting.navigation.settingsGraph
 import com.napzak.market.onboarding.navigation.Terms
 import com.napzak.market.onboarding.navigation.onboardingGraph
 import com.napzak.market.registration.navigation.navigateToGenreSearch
@@ -28,13 +40,22 @@ import com.napzak.market.registration.navigation.registrationGraph
 import com.napzak.market.report.navigation.reportGraph
 import com.napzak.market.search.navigation.navigateToSearch
 import com.napzak.market.search.navigation.searchGraph
+import com.napzak.market.splash.navigation.Splash
+import com.napzak.market.splash.navigation.splashGraph
 import com.napzak.market.store.store.navigation.storeGraph
+import com.napzak.market.util.android.LocalSnackBarController
+import com.napzak.market.util.android.SnackBarController
 import kotlinx.collections.immutable.toImmutableList
+
 
 @Composable
 fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
+    val snackBarController = remember { SnackBarController(snackBarHostState, coroutineScope) }
+
     Scaffold(
         bottomBar = {
             MainBottomBar(
@@ -44,26 +65,42 @@ fun MainScreen(
                 onTabSelected = navigator::navigate,
             )
         },
+        snackbarHost = {
+            SnackbarHost(snackBarHostState) {
+                CommonSnackBar(
+                    message = it.visuals.message,
+                    contentPadding = PaddingValues(horizontal = 17.dp, vertical = 15.dp),
+                    textStyle = NapzakMarketTheme.typography.caption12m.copy(
+                        color = NapzakMarketTheme.colors.white,
+                        textAlign = TextAlign.Center,
+                    )
+                )
+            }
+        },
         modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
-        Box(
-            modifier = Modifier.padding(innerPadding),
+        CompositionLocalProvider(
+            LocalSnackBarController provides snackBarController
         ) {
-            MainRegisterDialog(
-                visibility = navigator.isRegister,
-                onSellRegisterClick = {
-                    navigator.navController.navigateToSaleRegistration()
-                    navigator.dismissRegisterDialog()
-                },
-                onBuyRegisterClick = {
-                    navigator.navController.navigateToPurchaseRegistration()
-                    navigator.dismissRegisterDialog()
-                },
-                onDismissRequest = navigator::dismissRegisterDialog,
-                modifier = Modifier.zIndex(1f),
-            )
+            Box(
+                modifier = Modifier.padding(innerPadding),
+            ) {
+                MainRegisterDialog(
+                    visibility = navigator.isRegister,
+                    onSellRegisterClick = {
+                        navigator.navController.navigateToSaleRegistration()
+                        navigator.dismissRegisterDialog()
+                    },
+                    onBuyRegisterClick = {
+                        navigator.navController.navigateToPurchaseRegistration()
+                        navigator.dismissRegisterDialog()
+                    },
+                    onDismissRequest = navigator::dismissRegisterDialog,
+                    modifier = Modifier.zIndex(1f),
+                )
 
-            MainNavHost(navigator = navigator)
+                MainNavHost(navigator = navigator)
+            }
         }
     }
 }
@@ -90,6 +127,15 @@ private fun MainNavHost(
         startDestination = navigator.startDestination
     ) {
         dummyGraph(modifier = modifier)
+
+        splashGraph(
+            onNavigateToOnboarding = {
+                navigator.navController.navigate(Terms) {
+                    popUpTo<Splash> { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+        )
 
         onboardingGraph(
             navController = navigator.navController,
@@ -148,7 +194,7 @@ private fun MainNavHost(
 
         reportGraph(
             navigateUp = navigator::navigateUp,
-            modifier = Modifier.systemBarsPadding()
+            modifier = Modifier
         )
 
         registrationGraph(
@@ -156,6 +202,23 @@ private fun MainNavHost(
             navigateToDetail = {}, // TODO: 물품 상세 화면으로 이동
             navigateToGenreSearch = navigator.navController::navigateToGenreSearch,
             modifier = modifier,
+        )
+
+        mypageGraph(
+            navigateToMyMarket = { /* TODO: 내 마켓 화면으로 이동 */ },
+            navigateToSales = { /* TODO: 판매내역 화면으로 이동 */ },
+            navigateToPurchase = { /* TODO: 구매내역 화면으로 이동 */ },
+            navigateToRecent = { /* TODO: 최근 본 상품 화면으로 이동 */ },
+            navigateToFavorite = { /* TODO: 찜 화면으로 이동 */ },
+            navigateToSettings = navigator.navController::navigateToSettings,
+            navigateToHelp = { /* TODO: 고객센터 화면으로 이동 */ },
+            modifier = modifier,
+        )
+
+        settingsGraph(
+            navigateToBack = navigator::navigateUp,
+            onLogoutConfirm = { /* TODO: 로그아웃 처리 */ },
+            onWithdrawClick = { /* TODO: 탈퇴 처리 */ }
         )
     }
 }
