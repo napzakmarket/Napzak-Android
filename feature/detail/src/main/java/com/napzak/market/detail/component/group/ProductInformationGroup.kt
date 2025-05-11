@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -41,62 +43,69 @@ internal fun ProductInformationGroup(
     description: String,
     modifier: Modifier = Modifier,
 ) {
+    val shadowColor = NapzakMarketTheme.colors.gray100.copy(alpha = 0.2f)
+
     Column(
         modifier = modifier.background(NapzakMarketTheme.colors.white),
     ) {
-        Surface(
-            color = NapzakMarketTheme.colors.white,
-            shadowElevation = 1.dp,
-        ) {
-            Column(Modifier.padding(horizontal = 20.dp, vertical = 22.dp)) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    TradeTypeTagGroup(
-                        tradeType = tradeType,
-                        isPriceNegotiable = isPriceNegotiable,
-                    )
-                    CommentLikeGroup(
-                        commentCount = commentCount.toString(),
-                        likeCount = likeCount.toString(),
+        Column(
+            Modifier
+                .drawBehind {
+                    drawRect(
+                        color = shadowColor,
+                        topLeft = Offset(0f, size.height),
+                        size = Size(size.width, 1.dp.toPx())
                     )
                 }
-
-                Spacer(Modifier.height(20.dp))
-                Text(
-                    text = genre,
-                    style = NapzakMarketTheme.typography.body14b.copy(
-                        color = NapzakMarketTheme.colors.black,
-                    ),
+                .padding(horizontal = 20.dp, vertical = 22.dp)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                TradeTypeTagGroup(
+                    tradeType = tradeType,
+                    isPriceNegotiable = isPriceNegotiable,
                 )
-
-                Spacer(Modifier.height(10.dp))
-                Text(
-                    text = title,
-                    style = NapzakMarketTheme.typography.title18m.copy(
-                        color = NapzakMarketTheme.colors.black,
-                    ),
-                )
-
-                Spacer(Modifier.height(10.dp))
-                Text(
-                    text = price,
-                    style = NapzakMarketTheme.typography.title18b.copy(
-                        color = NapzakMarketTheme.colors.black,
-                    ),
-                )
-
-                Spacer(Modifier.height(20.dp))
-                Text(
-                    text = updatedDate,
-                    style = NapzakMarketTheme.typography.caption12r.copy(
-                        color = NapzakMarketTheme.colors.gray300,
-                    ),
+                CommentLikeGroup(
+                    commentCount = commentCount.toString(),
+                    likeCount = likeCount.toString(),
                 )
             }
-        }
 
+            Spacer(Modifier.height(20.dp))
+            Text(
+                text = genre,
+                style = NapzakMarketTheme.typography.body14b.copy(
+                    color = NapzakMarketTheme.colors.black,
+                ),
+            )
+
+            Spacer(Modifier.height(10.dp))
+            Text(
+                text = title,
+                style = NapzakMarketTheme.typography.title18m.copy(
+                    color = NapzakMarketTheme.colors.black,
+                ),
+            )
+
+            Spacer(Modifier.height(10.dp))
+            Text(
+                text = price,
+                style = NapzakMarketTheme.typography.title18b.copy(
+                    color = NapzakMarketTheme.colors.black,
+                ),
+            )
+
+            Spacer(Modifier.height(20.dp))
+            Text(
+                text = updatedDate,
+                style = NapzakMarketTheme.typography.caption12r.copy(
+                    color = NapzakMarketTheme.colors.gray300,
+                ),
+            )
+        }
+        
         Text(
             text = description,
             style = NapzakMarketTheme.typography.caption12r.copy(
