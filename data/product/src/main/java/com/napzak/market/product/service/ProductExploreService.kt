@@ -18,7 +18,7 @@ interface ProductExploreService {
 
     @GET("products/buy")
     suspend fun getExploreBuyProducts(
-        @Query("sort") sort: String,
+        @Query("sortOption") sort: String,
         @Query("genreId") genreIds: List<Long>?,
         @Query("isOnSale") isOnSale: Boolean,
         @Query("cursor") cursor: String?,
@@ -27,7 +27,7 @@ interface ProductExploreService {
     @GET("products/sell/search")
     suspend fun getSearchSellProducts(
         @Query("searchWord") searchWord: String,
-        @Query("sort") sort: String,
+        @Query("sortOption") sort: String,
         @Query("genreId") genreIds: List<Long>?,
         @Query("isOnSale") isOnSale: Boolean,
         @Query("isUnopened") isUnopened: Boolean,
@@ -37,7 +37,7 @@ interface ProductExploreService {
     @GET("products/buy/search")
     suspend fun getSearchBuyProducts(
         @Query("searchWord") searchWord: String,
-        @Query("sort") sort: String,
+        @Query("sortOption") sort: String,
         @Query("genreId") genreIds: List<Long>?,
         @Query("isOnSale") isOnSale: Boolean,
         @Query("cursor") cursor: String?,
