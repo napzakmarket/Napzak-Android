@@ -45,9 +45,9 @@ import com.napzak.market.report.navigation.navigateToProductReport
 import com.napzak.market.report.navigation.reportGraph
 import com.napzak.market.search.navigation.navigateToSearch
 import com.napzak.market.search.navigation.searchGraph
-import com.napzak.market.store.store.navigation.navigateToStore
 import com.napzak.market.splash.navigation.Splash
 import com.napzak.market.splash.navigation.splashGraph
+import com.napzak.market.store.store.navigation.navigateToStore
 import com.napzak.market.store.store.navigation.storeGraph
 import com.napzak.market.util.android.LocalSnackBarController
 import com.napzak.market.util.android.SnackBarController
@@ -202,10 +202,10 @@ private fun MainNavHost(
         )
 
         productDetailGraph(
-            onMarketNavigate = { navigator.navController.navigateToStore(it) }, //TODO: 내마켓 화면으로 이동
+            onMarketNavigate = { navigator.navController.navigateToStore(it) },
             onChatNavigate = {}, //TODO: 채팅 화면으로 이동
             onModifyNavigate = {}, //TODO: 물품 정보 수정 화면으로 이동
-            onReportNavigate = { navigator.navController.navigateToProductReport(it) }, //TODO: 물품 신고 화면으로 이동
+            onReportNavigate = { navigator.navController.navigateToProductReport(it) },
             onNavigateUp = navigator::navigateUp,
             modifier = Modifier.systemBarsPadding()
         )
