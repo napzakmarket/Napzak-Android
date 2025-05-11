@@ -207,9 +207,7 @@ private fun MainNavHost(
             navigateToUp = { navigator.navController.popBackStack() },
             navigateToHome = { navigator.navController.popBackStack(Home, inclusive = false) },
             navigateToSearch = { navigator.navController.navigateToSearch() },
-            navigateToGenreDetail = { genreId ->
-                navigator.navController.navigateToGenreDetail(genreId)
-            },
+            navigateToGenreDetail = { navigator.navController.navigateToGenreDetail(it) },
             navigateToProductDetail = { navigator.navController.navigateToProductDetail(it) },
             modifier = modifier,
         )
@@ -268,9 +266,7 @@ private fun MainNavHost(
         )
 
         mypageGraph(
-            navigateToMyMarket = { storeId ->
-                navigator.navController.navigateToStore(storeId)
-            },
+            navigateToMyMarket = { navigator.navController.navigateToStore(it) },
             navigateToSales = { /* TODO: 판매내역 화면으로 이동 */ },
             navigateToPurchase = { /* TODO: 구매내역 화면으로 이동 */ },
             navigateToRecent = { /* TODO: 최근 본 상품 화면으로 이동 */ },
