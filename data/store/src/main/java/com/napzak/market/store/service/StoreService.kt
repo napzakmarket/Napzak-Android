@@ -60,7 +60,7 @@ interface StoreService {
         @Body request: StoreEditProfileRequest
     ): BaseResponse<StoreEditProfileResponse>
 
-    @POST("api/v1/stores/login/kakao")
+    @POST("stores/login/kakao")
     suspend fun loginWithAccessToken(
         @Query("accessToken") accessToken: String,
         @Body body: KakaoLoginRequest
