@@ -127,7 +127,7 @@ internal fun EditStoreRoute(
         },
         onStoreIntroductionChange = { viewModel.updateUiState(description = it) },
         onStoreGenreChange = { viewModel.updateUiState(genres = it) },
-        onGenreSearchTextChange = { }, // TODO: 장르 검색 API 연결
+        onGenreSearchTextChange = viewModel::updateGenreSearchText,
         onBackButtonClick = onNavigateUp,
         onPhotoChange = { editedPhotoType ->
             photoType.value = editedPhotoType
@@ -200,15 +200,15 @@ private fun EditStoreScreen(
                 }
 
                 if (bottomSheetVisibility.value) {
-                    val bottomSheetGenres = uiState.storeDetail.preferredGenres.map {
+                    val selectedGenres = uiState.storeDetail.preferredGenres.map {
                         Genre(
                             genreId = it.genreId,
                             genreName = it.genreName
                         )
                     }
                     GenreSearchBottomSheet(
-                        initialSelectedGenreList = bottomSheetGenres,
-                        genreItems = bottomSheetGenres,
+                        initialSelectedGenreList = selectedGenres,
+                        genreItems = uiState.searchedGenres,
                         sheetState = bottomSheetState,
                         onDismissRequest = {
                             bottomSheetVisibility.value = false
@@ -225,7 +225,6 @@ private fun EditStoreScreen(
                         },
                     )
                 }
-
             }
 
             else -> {

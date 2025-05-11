@@ -1,15 +1,16 @@
 package com.napzak.market.store.edit_store.state
 
 import com.napzak.market.common.state.UiState
+import com.napzak.market.genre.model.Genre
 import com.napzak.market.store.model.StoreEditProfile
 
 internal data class EditStoreUiState(
     val loadState: UiState<Unit> = UiState.Loading,
     val nickNameValidState: UiState<String> = UiState.Empty,
+    val searchedGenres: List<Genre> = emptyList(),
     val originalStoreDetail: StoreEditProfile = EmptyStoreDetail,
     val storeDetail: StoreEditProfile = EmptyStoreDetail,
 ) {
-    val isNameChanged get() = storeDetail.nickname != originalStoreDetail.nickname
     val isDescriptionChanged get() = storeDetail.description != originalStoreDetail.description
     val isGenresChanged get() = storeDetail.preferredGenres != originalStoreDetail.preferredGenres
     val isCoverUrlChanged get() = storeDetail.coverUrl != originalStoreDetail.coverUrl

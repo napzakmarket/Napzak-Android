@@ -5,6 +5,8 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
+import com.napzak.market.genre.model.Genre
+import com.napzak.market.genre.usecase.GetGenreNamesUseCase
 import com.napzak.market.presigned_url.type.PhotoType
 import com.napzak.market.presigned_url.usecase.UploadStorePhotoUseCase
 import com.napzak.market.store.edit_store.state.EditStoreUiState
@@ -13,21 +15,51 @@ import com.napzak.market.store.model.StoreEditProfile
 import com.napzak.market.store.repository.StoreRepository
 import com.napzak.market.util.android.getHttpExceptionMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+@OptIn(FlowPreview::class)
 @HiltViewModel
 internal class EditStoreViewModel @Inject constructor(
     private val storeRepository: StoreRepository,
-    private val uploadStorePhotoUseCase: UploadStorePhotoUseCase
+    private val uploadStorePhotoUseCase: UploadStorePhotoUseCase,
+    private val getGenreNamesUseCase: GetGenreNamesUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(EditStoreUiState())
     val uiState = _uiState.asStateFlow()
 
+    private val _genreSearchText = MutableStateFlow("")
+
+    init {
+        val debounceDelay = 500L
+        viewModelScope.launch {
+            _genreSearchText.debounce(debounceDelay)
+                .collectLatest { searchText ->
+                    updateSearchedGenres(searchText)
+                }
+        }
+    }
+
+    private suspend fun updateSearchedGenres(searchText: String) {
+        getGenreNamesUseCase(searchText)
+            .onSuccess { genres ->
+                updateUiState(searchedGenres = genres)
+            }
+            .onFailure {
+                updateUiState(searchedGenres = emptyList())
+            }
+    }
+
+    fun updateGenreSearchText(searchText: String) {
+        _genreSearchText.update { searchText }
+    }
 
     suspend fun getEditProfile() {
         storeRepository.fetchEditProfile()
@@ -101,24 +133,27 @@ internal class EditStoreViewModel @Inject constructor(
             }
     }
 
-    fun checkSubmitButton(uiState: EditStoreUiState): Boolean = with(uiState) {
-        nickNameValidState is UiState.Success
-                || storeDetail.description != originalStoreDetail.description
-                || storeDetail.preferredGenres != originalStoreDetail.preferredGenres
-                || storeDetail.coverUrl != originalStoreDetail.coverUrl
-                || storeDetail.photoUrl != originalStoreDetail.photoUrl
+    fun checkSubmitButton(uiState: EditStoreUiState): Boolean {
+        with(uiState) {
+            val isNickNameValid = nickNameValidState is UiState.Success
+
+            return isNickNameValid || isDescriptionChanged || isGenresChanged
+                    || isCoverUrlChanged || isPhotoUrlChanged
+        }
     }
 
 
     fun updateUiState(
         loadState: UiState<Unit> = _uiState.value.loadState,
         nickNameValidState: UiState<String> = _uiState.value.nickNameValidState,
+        searchedGenres: List<Genre> = _uiState.value.searchedGenres,
         originalStoreDetail: StoreEditProfile = _uiState.value.originalStoreDetail,
         storeDetail: StoreEditProfile = _uiState.value.storeDetail
     ) {
         updateUiState(
             loadState = loadState,
             nickNameValidState = nickNameValidState,
+            searchedGenres = searchedGenres,
             originalStoreDetail = originalStoreDetail,
             coverUrl = storeDetail.coverUrl,
             photoUrl = storeDetail.photoUrl,
@@ -131,6 +166,7 @@ internal class EditStoreViewModel @Inject constructor(
     fun updateUiState(
         loadState: UiState<Unit> = _uiState.value.loadState,
         nickNameValidState: UiState<String> = _uiState.value.nickNameValidState,
+        searchedGenres: List<Genre> = _uiState.value.searchedGenres,
         originalStoreDetail: StoreEditProfile = _uiState.value.originalStoreDetail,
         coverUrl: String = _uiState.value.storeDetail.coverUrl,
         photoUrl: String = _uiState.value.storeDetail.photoUrl,
@@ -145,6 +181,7 @@ internal class EditStoreViewModel @Inject constructor(
             currentState.copy(
                 loadState = loadState,
                 nickNameValidState = nickNameValidState,
+                searchedGenres = searchedGenres,
                 originalStoreDetail = originalStoreDetail,
                 storeDetail = currentState.storeDetail.copy(
                     coverUrl = newCoverUrl,
