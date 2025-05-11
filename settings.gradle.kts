@@ -71,4 +71,5 @@ include(
     ":feature:store",
     ":feature:detail",
     ":feature:splash",
+    ":feature:login",
 )
