@@ -30,6 +30,4 @@ interface StoreRepository {
     suspend fun getTermsAgreement() : Result<TermsAgreement>
 
     suspend fun postTermsAgreement(bundleId: Int): Result<Unit>
-
-    suspend fun loginWithKakao(accessToken: String): Result<KakaoLogin>
 }

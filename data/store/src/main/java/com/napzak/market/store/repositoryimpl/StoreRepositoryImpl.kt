@@ -6,7 +6,6 @@ import com.napzak.market.store.dto.request.NicknameRequest
 import com.napzak.market.store.dto.request.WithdrawRequest
 import com.napzak.market.store.mapper.toDomain
 import com.napzak.market.store.mapper.toRequest
-import com.napzak.market.store.model.KakaoLogin
 import com.napzak.market.store.model.Genre
 import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.model.StoreEditProfile
@@ -66,9 +65,5 @@ class StoreRepositoryImpl @Inject constructor(
 
     override suspend fun postTermsAgreement(bundleId: Int) : Result<Unit> = runCatching {
         storeDataSource.postTermsAgreement(bundleId)
-    }
-
-    override suspend fun loginWithKakao(accessToken: String): Result<KakaoLogin> = runCatching {
-        storeDataSource.loginWithKakao(accessToken).toDomain()
     }
 }

@@ -3,12 +3,10 @@ package com.napzak.market.store.service
 import com.napzak.market.remote.model.BaseResponse
 import com.napzak.market.remote.model.EmptyDataResponse
 import com.napzak.market.store.dto.request.GenreRegistrationRequest
-import com.napzak.market.store.dto.request.KakaoLoginRequest
 import com.napzak.market.store.dto.request.NicknameRequest
 import com.napzak.market.store.dto.request.StoreEditProfileRequest
 import com.napzak.market.store.dto.request.WithdrawRequest
 import com.napzak.market.store.dto.response.GenreRegistrationResponse
-import com.napzak.market.store.dto.response.KakaoLoginResponse
 import com.napzak.market.store.dto.response.StoreDetailResponse
 import com.napzak.market.store.dto.response.StoreEditProfileResponse
 import com.napzak.market.store.dto.response.StoreResponse
@@ -19,7 +17,6 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface StoreService {
     @POST("stores/nickname/check")
@@ -68,10 +65,4 @@ interface StoreService {
     suspend fun postTermsAgreement(
         @Path("bundleId") bundleId: Int
     ): EmptyDataResponse
-
-    @POST("stores/login/kakao")
-    suspend fun loginWithAccessToken(
-        @Query("accessToken") accessToken: String,
-        @Body body: KakaoLoginRequest
-    ): BaseResponse<KakaoLoginResponse>
 }

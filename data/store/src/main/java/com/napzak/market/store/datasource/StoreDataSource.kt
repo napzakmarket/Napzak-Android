@@ -3,12 +3,10 @@ package com.napzak.market.store.datasource
 import com.napzak.market.remote.model.BaseResponse
 import com.napzak.market.remote.model.EmptyDataResponse
 import com.napzak.market.store.dto.request.GenreRegistrationRequest
-import com.napzak.market.store.dto.request.KakaoLoginRequest
 import com.napzak.market.store.dto.request.NicknameRequest
 import com.napzak.market.store.dto.request.StoreEditProfileRequest
 import com.napzak.market.store.dto.request.WithdrawRequest
 import com.napzak.market.store.dto.response.GenreRegistrationResponse
-import com.napzak.market.store.dto.response.KakaoLoginResponse
 import com.napzak.market.store.dto.response.StoreDetailResponse
 import com.napzak.market.store.dto.response.StoreEditProfileResponse
 import com.napzak.market.store.dto.response.StoreResponse
@@ -62,12 +60,5 @@ class StoreDataSource @Inject constructor(
 
     suspend fun postTermsAgreement(bundleId: Int) : EmptyDataResponse{
         return storeService.postTermsAgreement(bundleId)
-    }
-
-    suspend fun loginWithKakao(accessToken: String): KakaoLoginResponse {
-        return storeService.loginWithAccessToken(
-            accessToken = accessToken,
-            body = KakaoLoginRequest()
-        ).data
     }
 }
