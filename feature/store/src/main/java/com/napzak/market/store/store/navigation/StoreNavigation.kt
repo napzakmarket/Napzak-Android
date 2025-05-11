@@ -16,7 +16,7 @@ fun NavController.navigateToStore(
 
 fun NavGraphBuilder.storeGraph(
     navigateToUp: () -> Unit,
-    navigateToProfileEdit: () -> Unit,
+    navigateToProfileEdit: (Long) -> Unit,
     navigateToProductDetail: (Long) -> Unit,
     navigateToStoreReport: (Long) -> Unit,
     modifier: Modifier = Modifier,

@@ -7,6 +7,8 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.napzak.market.common.navigation.MainTabRoute
 import com.napzak.market.common.navigation.Route
+import com.napzak.market.common.type.SortType
+import com.napzak.market.common.type.TradeType
 import com.napzak.market.explore.ExploreRoute
 import com.napzak.market.explore.genredetail.GenreDetailRoute
 import kotlinx.serialization.Serializable
@@ -15,8 +17,10 @@ const val EMPTY_TEXT = ""
 
 fun NavController.navigateToExplore(
     searchTerm: String = EMPTY_TEXT,
+    tradeType: TradeType = TradeType.SELL,
+    sortType: SortType = SortType.RECENT,
     navOptions: NavOptions? = null,
-) = navigate(Explore(searchTerm), navOptions)
+) = navigate(Explore(searchTerm, tradeType, sortType), navOptions)
 
 fun NavController.navigateToGenreDetail(
     genreId: Long,
@@ -53,6 +57,8 @@ fun NavGraphBuilder.exploreGraph(
 @Serializable
 data class Explore(
     val searchTerm: String = EMPTY_TEXT,
+    val tradeType: TradeType = TradeType.SELL,
+    val sortType: SortType = SortType.RECENT,
 ) : MainTabRoute
 
 @Serializable

@@ -79,7 +79,7 @@ import com.napzak.market.util.android.noRippleClickable
 @Composable
 internal fun StoreRoute(
     onNavigateUp: () -> Unit,
-    onProfileEditNavigate: () -> Unit,
+    onProfileEditNavigate: (Long) -> Unit,
     onProductDetailNavigate: (Long) -> Unit,
     onStoreReportNavigate: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -108,7 +108,7 @@ internal fun StoreRoute(
         onMenuButtonClick = {
             viewModel.updateBottomSheetVisibility(BottomSheetType.STORE_REPORT)
         },
-        onProfileEditClick = onProfileEditNavigate,
+        onProfileEditClick = { onProfileEditNavigate(viewModel.storeId) },
         onTabClicked = viewModel::updateMarketTabType,
         onGenreFilterClick = {
             viewModel.updateBottomSheetVisibility(BottomSheetType.GENRE_SEARCHING)
