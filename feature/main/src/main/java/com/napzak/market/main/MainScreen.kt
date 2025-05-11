@@ -64,7 +64,6 @@ import com.napzak.market.util.android.LocalSnackBarController
 import com.napzak.market.util.android.SnackBarController
 import kotlinx.collections.immutable.toImmutableList
 
-
 @Composable
 fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
@@ -235,9 +234,15 @@ private fun MainNavHost(
         productDetailGraph(
             onMarketNavigate = { navigator.navController.navigateToStore(it) },
             onChatNavigate = {}, //TODO: 채팅 화면으로 이동
-            onModifyNavigate = { productId, isSell ->
-                if (isSell) navigator.navController.navigateToSaleRegistration(productId = productId)
-                else navigator.navController.navigateToPurchaseRegistration(productId = productId)
+            onModifyNavigate = { productId, tradeType ->
+                when (tradeType) {
+                    TradeType.SELL -> navigator.navController.navigateToSaleRegistration(productId = productId)
+                    TradeType.BUY -> navigator.navController.navigateToPurchaseRegistration(
+                        productId = productId
+                    )
+
+                    else -> {}
+                }
             },
             onReportNavigate = { navigator.navController.navigateToProductReport(it) },
             onNavigateUp = navigator::navigateUp,

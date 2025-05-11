@@ -48,7 +48,7 @@ import kotlinx.coroutines.launch
 internal fun ProductDetailRoute(
     onMarketNavigate: (userId: Long) -> Unit,
     onChatNavigate: (productId: Long) -> Unit,
-    onModifyNavigate: (productId: Long, isSell: Boolean) -> Unit,
+    onModifyNavigate: (productId: Long, tradeType: TradeType) -> Unit,
     onReportNavigate: (productId: Long) -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
@@ -96,7 +96,7 @@ private fun ProductDetailScreen(
     onChatButtonClick: (productId: Long) -> Unit,
     onLikeButtonClick: (productId: Long) -> Unit,
     onBackButtonClick: () -> Unit,
-    onModifyProductClick: (productId: Long, isSell: Boolean) -> Unit,
+    onModifyProductClick: (productId: Long, tradeType: TradeType) -> Unit,
     onDeleteProductClick: (productId: Long) -> Unit,
     onReportProductClick: (productId: Long) -> Unit,
     onTradeStatusChange: (productId: Long, tradeStatus: String) -> Unit,
@@ -167,7 +167,7 @@ private fun ProductDetailScreen(
                             onModifyClick = {
                                 onModifyProductClick(
                                     productDetail.productId,
-                                    tradeType == TradeType.SELL
+                                    tradeType
                                 )
                             },
                             onStatusChange = { newStatus ->
