@@ -57,6 +57,7 @@ import com.napzak.market.search.navigation.navigateToSearch
 import com.napzak.market.search.navigation.searchGraph
 import com.napzak.market.splash.navigation.Splash
 import com.napzak.market.splash.navigation.splashGraph
+import com.napzak.market.store.edit_store.navigation.editStoreGraph
 import com.napzak.market.store.edit_store.navigation.navigateToEditStore
 import com.napzak.market.store.store.navigation.navigateToStore
 import com.napzak.market.store.store.navigation.storeGraph
@@ -228,6 +229,11 @@ private fun MainNavHost(
             navigateToProfileEdit = { navigator.navController.navigateToEditStore(it) },
             navigateToProductDetail = { navigator.navController.navigateToProductDetail(it) },
             navigateToStoreReport = { navigator.navController.navigateToUserReport(it) },
+            modifier = modifier,
+        )
+
+        editStoreGraph(
+            navigateToUp = navigator::navigateUp,
             modifier = modifier,
         )
 
