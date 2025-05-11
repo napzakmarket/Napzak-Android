@@ -11,24 +11,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.registration.event.GenreEventBus
 import com.napzak.market.registration.genre.component.GenreSearchEmptyView
 import com.napzak.market.registration.genre.component.GenreSearchHeader
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.registration.genre.state.GenreContract.GenreSearchUiState
 import com.napzak.market.util.android.throttledNoRippleClickable
 import com.napzak.market.util.common.openUrl
 import kotlinx.collections.immutable.ImmutableList
@@ -44,13 +41,13 @@ fun GenreSearchRoute(
     viewModel: GenreSearchViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val searchTerm by viewModel.searchTerm.collectAsStateWithLifecycle()
 
     GenreSearchScreen(
         onBackClick = navigateToUp,
-        genreList = uiState.genres.toPersistentList(),
-        searchTerm = uiState.searchTerm,
+        uiState = uiState,
+        searchTerm = searchTerm,
         onSearchTermChange = viewModel::updateSearchTerm,
-        onSearchButtonClick = { },
         onGenreSelect = { genre ->
             GenreEventBus.selectGenre(genre)
             navigateToUp()
@@ -63,14 +60,12 @@ fun GenreSearchRoute(
 @Composable
 fun GenreSearchScreen(
     onBackClick: () -> Unit,
-    genreList: ImmutableList<Genre>,
+    uiState: GenreSearchUiState,
     searchTerm: String,
     onSearchTermChange: (String) -> Unit,
-    onSearchButtonClick: () -> Unit,
     onGenreSelect: (Genre) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var isClickable by remember { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -88,10 +83,9 @@ fun GenreSearchScreen(
                     onBackClick = onBackClick,
                     searchTerm = searchTerm,
                     onSearchTermChange = onSearchTermChange,
-                    onSearchButtonClick = onSearchButtonClick,
                 )
             }
-            if (genreList.isEmpty()) {
+            if (uiState.genres.isEmpty() && uiState.loadState != UiState.Loading) {
                 item {
                     GenreSearchEmptyView(
                         onRequestClick = { context.openUrl(GENRE_REQUEST_URL) },
@@ -99,7 +93,7 @@ fun GenreSearchScreen(
                 }
             } else {
                 itemsIndexed(
-                    items = genreList,
+                    items = uiState.genres,
                     key = { item, _ -> item },
                 ) { index, genre ->
                     Row(
@@ -114,9 +108,7 @@ fun GenreSearchScreen(
                                 .padding(10.dp)
                                 .throttledNoRippleClickable(
                                     coroutineScope = coroutineScope,
-                                    onClick = {
-                                        onGenreSelect(genre)
-                                    }
+                                    onClick = { onGenreSelect(genre) },
                                 ),
                         )
                     }
@@ -131,23 +123,10 @@ fun GenreSearchScreen(
 private fun RegistrationGenreSearchScreenPreview() {
     NapzakMarketTheme {
         GenreSearchScreen(
-            genreList = persistentListOf(
-                Genre(genreId = 10L, genreName = "산리오"),
-                Genre(genreId = 10L, genreName = "산리오"),
-                Genre(genreId = 10L, genreName = "산리오"),
-                Genre(genreId = 10L, genreName = "산리오"),
-                Genre(genreId = 10L, genreName = "산리오"),
-                Genre(genreId = 10L, genreName = "산리오"),
-                Genre(genreId = 10L, genreName = "산리오"),
-                Genre(genreId = 10L, genreName = "산리오"),
-                Genre(genreId = 10L, genreName = "산리오"),
-                Genre(genreId = 10L, genreName = "산리오"),
-                Genre(genreId = 10L, genreName = "산리오")
-            ),
             onBackClick = {},
+            uiState = GenreSearchUiState(),
             searchTerm = "",
             onSearchTermChange = {},
-            onSearchButtonClick = {},
             onGenreSelect = {},
         )
     }
