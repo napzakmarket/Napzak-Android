@@ -29,6 +29,7 @@ class MyPageViewModel @Inject constructor(
             .onSuccess { storeInfo ->
                 _uiState.update {
                     it.copy(
+                        storeId = storeInfo.storeId,
                         nickname = storeInfo.nickname,
                         profileImageUrl = storeInfo.photoUrl,
                         salesCount = storeInfo.salesCount,
