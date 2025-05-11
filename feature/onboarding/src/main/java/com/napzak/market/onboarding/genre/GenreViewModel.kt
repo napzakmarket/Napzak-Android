@@ -1,36 +1,51 @@
 package com.napzak.market.onboarding.genre
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.napzak.market.genre.usecase.SetPreferredGenreUseCase
+import com.napzak.market.genre.usecase.SetSearchPreferredGenresUseCase
 import com.napzak.market.onboarding.genre.model.GenreUiModel
 import com.napzak.market.onboarding.genre.model.GenreUiState
+import com.napzak.market.store.usecase.SetRegisterGenres
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class GenreViewModel @Inject constructor() : ViewModel() {
+class GenreViewModel @Inject constructor(
+    private val setPreferredGenreUseCase: SetPreferredGenreUseCase,
+    private val setSearchPreferredGenresUseCase: SetSearchPreferredGenresUseCase,
+    private val setRegisterGenres: SetRegisterGenres,
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GenreUiState())
     val uiState: StateFlow<GenreUiState> = _uiState.asStateFlow()
 
-    fun updateGenres(genres: List<GenreUiModel>) {
-        _uiState.update { it.copy(genres = genres) }
+    private var searchJob: Job? = null
+
+    fun updatePreferredGenre() {
+        viewModelScope.launch {
+            setPreferredGenreUseCase()
+                .onSuccess { genres ->
+                    updateGenresAllSelection(genres)
+                }
+        }
     }
 
     fun onGenreClick(item: GenreUiModel): Boolean {
         var changed = false
-
         _uiState.update { state ->
             val isAlreadySelected = item.isSelected
             val canSelectMore = state.selectedGenres.size < 7
 
             val updatedGenres = state.genres.map {
-                if (it.name == item.name) {
+                if (it.id == item.id) {
                     when {
                         isAlreadySelected -> {
                             changed = true
@@ -49,14 +64,13 @@ class GenreViewModel @Inject constructor() : ViewModel() {
 
             state.copy(genres = updatedGenres)
         }
-
         return changed
     }
 
     fun onGenreRemove(genre: GenreUiModel) {
         _uiState.update { state ->
             val updated = state.genres.map {
-                if (it.name == genre.name) it.copy(isSelected = false) else it
+                if (it.id == genre.id) it.copy(isSelected = false) else it
             }
             state.copy(genres = updated)
         }
@@ -70,5 +84,69 @@ class GenreViewModel @Inject constructor() : ViewModel() {
 
     fun onSearchTextChange(text: String) {
         _uiState.update { it.copy(searchText = text) }
+
+        searchJob?.cancel()
+        if (text.isBlank()) {
+            updatePreferredGenre()
+            return
+        }
+
+        searchJob = viewModelScope.launch {
+            delay(300)
+            searchPreferredGenres(text)
+        }
+    }
+
+    fun onSearchTextSubmit() {
+        val searchText = _uiState.value.searchText
+        if (searchText.isNotBlank()) {
+            searchJob?.cancel()
+            searchPreferredGenres(searchText)
+        }
+    }
+
+    private fun searchPreferredGenres(searchText: String) {
+        viewModelScope.launch {
+            setSearchPreferredGenresUseCase(searchText)
+                .onSuccess { genres ->
+                    updateGenresAllSelection(genres)
+                }
+                .onFailure {
+                    // TODO: UI에서 메시지 처리
+                }
+        }
+    }
+
+    fun updateSelectedGenres(
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        val selectedIds = _uiState.value.selectedGenres.map { it.id }
+        if (selectedIds.isEmpty()) return
+
+        viewModelScope.launch {
+            setRegisterGenres(selectedIds)
+                .onSuccess { onSuccess() }
+                .onFailure {
+                    //TODO 추후 구현
+                }
+        }
+    }
+
+    private fun updateGenresAllSelection(newGenres: List<com.napzak.market.genre.model.Genre>) {
+        val selected = _uiState.value.selectedGenres.associateBy { it.id }
+
+        val merged = newGenres.map { genre ->
+            val wasSelected = selected[genre.genreId] != null
+            genre.toUiModel(isSelected = wasSelected)
+        }
+
+        val additional = selected.values.filterNot { selectedItem ->
+            merged.any { it.id == selectedItem.id }
+        }
+
+        _uiState.update {
+            it.copy(genres = merged + additional)
+        }
     }
 }

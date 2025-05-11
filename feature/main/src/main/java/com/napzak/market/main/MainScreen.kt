@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -20,8 +22,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.napzak.market.designsystem.component.CommonSnackBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.detail.navigation.navigateToProductDetail
 import com.napzak.market.detail.navigation.productDetailGraph
 import com.napzak.market.dummy.navigation.dummyGraph
 import com.napzak.market.explore.navigation.exploreGraph
@@ -32,15 +36,21 @@ import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.mypage.navigation.mypageGraph
 import com.napzak.market.mypage.signout.navigation.signOutGraph
+import com.napzak.market.mypage.setting.navigation.navigateToSettings
+import com.napzak.market.mypage.setting.navigation.settingsGraph
 import com.napzak.market.onboarding.navigation.Terms
 import com.napzak.market.onboarding.navigation.onboardingGraph
 import com.napzak.market.registration.navigation.navigateToGenreSearch
 import com.napzak.market.registration.navigation.navigateToPurchaseRegistration
 import com.napzak.market.registration.navigation.navigateToSaleRegistration
 import com.napzak.market.registration.navigation.registrationGraph
+import com.napzak.market.report.navigation.navigateToProductReport
 import com.napzak.market.report.navigation.reportGraph
 import com.napzak.market.search.navigation.navigateToSearch
 import com.napzak.market.search.navigation.searchGraph
+import com.napzak.market.splash.navigation.Splash
+import com.napzak.market.splash.navigation.splashGraph
+import com.napzak.market.store.store.navigation.navigateToStore
 import com.napzak.market.store.store.navigation.storeGraph
 import com.napzak.market.util.android.LocalSnackBarController
 import com.napzak.market.util.android.SnackBarController
@@ -52,8 +62,17 @@ fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val systemUiController = rememberSystemUiController()
     val snackBarHostState = remember { SnackbarHostState() }
     val snackBarController = remember { SnackBarController(snackBarHostState, coroutineScope) }
+
+    val statusBarColor = NapzakMarketTheme.colors.white
+
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = statusBarColor,
+        )
+    }
 
     Scaffold(
         bottomBar = {
@@ -81,9 +100,7 @@ fun MainScreen(
         CompositionLocalProvider(
             LocalSnackBarController provides snackBarController
         ) {
-            Box(
-                modifier = Modifier.padding(innerPadding),
-            ) {
+            Box {
                 MainRegisterDialog(
                     visibility = navigator.isRegister,
                     onSellRegisterClick = {
@@ -95,10 +112,15 @@ fun MainScreen(
                         navigator.dismissRegisterDialog()
                     },
                     onDismissRequest = navigator::dismissRegisterDialog,
-                    modifier = Modifier.zIndex(1f),
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .zIndex(1f),
                 )
 
-                MainNavHost(navigator = navigator)
+                MainNavHost(
+                    navigator = navigator,
+                    modifier = Modifier.padding(innerPadding),
+                )
             }
         }
     }
@@ -129,6 +151,15 @@ private fun MainNavHost(
     ) {
         dummyGraph(modifier = modifier)
 
+        splashGraph(
+            onNavigateToOnboarding = {
+                navigator.navController.navigate(Terms) {
+                    popUpTo<Splash> { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+        )
+
         onboardingGraph(
             navController = navigator.navController,
             onFinish = {
@@ -141,7 +172,7 @@ private fun MainNavHost(
 
         homeGraph(
             navigateToSearch = { navigator.navController.navigateToSearch() },
-            navigateToProductDetail = { /*TODO: 물품 상세페이지로 이동*/ },
+            navigateToProductDetail = { navigator.navController.navigateToProductDetail(it) },
             navigateToExploreSell = { /*TODO: 탐색>팔아요>인기상품순 */ },
             navigateToExploreBuy = { /*TODO: 탐색>구해요>인기상품순 */ },
             modifier = modifier,
@@ -176,17 +207,17 @@ private fun MainNavHost(
         )
 
         productDetailGraph(
-            onMarketNavigate = {}, //TODO: 내마켓 화면으로 이동
+            onMarketNavigate = { navigator.navController.navigateToStore(it) },
             onChatNavigate = {}, //TODO: 채팅 화면으로 이동
             onModifyNavigate = {}, //TODO: 물품 정보 수정 화면으로 이동
-            onReportNavigate = {}, //TODO: 물품 신고 화면으로 이동
+            onReportNavigate = { navigator.navController.navigateToProductReport(it) },
             onNavigateUp = navigator::navigateUp,
-            modifier = modifier
+            modifier = Modifier.systemBarsPadding()
         )
 
         reportGraph(
             navigateUp = navigator::navigateUp,
-            modifier = Modifier
+            modifier = Modifier.systemBarsPadding()
         )
 
         registrationGraph(
@@ -202,9 +233,15 @@ private fun MainNavHost(
             navigateToPurchase = { /* TODO: 구매내역 화면으로 이동 */ },
             navigateToRecent = { /* TODO: 최근 본 상품 화면으로 이동 */ },
             navigateToFavorite = { /* TODO: 찜 화면으로 이동 */ },
-            navigateToSettings = { /* TODO: 설정 화면으로 이동 */ },
+            navigateToSettings = navigator.navController::navigateToSettings,
             navigateToHelp = { /* TODO: 고객센터 화면으로 이동 */ },
             modifier = modifier,
+        )
+
+        settingsGraph(
+            navigateToBack = navigator::navigateUp,
+            onLogoutConfirm = { /* TODO: 로그아웃 처리 */ },
+            onWithdrawClick = { /* TODO: 탈퇴 처리 */ }
         )
 
         signOutGraph(

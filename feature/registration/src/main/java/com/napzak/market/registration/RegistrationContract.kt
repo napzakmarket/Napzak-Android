@@ -1,17 +1,17 @@
 package com.napzak.market.registration
 
-import android.net.Uri
 import androidx.compose.runtime.Immutable
 import com.napzak.market.common.state.UiState
 import com.napzak.market.genre.model.Genre
+import com.napzak.market.registration.model.Photo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 class RegistrationContract {
     @Immutable
     data class RegistrationUiState(
-        val loadState: UiState<Nothing> = UiState.Loading,
-        val imageUris: ImmutableList<Uri> = persistentListOf(),
+        val loadState: UiState<Unit> = UiState.Empty,
+        val imageUris: ImmutableList<Photo> = persistentListOf(),
         val genre: Genre? = null,
         val title: String = "",
         val description: String = "",

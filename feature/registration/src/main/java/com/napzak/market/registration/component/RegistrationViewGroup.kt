@@ -1,6 +1,5 @@
 package com.napzak.market.registration.component
 
-import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +25,7 @@ import com.napzak.market.feature.registration.R.string.product_image
 import com.napzak.market.feature.registration.R.string.product_image_description
 import com.napzak.market.feature.registration.R.string.product_name
 import com.napzak.market.feature.registration.R.string.product_name_hint
+import com.napzak.market.registration.model.Photo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -36,8 +36,8 @@ private const val MAX_PRODUCT_DESCRIPTION = 430
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun RegistrationViewGroup(
-    productImageUris: PersistentList<Uri>,
-    onImageSelect: (ImmutableList<Uri>) -> Unit,
+    productImageUris: PersistentList<Photo>,
+    onImageSelect: (ImmutableList<Photo>) -> Unit,
     onPhotoPress: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
     productGenre: String,

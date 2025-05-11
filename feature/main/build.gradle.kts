@@ -20,6 +20,7 @@ dependencies {
     implementation(projects.feature.store)
     implementation(projects.feature.detail)
     implementation(projects.feature.registration)
+    implementation(projects.feature.splash)
     implementation(projects.feature.mypage)
 
     implementation(projects.core.designsystem)
@@ -29,4 +30,5 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.accompanist.systemuicontroller)
 }

@@ -20,13 +20,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.component.bottomsheet.Genre
-import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.designsystem.R.drawable.ic_down_chevron
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.feature.explore.R.string.explore_ellipsis
 import com.napzak.market.feature.explore.R.string.explore_genre
 import com.napzak.market.feature.explore.R.string.explore_genre_extra_count
-import com.napzak.market.feature.explore.R.string.explore_ellipsis
+import com.napzak.market.genre.model.Genre
+import com.napzak.market.util.android.noRippleClickable
 
 const val CHARACTER_MAX_COUNT = 5
 

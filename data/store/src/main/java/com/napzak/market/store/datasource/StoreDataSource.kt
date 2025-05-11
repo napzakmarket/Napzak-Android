@@ -10,6 +10,7 @@ import com.napzak.market.store.dto.response.GenreRegistrationResponse
 import com.napzak.market.store.dto.response.StoreDetailResponse
 import com.napzak.market.store.dto.response.StoreEditProfileResponse
 import com.napzak.market.store.dto.response.StoreResponse
+import com.napzak.market.store.dto.response.TermsResponse
 import com.napzak.market.store.dto.response.WithdrawResponse
 import com.napzak.market.store.service.StoreService
 import javax.inject.Inject
@@ -25,8 +26,8 @@ class StoreDataSource @Inject constructor(
         return storeService.postNicknameRegistration(request)
     }
 
-    suspend fun getRegistrationGenre(request: GenreRegistrationRequest): BaseResponse<GenreRegistrationResponse> {
-        return storeService.getGenresRegistration(request)
+    suspend fun postRegistrationGenre(request: GenreRegistrationRequest): BaseResponse<GenreRegistrationResponse> {
+        return storeService.postGenresRegistration(request)
     }
 
     suspend fun logout(): EmptyDataResponse {
@@ -51,5 +52,13 @@ class StoreDataSource @Inject constructor(
 
     suspend fun updateEditProfile(request: StoreEditProfileRequest): StoreEditProfileResponse {
         return storeService.updateStoreProfile(request).data
+    }
+
+    suspend fun getTermsAgreement() : TermsResponse{
+        return storeService.getTermsAgreement().data
+    }
+
+    suspend fun postTermsAgreement(bundleId: Int) : EmptyDataResponse{
+        return storeService.postTermsAgreement(bundleId)
     }
 }
