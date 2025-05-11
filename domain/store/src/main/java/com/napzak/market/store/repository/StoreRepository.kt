@@ -6,6 +6,7 @@ import com.napzak.market.store.model.UserWithdrawal
 import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.model.StoreEditProfile
 import com.napzak.market.store.model.StoreInfo
+import com.napzak.market.store.model.TermsAgreement
 
 interface StoreRepository {
     suspend fun getValidateNickname(nickname: String): Result<Unit>
@@ -25,6 +26,10 @@ interface StoreRepository {
     suspend fun fetchStoreDetail(storeId: Long): Result<StoreDetail>
 
     suspend fun updateEditProfile(request: StoreEditProfile): Result<StoreEditProfile>
+
+    suspend fun getTermsAgreement() : Result<TermsAgreement>
+
+    suspend fun postTermsAgreement(bundleId: Int): Result<Unit>
 
     suspend fun loginWithKakao(accessToken: String): Result<KakaoLogin>
 }
