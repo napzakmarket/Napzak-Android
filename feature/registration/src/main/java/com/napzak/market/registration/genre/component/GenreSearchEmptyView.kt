@@ -18,9 +18,11 @@ import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.genre_search_error
 import com.napzak.market.feature.registration.R.string.genre_search_request
+import com.napzak.market.util.android.noRippleClickable
 
 @Composable
 fun GenreSearchEmptyView(
+    onRequestClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -50,7 +52,8 @@ fun GenreSearchEmptyView(
                     color = NapzakMarketTheme.colors.purple500,
                     shape = RoundedCornerShape(8.dp),
                 )
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+                .padding(horizontal = 12.dp, vertical = 8.dp)
+                .noRippleClickable(onRequestClick),
         )
     }
 }
@@ -59,6 +62,8 @@ fun GenreSearchEmptyView(
 @Composable
 private fun GenreSearchEmptyViewPreview() {
     NapzakMarketTheme {
-        GenreSearchEmptyView()
+        GenreSearchEmptyView(
+            onRequestClick = {},
+        )
     }
 }

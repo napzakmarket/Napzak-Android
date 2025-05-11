@@ -4,6 +4,6 @@ data class ExploreParameters(
     val sort: String,
     val genreIds: List<Long>? = null,
     val isOnSale: Boolean = false,
-    val isUnopened: Boolean,
+    val isUnopened: Boolean = false,
     val cursor: String? = null,
 )

@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.napzak.market.common.navigation.Route
+import com.napzak.market.common.type.TradeType
 import com.napzak.market.detail.ProductDetailRoute
 import kotlinx.serialization.Serializable
 
@@ -20,7 +21,7 @@ fun NavController.navigateToProductDetail(
 fun NavGraphBuilder.productDetailGraph(
     onMarketNavigate: (userId: Long) -> Unit,
     onChatNavigate: (productId: Long) -> Unit,
-    onModifyNavigate: (productId: Long) -> Unit,
+    onModifyNavigate: (productId: Long, tradeType: TradeType) -> Unit,
     onReportNavigate: (productId: Long) -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,

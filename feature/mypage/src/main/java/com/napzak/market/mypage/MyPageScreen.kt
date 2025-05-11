@@ -29,7 +29,7 @@ import com.napzak.market.mypage.state.MyPageUiState
 
 @Composable
 fun MyPageRoute(
-    onMyMarketClick: () -> Unit,
+    onMyMarketClick: (Long) -> Unit,
     onSalesClick: () -> Unit,
     onPurchaseClick: () -> Unit,
     onRecentClick: () -> Unit,
@@ -43,7 +43,7 @@ fun MyPageRoute(
 
     MyPageScreen(
         uiState = uiState,
-        onMyMarketClick = onMyMarketClick,
+        onMyMarketClick = { onMyMarketClick(uiState.storeId) },
         onSalesClick = onSalesClick,
         onPurchaseClick = onPurchaseClick,
         onRecentClick = onRecentClick,

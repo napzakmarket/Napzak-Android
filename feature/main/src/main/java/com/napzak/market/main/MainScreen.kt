@@ -23,12 +23,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.napzak.market.common.type.SortType
+import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.component.CommonSnackBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.detail.navigation.navigateToProductDetail
 import com.napzak.market.detail.navigation.productDetailGraph
 import com.napzak.market.dummy.navigation.dummyGraph
 import com.napzak.market.explore.navigation.exploreGraph
+import com.napzak.market.explore.navigation.navigateToExplore
 import com.napzak.market.explore.navigation.navigateToGenreDetail
 import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.homeGraph
@@ -37,9 +40,9 @@ import com.napzak.market.login.navigation.loginGraph
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.mypage.navigation.mypageGraph
-import com.napzak.market.mypage.signout.navigation.signOutGraph
 import com.napzak.market.mypage.setting.navigation.navigateToSettings
 import com.napzak.market.mypage.setting.navigation.settingsGraph
+import com.napzak.market.mypage.signout.navigation.signOutGraph
 import com.napzak.market.onboarding.navigation.Terms
 import com.napzak.market.onboarding.navigation.onboardingGraph
 import com.napzak.market.registration.navigation.navigateToGenreSearch
@@ -47,17 +50,20 @@ import com.napzak.market.registration.navigation.navigateToPurchaseRegistration
 import com.napzak.market.registration.navigation.navigateToSaleRegistration
 import com.napzak.market.registration.navigation.registrationGraph
 import com.napzak.market.report.navigation.navigateToProductReport
+import com.napzak.market.report.navigation.navigateToUserReport
 import com.napzak.market.report.navigation.reportGraph
+import com.napzak.market.search.navigation.Search
 import com.napzak.market.search.navigation.navigateToSearch
 import com.napzak.market.search.navigation.searchGraph
 import com.napzak.market.splash.navigation.Splash
 import com.napzak.market.splash.navigation.splashGraph
+import com.napzak.market.store.edit_store.navigation.editStoreGraph
+import com.napzak.market.store.edit_store.navigation.navigateToEditStore
 import com.napzak.market.store.store.navigation.navigateToStore
 import com.napzak.market.store.store.navigation.storeGraph
 import com.napzak.market.util.android.LocalSnackBarController
 import com.napzak.market.util.android.SnackBarController
 import kotlinx.collections.immutable.toImmutableList
-
 
 @Composable
 fun MainScreen(
@@ -185,8 +191,18 @@ private fun MainNavHost(
         homeGraph(
             navigateToSearch = { navigator.navController.navigateToSearch() },
             navigateToProductDetail = { navigator.navController.navigateToProductDetail(it) },
-            navigateToExploreSell = { /*TODO: 탐색>팔아요>인기상품순 */ },
-            navigateToExploreBuy = { /*TODO: 탐색>구해요>인기상품순 */ },
+            navigateToExploreSell = {
+                navigator.navController.navigateToExplore(
+                    tradeType = TradeType.SELL,
+                    sortType = SortType.POPULAR,
+                )
+            },
+            navigateToExploreBuy = {
+                navigator.navController.navigateToExplore(
+                    tradeType = TradeType.BUY,
+                    sortType = SortType.POPULAR,
+                )
+            },
             modifier = modifier,
         )
 
@@ -194,34 +210,47 @@ private fun MainNavHost(
             navigateToUp = { navigator.navController.popBackStack() },
             navigateToHome = { navigator.navController.popBackStack(Home, inclusive = false) },
             navigateToSearch = { navigator.navController.navigateToSearch() },
-            navigateToGenreDetail = { genreId ->
-                navigator.navController.navigateToGenreDetail(genreId)
-            },
-            navigateToProductDetail = { /* TODO: 상품 상세 화면으로 이동 */ },
+            navigateToGenreDetail = { navigator.navController.navigateToGenreDetail(it) },
+            navigateToProductDetail = { navigator.navController.navigateToProductDetail(it) },
             modifier = modifier,
         )
 
         searchGraph(
             navigateToPrevious = { navigator.navController.popBackStack() },
-            navigateToSearchResult = { /* TODO: 검색어 검색결과 페이지로 이동 */ },
-            navigateToGenreDetail = { genreId ->
-                navigator.navController.navigateToGenreDetail(genreId)
+            navigateToSearchResult = { searchTerm ->
+                navigator.navController.popBackStack(Search, inclusive = true)
+                navigator.navController.navigateToExplore(searchTerm)
             },
+            navigateToGenreDetail = { navigator.navController.navigateToGenreDetail(it) },
             modifier = modifier,
         )
 
         storeGraph(
             navigateToUp = navigator::navigateUp,
-            navigateToProfileEdit = { /* TODO: move to profile edit */ },
-            navigateToProductDetail = { /* TODO: move to product detail */ },
-            navigateToStoreReport = { /* TODO: move to store report */ },
+            navigateToProfileEdit = { navigator.navController.navigateToEditStore(it) },
+            navigateToProductDetail = { navigator.navController.navigateToProductDetail(it) },
+            navigateToStoreReport = { navigator.navController.navigateToUserReport(it) },
+            modifier = modifier,
+        )
+
+        editStoreGraph(
+            navigateToUp = navigator::navigateUp,
             modifier = modifier,
         )
 
         productDetailGraph(
             onMarketNavigate = { navigator.navController.navigateToStore(it) },
             onChatNavigate = {}, //TODO: 채팅 화면으로 이동
-            onModifyNavigate = {}, //TODO: 물품 정보 수정 화면으로 이동
+            onModifyNavigate = { productId, tradeType ->
+                when (tradeType) {
+                    TradeType.SELL -> navigator.navController.navigateToSaleRegistration(productId = productId)
+                    TradeType.BUY -> navigator.navController.navigateToPurchaseRegistration(
+                        productId = productId
+                    )
+
+                    else -> {}
+                }
+            },
             onReportNavigate = { navigator.navController.navigateToProductReport(it) },
             onNavigateUp = navigator::navigateUp,
             modifier = Modifier.systemBarsPadding()
@@ -234,13 +263,13 @@ private fun MainNavHost(
 
         registrationGraph(
             navigateToUp = navigator::navigateUp,
-            navigateToDetail = {}, // TODO: 물품 상세 화면으로 이동
+            navigateToDetail = { navigator.navController.navigateToProductDetail(it) },
             navigateToGenreSearch = navigator.navController::navigateToGenreSearch,
             modifier = modifier,
         )
 
         mypageGraph(
-            navigateToMyMarket = { /* TODO: 내 마켓 화면으로 이동 */ },
+            navigateToMyMarket = { navigator.navController.navigateToStore(it) },
             navigateToSales = { /* TODO: 판매내역 화면으로 이동 */ },
             navigateToPurchase = { /* TODO: 구매내역 화면으로 이동 */ },
             navigateToRecent = { /* TODO: 최근 본 상품 화면으로 이동 */ },

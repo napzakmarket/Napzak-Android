@@ -15,9 +15,14 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.common)
     implementation(projects.core.util)
+
     implementation(projects.domain.store)
+    implementation(projects.domain.product)
+    implementation(projects.domain.interest)
     implementation(projects.domain.genre)
+    implementation(projects.domain.presignedUrl)
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
+    implementation(libs.timber)
 }

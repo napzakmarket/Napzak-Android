@@ -1,7 +1,10 @@
 package com.napzak.market.registration.purchase
 
+import androidx.core.net.toUri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
+import com.napzak.market.genre.model.Genre
 import com.napzak.market.presigned_url.model.PresignedUrl
 import com.napzak.market.presigned_url.usecase.GetProductPresignedUrlUseCase
 import com.napzak.market.presigned_url.usecase.UploadImageUseCase
@@ -9,13 +12,14 @@ import com.napzak.market.registration.RegistrationContract.RegistrationSideEffec
 import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect.NavigateToDetail
 import com.napzak.market.registration.RegistrationViewModel
 import com.napzak.market.registration.event.GenreEventBus
+import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.model.ProductImage
 import com.napzak.market.registration.model.PurchaseRegistrationProduct
-import com.napzak.market.registration.model.SaleRegistrationProduct
 import com.napzak.market.registration.purchase.state.PurchaseContract.PurchaseUiState
+import com.napzak.market.registration.usecase.EditRegisteredProductUseCase
+import com.napzak.market.registration.usecase.GetRegisteredPurchaseProductUseCase
 import com.napzak.market.registration.usecase.RegisterProductUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -26,14 +30,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PurchaseRegistrationViewModel @Inject constructor(
-    // TODO: 등록 수정 Use Case
     getProductPresignedUrlUseCase: GetProductPresignedUrlUseCase,
     uploadImageUseCase: UploadImageUseCase,
+    savedStateHandle: SavedStateHandle,
     private val registerProductUseCase: RegisterProductUseCase,
+    private val getRegisteredPurchaseProductUseCase: GetRegisteredPurchaseProductUseCase,
+    private val editRegisteredProductUseCase: EditRegisteredProductUseCase,
 ) : RegistrationViewModel(
     getProductPresignedUrlUseCase,
     uploadImageUseCase,
 ) {
+    private val productId: Long? = savedStateHandle.get<Long>(PRODUCT_ID_KEY)
+
     private val _uiState = MutableStateFlow(PurchaseUiState())
     val purchaseUiState = _uiState.asStateFlow()
 
@@ -74,11 +82,43 @@ class PurchaseRegistrationViewModel @Inject constructor(
             price = registrationState.price.toInt(),
             isPriceNegotiable = purchaseState.isNegotiable,
         )
-        registerProductUseCase(product).onSuccess { productId ->
-            updateLoadState(UiState.Success(Unit))
-            _sideEffect.emit(NavigateToDetail(productId))
-        }.onFailure {
-            updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
+        
+        productId?.let { id ->
+            editRegisteredProductUseCase(id, product).onSuccess {
+                updateLoadState(UiState.Success(Unit))
+                _sideEffect.emit(NavigateToDetail(id))
+            }.onFailure {
+                updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
+            }
+        } ?: run {
+            registerProductUseCase(product).onSuccess { productId ->
+                updateLoadState(UiState.Success(Unit))
+                _sideEffect.emit(NavigateToDetail(productId))
+            }.onFailure {
+                updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
+            }
+        }
+    }
+
+    fun getRegisteredPurchaseProduct() = viewModelScope.launch {
+        productId?.let { id ->
+            updateLoadState(UiState.Loading)
+
+            getRegisteredPurchaseProductUseCase(id).onSuccess { product ->
+                _uiState.update {
+                    it.copy(isNegotiable = product.isPriceNegotiable)
+                }
+
+                updatePhotos(product.imageUrls.map { Photo(it.imageUrl.toUri()) })
+                updateGenre(Genre(product.genreId, product.genreName))
+                updateTitle(product.title)
+                updateDescription(product.description)
+                updatePrice(product.price.toString())
+
+                updateLoadState(UiState.Success(Unit))
+            }.onFailure {
+                updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
+            }
         }
     }
 }
