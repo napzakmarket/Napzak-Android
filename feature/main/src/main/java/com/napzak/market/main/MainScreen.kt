@@ -41,6 +41,7 @@ import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.mypage.navigation.mypageGraph
 import com.napzak.market.mypage.setting.navigation.navigateToSettings
 import com.napzak.market.mypage.setting.navigation.settingsGraph
+import com.napzak.market.mypage.signout.navigation.navigateToSignOut
 import com.napzak.market.mypage.signout.navigation.signOutGraph
 import com.napzak.market.onboarding.navigation.Terms
 import com.napzak.market.onboarding.navigation.onboardingGraph
@@ -281,7 +282,7 @@ private fun MainNavHost(
         settingsGraph(
             navigateToBack = navigator::navigateUp,
             onLogoutConfirm = restartApplication,
-            onWithdrawClick = { /* TODO: 탈퇴 처리 */ }
+            onWithdrawClick = navigator.navController::navigateToSignOut
         )
 
         signOutGraph(
