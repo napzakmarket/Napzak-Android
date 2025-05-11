@@ -145,11 +145,10 @@ class StoreViewModel @Inject constructor(
 
     fun updateGenreSearchTerm(searchTerm: String) {
         _genreSearchTerm.update { searchTerm }
-        updateGenreSearchResult()
     }
 
     @OptIn(FlowPreview::class)
-    private fun updateGenreSearchResult() = viewModelScope.launch {
+    fun updateGenreSearchResult() = viewModelScope.launch {
         _genreSearchTerm
             .debounce(DEBOUNCE_DELAY)
             .collectLatest { searchTerm ->

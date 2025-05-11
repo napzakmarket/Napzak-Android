@@ -92,6 +92,7 @@ internal fun StoreRoute(
     LaunchedEffect(Unit) {
         viewModel.getStoreInformation()
         viewModel.updateGenreItemsInBottomSheet()
+        viewModel.updateGenreSearchResult()
     }
 
     LaunchedEffect(storeOptionState) {
