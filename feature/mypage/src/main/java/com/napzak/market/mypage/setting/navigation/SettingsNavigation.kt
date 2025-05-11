@@ -11,6 +11,10 @@ import com.napzak.market.mypage.setting.SettingsRoute
 
 const val SETTINGS_ROUTE = "settings"
 
+fun NavController.navigateToSettings(navOptions: NavOptions? = null) {
+    this.navigate(SETTINGS_ROUTE, navOptions)
+}
+
 fun NavGraphBuilder.settingsGraph(
     navigateToBack: () -> Unit,
     onLogoutConfirm: () -> Unit,
@@ -29,8 +33,4 @@ fun NavGraphBuilder.settingsGraph(
             }
         )
     }
-}
-
-fun NavController.navigateToSettings(navOptions: NavOptions? = null) {
-    this.navigate(SETTINGS_ROUTE, navOptions)
 }
