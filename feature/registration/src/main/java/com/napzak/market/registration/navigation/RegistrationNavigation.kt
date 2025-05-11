@@ -11,11 +11,15 @@ import com.napzak.market.registration.purchase.PurchaseRegistrationRoute
 import com.napzak.market.registration.sale.SaleRegistrationRoute
 import kotlinx.serialization.Serializable
 
-fun NavController.navigateToSaleRegistration(navOptions: NavOptions? = null) =
-    navigate(SaleRegistration, navOptions)
+fun NavController.navigateToSaleRegistration(
+    navOptions: NavOptions? = null,
+    productId: Long? = null,
+) = navigate(SaleRegistration(productId), navOptions)
 
-fun NavController.navigateToPurchaseRegistration(navOptions: NavOptions? = null) =
-    navigate(PurchaseRegistration, navOptions)
+fun NavController.navigateToPurchaseRegistration(
+    navOptions: NavOptions? = null,
+    productId: Long? = null,
+) = navigate(PurchaseRegistration(productId), navOptions)
 
 fun NavController.navigateToGenreSearch(navOptions: NavOptions? = null) =
     navigate(GenreSearch, navOptions)
@@ -53,10 +57,14 @@ fun NavGraphBuilder.registrationGraph(
 }
 
 @Serializable
-data object SaleRegistration : Route
+data class SaleRegistration(
+    val productId: Long?,
+) : Route
 
 @Serializable
-data object PurchaseRegistration : Route
+data class PurchaseRegistration(
+    val productId: Long?,
+) : Route
 
 @Serializable
 data object GenreSearch : Route
