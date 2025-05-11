@@ -7,13 +7,10 @@ import javax.inject.Inject
 class GetGenreNamesUseCase @Inject constructor(
     private val genreNameRepository: GenreNameRepository,
 ) {
-    suspend operator fun invoke(searchWord: String): Result<List<Genre>> {
-        val genres = if (searchWord.isBlank()) {
-            genreNameRepository.getGenreNames().getOrThrow().first
+    suspend operator fun invoke(searchTerm: String): Result<List<Genre>> =
+        if (searchTerm.isBlank()) {
+            genreNameRepository.getGenreNames().map { it.first }
         } else {
-            genreNameRepository.getGenreNameResults(searchWord).getOrThrow().genreList
+            genreNameRepository.getGenreNameResults(searchTerm).map { it.genreList }
         }
-
-        return Result.success(genres)
-    }
 }

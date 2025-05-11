@@ -49,6 +49,7 @@ appcompatVersion = "1.7.0"
 materialVersion = "1.12.0"
 runtimeAndroid = "1.7.8"
 uiAndroid = "1.7.8"
+accompanistSystemuicontroller = "0.28.0"
 
 [libraries]
 ## android
@@ -59,6 +60,8 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version = "6.0.0" }
+
 
 ## compose
 compose-foundation = { module = 'androidx.compose.foundation:foundation' }
@@ -111,7 +114,6 @@ compose-compiler-gradle = { group = "org.jetbrains.kotlin", name = "compose-comp
 
 ## miscellaneous
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
-lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 process-phoenix = { group = "com.jakewharton", name = "process-phoenix", version.ref = "phoenix" }
 androidx-benchmark-common = { group = "androidx.benchmark", name = "benchmark-common", version.ref = "benchmarkCommon" }
@@ -119,7 +121,6 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
-
 
 [bundles]
 coroutine = [

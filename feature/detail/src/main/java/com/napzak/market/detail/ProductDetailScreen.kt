@@ -157,6 +157,7 @@ private fun ProductDetailScreen(
                     modifier = Modifier.padding(innerPadding),
                 )
 
+                // TODO: 중첩 if문 로직 수정
                 if (sheetVisibility) {
                     if (productDetail.isOwnedByCurrentUser) {
                         MyProductBottomSheet(

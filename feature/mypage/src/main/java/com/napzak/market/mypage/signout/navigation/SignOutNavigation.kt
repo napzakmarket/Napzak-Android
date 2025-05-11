@@ -1,6 +1,9 @@
 package com.napzak.market.mypage.signout.navigation
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
@@ -9,21 +12,22 @@ import com.napzak.market.common.navigation.Route
 import com.napzak.market.mypage.signout.SignOutConfirmScreen
 import com.napzak.market.mypage.signout.SignOutDetailScreen
 import com.napzak.market.mypage.signout.SignOutReasonScreen
+import com.napzak.market.mypage.signout.SignOutSideEffect
 import com.napzak.market.mypage.signout.SignOutViewModel
 import com.napzak.market.util.android.horizontalSlideNavigation
 import com.napzak.market.util.android.sharedViewModel
 import kotlinx.serialization.Serializable
 
 fun NavHostController.navigateToSignOut(
-    storeId: Long,
     navOptions: NavOptions? = null,
-) = navigate(route = SignOut(storeId), navOptions = navOptions)
+) = navigate(route = SignOut, navOptions = navOptions)
 
 fun NavHostController.popSignOut() = popBackStack(SignOutReason, inclusive = true)
 
 fun NavGraphBuilder.signOutGraph(
     navController: NavHostController,
     onNavigateUp: () -> Unit,
+    restartApp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     horizontalSlideNavigation<SignOut, Route>(
@@ -56,11 +60,19 @@ fun NavGraphBuilder.signOutGraph(
 
         composable<SignOutConfirm> { backStackEntry ->
             val viewModel = backStackEntry.sharedViewModel<SignOutViewModel>(navController)
+            val lifecycleOwner = LocalLifecycleOwner.current
+
+            LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+                viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect {
+                    if (it is SignOutSideEffect.SignOutComplete) {
+                        restartApp()
+                    }
+                }
+            }
 
             SignOutConfirmScreen(
                 onConfirmClick = {
                     viewModel.proceedSignOut()
-                    navController.popSignOut()
                 },
                 onCancelClick = navController::popSignOut,
                 onNavigateUpClick = onNavigateUp,
@@ -71,7 +83,7 @@ fun NavGraphBuilder.signOutGraph(
 }
 
 @Serializable
-data class SignOut(val storeId: Long) : Route
+data object SignOut : Route
 
 @Serializable
 private data object SignOutReason : Route

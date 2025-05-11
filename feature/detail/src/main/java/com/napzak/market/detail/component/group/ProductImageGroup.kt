@@ -14,7 +14,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,9 +49,6 @@ internal fun ProductImageGroup(
         initialPage = 0,
         pageCount = { Int.MAX_VALUE.takeIf { imageUrls.size > 1 } ?: 1 }
     )
-    val currentPage = remember(pagerState.currentPage) {
-        pagerState.currentPage % imageUrls.size
-    }
 
     Box(
         modifier
@@ -62,7 +58,9 @@ internal fun ProductImageGroup(
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
-        ) {
+        ) { page ->
+            val currentPage = page % imageUrls.size
+
             AsyncImage(
                 model = ImageRequest
                     .Builder(context)
@@ -80,7 +78,7 @@ internal fun ProductImageGroup(
         )
 
         PageNumberIndicator(
-            currentPage = currentPage,
+            currentPage = pagerState.currentPage % imageUrls.size,
             totalPage = imageUrls.size,
             modifier = Modifier
                 .align(Alignment.BottomEnd)

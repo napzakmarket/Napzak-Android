@@ -60,6 +60,10 @@ fun SaleRegistrationRoute(
     val saleUiState by viewModel.saleUiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
 
+    LaunchedEffect(Unit) {
+        viewModel.getRegisteredSaleProduct()
+    }
+
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->

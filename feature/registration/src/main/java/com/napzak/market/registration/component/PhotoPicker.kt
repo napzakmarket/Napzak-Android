@@ -38,6 +38,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 
 private const val MAX_ITEMS = 10
+private const val MIN_ITEMS = 2
 private const val ZERO = 0
 
 /**
@@ -55,7 +56,7 @@ internal fun PhotoPicker(
     onDeleteClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val remainingImageSize = MAX_ITEMS - imageUris.size
+    val remainingImageSize = (MAX_ITEMS - imageUris.size).coerceAtLeast(MIN_ITEMS)
 
     val photoPickerLauncher = when (imageUris.size) {
         MAX_ITEMS - 1 -> rememberLauncherForActivityResult(

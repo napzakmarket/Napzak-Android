@@ -11,7 +11,7 @@ interface ProductStoreService {
     @GET("products/sell/stores/{storeId}")
     suspend fun getStoreSellProducts(
         @Path("storeId") storeId: Long,
-        @Query("sort") sort: String,
+        @Query("sortOption") sort: String,
         @Query("genreId") genreIds: List<Long>?,
         @Query("isOnSale") isOnSale: Boolean,
         @Query("isUnopened") isUnopened: Boolean,
@@ -21,7 +21,7 @@ interface ProductStoreService {
     @GET("products/buy/stores/{storeId}")
     suspend fun getStoreBuyProducts(
         @Path("storeId") storeId: Long,
-        @Query("sort") sort: String,
+        @Query("sortOption") sort: String,
         @Query("genreId") genreIds: List<Long>?,
         @Query("isOnSale") isOnSale: Boolean,
         @Query("cursor") cursor: String?,

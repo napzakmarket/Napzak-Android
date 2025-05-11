@@ -17,6 +17,8 @@ dependencies {
     implementation(projects.core.util)
 
     implementation(projects.domain.store)
+    implementation(projects.domain.product)
+    implementation(projects.domain.interest)
     implementation(projects.domain.genre)
     implementation(projects.domain.presignedUrl)
 

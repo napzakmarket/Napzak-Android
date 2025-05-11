@@ -13,7 +13,7 @@ fun NavController.navigateToMyPage(navOptions: NavOptions? = null) =
     navigate(MyPageNavigation, navOptions)
 
 fun NavGraphBuilder.mypageGraph(
-    navigateToMyMarket: () -> Unit,
+    navigateToMyMarket: (Long) -> Unit,
     navigateToSales: () -> Unit,
     navigateToPurchase: () -> Unit,
     navigateToRecent: () -> Unit,

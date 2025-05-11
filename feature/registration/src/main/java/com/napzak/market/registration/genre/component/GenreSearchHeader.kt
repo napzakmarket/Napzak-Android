@@ -28,7 +28,6 @@ fun GenreSearchHeader(
     onBackClick: () -> Unit,
     searchTerm: String,
     onSearchTermChange: (String) -> Unit,
-    onSearchButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -71,7 +70,7 @@ fun GenreSearchHeader(
             onTextChange = onSearchTermChange,
             hint = stringResource(com.napzak.market.feature.registration.R.string.genre_search_hint),
             onResetClick = { onSearchTermChange(BLANK) },
-            onSearchClick = onSearchButtonClick,
+            onSearchClick = {},
             modifier = paddedModifier,
         )
 
@@ -87,7 +86,6 @@ private fun GenreSearchHeaderPreview() {
             onBackClick = {},
             searchTerm = BLANK,
             onSearchTermChange = {},
-            onSearchButtonClick = {},
         )
     }
 }
