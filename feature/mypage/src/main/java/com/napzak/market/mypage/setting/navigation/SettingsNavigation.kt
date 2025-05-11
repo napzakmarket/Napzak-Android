@@ -1,13 +1,12 @@
 package com.napzak.market.mypage.setting.navigation
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.napzak.market.mypage.setting.SettingsRoute
+import com.napzak.market.util.common.openUrl
 
 const val SETTINGS_ROUTE = "settings"
 
@@ -28,8 +27,7 @@ fun NavGraphBuilder.settingsGraph(
             onLogoutConfirm = onLogoutConfirm,
             onWithdrawClick = onWithdrawClick,
             openWebLink = { url ->
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                context.startActivity(intent)
+                context.openUrl(url)
             }
         )
     }
