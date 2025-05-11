@@ -58,7 +58,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.common.state.UiState
-import com.napzak.market.designsystem.component.bottomsheet.Genre
 import com.napzak.market.designsystem.component.bottomsheet.GenreSearchBottomSheet
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.textfield.NapzakDefaultTextField
@@ -79,6 +78,7 @@ import com.napzak.market.feature.store.R.string.store_edit_sub_title_name
 import com.napzak.market.feature.store.R.string.store_edit_title_genre
 import com.napzak.market.feature.store.R.string.store_edit_title_introduction
 import com.napzak.market.feature.store.R.string.store_edit_title_name
+import com.napzak.market.genre.model.Genre
 import com.napzak.market.presigned_url.type.PhotoType
 import com.napzak.market.store.edit_store.state.EditStoreUiState
 import com.napzak.market.store.model.StoreEditGenre
