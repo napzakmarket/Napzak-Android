@@ -49,6 +49,7 @@ appcompatVersion = "1.7.0"
 materialVersion = "1.12.0"
 runtimeAndroid = "1.7.8"
 uiAndroid = "1.7.8"
+accompanistSystemuicontroller = "0.28.0"
 
 [libraries]
 ## android
@@ -119,7 +120,6 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
-
 
 [bundles]
 coroutine = [

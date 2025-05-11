@@ -20,8 +20,8 @@ import com.napzak.market.detail.component.divider.SectionDivider
 import com.napzak.market.feature.detail.R.string.detail_product_delivery_half
 import com.napzak.market.feature.detail.R.string.detail_product_delivery_included
 import com.napzak.market.feature.detail.R.string.detail_product_delivery_normal
+import com.napzak.market.feature.detail.R.string.detail_product_title_delivery
 import com.napzak.market.feature.detail.R.string.detail_product_title_product_condition
-
 
 @Composable
 internal fun ProductInformationBuyGroup(
@@ -105,7 +105,7 @@ private fun ProductDeliverySection(
             .padding(horizontal = 20.dp),
     ) {
         Text(
-            text = stringResource(detail_product_title_product_condition),
+            text = stringResource(detail_product_title_delivery),
             style = NapzakMarketTheme.typography.body14b.copy(
                 color = NapzakMarketTheme.colors.gray500,
             ),
