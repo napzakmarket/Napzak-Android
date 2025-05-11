@@ -6,9 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.napzak.market.detail.model.ProductDetail
-import com.napzak.market.detail.model.ProductPhoto
-import com.napzak.market.detail.model.StoreInfo
+import com.napzak.market.common.state.UiState
+import com.napzak.market.interest.usecase.SetInterestProductUseCase
+import com.napzak.market.product.model.ProductDetail
+import com.napzak.market.product.repository.ProductDetailRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
@@ -25,43 +26,70 @@ import javax.inject.Inject
 @HiltViewModel
 internal class ProductDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val productDetailRepository: ProductDetailRepository,
+    private val setInterestProductUseCase: SetInterestProductUseCase,
 ) : ViewModel() {
     private val productId: Long? = savedStateHandle.get<Long>(PRODUCT_ID_KEY)
 
-    // TODO: 더미 데이터. API 연결 후 삭제
-    var productDetail by mutableStateOf(ProductDetail.mock)
-        private set
+    private val _productDetail: MutableStateFlow<UiState<ProductDetail>> =
+        MutableStateFlow(UiState.Empty)
+    val productDetail = _productDetail.asStateFlow()
 
-    // TODO: 더미 데이터. API 연결 후 삭제
-    var productPhotos by mutableStateOf(ProductPhoto.mockList)
-        private set
+    // NOTE: 뷰모델이 처음 생성될 때 좋아요 로직이 불리는 것을 방지하기 위해 initialLoading을 사용한다.
+    private var initialLoading by mutableStateOf(true)
+    private val _isInterested = MutableStateFlow(true)
 
-    // TODO: 더미 데이터. API 연결 후 삭제
-    var marketInfo by mutableStateOf(StoreInfo.mock)
-        private set
-
-    private val _isInterested = MutableStateFlow(ProductDetail.mock.isInterested)
-    val isInterested = _isInterested.asStateFlow()
+    @OptIn(FlowPreview::class)
+    val isInterested = _isInterested.asStateFlow().apply {
+        viewModelScope.launch {
+            this@apply.debounce(DEBOUNCE_DELAY).collectLatest { debounced ->
+                // NOTE: debounce 처리로 인해 좋아요 조건이 바뀜
+                setInterested(productId, !debounced)
+            }
+        }
+    }
 
     private val _sideEffect = Channel<ProductDetailSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
 
-    @OptIn(FlowPreview::class)
-    fun debounceIsInterested() = viewModelScope.launch {
-        _isInterested.debounce(DEBOUNCE_DELAY)
-            .collectLatest { debounced ->
-                Timber.tag("ProductDetail").d("isInterested: $debounced")
-            }
+    suspend fun getProductDetail() {
+        if (productId != null) {
+            productDetailRepository.getProductDetail(productId)
+                .onSuccess { response ->
+                    _productDetail.update { UiState.Success(response) }
+                    _isInterested.update { response.isInterested }
+                }
+                .onFailure {
+                    Timber.e(it)
+                    _productDetail.value = UiState.Failure(it.toString())
+                }
+        }
     }
 
     fun updateIsInterested(isInterested: Boolean) = _isInterested.update { isInterested }
 
-    fun deleteProduct() = viewModelScope.launch {
-        runCatching {
-            Timber.tag("ProductDetail").d("delete product")
-        }.onSuccess {
-            _sideEffect.send(ProductDetailSideEffect.NavigateUp)
+    private suspend fun setInterested(productId: Long?, isInterested: Boolean) {
+        if (initialLoading) {
+            initialLoading = false
+        } else if (productId != null) {
+            setInterestProductUseCase(productId, isInterested)
         }
+    }
+
+    fun updateTradeStatus(productId: Long, tradeStatus: String) = viewModelScope.launch {
+        productDetailRepository.patchTradeStatus(productId, tradeStatus)
+            .onSuccess {
+                getProductDetail()
+            }
+            .onFailure(Timber::e)
+    }
+
+    fun deleteProduct(productId: Long) = viewModelScope.launch {
+        productDetailRepository.deleteProduct(productId)
+            .onSuccess {
+                _sideEffect.send(ProductDetailSideEffect.NavigateUp)
+            }
+            .onFailure(Timber::e)
     }
 
     companion object {

@@ -8,6 +8,10 @@ enum class TradeStatusType(
     COMPLETED_BUY(label = "구매 완료"),
     RESERVED(label = "예약중");
 
+    val typeName
+        get() = if (name.startsWith("COMPLETED")) "COMPLETED"
+        else name
+
     companion object {
         fun get(name: String, tradeType: TradeType): TradeStatusType {
             return try {

@@ -53,6 +53,7 @@ runtimeAndroid = "1.7.8"
 uiAndroid = "1.7.8"
 roomCompiler = "2.7.1"
 multidex = "2.0.1"
+accompanistSystemuicontroller = "0.28.0"
 
 [libraries]
 ## android
