@@ -22,6 +22,7 @@ dependencies {
     implementation(projects.feature.registration)
     implementation(projects.feature.splash)
     implementation(projects.feature.mypage)
+    implementation(projects.feature.login)
 
     implementation(projects.core.designsystem)
     implementation(projects.core.common)
