@@ -7,8 +7,6 @@ import com.napzak.market.store.dto.request.WithdrawRequest
 import com.napzak.market.store.mapper.toDomain
 import com.napzak.market.store.mapper.toRequest
 import com.napzak.market.store.model.Genre
-import com.napzak.market.store.model.UserWithdrawal
-import com.napzak.market.store.mapper.toRequest
 import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.model.StoreEditProfile
 import com.napzak.market.store.model.StoreInfo
@@ -67,6 +65,5 @@ class StoreRepositoryImpl @Inject constructor(
 
     override suspend fun postTermsAgreement(bundleId: Int) : Result<Unit> = runCatching {
         storeDataSource.postTermsAgreement(bundleId)
-        Unit
     }
 }
