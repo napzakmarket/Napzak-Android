@@ -29,6 +29,7 @@ import com.napzak.market.detail.navigation.navigateToProductDetail
 import com.napzak.market.detail.navigation.productDetailGraph
 import com.napzak.market.dummy.navigation.dummyGraph
 import com.napzak.market.explore.navigation.exploreGraph
+import com.napzak.market.explore.navigation.navigateToExplore
 import com.napzak.market.explore.navigation.navigateToGenreDetail
 import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.homeGraph
@@ -48,6 +49,7 @@ import com.napzak.market.registration.navigation.navigateToSaleRegistration
 import com.napzak.market.registration.navigation.registrationGraph
 import com.napzak.market.report.navigation.navigateToProductReport
 import com.napzak.market.report.navigation.reportGraph
+import com.napzak.market.search.navigation.Search
 import com.napzak.market.search.navigation.navigateToSearch
 import com.napzak.market.search.navigation.searchGraph
 import com.napzak.market.splash.navigation.Splash
@@ -200,7 +202,10 @@ private fun MainNavHost(
 
         searchGraph(
             navigateToPrevious = { navigator.navController.popBackStack() },
-            navigateToSearchResult = { /* TODO: 검색어 검색결과 페이지로 이동 */ },
+            navigateToSearchResult = { searchTerm ->
+                navigator.navController.popBackStack(Search, inclusive = true)
+                navigator.navController.navigateToExplore(searchTerm)
+            },
             navigateToGenreDetail = { genreId ->
                 navigator.navController.navigateToGenreDetail(genreId)
             },

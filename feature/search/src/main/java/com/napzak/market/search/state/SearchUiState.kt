@@ -2,7 +2,8 @@ package com.napzak.market.search.state
 
 import androidx.compose.runtime.Immutable
 import com.napzak.market.common.state.UiState
-import com.napzak.market.designsystem.component.bottomsheet.Genre
+import com.napzak.market.genre.model.Genre
+import com.napzak.market.genre.model.RecommendedSearchWordGenre.SearchWord
 
 @Immutable
 data class SearchUiState(
@@ -13,10 +14,4 @@ data class SearchUiState(
 data class SearchRecommendation(
     val recommendedSearchWords: List<SearchWord>,
     val recommendedGenres: List<Genre>,
-)
-
-// TODO: 추후 도메인에 data class 사용예정
-data class SearchWord(
-    val searchWordId: Long,
-    val searchWord: String,
 )

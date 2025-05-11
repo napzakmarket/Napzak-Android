@@ -35,18 +35,18 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.common.state.UiState
-import com.napzak.market.designsystem.component.bottomsheet.Genre
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.search.R.drawable.ic_left_chevron
 import com.napzak.market.feature.search.R.string.search_hint
 import com.napzak.market.feature.search.R.string.search_suggested_genre
 import com.napzak.market.feature.search.R.string.search_suggested_search_text
+import com.napzak.market.genre.model.Genre
+import com.napzak.market.genre.model.RecommendedSearchWordGenre.SearchWord
 import com.napzak.market.search.component.GenreNavigationButton
 import com.napzak.market.search.component.SuggestedGenreCard
 import com.napzak.market.search.component.SuggestedKeywordChip
 import com.napzak.market.search.state.SearchUiState
-import com.napzak.market.search.state.SearchWord
 import com.napzak.market.util.android.noRippleClickable
 
 const val EMPTY_TEXT = ""
@@ -268,7 +268,7 @@ private fun SuggestedGenreSection(
                 rowItems.forEach { genre ->
                     SuggestedGenreCard(
                         genreName = genre.genreName,
-                        imgUrl = genre.genreImgUrl.toString(),
+                        imgUrl = genre.genrePhoto.toString(),
                         onCardClick = { onGenreCardClick(genre.genreId) },
                         modifier = Modifier.width(100.dp),
                     )
