@@ -8,6 +8,7 @@ import com.napzak.market.store.mapper.toDomain
 import com.napzak.market.store.model.Genre
 import com.napzak.market.store.model.UserWithdrawal
 import com.napzak.market.store.mapper.toRequest
+import com.napzak.market.store.model.KakaoLogin
 import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.model.StoreEditProfile
 import com.napzak.market.store.model.StoreInfo
@@ -58,5 +59,9 @@ class StoreRepositoryImpl @Inject constructor(
 
     override suspend fun updateEditProfile(request: StoreEditProfile): Result<StoreEditProfile> = runCatching {
         storeDataSource.updateEditProfile(request.toRequest()).toDomain()
+    }
+
+    override suspend fun loginWithKakao(accessToken: String): Result<KakaoLogin> = runCatching {
+        storeDataSource.loginWithKakao(accessToken).toDomain()
     }
 }

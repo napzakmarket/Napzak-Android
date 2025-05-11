@@ -1,6 +1,7 @@
 package com.napzak.market.store.repository
 
 import com.napzak.market.store.model.Genre
+import com.napzak.market.store.model.KakaoLogin
 import com.napzak.market.store.model.UserWithdrawal
 import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.model.StoreEditProfile
@@ -24,4 +25,6 @@ interface StoreRepository {
     suspend fun fetchStoreDetail(storeId: Long): Result<StoreDetail>
 
     suspend fun updateEditProfile(request: StoreEditProfile): Result<StoreEditProfile>
+
+    suspend fun loginWithKakao(accessToken: String): Result<KakaoLogin>
 }
