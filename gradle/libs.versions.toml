@@ -5,8 +5,10 @@ targetSdk = "35"
 accompanist = "0.30.1"
 compileSdk = "35"
 jvmTarget = "17"
+v2User = "2.20.1"
 versionCode = "1"
 versionName = "1.0"
+kakao = "2.19.0"
 
 lifecycleRuntimeKtx = "2.8.7"
 coreKtx = "1.15.0"
@@ -49,6 +51,8 @@ appcompatVersion = "1.7.0"
 materialVersion = "1.12.0"
 runtimeAndroid = "1.7.8"
 uiAndroid = "1.7.8"
+roomCompiler = "2.7.1"
+multidex = "2.0.1"
 
 [libraries]
 ## android
@@ -60,7 +64,8 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version = "6.0.0" }
-
+v2-user = "com.kakao.sdk:v2-user:2.19.0"
+v2-common = "com.kakao.sdk:v2-common:2.19.0"
 
 ## compose
 compose-foundation = { module = 'androidx.compose.foundation:foundation' }
@@ -120,7 +125,8 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
-
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
+androidx-multidex = { group = "androidx.multidex", name = "multidex", version.ref = "multidex" }
 
 [bundles]
 coroutine = [
