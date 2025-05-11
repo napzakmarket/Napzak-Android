@@ -10,6 +10,7 @@ import com.napzak.market.store.dto.response.GenreRegistrationResponse
 import com.napzak.market.store.dto.response.StoreDetailResponse
 import com.napzak.market.store.dto.response.StoreEditProfileResponse
 import com.napzak.market.store.dto.response.StoreResponse
+import com.napzak.market.store.dto.response.TermsResponse
 import com.napzak.market.store.dto.response.WithdrawResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -28,8 +29,8 @@ interface StoreService {
         @Body request: NicknameRequest,
     ): EmptyDataResponse
 
-    @GET("stores/genres/register")
-    suspend fun getGenresRegistration(
+    @POST("stores/genres/register")
+    suspend fun postGenresRegistration(
         @Body request: GenreRegistrationRequest,
     ): BaseResponse<GenreRegistrationResponse>
 
@@ -56,4 +57,12 @@ interface StoreService {
     suspend fun updateStoreProfile(
         @Body request: StoreEditProfileRequest
     ): BaseResponse<StoreEditProfileResponse>
+
+    @GET("stores/terms")
+    suspend fun getTermsAgreement(): BaseResponse<TermsResponse>
+
+    @POST("stores/terms/{bundleId}")
+    suspend fun postTermsAgreement(
+        @Path("bundleId") bundleId: Int
+    ): EmptyDataResponse
 }

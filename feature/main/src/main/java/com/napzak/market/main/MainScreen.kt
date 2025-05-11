@@ -33,6 +33,8 @@ import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.mypage.navigation.mypageGraph
+import com.napzak.market.mypage.setting.navigation.navigateToSettings
+import com.napzak.market.mypage.setting.navigation.settingsGraph
 import com.napzak.market.onboarding.navigation.Terms
 import com.napzak.market.onboarding.navigation.onboardingGraph
 import com.napzak.market.registration.navigation.navigateToGenreSearch
@@ -44,6 +46,8 @@ import com.napzak.market.report.navigation.reportGraph
 import com.napzak.market.search.navigation.navigateToSearch
 import com.napzak.market.search.navigation.searchGraph
 import com.napzak.market.store.store.navigation.navigateToStore
+import com.napzak.market.splash.navigation.Splash
+import com.napzak.market.splash.navigation.splashGraph
 import com.napzak.market.store.store.navigation.storeGraph
 import com.napzak.market.util.android.LocalSnackBarController
 import com.napzak.market.util.android.SnackBarController
@@ -142,6 +146,15 @@ private fun MainNavHost(
     ) {
         dummyGraph(modifier = modifier)
 
+        splashGraph(
+            onNavigateToOnboarding = {
+                navigator.navController.navigate(Terms) {
+                    popUpTo<Splash> { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+        )
+
         onboardingGraph(
             navController = navigator.navController,
             onFinish = {
@@ -215,9 +228,15 @@ private fun MainNavHost(
             navigateToPurchase = { /* TODO: 구매내역 화면으로 이동 */ },
             navigateToRecent = { /* TODO: 최근 본 상품 화면으로 이동 */ },
             navigateToFavorite = { /* TODO: 찜 화면으로 이동 */ },
-            navigateToSettings = { /* TODO: 설정 화면으로 이동 */ },
+            navigateToSettings = navigator.navController::navigateToSettings,
             navigateToHelp = { /* TODO: 고객센터 화면으로 이동 */ },
             modifier = modifier,
+        )
+
+        settingsGraph(
+            navigateToBack = navigator::navigateUp,
+            onLogoutConfirm = { /* TODO: 로그아웃 처리 */ },
+            onWithdrawClick = { /* TODO: 탈퇴 처리 */ }
         )
     }
 }

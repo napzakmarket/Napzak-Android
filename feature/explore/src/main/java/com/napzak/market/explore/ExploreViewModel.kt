@@ -7,11 +7,16 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.BottomSheetType
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.component.bottomsheet.Genre
-import com.napzak.market.explore.model.Product
 import com.napzak.market.explore.state.ExploreBottomSheetState
 import com.napzak.market.explore.state.ExploreProducts
 import com.napzak.market.explore.state.ExploreUiState
+import com.napzak.market.genre.model.Genre
+import com.napzak.market.genre.model.extractGenreIds
+import com.napzak.market.genre.repository.GenreNameRepository
+import com.napzak.market.interest.usecase.SetInterestProductUseCase
+import com.napzak.market.product.model.ExploreParameters
+import com.napzak.market.product.model.SearchParameters
+import com.napzak.market.product.repository.ProductExploreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,13 +26,19 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 internal class ExploreViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val productExploreRepository: ProductExploreRepository,
+    private val genreNameRepository: GenreNameRepository,
+    private val setInterestProductUseCase: SetInterestProductUseCase,
 ) : ViewModel() {
     val searchTerm: String = savedStateHandle.get<String>(SEARCH_TERM_KEY) ?: ""
+    val sortType: SortType = savedStateHandle.get<SortType>(SORT_TYPE_KEY) ?: SortType.RECENT
+    val tradeType: TradeType = savedStateHandle.get<TradeType>(TRADE_TYPE_KEY) ?: TradeType.SELL
 
     private val _uiState = MutableStateFlow(ExploreUiState())
     val uiState = _uiState.asStateFlow()
@@ -39,15 +50,56 @@ internal class ExploreViewModel @Inject constructor(
     val genreSearchTerm = _genreSearchTerm.asStateFlow()
 
     fun updateExploreInformation() = viewModelScope.launch {
-        with(uiState.value) {
-            // TODO : 추후 API로 변경
-            updateLoadState(
-                UiState.Success(
-                    ExploreProducts(productList = Product.mockMixedProduct)
+        val parameters = with(uiState.value) {
+            if (searchTerm.isEmpty()) {
+                ExploreParameters(
+                    sort = sortOption.toString(),
+                    genreIds = filteredGenres.extractGenreIds(),
+                    isOnSale = isSoldOutSelected,
+                    isUnopened = isUnopenSelected,
+                    cursor = null, // TODO: 추후 cursor 값 변경
                 )
-            )
+            } else {
+                SearchParameters(
+                    searchWord = searchTerm,
+                    sort = sortOption.toString(),
+                    genreIds = filteredGenres.extractGenreIds(),
+                    isOnSale = isSoldOutSelected,
+                    isUnopened = isUnopenSelected,
+                    cursor = null, // TODO: 추후 cursor 값 변경
+                )
+            }
+        }
+
+        when (uiState.value.selectedTab) {
+            TradeType.BUY -> {
+                if (searchTerm.isEmpty()) {
+                    productExploreRepository.getExploreBuyProducts(parameters as ExploreParameters)
+                        .onSuccess { updateLoadState(UiState.Success(ExploreProducts(it.second))) }
+                        .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
+                } else {
+                    productExploreRepository.getSearchBuyProducts(parameters as SearchParameters)
+                        .onSuccess { updateLoadState(UiState.Success(ExploreProducts(it.second))) }
+                        .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
+                }
+            }
+
+            TradeType.SELL -> {
+                if (searchTerm.isEmpty()) {
+                    productExploreRepository.getExploreSellProducts(parameters as ExploreParameters)
+                        .onSuccess { updateLoadState(UiState.Success(ExploreProducts(it.second))) }
+                        .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
+                } else {
+                    productExploreRepository.getSearchSellProducts(parameters as SearchParameters)
+                        .onSuccess { updateLoadState(UiState.Success(ExploreProducts(it.second))) }
+                        .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
+                }
+            }
+
+            else -> {}
         }
     }
+
 
     fun updateTradeType(newTradeType: TradeType) {
         _uiState.update { currentState ->
@@ -76,37 +128,16 @@ internal class ExploreViewModel @Inject constructor(
     }
 
     fun updateGenreItemsInBottomSheet() = viewModelScope.launch {
-        _uiState.update { currentState ->
-            // TODO : 추후 API로 변경
-            currentState.copy(
-                initGenreItems = listOf(
-                    Genre(0, "산리오"),
-                    Genre(1, "주술회전"),
-                    Genre(2, "진격의 거인"),
-                    Genre(3, "산리오1"),
-                    Genre(4, "주술회전1"),
-                    Genre(5, "진격의 거인1"),
-                    Genre(6, "산리오2"),
-                    Genre(7, "주술회전2"),
-                    Genre(8, "진격의 거인2"),
-                    Genre(9, "산리오3"),
-                    Genre(10, "주술회전3"),
-                ),
-                genreSearchResultItems = listOf(
-                    Genre(0, "산리오"),
-                    Genre(1, "주술회전"),
-                    Genre(2, "진격의 거인"),
-                    Genre(3, "산리오1"),
-                    Genre(4, "주술회전1"),
-                    Genre(5, "진격의 거인1"),
-                    Genre(6, "산리오2"),
-                    Genre(7, "주술회전2"),
-                    Genre(8, "진격의 거인2"),
-                    Genre(9, "산리오3"),
-                    Genre(10, "주술회전3"),
-                )
-            )
-        }
+        genreNameRepository.getGenreNames(cursor = null)
+            .onSuccess { genres ->
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        initGenreItems = genres.first,
+                        genreSearchResultItems = genres.first,
+                    )
+                }
+            }
+            .onFailure(Timber::e)
     }
 
     fun updateGenreSearchTerm(searchTerm: String) {
@@ -117,17 +148,22 @@ internal class ExploreViewModel @Inject constructor(
     fun updateGenreSearchResult() = viewModelScope.launch {
         _genreSearchTerm
             .debounce(DEBOUNCE_DELAY)
-            .collectLatest { debounce ->
-                val newGenreItems: List<Genre> = if (debounce.isBlank()) {
+            .collectLatest { searchTerm ->
+                val genreList = if (searchTerm.isBlank()) {
                     _uiState.value.initGenreItems
                 } else {
-                    emptyList() // TODO: 장르 검색 API 연결
+                    genreNameRepository.getGenreNameResults(searchTerm)
+                        .fold(
+                            onSuccess = { it.genreList },
+                            onFailure = {
+                                Timber.e(it)
+                                emptyList()
+                            }
+                        )
                 }
 
                 _uiState.update { currentState ->
-                    currentState.copy(
-                        genreSearchResultItems = newGenreItems
-                    )
+                    currentState.copy(genreSearchResultItems = genreList)
                 }
             }
     }
@@ -135,7 +171,7 @@ internal class ExploreViewModel @Inject constructor(
     fun updateSelectedGenres(newGenres: List<Genre>) {
         _uiState.update { currentState ->
             currentState.copy(
-                filteredGenres = newGenres
+                filteredGenres = newGenres,
             )
         }
     }
@@ -164,19 +200,37 @@ internal class ExploreViewModel @Inject constructor(
         }
     }
 
-    fun updateProductIsInterested(productId: Long, isLiked: Boolean) {
-        // TODO: 좋아요 연결 API 설정
+    fun updateProductIsInterested(productId: Long, isLiked: Boolean) = viewModelScope.launch {
+        when (val state = uiState.value.loadState) {
+            is UiState.Success -> {
+                val updatedProducts = state.data.productList.map { product ->
+                    if (product.productId == productId) {
+                        product.copy(isInterested = !product.isInterested)
+                    } else {
+                        product
+                    }
+                }
+
+                updateLoadState(loadState = UiState.Success(ExploreProducts(updatedProducts)))
+            }
+
+            else -> {}
+        }
+
+        setInterestProductUseCase(productId, isLiked)
     }
 
     private fun updateLoadState(loadState: UiState<ExploreProducts>) =
         _uiState.update { currentState ->
             currentState.copy(
-                loadState = loadState
+                loadState = loadState,
             )
         }
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L
         private const val SEARCH_TERM_KEY = "searchTerm"
+        private const val SORT_TYPE_KEY = "sortType"
+        private const val TRADE_TYPE_KEY = "tradeType"
     }
 }
