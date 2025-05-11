@@ -10,7 +10,7 @@ data class KakaoLoginResponse(
     @SerialName("refreshToken")
     val refreshToken: String,
     @SerialName("nickname")
-    val nickname: String,
+    val nickname: String?,
     @SerialName("role")
     val role: String,
 )
