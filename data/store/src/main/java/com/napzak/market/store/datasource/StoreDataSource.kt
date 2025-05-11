@@ -26,8 +26,8 @@ class StoreDataSource @Inject constructor(
         return storeService.postNicknameRegistration(request)
     }
 
-    suspend fun getRegistrationGenre(request: GenreRegistrationRequest): BaseResponse<GenreRegistrationResponse> {
-        return storeService.getGenresRegistration(request)
+    suspend fun postRegistrationGenre(request: GenreRegistrationRequest): BaseResponse<GenreRegistrationResponse> {
+        return storeService.postGenresRegistration(request)
     }
 
     suspend fun logout(): EmptyDataResponse {

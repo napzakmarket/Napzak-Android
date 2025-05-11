@@ -65,34 +65,13 @@ fun GenreRoute(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        viewModel.updateGenres(
-            listOf(
-                GenreUiModel("김종명", "..."),
-                GenreUiModel("김채린", "..."),
-                GenreUiModel("이석준", "..."),
-                GenreUiModel("이연진", "..."),
-                GenreUiModel("장재원", "..."),
-                GenreUiModel("납작마켓", "..."),
-                GenreUiModel("안드", "..."),
-                GenreUiModel("파이팅", "..."),
-                GenreUiModel("나진짜", "..."),
-                GenreUiModel("오늘", "..."),
-                GenreUiModel("안잘거야", "..."),
-                GenreUiModel("내가만약", "..."),
-                GenreUiModel("자면", "..."),
-                GenreUiModel("납작", "..."),
-                GenreUiModel("아니고", "..."),
-                GenreUiModel("넙적이야", "..."),
-            )
-        )
+        viewModel.updatePreferredGenre()
     }
 
     GenreScreen(
         uiState = uiState,
         onGenreClick = { genre ->
-            val changed = viewModel.onGenreClick(genre)
-
-            if (!changed && uiState.selectedGenres.size >= 7) {
+            if (!viewModel.onGenreClick(genre) && uiState.selectedGenres.size >= 7) {
                 isShownSnackBar = true
                 scope.launch {
                     delay(2000)
@@ -103,9 +82,17 @@ fun GenreRoute(
         onGenreRemove = viewModel::onGenreRemove,
         onAllGenresReset = viewModel::onResetAllGenres,
         onSearchTextChange = viewModel::onSearchTextChange,
+        onSearchTextSubmit = viewModel::onSearchTextSubmit,
         onSearchTextReset = { viewModel.onSearchTextChange("") },
         onBackClick = onBackClick,
-        onDoneClick = onDoneClick,
+        onDoneClick = {
+            viewModel.updateSelectedGenres(
+                onSuccess = onDoneClick,
+                onError = {
+                    //TODO 추후 구현
+                }
+            )
+        },
         onSkipClick = onSkipClick,
         isShownSnackBar = isShownSnackBar,
     )
@@ -118,6 +105,7 @@ fun GenreScreen(
     onGenreRemove: (GenreUiModel) -> Unit,
     onAllGenresReset: () -> Unit,
     onSearchTextChange: (String) -> Unit,
+    onSearchTextSubmit: () -> Unit,
     onSearchTextReset: () -> Unit,
     onBackClick: () -> Unit,
     onDoneClick: () -> Unit,
@@ -148,12 +136,12 @@ fun GenreScreen(
                 onTextChange = onSearchTextChange,
                 hint = stringResource(onboarding_genre_edit_hint),
                 onResetClick = onSearchTextReset,
-                onSearchClick = {},
+                onSearchClick = onSearchTextSubmit,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
-                readOnly = true,
-                enabled = false,
+                readOnly = false,
+                enabled = true,
             )
 
             if (uiState.selectedGenres.isNotEmpty()) {
@@ -275,18 +263,12 @@ private fun GenreTitleSection() {
 fun GenreScreenPreview() {
     NapzakMarketTheme {
         GenreScreen(
-            uiState = GenreUiState(
-                genres = listOf(
-                    GenreUiModel("로맨스", "...", isSelected = true),
-                    GenreUiModel("스릴러", "...", isSelected = false),
-                    GenreUiModel("코미디", "...", isSelected = true),
-                ),
-                searchText = "",
-            ),
+            uiState = GenreUiState(),
             onGenreClick = {},
             onGenreRemove = {},
             onAllGenresReset = {},
             onSearchTextChange = {},
+            onSearchTextSubmit = {},
             onSearchTextReset = {},
             onBackClick = {},
             onDoneClick = {},

@@ -29,8 +29,8 @@ interface StoreService {
         @Body request: NicknameRequest,
     ): EmptyDataResponse
 
-    @GET("stores/genres/register")
-    suspend fun getGenresRegistration(
+    @POST("stores/genres/register")
+    suspend fun postGenresRegistration(
         @Body request: GenreRegistrationRequest,
     ): BaseResponse<GenreRegistrationResponse>
 
