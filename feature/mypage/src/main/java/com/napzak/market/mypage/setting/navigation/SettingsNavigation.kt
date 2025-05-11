@@ -5,13 +5,16 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.napzak.market.common.navigation.Route
 import com.napzak.market.mypage.setting.SettingsRoute
 import com.napzak.market.util.common.openUrl
+import kotlinx.serialization.Serializable
 
-const val SETTINGS_ROUTE = "settings"
+@Serializable
+data object Settings : Route
 
 fun NavController.navigateToSettings(navOptions: NavOptions? = null) {
-    this.navigate(SETTINGS_ROUTE, navOptions)
+    this.navigate(Settings, navOptions)
 }
 
 fun NavGraphBuilder.settingsGraph(
@@ -19,7 +22,7 @@ fun NavGraphBuilder.settingsGraph(
     onLogoutConfirm: () -> Unit,
     onWithdrawClick: () -> Unit,
 ) {
-    composable(route = SETTINGS_ROUTE) {
+    composable<Settings> {
         val context = LocalContext.current
 
         SettingsRoute(
