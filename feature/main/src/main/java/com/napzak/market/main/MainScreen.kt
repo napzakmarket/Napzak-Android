@@ -1,6 +1,5 @@
 package com.napzak.market.main
 
-import android.content.Intent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
@@ -67,6 +66,7 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun MainScreen(
+    restartApplication: () -> Unit,
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -127,6 +127,7 @@ fun MainScreen(
 
                 MainNavHost(
                     navigator = navigator,
+                    restartApplication = restartApplication,
                     modifier = Modifier.padding(innerPadding),
                 )
             }
@@ -137,6 +138,7 @@ fun MainScreen(
 @Composable
 private fun MainNavHost(
     navigator: MainNavigator,
+    restartApplication: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -278,21 +280,14 @@ private fun MainNavHost(
 
         settingsGraph(
             navigateToBack = navigator::navigateUp,
-            onLogoutConfirm = { /* TODO: 로그아웃 처리 */ },
+            onLogoutConfirm = restartApplication,
             onWithdrawClick = { /* TODO: 탈퇴 처리 */ }
         )
 
         signOutGraph(
             navController = navigator.navController,
             onNavigateUp = navigator::navigateUp,
-            restartApp = {
-                Intent(context, MainActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(this)
-                }
-
-            },
+            restartApp = restartApplication,
             modifier = modifier,
         )
     }
