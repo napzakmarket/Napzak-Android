@@ -34,7 +34,7 @@ data class ProductGetDetailResponse(
     data class ProductPhotoResponse(
         @SerialName("photoId") val photoId: Long,
         @SerialName("photoUrl") val photoUrl: String,
-        @SerialName("photoSequence") val photoSequence: Int
+        @SerialName("sequence") val photoSequence: Int
     )
 
     @Serializable
