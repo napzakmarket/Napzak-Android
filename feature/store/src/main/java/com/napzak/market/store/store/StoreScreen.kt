@@ -65,13 +65,14 @@ import com.napzak.market.feature.store.R.string.store_filter_buying
 import com.napzak.market.feature.store.R.string.store_filter_selling
 import com.napzak.market.feature.store.R.string.store_product
 import com.napzak.market.genre.model.Genre
+import com.napzak.market.product.model.Product
 import com.napzak.market.store.component.BasicFilterChip
 import com.napzak.market.store.component.GenreChip
 import com.napzak.market.store.component.GenreFilterChip
 import com.napzak.market.store.component.StoreBottomSheetScreen
-import com.napzak.market.store.model.Product
 import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.store.state.StoreBottomSheetState
+import com.napzak.market.store.store.state.StoreOptionState
 import com.napzak.market.store.store.state.StoreUiState
 import com.napzak.market.util.android.noRippleClickable
 
@@ -84,25 +85,23 @@ internal fun StoreRoute(
     modifier: Modifier = Modifier,
     viewModel: StoreViewModel = hiltViewModel(),
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.storeUiState.collectAsStateWithLifecycle()
+    val storeOptionState by viewModel.storeOptionState.collectAsStateWithLifecycle()
     val bottomSheetState by viewModel.bottomSheetState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.updateStoreInformation()
+        viewModel.getStoreInformation()
         viewModel.updateGenreItemsInBottomSheet()
+        viewModel.updateGenreSearchResult()
     }
 
-    LaunchedEffect(
-        uiState.selectedTab,
-        uiState.filteredGenres,
-        uiState.isOnSale,
-        uiState.sortOption,
-    ) {
+    LaunchedEffect(storeOptionState) {
         viewModel.updateStoreProducts()
     }
 
     StoreScreen(
         uiState = uiState,
+        storeOptionState = storeOptionState,
         bottomSheetState = bottomSheetState,
         onDismissRequest = viewModel::updateBottomSheetVisibility,
         onBackButtonClick = onNavigateUp,
@@ -142,6 +141,7 @@ internal fun StoreRoute(
 @Composable
 private fun StoreScreen(
     uiState: StoreUiState,
+    storeOptionState: StoreOptionState,
     bottomSheetState: StoreBottomSheetState,
     onBackButtonClick: () -> Unit,
     onMenuButtonClick: () -> Unit,
@@ -159,26 +159,23 @@ private fun StoreScreen(
     onStoreReportButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when (uiState.loadState) {
-        is UiState.Loading -> {
-        }
+    when (uiState.isLoaded) {
+        is UiState.Loading -> {}
 
-        is UiState.Empty -> {
-        }
+        is UiState.Empty -> {}
 
-        is UiState.Failure -> {
-        }
+        is UiState.Failure -> {}
 
         is UiState.Success -> {
-            with(uiState) {
+            with(storeOptionState) {
                 StoreSuccessScreen(
-                    storeDetail = uiState.loadState.data.storeDetail,
+                    storeDetail = (uiState.storeDetailState as UiState.Success<StoreDetail>).data,
                     selectedTab = selectedTab,
                     filteredGenres = filteredGenres,
                     isOnSale = isOnSale,
                     sortType = sortOption,
                     genreItems = genreSearchResultItems,
-                    productList = uiState.loadState.data.productList,
+                    productList = (uiState.storeProductsState as UiState.Success<List<Product>>).data,
                     bottomSheetState = bottomSheetState,
                     onProfileEditClick = onProfileEditClick,
                     onTabClicked = onTabClicked,
@@ -432,13 +429,13 @@ private fun StoreScrollSection(
                     rowItems.forEach { product ->
                         with(product) {
                             NapzakLargeProductItem(
-                                genre = genre,
-                                title = name,
+                                genre = genreName,
+                                title = productName,
                                 imgUrl = photo,
                                 price = price.toString(),
                                 createdDate = uploadTime,
-                                reviewCount = reviewCount.toString(),
-                                likeCount = likeCount.toString(),
+                                reviewCount = chatCount.toString(),
+                                likeCount = interestCount.toString(),
                                 isLiked = isInterested,
                                 isMyItem = isOwnedByCurrentUser,
                                 isSellElseBuy = TradeType.valueOf(tradeType) == TradeType.SELL,
@@ -446,10 +443,10 @@ private fun StoreScrollSection(
                                 tradeStatus = TradeStatusType.get(
                                     tradeStatus, TradeType.valueOf(tradeType)
                                 ),
-                                onLikeClick = { onLikeButtonClick(id, isInterested) },
+                                onLikeClick = { onLikeButtonClick(productId, isInterested) },
                                 modifier = Modifier
                                     .weight(1f)
-                                    .noRippleClickable { onProductDetailNavigate(id) },
+                                    .noRippleClickable { onProductDetailNavigate(productId) },
                             )
                         }
                     }
@@ -595,7 +592,7 @@ private fun StoreScreenPreview(modifier: Modifier = Modifier) {
             isOnSale = false,
             sortType = SortType.RECENT,
             genreItems = emptyList(),
-            productList = Product.mockMixedProduct,
+            productList = emptyList(),
             bottomSheetState = StoreBottomSheetState(),
             onBackButtonClick = {},
             onMenuButtonClick = {},
