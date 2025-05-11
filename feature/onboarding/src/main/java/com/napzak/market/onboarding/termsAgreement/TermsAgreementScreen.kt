@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,12 +46,23 @@ fun TermsAgreementRoute(
     onNextClick: () -> Unit,
     viewModel: TermsAgreementViewModel = hiltViewModel(),
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.checkTermsAgreement()
+    }
+
     TermsAgreementScreen(
         uiState = viewModel.uiState.collectAsState().value,
         onAllAgreementClick = viewModel::onAllAgreementClick,
         onAgreementClick = viewModel::onAgreementClick,
         onBackClick = onBackClick,
-        onNextClick = onNextClick,
+        onNextClick = {
+            viewModel.updateTermsAgreement(
+                onSuccess = onNextClick,
+                onFailure = {
+                    // TODO: 추후 구현
+                }
+            )
+        },
     )
 }
 
