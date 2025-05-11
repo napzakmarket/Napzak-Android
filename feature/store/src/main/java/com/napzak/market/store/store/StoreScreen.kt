@@ -94,15 +94,8 @@ internal fun StoreRoute(
         viewModel.updateGenreItemsInBottomSheet()
     }
 
-    with(storeOptionState) {
-        LaunchedEffect(
-            selectedTab,
-            filteredGenres,
-            isOnSale,
-            sortOption,
-        ) {
-            viewModel.updateStoreProducts()
-        }
+    LaunchedEffect(storeOptionState) {
+        viewModel.updateStoreProducts()
     }
 
     StoreScreen(
