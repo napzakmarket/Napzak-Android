@@ -19,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.ProductConditionType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
@@ -35,9 +36,9 @@ import com.napzak.market.detail.component.group.ProductInformationGroup
 import com.napzak.market.detail.component.group.ProductInformationSellGroup
 import com.napzak.market.detail.component.group.ProductMarketGroup
 import com.napzak.market.detail.component.topbar.DetailTopBar
-import com.napzak.market.detail.model.ProductDetail
-import com.napzak.market.detail.model.ProductPhoto
-import com.napzak.market.detail.model.StoreInfo
+import com.napzak.market.product.model.ProductDetail
+import com.napzak.market.product.model.ProductDetail.ProductPhoto
+import com.napzak.market.product.model.ProductDetail.StoreInfo
 import com.napzak.market.util.common.formatToPriceString
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -54,10 +55,11 @@ internal fun ProductDetailRoute(
     viewModel: ProductDetailViewModel = hiltViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
+    val uiState by viewModel.productDetail.collectAsStateWithLifecycle()
     val isInterested by viewModel.isInterested.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewModel) {
-        viewModel.debounceIsInterested()
+    LaunchedEffect(Unit) {
+        viewModel.getProductDetail()
     }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
@@ -72,41 +74,36 @@ internal fun ProductDetailRoute(
     }
 
     ProductDetailScreen(
-        productDetail = viewModel.productDetail,
-        productPhotos = viewModel.productPhotos.toImmutableList(),
-        marketInfo = viewModel.marketInfo,
+        uiState = uiState,
         isInterested = isInterested,
-        onMarketClick = { onMarketNavigate(viewModel.marketInfo.userId) },
-        onChatButtonClick = { onChatNavigate(viewModel.productDetail.productId) },
+        onMarketClick = onMarketNavigate,
+        onChatButtonClick = onChatNavigate,
         onLikeButtonClick = { viewModel.updateIsInterested(!isInterested) },
         onBackButtonClick = onNavigateUp,
-        onModifyProductClick = { onModifyNavigate(viewModel.productDetail.productId) },
+        onModifyProductClick = onModifyNavigate,
         onDeleteProductClick = viewModel::deleteProduct,
-        onReportProductClick = { onReportNavigate(viewModel.productDetail.productId) },
+        onReportProductClick = onReportNavigate,
+        onTradeStatusChange = viewModel::updateTradeStatus,
         modifier = modifier,
     )
 }
 
 @Composable
-fun ProductDetailScreen(
-    productDetail: ProductDetail,
-    productPhotos: ImmutableList<ProductPhoto>,
-    marketInfo: StoreInfo,
+private fun ProductDetailScreen(
+    uiState: UiState<ProductDetail>,
     isInterested: Boolean,
-    onMarketClick: () -> Unit,
-    onChatButtonClick: () -> Unit,
-    onLikeButtonClick: () -> Unit,
+    onMarketClick: (userId: Long) -> Unit,
+    onChatButtonClick: (productId: Long) -> Unit,
+    onLikeButtonClick: (productId: Long) -> Unit,
     onBackButtonClick: () -> Unit,
-    onModifyProductClick: () -> Unit,
-    onDeleteProductClick: () -> Unit,
-    onReportProductClick: () -> Unit,
+    onModifyProductClick: (productId: Long) -> Unit,
+    onDeleteProductClick: (productId: Long) -> Unit,
+    onReportProductClick: (productId: Long) -> Unit,
+    onTradeStatusChange: (productId: Long, tradeStatus: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val tradeType = remember(productDetail) { TradeType.fromName(productDetail.tradeType) }
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
-
-    var tradeStatus by remember { mutableStateOf(TradeStatusType.valueOf(productDetail.tradeStatus)) }
     var sheetVisibility by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -117,18 +114,21 @@ fun ProductDetailScreen(
             )
         },
         bottomBar = {
-            ProductDetailBottomBar(
-                isLiked = isInterested,
-                onChatButtonClick = onChatButtonClick,
-                onLikeButtonClick = {
-                    onLikeButtonClick()
-                    coroutineScope.launch {
-                        // debounce 처리로 인해 스낵바 조건이 바뀜
-                        if (!isInterested) snackBarHostState.showSnackbar("")
-                        else snackBarHostState.currentSnackbarData?.dismiss()
-                    }
-                },
-            )
+            if (uiState is UiState.Success) {
+                val productId = uiState.data.productId
+                ProductDetailBottomBar(
+                    isLiked = isInterested,
+                    onChatButtonClick = { onChatButtonClick(productId) },
+                    onLikeButtonClick = {
+                        onLikeButtonClick(productId)
+                        coroutineScope.launch {
+                            // NOTE: debounce 처리로 인해 스낵바 조건이 바뀜
+                            if (!isInterested) snackBarHostState.showSnackbar("")
+                            else snackBarHostState.currentSnackbarData?.dismiss()
+                        }
+                    },
+                )
+            }
         },
         snackbarHost = {
             SnackbarHost(hostState = snackBarHostState) {
@@ -138,79 +138,117 @@ fun ProductDetailScreen(
         containerColor = NapzakMarketTheme.colors.white,
         modifier = modifier,
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier.padding(innerPadding),
-        ) {
-            item {
-                ProductImageGroup(
-                    imageUrls = productPhotos.map { it.photoUrl }.toImmutableList(),
-                    contentDescription = productDetail.productName,
-                    tradeStatusType = tradeStatus,
+        when (uiState) {
+            is UiState.Success -> {
+                val productDetail = uiState.data
+                val productPhotos = uiState.data.productPhotos
+                val storeInfo = uiState.data.storeInfo
+
+                val tradeType = TradeType.fromName(productDetail.tradeType)
+                val tradeStatus = TradeStatusType.get(productDetail.tradeStatus, tradeType)
+
+                ProductDetailSuccessScreen(
+                    productDetail = productDetail,
+                    productPhotos = productPhotos.toImmutableList(),
+                    marketInfo = storeInfo,
+                    tradeType = tradeType,
+                    tradeStatus = tradeStatus,
+                    onMarketClick = { onMarketClick(storeInfo.userId) },
+                    modifier = Modifier.padding(innerPadding),
                 )
 
-                with(productDetail) {
-                    ProductInformationGroup(
-                        tradeType = tradeType,
-                        isPriceNegotiable = isPriceNegotiable,
-                        commentCount = chatCount,
-                        likeCount = interestCount,
-                        genre = genreName,
-                        title = productName,
-                        price = price.toString().formatToPriceString(),
-                        updatedDate = uploadTime,
-                        description = description,
-                        modifier = Modifier,
-                    )
-
-                    SectionDivider()
-
-                    when (tradeType) {
-                        TradeType.BUY -> {
-                            ProductInformationBuyGroup(
-                                productCondition = ProductConditionType.fromConditionByName(
-                                    productCondition
-                                ),
-                                isDeliveryIncluded = isDeliveryIncluded,
-                                standardDeliveryFee = standardDeliveryFee,
-                                halfDeliveryFee = halfDeliveryFee,
-                            )
-                        }
-
-                        TradeType.SELL -> {
-                            ProductInformationSellGroup(
-                                isPriceNegotiable = isPriceNegotiable,
-                            )
-                        }
+                // TODO: 중첩 if문 로직 수정
+                if (sheetVisibility) {
+                    if (productDetail.isOwnedByCurrentUser) {
+                        MyProductBottomSheet(
+                            tradeType = tradeType,
+                            tradeStatus = tradeStatus,
+                            onDismissRequest = { sheetVisibility = false },
+                            onModifyClick = { onModifyProductClick(productDetail.productId) },
+                            onStatusChange = { newStatus ->
+                                onTradeStatusChange(productDetail.productId, newStatus.typeName)
+                            },
+                            onDeleteClick = { onDeleteProductClick(productDetail.productId) },
+                        )
+                    } else {
+                        ProductBottomSheet(
+                            onReportClick = { onReportProductClick(productDetail.productId) },
+                            onDismissRequest = { sheetVisibility = false },
+                        )
                     }
                 }
+            }
+
+            is UiState.Failure -> {}
+            is UiState.Empty -> {}
+            is UiState.Loading -> {}
+        }
+    }
+}
+
+@Composable
+private fun ProductDetailSuccessScreen(
+    productDetail: ProductDetail,
+    productPhotos: ImmutableList<ProductPhoto>,
+    tradeType: TradeType,
+    tradeStatus: TradeStatusType,
+    marketInfo: StoreInfo,
+    onMarketClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(modifier = modifier) {
+        item {
+            ProductImageGroup(
+                imageUrls = productPhotos.map { it.photoUrl }.toImmutableList(),
+                contentDescription = productDetail.productName,
+                tradeStatusType = tradeStatus,
+            )
+
+            with(productDetail) {
+                ProductInformationGroup(
+                    tradeType = tradeType,
+                    isPriceNegotiable = isPriceNegotiable,
+                    commentCount = chatCount,
+                    likeCount = interestCount,
+                    genre = genreName,
+                    title = productName,
+                    price = price.toString().formatToPriceString(),
+                    updatedDate = uploadTime,
+                    description = description,
+                    modifier = Modifier,
+                )
 
                 SectionDivider()
 
-                with(marketInfo) {
-                    ProductMarketGroup(
-                        marketImage = storePhoto,
-                        marketName = nickname,
-                        sellCount = totalSellCount.toString(),
-                        buyCount = totalBuyCount.toString(),
-                        onMarketProfileClick = onMarketClick,
-                    )
+                when (tradeType) {
+                    TradeType.BUY -> {
+                        ProductInformationBuyGroup(
+                            productCondition = ProductConditionType.fromConditionByName(
+                                productCondition
+                            ),
+                            isDeliveryIncluded = isDeliveryIncluded,
+                            standardDeliveryFee = standardDeliveryFee,
+                            halfDeliveryFee = halfDeliveryFee,
+                        )
+                    }
+
+                    TradeType.SELL -> {
+                        ProductInformationSellGroup(
+                            isPriceNegotiable = isPriceNegotiable,
+                        )
+                    }
                 }
             }
-        }
-        if (sheetVisibility) {
-            if (productDetail.isOwnedByCurrentUser) {
-                MyProductBottomSheet(
-                    tradeType = tradeType,
-                    tradeStatus = tradeStatus,
-                    onDismissRequest = { sheetVisibility = false },
-                    onModifyClick = onModifyProductClick,
-                    onStatusChange = { tradeStatus = it },
-                    onDeleteClick = onDeleteProductClick,
-                )
-            } else {
-                ProductBottomSheet(
-                    onReportClick = onReportProductClick,
-                    onDismissRequest = { sheetVisibility = false },
+
+            SectionDivider()
+
+            with(marketInfo) {
+                ProductMarketGroup(
+                    marketImage = storePhoto,
+                    marketName = nickname,
+                    sellCount = totalSellCount.toString(),
+                    buyCount = totalBuyCount.toString(),
+                    onMarketProfileClick = onMarketClick,
                 )
             }
         }
@@ -220,21 +258,52 @@ fun ProductDetailScreen(
 @Preview(showBackground = true, heightDp = 780, widthDp = 360)
 @Composable
 private fun ProductDetailScreenPreview() {
-    NapzakMarketTheme {
-        var isLiked by remember { mutableStateOf(false) }
+    val mockProductDetail = ProductDetail(
+        productId = 1,
+        tradeType = "SELL",
+        genreName = "은혼",
+        productName = "은혼 긴토키 히지카타 룩업은혼 긴토키 히지카타 룩",
+        price = 125000,
+        uploadTime = "1일전",
+        chatCount = 1000,
+        interestCount = 1000,
+        description = "은혼 긴토키 히지카타 룩업",
+        productCondition = "LIKE_NEW",
+        standardDeliveryFee = 3600,
+        halfDeliveryFee = 1800,
+        isDeliveryIncluded = false,
+        isPriceNegotiable = true,
+        tradeStatus = "BEFORE_TRADE",
+        isOwnedByCurrentUser = true,
+        isInterested = false,
+        productPhotos = listOf(
+            ProductPhoto(
+                photoId = 1,
+                photoUrl = "",
+                photoSequence = 1,
+            )
+        ),
+        storeInfo = StoreInfo(
+            userId = 1,
+            storePhoto = "",
+            nickname = "닉네임",
+            totalSellCount = 1000,
+            totalBuyCount = 1000,
+        )
+    )
 
-        ProductDetailScreen(
-            isInterested = isLiked,
-            onLikeButtonClick = { isLiked = !isLiked },
-            productDetail = ProductDetail.mock,
-            productPhotos = ProductPhoto.mockList.toImmutableList(),
-            marketInfo = StoreInfo.mock,
+    val tradeType = TradeType.fromName(mockProductDetail.tradeType)
+    val tradeStatus = TradeStatusType.get(mockProductDetail.tradeStatus, tradeType)
+
+    NapzakMarketTheme {
+        ProductDetailSuccessScreen(
+            productDetail = mockProductDetail,
+            productPhotos = mockProductDetail.productPhotos.toImmutableList(),
+            marketInfo = mockProductDetail.storeInfo,
             onMarketClick = {},
-            onChatButtonClick = {},
-            onBackButtonClick = {},
-            onModifyProductClick = {},
-            onDeleteProductClick = {},
-            onReportProductClick = {},
+            modifier = Modifier,
+            tradeType = tradeType,
+            tradeStatus = tradeStatus,
         )
     }
 }

@@ -21,7 +21,7 @@ data class ProductGetDetailResponse(
         @SerialName("chatCount") val chatCount: Int,
         @SerialName("interestCount") val interestCount: Int,
         @SerialName("description") val description: String,
-        @SerialName("productCondition") val productCondition: String,
+        @SerialName("productCondition") val productCondition: String? = null,
         @SerialName("standardDeliveryFee") val standardDeliveryFee: Int,
         @SerialName("halfDeliveryFee") val halfDeliveryFee: Int,
         @SerialName("isDeliveryIncluded") val isDeliveryIncluded: Boolean,

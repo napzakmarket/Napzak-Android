@@ -5,12 +5,13 @@ import com.napzak.market.store.dto.request.GenreRegistrationRequest
 import com.napzak.market.store.dto.request.NicknameRequest
 import com.napzak.market.store.dto.request.WithdrawRequest
 import com.napzak.market.store.mapper.toDomain
-import com.napzak.market.store.model.Genre
-import com.napzak.market.store.model.UserWithdrawal
 import com.napzak.market.store.mapper.toRequest
+import com.napzak.market.store.model.Genre
 import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.model.StoreEditProfile
 import com.napzak.market.store.model.StoreInfo
+import com.napzak.market.store.model.TermsAgreement
+import com.napzak.market.store.model.UserWithdrawal
 import com.napzak.market.store.repository.StoreRepository
 import javax.inject.Inject
 
@@ -29,8 +30,7 @@ class StoreRepositoryImpl @Inject constructor(
     }
 
     override suspend fun postRegisterGenres(genreIds: List<Long>): Result<Genre> = runCatching {
-        val response = storeDataSource.postRegistrationGenre(GenreRegistrationRequest(genreIds))
-        response.data.genreList.first().toDomain()
+        storeDataSource.postRegistrationGenre(GenreRegistrationRequest(genreIds)).data.genreList.first().toDomain()
     }
 
     override suspend fun logout(): Result<Unit> = runCatching {
@@ -40,8 +40,7 @@ class StoreRepositoryImpl @Inject constructor(
 
     override suspend fun withdraw(title: String, description: String?): Result<UserWithdrawal> =
         runCatching {
-            val response = storeDataSource.withdraw(WithdrawRequest(title, description))
-            response.data.toDomain()
+            storeDataSource.withdraw(WithdrawRequest(title, description)).data.toDomain()
     }
 
     override suspend fun fetchStoreInfo(): Result<StoreInfo> = runCatching {
@@ -58,5 +57,13 @@ class StoreRepositoryImpl @Inject constructor(
 
     override suspend fun updateEditProfile(request: StoreEditProfile): Result<StoreEditProfile> = runCatching {
         storeDataSource.updateEditProfile(request.toRequest()).toDomain()
+    }
+
+    override suspend fun getTermsAgreement(): Result<TermsAgreement> = runCatching {
+        storeDataSource.getTermsAgreement().toDomain()
+    }
+
+    override suspend fun postTermsAgreement(bundleId: Int) : Result<Unit> = runCatching {
+        storeDataSource.postTermsAgreement(bundleId)
     }
 }
