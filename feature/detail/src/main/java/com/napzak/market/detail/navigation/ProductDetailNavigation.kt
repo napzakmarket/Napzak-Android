@@ -20,7 +20,7 @@ fun NavController.navigateToProductDetail(
 fun NavGraphBuilder.productDetailGraph(
     onMarketNavigate: (userId: Long) -> Unit,
     onChatNavigate: (productId: Long) -> Unit,
-    onModifyNavigate: (productId: Long) -> Unit,
+    onModifyNavigate: (productId: Long, isSELL: Boolean) -> Unit,
     onReportNavigate: (productId: Long) -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
