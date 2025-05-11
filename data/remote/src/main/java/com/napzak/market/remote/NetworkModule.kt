@@ -4,12 +4,12 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import com.napzak.market.local.datastore.TokenDataStore
 import com.napzak.market.remote.qualifier.DUMMY
 import com.napzak.market.remote.qualifier.JWT
+import com.napzak.market.remote.qualifier.NoAuth
 import com.napzak.market.remote.qualifier.S3
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import data.remote.BuildConfig
 import data.remote.BuildConfig.BASE_URL
 import data.remote.BuildConfig.DUMMY_URL
 import kotlinx.serialization.json.Json
@@ -55,19 +55,31 @@ object NetworkModule {
             }
         }
     }.apply {
-        level = if (BuildConfig.DEBUG) {
+        level = if (com.napzak.market.data.local.BuildConfig.DEBUG) {
             HttpLoggingInterceptor.Level.BODY
         } else {
             HttpLoggingInterceptor.Level.NONE
         }
     }
 
+    @Provides
+    @Singleton
+    fun provideHeaderInterceptor(
+        tokenDataStore: TokenDataStore
+    ): HeaderInterceptor = HeaderInterceptor(tokenDataStore)
+
+    @Provides
+    @Singleton
+    fun provideAuthInterceptor(
+        tokenDataStore: TokenDataStore
+    ): AuthInterceptor = AuthInterceptor(tokenDataStore)
+
     @JWT
     @Provides
     @Singleton
-    fun providerHeaderInterceptor(
-        tokenDataStore: TokenDataStore,
-    ): Interceptor = HeaderInterceptor(tokenDataStore)
+    fun provideJwtInterceptor(
+        authInterceptor: AuthInterceptor,
+    ): Interceptor = authInterceptor
 
     @JWT
     @Provides
@@ -111,9 +123,21 @@ object NetworkModule {
         .addConverterFactory(factory)
         .build()
 
-    // TODO: 더미 레트로핏, 삭제 예정
     @Provides
+    @NoAuth
+    @Singleton
+    fun provideNoAuthRetrofit(
+        factory: Converter.Factory,
+        client: OkHttpClient
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .client(client)
+        .addConverterFactory(factory)
+        .build()
+
+    // TODO: 더미 레트로핏, 삭제 예정
     @DUMMY
+    @Provides
     fun provideDummyRetrofit(
         client: OkHttpClient,
         factory: Converter.Factory
