@@ -9,6 +9,6 @@ data class ProductPhotoDto(
     val photoId: Long?,
     @SerialName("photoUrl")
     val photoUrl: String,
-    @SerialName("photoSequence")
-    val photoSequence: Int,
+    @SerialName("sequence")
+    val sequence: Int,
 )

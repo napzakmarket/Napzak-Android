@@ -13,7 +13,7 @@ import com.napzak.market.registration.model.SaleRegistrationProduct
 fun ProductImage.toData() = ProductPhotoDto(
     photoId = photoId,
     photoUrl = imageUrl,
-    photoSequence = sequence,
+    sequence = sequence,
 )
 
 fun PurchaseRegistrationProduct.toData() = PurchaseRegistrationRequest(
@@ -40,7 +40,7 @@ fun SaleRegistrationProduct.toData() = SaleRegistrationRequest(
 fun ProductPhotoDto.toDomain() = ProductImage(
     photoId = photoId,
     imageUrl = photoUrl,
-    sequence = photoSequence,
+    sequence = sequence,
 )
 
 fun PurchaseRegistrationResponse.toDomain() = PurchaseRegistrationProduct(
