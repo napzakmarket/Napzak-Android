@@ -49,6 +49,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -162,6 +163,8 @@ private fun EditStoreScreen(
     onProceedButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val focusManager = LocalFocusManager.current
+
     Scaffold(
         topBar = {
             EditStoreTopBar(
@@ -170,7 +173,10 @@ private fun EditStoreScreen(
         },
         bottomBar = {
             EditStoreProceedButton(
-                onClick = onProceedButtonClick,
+                onClick = {
+                    onProceedButtonClick()
+                    focusManager.clearFocus()
+                },
                 enabled = submitEnabled,
             )
         },
@@ -190,6 +196,7 @@ private fun EditStoreScreen(
                         storeIntroduction = description,
                         storeGenres = preferredGenres,
                         nickNameValidState = uiState.nickNameValidState,
+                        nickNameCheckEnabled = uiState.isNameChanged && nickname.isNotBlank(),
                         onStoreNameChange = onStoreNameChange,
                         onStoreIntroductionChange = onStoreIntroductionChange,
                         onNameValidityCheckClick = onNameValidityCheckClick,
@@ -242,6 +249,7 @@ private fun SuccessScreen(
     storeIntroduction: String,
     storeGenres: List<StoreEditGenre>,
     nickNameValidState: UiState<String>,
+    nickNameCheckEnabled: Boolean,
     onStoreNameChange: (String) -> Unit,
     onStoreIntroductionChange: (String) -> Unit,
     onPhotoChange: (PhotoType) -> Unit,
@@ -250,7 +258,6 @@ private fun SuccessScreen(
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
-    val nameCheckButtonEnabled = remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -269,11 +276,10 @@ private fun SuccessScreen(
             marketName = storeName,
             onNameChange = {
                 onStoreNameChange(it)
-                nameCheckButtonEnabled.value = it.isNotEmpty()
             },
             nickNameValidState = nickNameValidState,
             onNameValidityCheckClick = onNameValidityCheckClick,
-            checkEnabled = nameCheckButtonEnabled.value,
+            checkEnabled = nickNameCheckEnabled,
         )
 
         SectionDivider(Modifier.padding(bottom = 30.dp))
@@ -651,6 +657,7 @@ private fun EditStoreScreenPreview() {
             onNameValidityCheckClick = {},
             onGenreSelectButtonClick = {},
             onPhotoChange = {},
+            nickNameCheckEnabled = true,
             nickNameValidState = UiState.Success("사용할 수 있는 이름이에요!"),
             modifier = Modifier.fillMaxSize(),
         )
