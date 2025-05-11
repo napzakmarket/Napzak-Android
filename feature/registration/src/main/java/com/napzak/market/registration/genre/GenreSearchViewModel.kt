@@ -2,6 +2,7 @@ package com.napzak.market.registration.genre
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.napzak.market.common.state.UiState
 import com.napzak.market.genre.usecase.GetGenreNamesUseCase
 import com.napzak.market.registration.genre.state.GenreContract.GenreSearchUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,11 +36,17 @@ class GenreSearchViewModel @Inject constructor(
 
     fun updateSearchTerm(searchTerm: String) = _searchTerm.update { searchTerm }
 
+    fun updateUiState(uiState: UiState<Unit>) = _uiState.update {
+        it.copy(loadState = uiState)
+    }
+
     private fun updateGenreSearchResult() = viewModelScope.launch {
+        updateUiState(UiState.Loading)
         getGenreNamesUseCase(searchTerm.value).onSuccess { genres ->
             _uiState.update { it.copy(genres = genres.toPersistentList()) }
+            updateUiState(UiState.Success(Unit))
         }.onFailure {
-
+            updateUiState(UiState.Failure("failed to load genres"))
         }
     }
 
