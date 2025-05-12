@@ -1,14 +1,11 @@
 package com.napzak.market.login
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -25,7 +22,6 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.kakao.sdk.user.UserApiClient
 import com.napzak.market.designsystem.R.raw.lottie_login
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.login.component.KakaoLoginButton
@@ -45,12 +41,14 @@ fun LoginRoute(
 
     LoginScreen(
         onKakaoLoginClick = {
-            UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
-                if (token != null) {
-                    viewModel.loginWithKakao(token.accessToken)
+            LoginKakaoLauncher(
+                context = context,
+                onTokenReceived = { token -> viewModel.loginWithKakao(token) },
+                onError = {
+                    //TODO 추후 구현
                 }
-            }
-        },
+            ).startKakaoLogin()
+        }
     )
 }
 
@@ -70,7 +68,10 @@ private fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(NapzakMarketTheme.colors.white)
-            .padding(horizontal = 20.dp)
+            .padding(
+                horizontal = 20.dp,
+                vertical = 40.dp,
+            )
             .padding(
                 bottom = WindowInsets.navigationBars
                     .asPaddingValues()
@@ -78,8 +79,6 @@ private fun LoginScreen(
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.height(60.dp))
-
         LottieAnimation(
             composition = composition,
             progress = { progress },
@@ -89,7 +88,5 @@ private fun LoginScreen(
         )
 
         KakaoLoginButton(onClick = onKakaoLoginClick)
-
-        Spacer(modifier = Modifier.height(20.dp))
     }
 }
