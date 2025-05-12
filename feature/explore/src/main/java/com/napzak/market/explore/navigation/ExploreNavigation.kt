@@ -1,5 +1,6 @@
 package com.napzak.market.explore.navigation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -36,6 +37,10 @@ fun NavGraphBuilder.exploreGraph(
     modifier: Modifier = Modifier,
 ) {
     composable<Explore> {
+        BackHandler {
+            navigateToUp()
+        }
+
         ExploreRoute(
             onSearchNavigate = navigateToSearch,
             onGenreDetailNavigate = navigateToGenreDetail,

@@ -13,10 +13,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.napzak.market.explore.navigation.navigateToExplore
 import com.napzak.market.home.navigation.navigateToHome
-import com.napzak.market.splash.navigation.Splash
-import com.napzak.market.onboarding.navigation.Terms
-import com.napzak.market.login.navigation.Login
 import com.napzak.market.mypage.navigation.navigateToMyPage
+import com.napzak.market.splash.navigation.Splash
 
 class MainNavigator(
     val navController: NavHostController,
@@ -41,7 +39,6 @@ class MainNavigator(
         val navOptions = navOptions {
             navController.currentDestination?.route?.let {
                 popUpTo(it) {
-                    inclusive = true
                     saveState = true
                 }
             }
