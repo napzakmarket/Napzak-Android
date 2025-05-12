@@ -1,5 +1,6 @@
 package com.napzak.market.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,8 +15,19 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NapzakMarketTheme {
-                MainScreen()
+                MainScreen(
+                    restartApplication = ::restartApplication
+                )
             }
+        }
+    }
+
+
+    private fun restartApplication() {
+        Intent(this, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(this)
         }
     }
 }

@@ -1,13 +1,11 @@
 package com.napzak.market.main
 
-import android.content.Intent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -17,7 +15,6 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -29,7 +26,6 @@ import com.napzak.market.designsystem.component.CommonSnackBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.detail.navigation.navigateToProductDetail
 import com.napzak.market.detail.navigation.productDetailGraph
-import com.napzak.market.dummy.navigation.dummyGraph
 import com.napzak.market.explore.navigation.exploreGraph
 import com.napzak.market.explore.navigation.navigateToExplore
 import com.napzak.market.explore.navigation.navigateToGenreDetail
@@ -42,6 +38,7 @@ import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.mypage.navigation.mypageGraph
 import com.napzak.market.mypage.setting.navigation.navigateToSettings
 import com.napzak.market.mypage.setting.navigation.settingsGraph
+import com.napzak.market.mypage.signout.navigation.navigateToSignOut
 import com.napzak.market.mypage.signout.navigation.signOutGraph
 import com.napzak.market.onboarding.navigation.Terms
 import com.napzak.market.onboarding.navigation.onboardingGraph
@@ -67,6 +64,7 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun MainScreen(
+    restartApplication: () -> Unit,
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -103,6 +101,7 @@ fun MainScreen(
                 )
             }
         },
+        containerColor = NapzakMarketTheme.colors.white,
         modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
         CompositionLocalProvider(
@@ -127,6 +126,7 @@ fun MainScreen(
 
                 MainNavHost(
                     navigator = navigator,
+                    restartApplication = restartApplication,
                     modifier = Modifier.padding(innerPadding),
                 )
             }
@@ -137,10 +137,9 @@ fun MainScreen(
 @Composable
 private fun MainNavHost(
     navigator: MainNavigator,
+    restartApplication: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     NavHost(
         enterTransition = {
             EnterTransition.None
@@ -157,8 +156,6 @@ private fun MainNavHost(
         navController = navigator.navController,
         startDestination = navigator.startDestination
     ) {
-        dummyGraph(modifier = modifier)
-
         splashGraph(
             onNavigateToOnboarding = {
                 navigator.navController.navigate(Login) {
@@ -169,10 +166,8 @@ private fun MainNavHost(
         )
 
         loginGraph(
-            navController = navigator.navController,
-            onKakaoLoginClick = {
-                navigator.navController.navigate(Terms)
-            }
+            onNavigateToTerms = { navigator.navController.navigate(Terms) },
+            onNavigateToHome = { navigator.navController.navigate(Home) },
         )
 
         onboardingGraph(
@@ -182,7 +177,11 @@ private fun MainNavHost(
                     popUpTo(Terms) { inclusive = true }
                 }
             },
-            modifier = modifier,
+            onLogin = {
+                navigator.navController.navigate(Login) {
+                    popUpTo(Terms) { inclusive = true }
+                }
+            },
         )
 
         homeGraph(
@@ -219,7 +218,6 @@ private fun MainNavHost(
                 navigator.navController.navigateToExplore(searchTerm)
             },
             navigateToGenreDetail = { navigator.navController.navigateToGenreDetail(it) },
-            modifier = modifier,
         )
 
         storeGraph(
@@ -227,12 +225,10 @@ private fun MainNavHost(
             navigateToProfileEdit = { navigator.navController.navigateToEditStore(it) },
             navigateToProductDetail = { navigator.navController.navigateToProductDetail(it) },
             navigateToStoreReport = { navigator.navController.navigateToUserReport(it) },
-            modifier = modifier,
         )
 
         editStoreGraph(
             navigateToUp = navigator::navigateUp,
-            modifier = modifier,
         )
 
         productDetailGraph(
@@ -250,19 +246,16 @@ private fun MainNavHost(
             },
             onReportNavigate = { navigator.navController.navigateToProductReport(it) },
             onNavigateUp = navigator::navigateUp,
-            modifier = Modifier.systemBarsPadding()
         )
 
         reportGraph(
             navigateUp = navigator::navigateUp,
-            modifier = Modifier.systemBarsPadding()
         )
 
         registrationGraph(
             navigateToUp = navigator::navigateUp,
             navigateToDetail = { navigator.navController.navigateToProductDetail(it) },
             navigateToGenreSearch = navigator.navController::navigateToGenreSearch,
-            modifier = modifier,
         )
 
         mypageGraph(
@@ -278,22 +271,14 @@ private fun MainNavHost(
 
         settingsGraph(
             navigateToBack = navigator::navigateUp,
-            onLogoutConfirm = { /* TODO: 로그아웃 처리 */ },
-            onWithdrawClick = { /* TODO: 탈퇴 처리 */ }
+            onLogoutConfirm = restartApplication,
+            onWithdrawClick = navigator.navController::navigateToSignOut
         )
 
         signOutGraph(
             navController = navigator.navController,
             onNavigateUp = navigator::navigateUp,
-            restartApp = {
-                Intent(context, MainActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(this)
-                }
-
-            },
-            modifier = modifier,
+            restartApp = restartApplication,
         )
     }
 }

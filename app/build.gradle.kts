@@ -1,10 +1,30 @@
+import java.util.Properties
+
 plugins {
     id("com.napzak.market.buildlogic.convention.application")
     id("com.napzak.market.buildlogic.primitive.hilt")
 }
+val localProperties = Properties().apply {
+    load(File(rootDir, "local.properties").inputStream())
+}
+
+val kakaoAppKey = localProperties.getProperty("kakao.app.key")
 
 android {
     namespace = "com.napzak.market"
+
+    buildTypes {
+        getByName("debug") {
+            buildConfigField("String", "KAKAO_APP_KEY", "\"$kakaoAppKey\"")
+        }
+        getByName("release") {
+            buildConfigField("String", "KAKAO_APP_KEY", "\"$kakaoAppKey\"")
+        }
+    }
+}
+
+configurations.all {
+    exclude(group = "com.intellij", module = "annotations")
 }
 
 dependencies {
@@ -25,4 +45,10 @@ dependencies {
 
     implementation(libs.androidx.appcompat)
     implementation(libs.timber)
+    implementation(libs.v2.user)
+    implementation(libs.v2.common)
+    implementation(libs.androidx.room.compiler)
+    implementation(libs.androidx.multidex)
+    implementation(libs.androidx.multidex)
+    implementation(libs.lottie.compose)
 }

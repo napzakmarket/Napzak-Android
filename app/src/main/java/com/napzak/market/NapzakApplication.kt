@@ -2,6 +2,7 @@ package com.napzak.market
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.kakao.sdk.common.KakaoSdk
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
@@ -9,6 +10,7 @@ import timber.log.Timber
 class NapzakApplication: Application() {
     override fun onCreate() {
         super.onCreate()
+        KakaoSdk.init(this, BuildConfig.KAKAO_APP_KEY)
 
         initTimber()
         setDayMode()

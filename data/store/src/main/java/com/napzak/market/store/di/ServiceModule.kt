@@ -1,5 +1,7 @@
 package com.napzak.market.store.di
 
+import com.napzak.market.remote.qualifier.NoAuth
+import com.napzak.market.store.service.AuthService
 import com.napzak.market.store.service.SettingService
 import com.napzak.market.store.service.StoreService
 import dagger.Module
@@ -20,4 +22,10 @@ object ServiceModule {
     @Provides
     @Singleton
     fun provideSettingService(retrofit: Retrofit): SettingService = retrofit.create()
+
+    @Provides
+    @Singleton
+    fun provideAuthService(
+        @NoAuth retrofit: Retrofit
+    ): AuthService = retrofit.create(AuthService::class.java)
 }

@@ -16,7 +16,7 @@ import com.napzak.market.feature.detail.R.string.detail_product_is_price_negotia
 import com.napzak.market.feature.detail.R.string.detail_product_title_is_price_negotiable
 
 @Composable
-internal fun ProductInformationSellGroup(
+internal fun ProductInformationBuyGroup(
     isPriceNegotiable: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -47,9 +47,9 @@ internal fun ProductInformationSellGroup(
 
 @Preview(showBackground = true)
 @Composable
-private fun ProductInformationSellGroupPreview() {
+private fun ProductInformationBuyGroupPreview() {
     NapzakMarketTheme {
-        ProductInformationSellGroup(
+        ProductInformationBuyGroup(
             isPriceNegotiable = true,
         )
     }

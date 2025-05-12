@@ -1,5 +1,6 @@
 package com.napzak.market.mypage.signout.navigation
 
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -28,8 +29,9 @@ fun NavGraphBuilder.signOutGraph(
     navController: NavHostController,
     onNavigateUp: () -> Unit,
     restartApp: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
+    val modifier = Modifier.systemBarsPadding()
+
     horizontalSlideNavigation<SignOut, Route>(
         startDestination = SignOutReason,
         screens = listOf(SignOutReason, SignOutDetail, SignOutConfirm),

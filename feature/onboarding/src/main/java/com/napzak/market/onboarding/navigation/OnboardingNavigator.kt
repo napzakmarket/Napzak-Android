@@ -23,12 +23,13 @@ fun NavController.navigateToGenre(navOptions: NavOptions? = null) =
 
 fun NavGraphBuilder.onboardingGraph(
     onFinish: () -> Unit,
+    onLogin: () -> Unit,
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
     composable<Terms> {
         TermsAgreementRoute(
-            onBackClick = navController::navigateUp,
+            onBackClick = onLogin,
             onNextClick = navController::navigateToNickname,
         )
     }

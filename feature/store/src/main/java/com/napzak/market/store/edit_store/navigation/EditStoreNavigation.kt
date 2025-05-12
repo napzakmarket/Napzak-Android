@@ -1,5 +1,6 @@
 package com.napzak.market.store.edit_store.navigation
 
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -21,7 +22,7 @@ fun NavGraphBuilder.editStoreGraph(
     composable<EditStore> {
         EditStoreRoute(
             onNavigateUp = navigateToUp,
-            modifier = modifier,
+            modifier = modifier.systemBarsPadding(),
         )
     }
 }

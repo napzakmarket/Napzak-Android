@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class StoreDetailResponse(
     @SerialName("storeId") val storeId: Long,
     @SerialName("storeNickName") val storeNickname: String,
-    @SerialName("storeDescription") val storeDescription: String,
+    @SerialName("storeDescription") val storeDescription: String?,
     @SerialName("storePhoto") val storePhoto: String,
     @SerialName("storeCover") val storeCover: String,
     @SerialName("isStoreOwner") val isStoreOwner: Boolean,

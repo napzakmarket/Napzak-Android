@@ -1,5 +1,6 @@
 package com.napzak.market.report.navigation
 
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -35,7 +36,7 @@ fun NavGraphBuilder.reportGraph(
         ReportRoute(
             reportType = reportType,
             navigateUp = navigateUp,
-            modifier = modifier,
+            modifier = modifier.systemBarsPadding(),
         )
     }
 }

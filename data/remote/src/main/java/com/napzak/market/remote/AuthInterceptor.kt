@@ -1,25 +1,26 @@
 package com.napzak.market.remote
 
 import com.napzak.market.local.datastore.TokenDataStore
-import data.remote.BuildConfig.ACCESS_TOKEN
-import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
-import okhttp3.Request
 import okhttp3.Response
 import javax.inject.Inject
+import kotlinx.coroutines.runBlocking
 
-class HeaderInterceptor @Inject constructor(
+class AuthInterceptor @Inject constructor(
     private val tokenDataStore: TokenDataStore,
 ) : Interceptor {
+
     override fun intercept(chain: Interceptor.Chain): Response {
+        val originalRequest = chain.request()
+
         val accessToken = runBlocking { tokenDataStore.getAccessToken() }
 
-        val newRequest = chain.request().newBuilder().apply {
+        val authenticatedRequest = originalRequest.newBuilder().apply {
             if (!accessToken.isNullOrBlank()) {
-                addHeader("Authorization", "Bearer $accessToken")
+                header("Authorization", "Bearer $accessToken")
             }
         }.build()
 
-        return chain.proceed(newRequest)
+        return chain.proceed(authenticatedRequest)
     }
 }
