@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,6 +27,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
+import com.napzak.market.designsystem.component.topbar.NavigateUpTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.settings_button_logout
 import com.napzak.market.feature.mypage.R.string.settings_button_withdraw
@@ -33,8 +35,8 @@ import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_cancel_b
 import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_confirm_button
 import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_title
 import com.napzak.market.feature.mypage.R.string.settings_section_service_info_title
+import com.napzak.market.feature.mypage.R.string.settings_topbar_title
 import com.napzak.market.mypage.setting.component.SettingItem
-import com.napzak.market.mypage.setting.component.SettingsTopBar
 import com.napzak.market.mypage.setting.model.SettingViewModel
 import com.napzak.market.util.android.noRippleClickable
 
@@ -83,8 +85,12 @@ fun SettingsScreen(
 
     Scaffold(
         topBar = {
-            SettingsTopBar(onBackClick = onBackClick)
-        }
+            NavigateUpTopBar(
+                title = stringResource(id = settings_topbar_title),
+                onNavigateUp = onBackClick,
+            )
+        },
+        modifier = Modifier.systemBarsPadding(),
     ) { padding ->
         Column(
             modifier = Modifier
