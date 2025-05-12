@@ -51,7 +51,10 @@ private fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(NapzakMarketTheme.colors.white)
-            .padding(horizontal = 20.dp)
+            .padding(
+                horizontal = 20.dp,
+                vertical = 60.dp,
+            )
             .padding(
                 bottom = WindowInsets.navigationBars
                     .asPaddingValues()
@@ -59,8 +62,6 @@ private fun LoginScreen(
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.height(60.dp))
-
         LottieAnimation(
             composition = composition,
             progress = { progress },
@@ -70,7 +71,5 @@ private fun LoginScreen(
         )
 
         KakaoLoginButton(onClick = onKakaoLoginClick)
-
-        Spacer(modifier = Modifier.height(20.dp))
     }
 }
