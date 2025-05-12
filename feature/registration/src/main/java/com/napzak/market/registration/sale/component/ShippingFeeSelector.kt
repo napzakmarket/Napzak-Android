@@ -41,6 +41,8 @@ import com.napzak.market.registration.component.ShippingFeeTextField
 import com.napzak.market.util.android.noRippleClickable
 
 private const val EMPTY_STRING = ""
+private const val NORMAL_MAX_PRICE = 30_000
+private const val HALF_MAX_PRICE = 5_000
 
 @Composable
 internal fun ShippingFeeSelector(
@@ -112,6 +114,7 @@ internal fun ShippingFeeSelector(
                             onCheckChange = onNormalShippingSelect,
                             shippingFee = normalShippingFee,
                             onShippingFeeChange = onNormalShippingFeeChange,
+                            maxPrice = NORMAL_MAX_PRICE,
                             hint = stringResource(normal_shipping_hint),
                         )
                         ExpandedShippingFee(
@@ -120,6 +123,7 @@ internal fun ShippingFeeSelector(
                             onCheckChange = onHalfShippingSelect,
                             shippingFee = halfShippingFee,
                             onShippingFeeChange = onHalfShippingFeeChange,
+                            maxPrice = HALF_MAX_PRICE,
                             hint = stringResource(half_priced_shipping_hint),
                         )
                     }
@@ -171,6 +175,7 @@ fun ExpandedShippingFee(
     onCheckChange: (Boolean) -> Unit,
     shippingFee: String,
     onShippingFeeChange: (String) -> Unit,
+    maxPrice: Int,
     hint: String,
     modifier: Modifier = Modifier,
 ) {
@@ -208,6 +213,7 @@ fun ExpandedShippingFee(
             price = shippingFee,
             onPriceChange = onShippingFeeChange,
             hint = hint,
+            maxPrice = maxPrice,
             enabled = isChecked,
         )
     }

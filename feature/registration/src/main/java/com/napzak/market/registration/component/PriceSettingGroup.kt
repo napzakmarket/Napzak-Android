@@ -12,6 +12,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,9 +21,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalTextToolbar
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,7 +35,11 @@ import com.napzak.market.designsystem.R.drawable.ic_error_9
 import com.napzak.market.designsystem.component.textfield.InputTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.purchase_price_error
+import com.napzak.market.util.android.EmptyTextToolbar
+import com.napzak.market.util.android.LocalEmptyTextToolbar
+import com.napzak.market.util.android.LocalSnackBarController
 import com.napzak.market.util.android.addPrice
+import com.napzak.market.util.android.adjustToMaxPrice
 import com.napzak.market.util.android.priceSeparatorTransformation
 import com.napzak.market.util.android.priceToNumericTransformation
 
@@ -38,6 +47,7 @@ private const val THOUSAND = 1000
 private const val FIVE_THOUSAND = 5000
 private const val TEN_THOUSAND = 10000
 private const val HUNDRED_THOUSAND = 100000
+private const val MILLION = 1000000
 
 @Composable
 internal fun PriceSettingGroup(
@@ -49,6 +59,18 @@ internal fun PriceSettingGroup(
     priceTag: String,
     modifier: Modifier = Modifier,
 ) {
+    var priceFieldValue by remember { mutableStateOf(TextFieldValue(price)) }
+    val emptyTextToolbar = remember { EmptyTextToolbar() }
+
+    LaunchedEffect(price) {
+        if (price != priceFieldValue.text) {
+            priceFieldValue = TextFieldValue(
+                text = price,
+                selection = TextRange(price.length)
+            )
+        }
+    }
+
     val transformedPrice = price.priceToNumericTransformation()
     val purchaseError = tradeType == TradeType.BUY && transformedPrice != 0 && transformedPrice % THOUSAND != 0
     val napzakColors = NapzakMarketTheme.colors
@@ -61,7 +83,6 @@ internal fun PriceSettingGroup(
             else -> napzakColors.gray400
         }
     }
-
 
     Column(
         modifier = modifier,
@@ -84,28 +105,34 @@ internal fun PriceSettingGroup(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        InputTextField(
-            text = price,
-            onTextChange = onPriceChange,
-            textStyle = NapzakMarketTheme.typography.body14b,
-            textColor = textColor,
-            borderColor = borderColor,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-            ),
-            visualTransformation = priceSeparatorTransformation(),
-            paddingValues = PaddingValues(12.dp, 16.dp, 12.dp, 16.dp),
-            contentAlignment = Alignment.CenterEnd,
-            textAlign = TextAlign.End,
-            suffix = {
-                Text(
-                    text = priceTag,
-                    style = NapzakMarketTheme.typography.body14b.copy(
-                        color = hintColor,
-                    ),
-                )
-            }
-        )
+        CompositionLocalProvider(LocalTextToolbar provides emptyTextToolbar) {
+            InputTextField(
+                text = priceFieldValue,
+                onTextChange = {
+                    val limited = it.adjustToMaxPrice(MILLION)
+                    priceFieldValue = limited
+                    onPriceChange(limited.text)
+                },
+                textStyle = NapzakMarketTheme.typography.body14b,
+                textColor = textColor,
+                borderColor = borderColor,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.NumberPassword,
+                ),
+                visualTransformation = priceSeparatorTransformation(),
+                paddingValues = PaddingValues(12.dp, 16.dp, 12.dp, 16.dp),
+                contentAlignment = Alignment.CenterEnd,
+                textAlign = TextAlign.End,
+                suffix = {
+                    Text(
+                        text = priceTag,
+                        style = NapzakMarketTheme.typography.body14b.copy(
+                            color = hintColor,
+                        ),
+                    )
+                }
+            )
+        }
 
         Spacer(modifier = Modifier.height(6.dp))
 
