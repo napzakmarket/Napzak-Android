@@ -289,7 +289,6 @@ private fun MainNavHost(
             navController = navigator.navController,
             onNavigateUp = navigator::navigateUp,
             restartApp = restartApplication,
-            modifier = modifier,
         )
     }
 }
