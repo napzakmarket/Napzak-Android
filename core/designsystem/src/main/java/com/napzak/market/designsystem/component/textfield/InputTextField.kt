@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,6 +39,59 @@ private const val BLANK = ""
 fun InputTextField(
     text: String,
     onTextChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    hint: String = BLANK,
+    textStyle: TextStyle = NapzakMarketTheme.typography.body14sb,
+    textColor: Color = NapzakMarketTheme.colors.gray500,
+    hintTextStyle: TextStyle = NapzakMarketTheme.typography.body14sb,
+    hintTextColor: Color = NapzakMarketTheme.colors.gray200,
+    borderColor: Color = NapzakMarketTheme.colors.gray100,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    isSingleLined: Boolean = true,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    paddingValues: PaddingValues = PaddingValues(14.dp, 16.dp, 14.dp, 16.dp),
+    contentAlignment: Alignment = Alignment.CenterStart,
+    textAlign: TextAlign = TextAlign.Start,
+    suffix: @Composable (() -> Unit)? = null,
+) {
+    NapzakDefaultTextField(
+        text = text,
+        onTextChange = onTextChange,
+        modifier = modifier
+            .clip(RoundedCornerShape(14.dp))
+            .background(NapzakMarketTheme.colors.white)
+            .border(1.dp, borderColor, RoundedCornerShape(14.dp))
+            .padding(paddingValues),
+        hint = hint,
+        textStyle = textStyle,
+        textColor = textColor,
+        keyboardActions = keyboardActions,
+        keyboardOptions = keyboardOptions,
+        hintTextStyle = hintTextStyle.copy(color = hintTextColor),
+        isSingleLined = isSingleLined,
+        visualTransformation = visualTransformation,
+        suffix = suffix,
+        verticalAlignment = Alignment.Top,
+        contentAlignment = contentAlignment,
+        textAlign = textAlign,
+    )
+}
+
+/**
+ * Input text field
+ * String 값이 아닌 TextFieldValue를 받는 InputTextField입니다.
+ *
+ * @param text: 입력 값
+ * @param onTextChange: 입력 값 변경
+ * @param hint: 힌트
+ * @param isSingleLined: single / multi line
+ * @param suffix
+ */
+@Composable
+fun InputTextField(
+    text: TextFieldValue,
+    onTextChange: (TextFieldValue) -> Unit,
     modifier: Modifier = Modifier,
     hint: String = BLANK,
     textStyle: TextStyle = NapzakMarketTheme.typography.body14sb,
