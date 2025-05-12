@@ -13,6 +13,12 @@ val kakaoAppKey = localProperties.getProperty("kakao.app.key")
 android {
     namespace = "com.napzak.market"
 
+    val kakaoKey = "kakao$kakaoAppKey"
+
+    defaultConfig {
+        resValue("string", "kakao_key", kakaoKey)
+    }
+
     buildTypes {
         getByName("debug") {
             buildConfigField("String", "KAKAO_APP_KEY", "\"$kakaoAppKey\"")
