@@ -114,7 +114,7 @@ private fun ProductDetailScreen(
             )
         },
         bottomBar = {
-            if (uiState is UiState.Success) {
+            if (uiState is UiState.Success && !uiState.data.isOwnedByCurrentUser) {
                 val productId = uiState.data.productId
                 ProductDetailBottomBar(
                     isLiked = isInterested,
