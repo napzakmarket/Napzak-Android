@@ -226,8 +226,8 @@ private fun ProductDetailSuccessScreen(
                 SectionDivider()
 
                 when (tradeType) {
-                    TradeType.BUY -> {
-                        ProductInformationBuyGroup(
+                    TradeType.SELL -> {
+                        ProductInformationSellGroup(
                             productCondition = ProductConditionType.fromConditionByName(
                                 productCondition
                             ),
@@ -237,8 +237,8 @@ private fun ProductDetailSuccessScreen(
                         )
                     }
 
-                    TradeType.SELL -> {
-                        ProductInformationSellGroup(
+                    TradeType.BUY -> {
+                        ProductInformationBuyGroup(
                             isPriceNegotiable = isPriceNegotiable,
                         )
                     }
