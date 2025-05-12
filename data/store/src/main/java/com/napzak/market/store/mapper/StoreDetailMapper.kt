@@ -8,7 +8,7 @@ import com.napzak.market.store.model.StoreDetailGenre
 fun StoreDetailResponse.toDomain(): StoreDetail = StoreDetail(
     storeId = storeId,
     nickname = storeNickname,
-    description = storeDescription,
+    description = storeDescription ?: "",
     photoUrl = storePhoto,
     coverUrl = storeCover,
     isOwner = isStoreOwner,
