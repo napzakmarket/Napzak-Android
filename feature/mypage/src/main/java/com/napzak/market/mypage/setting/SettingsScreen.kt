@@ -12,6 +12,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,7 +22,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.settings_button_logout
@@ -43,11 +46,20 @@ fun SettingsRoute(
     openWebLink: (String) -> Unit,
     viewModel: SettingViewModel = hiltViewModel()
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
     val state by viewModel.settingInfo.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect {
+            when (it) {
+                is SettingSideEffect.OnSignOutComplete -> onLogoutConfirm()
+            }
+        }
+    }
 
     SettingsScreen(
         onBackClick = onBackClick,
-        onLogoutConfirm = onLogoutConfirm,
+        onLogoutConfirm = viewModel::signOutUser,
         onWithdrawClick = onWithdrawClick,
         onNoticeClick = { if (state.noticeLink.isNotBlank()) openWebLink(state.noticeLink) },
         onTermsClick = { if (state.termsLink.isNotBlank()) openWebLink(state.termsLink) },
