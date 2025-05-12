@@ -24,7 +24,7 @@ import com.napzak.market.feature.detail.R.string.detail_product_title_delivery
 import com.napzak.market.feature.detail.R.string.detail_product_title_product_condition
 
 @Composable
-internal fun ProductInformationBuyGroup(
+internal fun ProductInformationSellGroup(
     productCondition: ProductConditionType,
     isDeliveryIncluded: Boolean,
     standardDeliveryFee: Int,
@@ -129,9 +129,9 @@ private fun ProductDeliverySection(
 
 @Preview(showBackground = true)
 @Composable
-private fun ProductInformationBuyGroupPreview() {
+private fun ProductInformationSellGroupPreview() {
     NapzakMarketTheme {
-        ProductInformationBuyGroup(
+        ProductInformationSellGroup(
             productCondition = ProductConditionType.NEW,
             isDeliveryIncluded = true,
             standardDeliveryFee = 2500,

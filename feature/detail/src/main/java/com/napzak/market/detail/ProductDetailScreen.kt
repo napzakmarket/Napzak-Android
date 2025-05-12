@@ -114,7 +114,7 @@ private fun ProductDetailScreen(
             )
         },
         bottomBar = {
-            if (uiState is UiState.Success) {
+            if (uiState is UiState.Success && !uiState.data.isOwnedByCurrentUser) {
                 val productId = uiState.data.productId
                 ProductDetailBottomBar(
                     isLiked = isInterested,
@@ -226,8 +226,8 @@ private fun ProductDetailSuccessScreen(
                 SectionDivider()
 
                 when (tradeType) {
-                    TradeType.BUY -> {
-                        ProductInformationBuyGroup(
+                    TradeType.SELL -> {
+                        ProductInformationSellGroup(
                             productCondition = ProductConditionType.fromConditionByName(
                                 productCondition
                             ),
@@ -237,8 +237,8 @@ private fun ProductDetailSuccessScreen(
                         )
                     }
 
-                    TradeType.SELL -> {
-                        ProductInformationSellGroup(
+                    TradeType.BUY -> {
+                        ProductInformationBuyGroup(
                             isPriceNegotiable = isPriceNegotiable,
                         )
                     }

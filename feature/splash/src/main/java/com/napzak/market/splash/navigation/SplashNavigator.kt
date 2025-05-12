@@ -1,5 +1,6 @@
 package com.napzak.market.splash.navigation
 
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -13,7 +14,7 @@ fun NavGraphBuilder.splashGraph(
 ) {
     composable<Splash> {
         SplashRoute(
-            modifier = modifier,
+            modifier = modifier.systemBarsPadding(),
             onNavigateToOnboarding = onNavigateToOnboarding,
         )
     }

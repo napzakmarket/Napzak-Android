@@ -8,7 +8,7 @@ data class StoreEditProfileResponse(
     @SerialName("storeCover") val storeCover: String,
     @SerialName("storePhoto") val storePhoto: String,
     @SerialName("storeNickName") val storeNickname: String,
-    @SerialName("storeDescription") val storeDescription: String,
+    @SerialName("storeDescription") val storeDescription: String?,
     @SerialName("preferredGenreList") val preferredGenres: List<StoreEditGenreDto>,
 )
 

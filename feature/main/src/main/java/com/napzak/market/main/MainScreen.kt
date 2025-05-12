@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -27,7 +26,6 @@ import com.napzak.market.designsystem.component.CommonSnackBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.detail.navigation.navigateToProductDetail
 import com.napzak.market.detail.navigation.productDetailGraph
-import com.napzak.market.dummy.navigation.dummyGraph
 import com.napzak.market.explore.navigation.exploreGraph
 import com.napzak.market.explore.navigation.navigateToExplore
 import com.napzak.market.explore.navigation.navigateToGenreDetail
@@ -103,6 +101,7 @@ fun MainScreen(
                 )
             }
         },
+        containerColor = NapzakMarketTheme.colors.white,
         modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
         CompositionLocalProvider(
@@ -157,8 +156,6 @@ private fun MainNavHost(
         navController = navigator.navController,
         startDestination = navigator.startDestination
     ) {
-        dummyGraph(modifier = modifier)
-
         splashGraph(
             onNavigateToOnboarding = {
                 navigator.navController.navigate(Login) {
@@ -185,7 +182,6 @@ private fun MainNavHost(
                     popUpTo(Terms) { inclusive = true }
                 }
             },
-            modifier = modifier,
         )
 
         homeGraph(
@@ -222,7 +218,6 @@ private fun MainNavHost(
                 navigator.navController.navigateToExplore(searchTerm)
             },
             navigateToGenreDetail = { navigator.navController.navigateToGenreDetail(it) },
-            modifier = modifier,
         )
 
         storeGraph(
@@ -230,12 +225,10 @@ private fun MainNavHost(
             navigateToProfileEdit = { navigator.navController.navigateToEditStore(it) },
             navigateToProductDetail = { navigator.navController.navigateToProductDetail(it) },
             navigateToStoreReport = { navigator.navController.navigateToUserReport(it) },
-            modifier = modifier,
         )
 
         editStoreGraph(
             navigateToUp = navigator::navigateUp,
-            modifier = modifier,
         )
 
         productDetailGraph(
@@ -253,19 +246,16 @@ private fun MainNavHost(
             },
             onReportNavigate = { navigator.navController.navigateToProductReport(it) },
             onNavigateUp = navigator::navigateUp,
-            modifier = Modifier.systemBarsPadding()
         )
 
         reportGraph(
             navigateUp = navigator::navigateUp,
-            modifier = Modifier.systemBarsPadding()
         )
 
         registrationGraph(
             navigateToUp = navigator::navigateUp,
             navigateToDetail = { navigator.navController.navigateToProductDetail(it) },
             navigateToGenreSearch = navigator.navController::navigateToGenreSearch,
-            modifier = modifier,
         )
 
         mypageGraph(

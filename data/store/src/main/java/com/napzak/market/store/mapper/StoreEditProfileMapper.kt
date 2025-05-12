@@ -1,7 +1,7 @@
 package com.napzak.market.store.mapper
 
-import com.napzak.market.store.dto.response.StoreEditGenreDto
 import com.napzak.market.store.dto.request.StoreEditProfileRequest
+import com.napzak.market.store.dto.response.StoreEditGenreDto
 import com.napzak.market.store.dto.response.StoreEditProfileResponse
 import com.napzak.market.store.model.StoreEditGenre
 import com.napzak.market.store.model.StoreEditProfile
@@ -10,7 +10,7 @@ fun StoreEditProfileResponse.toDomain(): StoreEditProfile = StoreEditProfile(
     coverUrl = storeCover,
     photoUrl = storePhoto,
     nickname = storeNickname,
-    description = storeDescription,
+    description = storeDescription ?: "",
     preferredGenres = preferredGenres.map { it.toDomain() },
 )
 

@@ -55,7 +55,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.common.state.UiState
@@ -94,6 +96,7 @@ internal fun EditStoreRoute(
     modifier: Modifier = Modifier,
     viewModel: EditStoreViewModel = hiltViewModel()
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val photoType = remember { mutableStateOf(PhotoType.COVER) }
 
@@ -115,6 +118,13 @@ internal fun EditStoreRoute(
 
     LaunchedEffect(Unit) {
         viewModel.getEditProfile()
+    }
+
+    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle)
+            .collect {
+                if (it is EditStoreSideEffect.OnEditComplete) onNavigateUp()
+            }
     }
 
     EditStoreScreen(
@@ -349,7 +359,6 @@ private fun EditStoreProceedButton(
 
 /**
  * 마켓 프로필 및 커버 이미지를 편집하는 컴포넌트
- * TODO: 기디와 논의를 통해 ContentScale 설정
  */
 @Composable
 private fun EditStorePhotoSection(
@@ -385,7 +394,7 @@ private fun EditStorePhotoSection(
                 .placeholder(ic_profile_basic)
                 .build(),
             contentDescription = null,
-            contentScale = ContentScale.FillWidth,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(top = 80.dp)

@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -100,6 +101,7 @@ private fun ProductMarketProfile(
             contentDescription = null,
             error = painterResource(ic_profile),
             placeholder = painterResource(ic_profile),
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(60.dp)
                 .clip(shape = CircleShape),
