@@ -1,5 +1,6 @@
 package com.napzak.market.detail.navigation
 
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -33,7 +34,7 @@ fun NavGraphBuilder.productDetailGraph(
             onNavigateUp = onNavigateUp,
             onModifyNavigate = onModifyNavigate,
             onReportNavigate = onReportNavigate,
-            modifier = modifier,
+            modifier = modifier.systemBarsPadding(),
         )
     }
 }
