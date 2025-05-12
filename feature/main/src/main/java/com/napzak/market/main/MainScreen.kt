@@ -1,6 +1,5 @@
 package com.napzak.market.main
 
-import android.content.Intent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
@@ -16,7 +15,6 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -40,6 +38,7 @@ import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.mypage.navigation.mypageGraph
 import com.napzak.market.mypage.setting.navigation.navigateToSettings
 import com.napzak.market.mypage.setting.navigation.settingsGraph
+import com.napzak.market.mypage.signout.navigation.navigateToSignOut
 import com.napzak.market.mypage.signout.navigation.signOutGraph
 import com.napzak.market.onboarding.navigation.Terms
 import com.napzak.market.onboarding.navigation.onboardingGraph
@@ -65,6 +64,7 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun MainScreen(
+    restartApplication: () -> Unit,
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -126,6 +126,7 @@ fun MainScreen(
 
                 MainNavHost(
                     navigator = navigator,
+                    restartApplication = restartApplication,
                     modifier = Modifier.padding(innerPadding),
                 )
             }
@@ -136,10 +137,9 @@ fun MainScreen(
 @Composable
 private fun MainNavHost(
     navigator: MainNavigator,
+    restartApplication: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     NavHost(
         enterTransition = {
             EnterTransition.None
@@ -271,21 +271,14 @@ private fun MainNavHost(
 
         settingsGraph(
             navigateToBack = navigator::navigateUp,
-            onLogoutConfirm = { /* TODO: 로그아웃 처리 */ },
-            onWithdrawClick = { /* TODO: 탈퇴 처리 */ }
+            onLogoutConfirm = restartApplication,
+            onWithdrawClick = navigator.navController::navigateToSignOut
         )
 
         signOutGraph(
             navController = navigator.navController,
             onNavigateUp = navigator::navigateUp,
-            restartApp = {
-                Intent(context, MainActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(this)
-                }
-
-            },
+            restartApp = restartApplication,
         )
     }
 }
