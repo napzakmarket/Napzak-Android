@@ -169,16 +169,19 @@ private fun MainNavHost(
         )
 
         loginGraph(
-            navController = navigator.navController,
-            onKakaoLoginClick = {
-                navigator.navController.navigate(Terms)
-            }
+            onNavigateToTerms = { navigator.navController.navigate(Terms) },
+            onNavigateToHome = { navigator.navController.navigate(Home) },
         )
 
         onboardingGraph(
             navController = navigator.navController,
             onFinish = {
                 navigator.navController.navigate(Home) {
+                    popUpTo(Terms) { inclusive = true }
+                }
+            },
+            onLogin = {
+                navigator.navController.navigate(Login) {
                     popUpTo(Terms) { inclusive = true }
                 }
             },
