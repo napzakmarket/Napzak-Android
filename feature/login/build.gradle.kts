@@ -14,7 +14,6 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.common)
     implementation(projects.core.util)
-    implementation(projects.data.local)
     implementation(projects.domain.store)
     implementation(projects.feature.onboarding)
     implementation(projects.feature.home)
