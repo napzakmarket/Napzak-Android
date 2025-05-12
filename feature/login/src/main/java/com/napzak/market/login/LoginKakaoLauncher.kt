@@ -7,7 +7,7 @@ import com.kakao.sdk.user.UserApiClient
 class LoginKakaoLauncher(
     private val context: Context,
     private val onTokenReceived: (String) -> Unit,
-    private val onError: (Throwable) -> Unit
+    private val onError: (Throwable) -> Unit,
 ) {
     fun startKakaoLogin() {
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
