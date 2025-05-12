@@ -118,7 +118,7 @@ fun MainScreen(
                         navigator.navController.navigateToPurchaseRegistration()
                         navigator.dismissRegisterDialog()
                     },
-                    onDismissRequest = navigator::dismissRegisterDialog,
+                    onDismissRequest = navigator::navigateUp,
                     modifier = Modifier
                         .padding(innerPadding)
                         .zIndex(1f),
@@ -185,6 +185,7 @@ private fun MainNavHost(
         )
 
         homeGraph(
+            navigateToUp = navigator::navigateUp,
             navigateToSearch = { navigator.navController.navigateToSearch() },
             navigateToProductDetail = { navigator.navController.navigateToProductDetail(it) },
             navigateToExploreSell = {
@@ -203,7 +204,7 @@ private fun MainNavHost(
         )
 
         exploreGraph(
-            navigateToUp = { navigator.navController.popBackStack() },
+            navigateToUp = navigator::navigateUp,
             navigateToHome = { navigator.navController.popBackStack(Home, inclusive = false) },
             navigateToSearch = { navigator.navController.navigateToSearch() },
             navigateToGenreDetail = { navigator.navController.navigateToGenreDetail(it) },
@@ -259,6 +260,7 @@ private fun MainNavHost(
         )
 
         mypageGraph(
+            navigateToUp = navigator::navigateUp,
             navigateToMyMarket = { navigator.navController.navigateToStore(it) },
             navigateToSales = { /* TODO: 판매내역 화면으로 이동 */ },
             navigateToPurchase = { /* TODO: 구매내역 화면으로 이동 */ },

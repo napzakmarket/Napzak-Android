@@ -1,5 +1,6 @@
 package com.napzak.market.mypage.navigation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -13,6 +14,7 @@ fun NavController.navigateToMyPage(navOptions: NavOptions? = null) =
     navigate(MyPageNavigation, navOptions)
 
 fun NavGraphBuilder.mypageGraph(
+    navigateToUp: () -> Unit,
     navigateToMyMarket: (Long) -> Unit,
     navigateToSales: () -> Unit,
     navigateToPurchase: () -> Unit,
@@ -23,6 +25,10 @@ fun NavGraphBuilder.mypageGraph(
     modifier: Modifier = Modifier,
 ) {
     composable<MyPageNavigation> {
+        BackHandler {
+            navigateToUp()
+        }
+
         MyPageRoute(
             onMyMarketClick = navigateToMyMarket,
             onSalesClick = navigateToSales,
