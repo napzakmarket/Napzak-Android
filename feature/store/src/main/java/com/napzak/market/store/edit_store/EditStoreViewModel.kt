@@ -16,10 +16,12 @@ import com.napzak.market.store.repository.StoreRepository
 import com.napzak.market.util.android.getHttpExceptionMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -34,6 +36,9 @@ internal class EditStoreViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(EditStoreUiState())
     val uiState = _uiState.asStateFlow()
+
+    private val _sideEffect = Channel<EditStoreSideEffect>()
+    val sideEffect = _sideEffect.receiveAsFlow()
 
     private val _genreSearchText = MutableStateFlow("")
 
@@ -82,7 +87,7 @@ internal class EditStoreViewModel @Inject constructor(
             getProfilePreSignedUrl()
             storeRepository.updateEditProfile(_uiState.value.storeDetail).getOrThrow()
         }.onSuccess {
-            getEditProfile() // TODO: 이전 화면으로 이동
+            _sideEffect.send(EditStoreSideEffect.OnEditComplete)
         }.onFailure {
             Timber.tag("EditStoreViewModel").e(it) // TODO: 실패했을 경우에 대한 처리 논의
         }

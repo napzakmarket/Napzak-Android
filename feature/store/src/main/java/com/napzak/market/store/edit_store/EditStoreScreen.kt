@@ -55,7 +55,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.common.state.UiState
@@ -94,6 +96,7 @@ internal fun EditStoreRoute(
     modifier: Modifier = Modifier,
     viewModel: EditStoreViewModel = hiltViewModel()
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val photoType = remember { mutableStateOf(PhotoType.COVER) }
 
@@ -115,6 +118,13 @@ internal fun EditStoreRoute(
 
     LaunchedEffect(Unit) {
         viewModel.getEditProfile()
+    }
+
+    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle)
+            .collect {
+                if (it is EditStoreSideEffect.OnEditComplete) onNavigateUp()
+            }
     }
 
     EditStoreScreen(
