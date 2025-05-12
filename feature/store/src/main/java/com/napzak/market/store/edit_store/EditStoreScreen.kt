@@ -349,7 +349,6 @@ private fun EditStoreProceedButton(
 
 /**
  * 마켓 프로필 및 커버 이미지를 편집하는 컴포넌트
- * TODO: 기디와 논의를 통해 ContentScale 설정
  */
 @Composable
 private fun EditStorePhotoSection(
@@ -385,7 +384,7 @@ private fun EditStorePhotoSection(
                 .placeholder(ic_profile_basic)
                 .build(),
             contentDescription = null,
-            contentScale = ContentScale.FillWidth,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(top = 80.dp)
