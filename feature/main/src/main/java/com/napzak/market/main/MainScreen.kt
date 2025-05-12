@@ -257,6 +257,7 @@ private fun MainNavHost(
             navigateToUp = navigator::navigateUp,
             navigateToDetail = { navigator.navController.navigateToProductDetail(it) },
             navigateToGenreSearch = navigator.navController::navigateToGenreSearch,
+            modifier = modifier,
         )
 
         mypageGraph(
