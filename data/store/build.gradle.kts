@@ -14,7 +14,7 @@ android {
 dependencies {
     implementation(projects.data.remote)
     implementation(projects.domain.store)
+    implementation(projects.data.local)
 
     implementation(libs.timber)
-    implementation(project(":domain:store"))
 }

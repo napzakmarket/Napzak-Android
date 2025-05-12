@@ -1,6 +1,7 @@
 package com.napzak.market.store.repository
 
 import com.napzak.market.store.model.Genre
+import com.napzak.market.store.model.KakaoLogin
 import com.napzak.market.store.model.UserWithdrawal
 import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.model.StoreEditProfile

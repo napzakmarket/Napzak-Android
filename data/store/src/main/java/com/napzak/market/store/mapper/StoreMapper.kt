@@ -1,12 +1,15 @@
 package com.napzak.market.store.mapper
 
 import com.napzak.market.store.dto.response.GenreDto
+import com.napzak.market.store.dto.response.KakaoLoginResponse
 import com.napzak.market.store.dto.response.WithdrawResponse
 import com.napzak.market.store.model.Genre
 import com.napzak.market.store.model.UserWithdrawal
 import com.napzak.market.store.dto.response.StoreResponse
+import com.napzak.market.store.model.KakaoLogin
 import com.napzak.market.store.dto.response.TermsResponse
 import com.napzak.market.store.model.StoreInfo
+import com.napzak.market.store.model.UserRole
 import com.napzak.market.store.model.Terms
 import com.napzak.market.store.model.TermsAgreement
 
@@ -45,3 +48,12 @@ fun TermsResponse.toDomain(): TermsAgreement = TermsAgreement(
         )
     }
 )
+
+fun KakaoLoginResponse.toDomain(): KakaoLogin {
+    return KakaoLogin(
+        accessToken = accessToken,
+        refreshToken = refreshToken,
+        nickname = nickname,
+        role = UserRole.from(role).toString()
+    )
+}

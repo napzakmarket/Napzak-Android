@@ -13,3 +13,7 @@ annotation class DUMMY
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class S3
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class NoAuth
