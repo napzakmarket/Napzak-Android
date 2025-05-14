@@ -82,7 +82,7 @@ internal fun EditStorePhotoSection(
             tint = Color.Unspecified,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(start = 96.dp, bottom = 16.dp)
+                .padding(start = 96.dp, bottom = 16.dp),
         )
     }
 }

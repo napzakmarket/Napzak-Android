@@ -51,14 +51,13 @@ import com.napzak.market.store.edit_store.component.EditStorePreferredGenreSecti
 import com.napzak.market.store.edit_store.state.EditStoreUiState
 import com.napzak.market.store.model.StoreEditGenre
 
-private const val DESCRIPTION_MAX_LENGTH = 200
 private const val INPUT_TYPE = "image/*"
 
 @Composable
 internal fun EditStoreRoute(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: EditStoreViewModel = hiltViewModel()
+    viewModel: EditStoreViewModel = hiltViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -97,7 +96,7 @@ internal fun EditStoreRoute(
         onStoreNameChange = {
             viewModel.updateUiState(
                 name = it,
-                nickNameValidState = UiState.Empty
+                nickNameValidState = UiState.Empty,
             )
         },
         onStoreIntroductionChange = { viewModel.updateUiState(description = it) },
@@ -177,7 +176,7 @@ private fun EditStoreScreen(
                         onNameValidityCheckClick = onNameValidityCheckClick,
                         onGenreSelectButtonClick = { bottomSheetVisibility.value = true },
                         onPhotoChange = onPhotoChange,
-                        modifier = modifier.padding(innerPadding)
+                        modifier = modifier.padding(innerPadding),
                     )
                 }
 
@@ -185,7 +184,7 @@ private fun EditStoreScreen(
                     val selectedGenres = uiState.storeDetail.preferredGenres.map {
                         Genre(
                             genreId = it.genreId,
-                            genreName = it.genreName
+                            genreName = it.genreName,
                         )
                     }
                     GenreSearchBottomSheet(

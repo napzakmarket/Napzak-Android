@@ -50,8 +50,7 @@ internal fun EditStoreNickNameSection(
         subtitle = stringResource(store_edit_sub_title_name),
     ) {
         Column(
-            modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 5.dp)
-
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 5.dp),
         ) {
             NapzakDefaultTextField(
                 text = marketName,
@@ -88,7 +87,7 @@ internal fun EditStoreNickNameSection(
                 text = supportingText,
                 color = supportingTextColor,
                 style = NapzakMarketTheme.typography.caption12sb,
-                modifier = Modifier.padding(top = 10.dp)
+                modifier = Modifier.padding(top = 10.dp),
             )
         }
     }
@@ -104,7 +103,7 @@ private fun EditStoreNickNameSectionPreview() {
                 onNameChange = {},
                 checkEnabled = false,
                 nickNameValidState = UiState.Empty,
-                onNameValidityCheckClick = {}
+                onNameValidityCheckClick = {},
             )
         }
     }
