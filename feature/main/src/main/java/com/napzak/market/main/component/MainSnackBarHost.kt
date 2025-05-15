@@ -31,6 +31,7 @@ fun MainSnackBarHost(
             ),
             modifier = modifier
                 .fillMaxWidth()
+                .padding(horizontal = 30.dp)
                 .padding(vertical = 13.dp),
         )
     }
