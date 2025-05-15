@@ -102,6 +102,7 @@ internal class ProductDetailViewModel @Inject constructor(
         productDetailRepository.deleteProduct(productId)
             .onSuccess {
                 _sideEffect.send(ProductDetailSideEffect.NavigateUp)
+                _sideEffect.send(ProductDetailSideEffect.ShowDeleteSnackBar)
             }
             .onFailure(Timber::e)
     }
