@@ -72,7 +72,21 @@ internal class ProductDetailViewModel @Inject constructor(
         if (initialLoading) {
             initialLoading = false
         } else if (productId != null) {
-            setInterestProductUseCase(productId, isInterested)
+            setInterestProductUseCase(productId, isInterested).onSuccess {
+                updateInterestCount(isInterested)
+            }
+        }
+    }
+
+    private fun updateInterestCount(isInterested: Boolean) {
+        val increaseCount = if (isInterested) -1 else 1
+
+        _productDetail.update { uiState ->
+            UiState.Success(
+                (uiState as UiState.Success).data.copy(
+                    interestCount = uiState.data.interestCount + increaseCount
+                )
+            )
         }
     }
 
