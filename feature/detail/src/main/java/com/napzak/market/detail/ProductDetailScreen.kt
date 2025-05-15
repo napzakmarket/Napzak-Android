@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -58,8 +59,9 @@ internal fun ProductDetailRoute(
     val uiState by viewModel.productDetail.collectAsStateWithLifecycle()
     val isInterested by viewModel.isInterested.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
+    LifecycleResumeEffect(Unit) {
         viewModel.getProductDetail()
+        onPauseOrDispose { /*No resource to clean up*/ }
     }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {

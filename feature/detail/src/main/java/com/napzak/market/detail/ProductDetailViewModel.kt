@@ -52,7 +52,7 @@ internal class ProductDetailViewModel @Inject constructor(
     private val _sideEffect = Channel<ProductDetailSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
 
-    suspend fun getProductDetail() {
+    fun getProductDetail() = viewModelScope.launch {
         if (productId != null) {
             productDetailRepository.getProductDetail(productId)
                 .onSuccess { response ->
