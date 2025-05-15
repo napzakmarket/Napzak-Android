@@ -21,6 +21,7 @@ import com.napzak.market.designsystem.component.productItem.NapzakSmallProductIt
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.product.model.Product
 import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.util.common.formatToPriceString
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -90,7 +91,7 @@ private fun ProductsRow(
                     title = productName,
                     genre = genreName,
                     imgUrl = photo,
-                    price = price.toString(),
+                    price = price.toString().formatToPriceString(),
                     isSellElseBuy = isSellElseBuy,
                     isLiked = isInterested,
                     isMyItem = isOwnedByCurrentUser,
