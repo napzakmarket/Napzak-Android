@@ -3,8 +3,11 @@ package com.napzak.market.registration.genre
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -84,33 +87,43 @@ fun GenreSearchScreen(
                     onSearchTermChange = onSearchTermChange,
                 )
             }
-            if (uiState.genres.isEmpty() && uiState.loadState != UiState.Loading) {
-                item {
-                    GenreSearchEmptyView(
-                        onRequestClick = { context.openUrl(GENRE_REQUEST_URL) },
-                    )
-                }
-            } else {
-                itemsIndexed(
-                    items = uiState.genres,
-                    key = { item, _ -> item },
-                ) { index, genre ->
-                    Row(
-                        modifier = Modifier.padding(horizontal = 18.dp, vertical = 4.dp),
-                    ) {
-                        Text(
-                            text = genre.genreName,
-                            style = NapzakMarketTheme.typography.body14r.copy(
-                                color = NapzakMarketTheme.colors.gray400,
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(10.dp)
-                                .throttledNoRippleClickable(
-                                    coroutineScope = coroutineScope,
-                                    onClick = { onGenreSelect(genre) },
-                                ),
+            when {
+                uiState.genres.isEmpty() && uiState.loadState != UiState.Loading -> {
+                    item {
+                        GenreSearchEmptyView(
+                            onRequestClick = { context.openUrl(GENRE_REQUEST_URL) },
                         )
+                    }
+                }
+
+                uiState.genres.isNotEmpty() -> {
+                    itemsIndexed(
+                        items = uiState.genres,
+                        key = { _, genre -> genre.genreId },
+                    ) { index, genre ->
+                        Row(
+                            modifier = Modifier.padding(horizontal = 18.dp, vertical = 4.dp),
+                        ) {
+                            Text(
+                                text = genre.genreName,
+                                style = NapzakMarketTheme.typography.body14r.copy(
+                                    color = NapzakMarketTheme.colors.gray400,
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp)
+                                    .throttledNoRippleClickable(
+                                        coroutineScope = coroutineScope,
+                                        onClick = { onGenreSelect(genre) },
+                                    ),
+                            )
+                        }
+                    }
+                }
+
+                else -> {
+                    item {
+                        Spacer(modifier = Modifier.fillMaxHeight())
                     }
                 }
             }
