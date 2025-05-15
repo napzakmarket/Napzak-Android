@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalFocusManager
@@ -39,7 +40,6 @@ import com.napzak.market.registration.component.RegistrationViewGroup
 import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.purchase.component.PriceNegotiationGroup
 import com.napzak.market.registration.purchase.state.PurchaseContract.PurchaseUiState
-import com.napzak.market.util.android.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
@@ -115,78 +115,75 @@ fun PurchaseRegistrationScreen(
         purchaseUiState.isNegotiable,
     ) { checkButtonEnabled() }
 
-    LazyColumn(
+    Box(
         modifier = modifier
-            .background(NapzakMarketTheme.colors.white)
-            .noRippleClickable {
-                focusManager.clearFocus()
-            },
+            .background(NapzakMarketTheme.colors.white),
     ) {
-        stickyHeader {
-            RegistrationTopBar(
-                title = stringResource(title, stringResource(purchase)),
-                onCloseClick = onCloseClick,
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
-
-        item {
-            RegistrationViewGroup(
-                productImageUris = registrationUiState.imageUris.toPersistentList(),
-                onImageSelect = onImageSelect,
-                onPhotoPress = onPhotoPress,
-                onDeleteClick = onDeleteClick,
-                productGenre = registrationUiState.genre?.genreName.orEmpty(),
-                onGenreClick = onGenreClick,
-                productName = registrationUiState.title,
-                onProductNameChange = onProductNameChange,
-                productDescription = registrationUiState.description,
-                onProductDescriptionChange = onProductDescriptionChange,
-            )
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(24.dp))
-
-            PriceSettingGroup(
-                tradeType = TradeType.BUY,
-                title = stringResource(purchase_price),
-                description = stringResource(purchase_price_description),
-                price = registrationUiState.price,
-                onPriceChange = onPriceChange,
-                priceTag = stringResource(purchase_price_tag),
-                modifier = paddedModifier,
-            )
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(32.dp))
-
-            PriceNegotiationGroup(
-                isNegotiable = purchaseUiState.isNegotiable,
-                onNegotiableChange = onNegotiableChange,
-                modifier = paddedModifier.fillMaxWidth(),
-            )
-        }
-
-        item {
-            Box(
-                modifier = Modifier
-                    .shadow(
-                        elevation = 4.dp,
-                        spotColor = NapzakMarketTheme.colors.transBlack,
-                        ambientColor = NapzakMarketTheme.colors.transBlack,
-                    )
-                    .background(NapzakMarketTheme.colors.white)
-                    .then(paddedModifier)
-                    .padding(top = 18.dp, bottom = 40.dp),
-            ) {
-                NapzakButton(
-                    text = stringResource(register),
-                    onClick = onRegisterClick,
-                    enabled = isButtonEnabled,
+        LazyColumn {
+            stickyHeader {
+                RegistrationTopBar(
+                    title = stringResource(title, stringResource(purchase)),
+                    onCloseClick = onCloseClick,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
+
+            item {
+                RegistrationViewGroup(
+                    productImageUris = registrationUiState.imageUris.toPersistentList(),
+                    onImageSelect = onImageSelect,
+                    onPhotoPress = onPhotoPress,
+                    onDeleteClick = onDeleteClick,
+                    productGenre = registrationUiState.genre?.genreName.orEmpty(),
+                    onGenreClick = onGenreClick,
+                    productName = registrationUiState.title,
+                    onProductNameChange = onProductNameChange,
+                    productDescription = registrationUiState.description,
+                    onProductDescriptionChange = onProductDescriptionChange,
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+
+                PriceSettingGroup(
+                    tradeType = TradeType.BUY,
+                    title = stringResource(purchase_price),
+                    description = stringResource(purchase_price_description),
+                    price = registrationUiState.price,
+                    onPriceChange = onPriceChange,
+                    priceTag = stringResource(purchase_price_tag),
+                    modifier = paddedModifier,
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(32.dp))
+
+                PriceNegotiationGroup(
+                    isNegotiable = purchaseUiState.isNegotiable,
+                    onNegotiableChange = onNegotiableChange,
+                    modifier = paddedModifier.fillMaxWidth(),
+                )
+            }
+        }
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .shadow(
+                    elevation = 4.dp,
+                    spotColor = NapzakMarketTheme.colors.transBlack,
+                    ambientColor = NapzakMarketTheme.colors.transBlack,
+                )
+                .background(NapzakMarketTheme.colors.white)
+                .then(paddedModifier)
+                .padding(top = 18.dp),
+        ) {
+            NapzakButton(
+                text = stringResource(register),
+                onClick = onRegisterClick,
+                enabled = isButtonEnabled,
+            )
         }
     }
 }

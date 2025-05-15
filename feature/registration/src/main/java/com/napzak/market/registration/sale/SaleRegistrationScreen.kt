@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalFocusManager
@@ -44,7 +45,6 @@ import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.sale.component.ProductConditionGridButton
 import com.napzak.market.registration.sale.component.ShippingFeeSelector
 import com.napzak.market.registration.sale.state.SaleContract.SaleUiState
-import com.napzak.market.util.android.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
@@ -120,7 +120,6 @@ fun SaleRegistrationScreen(
     modifier: Modifier = Modifier,
 ) {
     val paddedModifier = Modifier.padding(horizontal = 20.dp)
-    val focusManager = LocalFocusManager.current
     val isButtonEnabled = remember(
         registrationUiState.imageUris,
         registrationUiState.genre,
@@ -135,123 +134,120 @@ fun SaleRegistrationScreen(
         saleUiState.halfShippingFee,
     ) { checkButtonEnabled() }
 
-    LazyColumn(
+    Box(
         modifier = modifier
-            .background(NapzakMarketTheme.colors.white)
-            .noRippleClickable {
-                focusManager.clearFocus()
-            },
+            .background(NapzakMarketTheme.colors.white),
     ) {
-        stickyHeader {
-            RegistrationTopBar(
-                title = stringResource(title, stringResource(sale)),
-                onCloseClick = onCloseClick,
-                modifier = Modifier
-                    .fillMaxWidth(),
-            )
-        }
-
-        item {
-            RegistrationViewGroup(
-                productImageUris = registrationUiState.imageUris.toPersistentList(),
-                onImageSelect = onImageSelect,
-                onPhotoPress = onPhotoPress,
-                onDeleteClick = onDeleteClick,
-                productGenre = registrationUiState.genre?.genreName.orEmpty(),
-                onGenreClick = onGenreClick,
-                productName = registrationUiState.title,
-                onProductNameChange = onProductNameChange,
-                productDescription = registrationUiState.description,
-                onProductDescriptionChange = onProductDescriptionChange,
-            )
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = stringResource(product_condition),
-                style = NapzakMarketTheme.typography.body14b.copy(
-                    color = NapzakMarketTheme.colors.gray500,
-                ),
-                modifier = paddedModifier,
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            ProductConditionGridButton(
-                selectedCondition = saleUiState.condition,
-                onConditionSelect = onProductConditionSelect,
-                modifier = paddedModifier,
-            )
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(30.dp))
-
-            PriceSettingGroup(
-                tradeType = TradeType.SELL,
-                title = stringResource(sale_price),
-                description = stringResource(sale_price_description),
-                price = registrationUiState.price,
-                onPriceChange = onPriceChange,
-                priceTag = stringResource(sale_price_tag),
-                modifier = paddedModifier,
-            )
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(30.dp))
-
-            Text(
-                text = stringResource(shipping_method),
-                style = NapzakMarketTheme.typography.body14b.copy(
-                    color = NapzakMarketTheme.colors.gray500,
-                ),
-                modifier = paddedModifier,
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            ShippingFeeSelector(
-                isShippingIncluded = saleUiState.isShippingFeeIncluded,
-                onShippingFeeSelect = onShippingFeeSelect,
-                isNormalShippingChecked = saleUiState.isNormalShippingChecked,
-                onNormalShippingSelect = onNormalShippingFeeSelect,
-                normalShippingFee = saleUiState.normalShippingFee,
-                onNormalShippingFeeChange = onNormalShippingFeeChange,
-                isHalfShippingChecked = saleUiState.isHalfShippingChecked,
-                onHalfShippingSelect = onHalfShippingFeeSelect,
-                halfShippingFee = saleUiState.halfShippingFee,
-                onHalfShippingFeeChange = onHalfShippingFeeChange,
-                modifier = paddedModifier,
-            )
-        }
-
-        item {
-            val spacerHeight = if (saleUiState.isShippingFeeIncluded == false) 60.dp else 20.dp
-
-            Spacer(modifier = Modifier.height(spacerHeight))
-
-            Box(
-                modifier = Modifier
-                    .shadow(
-                        elevation = 4.dp,
-                        spotColor = NapzakMarketTheme.colors.transBlack,
-                        ambientColor = NapzakMarketTheme.colors.transBlack,
-                    )
-                    .background(NapzakMarketTheme.colors.white)
-                    .then(paddedModifier)
-                    .padding(top = 18.dp, bottom = 40.dp),
-            ) {
-                NapzakButton(
-                    text = stringResource(register),
-                    onClick = onRegisterClick,
-                    enabled = isButtonEnabled,
+        LazyColumn {
+            stickyHeader {
+                RegistrationTopBar(
+                    title = stringResource(title, stringResource(sale)),
+                    onCloseClick = onCloseClick,
+                    modifier = Modifier
+                        .fillMaxWidth(),
                 )
             }
+
+            item {
+                RegistrationViewGroup(
+                    productImageUris = registrationUiState.imageUris.toPersistentList(),
+                    onImageSelect = onImageSelect,
+                    onPhotoPress = onPhotoPress,
+                    onDeleteClick = onDeleteClick,
+                    productGenre = registrationUiState.genre?.genreName.orEmpty(),
+                    onGenreClick = onGenreClick,
+                    productName = registrationUiState.title,
+                    onProductNameChange = onProductNameChange,
+                    productDescription = registrationUiState.description,
+                    onProductDescriptionChange = onProductDescriptionChange,
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = stringResource(product_condition),
+                    style = NapzakMarketTheme.typography.body14b.copy(
+                        color = NapzakMarketTheme.colors.gray500,
+                    ),
+                    modifier = paddedModifier,
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                ProductConditionGridButton(
+                    selectedCondition = saleUiState.condition,
+                    onConditionSelect = onProductConditionSelect,
+                    modifier = paddedModifier,
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(30.dp))
+
+                PriceSettingGroup(
+                    tradeType = TradeType.SELL,
+                    title = stringResource(sale_price),
+                    description = stringResource(sale_price_description),
+                    price = registrationUiState.price,
+                    onPriceChange = onPriceChange,
+                    priceTag = stringResource(sale_price_tag),
+                    modifier = paddedModifier,
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Text(
+                    text = stringResource(shipping_method),
+                    style = NapzakMarketTheme.typography.body14b.copy(
+                        color = NapzakMarketTheme.colors.gray500,
+                    ),
+                    modifier = paddedModifier,
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                ShippingFeeSelector(
+                    isShippingIncluded = saleUiState.isShippingFeeIncluded,
+                    onShippingFeeSelect = onShippingFeeSelect,
+                    isNormalShippingChecked = saleUiState.isNormalShippingChecked,
+                    onNormalShippingSelect = onNormalShippingFeeSelect,
+                    normalShippingFee = saleUiState.normalShippingFee,
+                    onNormalShippingFeeChange = onNormalShippingFeeChange,
+                    isHalfShippingChecked = saleUiState.isHalfShippingChecked,
+                    onHalfShippingSelect = onHalfShippingFeeSelect,
+                    halfShippingFee = saleUiState.halfShippingFee,
+                    onHalfShippingFeeChange = onHalfShippingFeeChange,
+                    modifier = paddedModifier,
+                )
+
+                val spacerHeight = if (saleUiState.isShippingFeeIncluded == false) 120.dp else 80.dp
+
+                Spacer(modifier = Modifier.height(spacerHeight))
+            }
+        }
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .shadow(
+                    elevation = 4.dp,
+                    spotColor = NapzakMarketTheme.colors.transBlack,
+                    ambientColor = NapzakMarketTheme.colors.transBlack,
+                ).background(NapzakMarketTheme.colors.white)
+                .then(paddedModifier)
+                .padding(top = 18.dp),
+        ) {
+            NapzakButton(
+                text = stringResource(register),
+                onClick = onRegisterClick,
+                enabled = isButtonEnabled,
+            )
         }
     }
+
 }
 
 @Preview
