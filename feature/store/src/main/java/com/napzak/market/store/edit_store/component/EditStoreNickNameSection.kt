@@ -3,7 +3,6 @@ package com.napzak.market.store.edit_store.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,9 +22,6 @@ import com.napzak.market.feature.store.R.string.store_edit_title_name
 import com.napzak.market.store.model.NicknameValidationResult
 import com.napzak.market.util.android.noRippleClickable
 
-/**
- * 마켓의 이름을 수정하는 입력 필드를 제공하는 컴포넌트
- */
 @Composable
 internal fun EditStoreNickNameSection(
     marketName: String,
@@ -35,13 +31,6 @@ internal fun EditStoreNickNameSection(
     nickNameDuplicationState: NicknameValidationResult,
     onNameValidityCheckClick: () -> Unit,
 ) {
-    val nickNameCheckEvent = { if (checkEnabled) onNameValidityCheckClick() }
-
-    val buttonColor = with(NapzakMarketTheme.colors) {
-        if (checkEnabled) purple500
-        else gray200
-    }
-
     EditStoreProfileContainer(
         title = stringResource(store_edit_title_name),
         subtitle = stringResource(store_edit_sub_title_name),
@@ -58,25 +47,15 @@ internal fun EditStoreNickNameSection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        NapzakMarketTheme.colors.gray50,
-                        RoundedCornerShape(14.dp),
+                        color = NapzakMarketTheme.colors.gray50,
+                        shape = RoundedCornerShape(14.dp),
                     )
-                    .padding(PaddingValues(16.dp, 10.dp, 10.dp, 10.dp)),
+                    .padding(start = 16.dp, top = 10.dp, end = 10.dp, bottom = 10.dp),
                 suffix = {
-                    Box(
-                        modifier = Modifier
-                            .noRippleClickable(nickNameCheckEvent)
-                            .background(buttonColor, RoundedCornerShape(10.dp))
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            text = stringResource(store_edit_button_name_check),
-                            style = NapzakMarketTheme.typography.caption12sb.copy(
-                                color = NapzakMarketTheme.colors.gray50,
-                            ),
-                        )
-                    }
+                    NickNameCheckButton(
+                        enabled = checkEnabled,
+                        onClick = onNameValidityCheckClick,
+                    )
                 }
             )
 
@@ -90,21 +69,53 @@ internal fun EditStoreNickNameSection(
 }
 
 @Composable
+private fun NickNameCheckButton(
+    enabled: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val nickNameCheckEvent = { if (enabled) onClick() }
+    val buttonColor = with(NapzakMarketTheme.colors) {
+        if (enabled) purple500
+        else gray200
+    }
+
+    Box(
+        modifier = modifier
+            .noRippleClickable(nickNameCheckEvent)
+            .background(
+                color = buttonColor,
+                shape = RoundedCornerShape(10.dp),
+            )
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = stringResource(store_edit_button_name_check),
+            style = NapzakMarketTheme.typography.caption12sb.copy(
+                color = NapzakMarketTheme.colors.gray50,
+            ),
+        )
+    }
+}
+
+@Composable
 private fun NickNameSupportingText(
     nickNameValidationState: NicknameValidationResult,
     nickNameDuplicationState: NicknameValidationResult,
     modifier: Modifier = Modifier,
 ) {
+    val bulletedText = "\u2022 %s"
 
     val (supportingText, supportingTextColor) = when {
         nickNameDuplicationState is NicknameValidationResult.Valid ->
-            "\u2022 ${nickNameDuplicationState.message}" to NapzakMarketTheme.colors.green
+            bulletedText.format(nickNameDuplicationState.message) to NapzakMarketTheme.colors.green
 
         nickNameDuplicationState is NicknameValidationResult.Invalid ->
-            "\u2022 ${nickNameDuplicationState.errorMessage}" to NapzakMarketTheme.colors.red
+            bulletedText.format(nickNameDuplicationState.errorMessage) to NapzakMarketTheme.colors.red
 
         nickNameValidationState is NicknameValidationResult.Invalid ->
-            "\u2022 ${nickNameValidationState.errorMessage}" to NapzakMarketTheme.colors.red
+            bulletedText.format(nickNameValidationState.errorMessage) to NapzakMarketTheme.colors.red
 
         else -> "" to NapzakMarketTheme.colors.gray300
     }

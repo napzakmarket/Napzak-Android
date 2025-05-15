@@ -1,5 +1,10 @@
 package com.napzak.market.store.edit_store.component
 
+import android.net.Uri
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -10,6 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,19 +35,45 @@ import com.napzak.market.feature.store.R.drawable.ic_profile_edit
 import com.napzak.market.presigned_url.type.PhotoType
 import com.napzak.market.util.android.noRippleClickable
 
+private const val INPUT_TYPE = "image/*"
+
 @Composable
 internal fun EditStorePhotoSection(
     storeCover: String,
     storePhoto: String,
-    onPhotoChange: (PhotoType) -> Unit,
+    onPhotoChange: (PhotoType, Uri?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val storePhotoShape = CircleShape
 
+    val photoType = remember { mutableStateOf(PhotoType.COVER) }
+
+    val imageStorageLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetMultipleContents()
+    ) { uris: List<Uri> -> onPhotoChange(photoType.value, uris.first()) }
+
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri -> onPhotoChange(photoType.value, uri) }
+
+    val onPhotoClick: (PhotoType) -> Unit = { editedPhotoType ->
+        photoType.value = editedPhotoType
+        when {
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> imageStorageLauncher.launch(
+                INPUT_TYPE
+            )
+
+            else -> photoPickerLauncher.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
+        }
+    }
+
     Box(
         modifier = modifier,
     ) {
+        // Cover Image
         AsyncImage(
             model = ImageRequest
                 .Builder(context)
@@ -52,9 +85,10 @@ internal fun EditStorePhotoSection(
                 .fillMaxWidth()
                 .aspectRatio(2.25f)
                 .background(NapzakMarketTheme.colors.gray200)
-                .noRippleClickable { onPhotoChange(PhotoType.COVER) },
+                .noRippleClickable { onPhotoClick(PhotoType.COVER) },
         )
 
+        // Profile Image
         AsyncImage(
             model = ImageRequest
                 .Builder(context)
@@ -68,7 +102,7 @@ internal fun EditStorePhotoSection(
                 .padding(top = 80.dp)
                 .size(110.dp)
                 .clip(storePhotoShape)
-                .noRippleClickable { onPhotoChange(PhotoType.PROFILE) }
+                .noRippleClickable { onPhotoClick(PhotoType.PROFILE) }
                 .border(
                     width = 5.dp,
                     color = NapzakMarketTheme.colors.white,
@@ -94,7 +128,7 @@ private fun EditStorePhotoSectionPreview() {
         EditStorePhotoSection(
             storeCover = "",
             storePhoto = "",
-            onPhotoChange = {},
+            onPhotoChange = { _, _ -> },
         )
     }
 }

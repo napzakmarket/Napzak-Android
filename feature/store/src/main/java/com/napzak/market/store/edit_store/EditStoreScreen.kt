@@ -1,10 +1,6 @@
 package com.napzak.market.store.edit_store
 
 import android.net.Uri
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -51,8 +47,6 @@ import com.napzak.market.store.edit_store.state.EditStoreUiState
 import com.napzak.market.store.model.NicknameValidationResult
 import com.napzak.market.store.model.StoreEditGenre
 
-private const val INPUT_TYPE = "image/*"
-
 @Composable
 internal fun EditStoreRoute(
     onNavigateUp: () -> Unit,
@@ -61,19 +55,6 @@ internal fun EditStoreRoute(
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val photoType = remember { mutableStateOf(PhotoType.COVER) }
-
-    val imageStorageLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetMultipleContents()
-    ) { uris: List<Uri> ->
-        viewModel.updatePhoto(photoType.value, uris.first())
-    }
-
-    val photoPickerLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.PickVisualMedia()
-    ) { uri ->
-        viewModel.updatePhoto(photoType.value, uri)
-    }
 
     LaunchedEffect(Unit) {
         viewModel.getEditProfile()
@@ -95,18 +76,7 @@ internal fun EditStoreRoute(
         onStoreGenreChange = { viewModel.updateUiState(genres = it) },
         onGenreSearchTextChange = viewModel::updateGenreSearchText,
         onBackButtonClick = onNavigateUp,
-        onPhotoChange = { editedPhotoType ->
-            photoType.value = editedPhotoType
-            when {
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> imageStorageLauncher.launch(
-                    INPUT_TYPE
-                )
-
-                else -> photoPickerLauncher.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                )
-            }
-        },
+        onPhotoChange = viewModel::updatePhoto,
         onNameValidityCheckClick = viewModel::checkNicknameDuplication,
         onProceedButtonClick = viewModel::saveEditedProfile,
         modifier = modifier,
@@ -122,7 +92,7 @@ private fun EditStoreScreen(
     onStoreGenreChange: (List<StoreEditGenre>) -> Unit,
     onGenreSearchTextChange: (String) -> Unit,
     onBackButtonClick: () -> Unit,
-    onPhotoChange: (PhotoType) -> Unit,
+    onPhotoChange: (PhotoType, Uri?) -> Unit,
     onNameValidityCheckClick: () -> Unit,
     onProceedButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -219,7 +189,7 @@ private fun SuccessScreen(
     nickNameCheckEnabled: Boolean,
     onStoreNameChange: (String) -> Unit,
     onStoreIntroductionChange: (String) -> Unit,
-    onPhotoChange: (PhotoType) -> Unit,
+    onPhotoChange: (PhotoType, Uri?) -> Unit,
     onNameValidityCheckClick: () -> Unit,
     onGenreSelectButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -318,7 +288,7 @@ private fun EditStoreScreenPreview() {
             onStoreIntroductionChange = { storeIntroduction = it },
             onNameValidityCheckClick = {},
             onGenreSelectButtonClick = {},
-            onPhotoChange = {},
+            onPhotoChange = { _, _ -> },
             nickNameCheckEnabled = true,
             nickNameValidationState = NicknameValidationResult.Valid(),
             nickNameDuplicationState = NicknameValidationResult.Valid(),

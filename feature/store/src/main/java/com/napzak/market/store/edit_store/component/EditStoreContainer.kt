@@ -10,6 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
+/**
+ * 제목, 부제목, 내용을 포함하는 프로필 수정 화면의 기본 컴포넌트
+ */
 @Composable
 internal fun EditStoreProfileContainer(
     title: String,

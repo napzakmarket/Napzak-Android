@@ -36,7 +36,6 @@ internal fun EditStorePreferredGenreSection(
     onGenreSelectButtonClick: () -> Unit,
 ) {
     val paddingValues = PaddingValues(horizontal = 20.dp)
-    val contentColor = NapzakMarketTheme.colors.purple500
 
     EditStoreProfileContainer(
         title = stringResource(store_edit_title_genre),
@@ -47,23 +46,8 @@ internal fun EditStorePreferredGenreSection(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(paddingValues),
         ) {
-            genres.forEach { genre ->
-                Box(
-                    modifier = Modifier
-                        .border(
-                            width = 1.dp,
-                            color = contentColor,
-                            shape = RoundedCornerShape(size = 50.dp),
-                        )
-                        .padding(horizontal = 10.dp, vertical = 6.dp),
-                ) {
-                    Text(
-                        text = genre,
-                        style = NapzakMarketTheme.typography.caption12sb.copy(
-                            color = contentColor,
-                        ),
-                    )
-                }
+            genres.forEach { genreName ->
+                GenreChip(genreName = genreName)
             }
         }
 
@@ -86,6 +70,31 @@ internal fun EditStorePreferredGenreSection(
                 style = NapzakMarketTheme.typography.body14b,
             )
         }
+    }
+}
+
+@Composable
+private fun GenreChip(
+    genreName: String,
+    modifier: Modifier = Modifier,
+) {
+    val contentColor = NapzakMarketTheme.colors.purple500
+
+    Box(
+        modifier = modifier
+            .border(
+                width = 1.dp,
+                color = contentColor,
+                shape = RoundedCornerShape(size = 50.dp),
+            )
+            .padding(horizontal = 10.dp, vertical = 6.dp),
+    ) {
+        Text(
+            text = genreName,
+            style = NapzakMarketTheme.typography.caption12sb.copy(
+                color = contentColor,
+            ),
+        )
     }
 }
 

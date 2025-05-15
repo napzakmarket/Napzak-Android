@@ -58,19 +58,28 @@ internal fun EditStoreDescriptionSection(
 
         Spacer(Modifier.height(14.dp))
 
-        Row(
-            horizontalArrangement = Arrangement.End,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues),
-        ) {
-            Text(
-                text = "${description.length}/$DESCRIPTION_MAX_LENGTH",
-                style = NapzakMarketTheme.typography.caption10r.copy(
-                    color = NapzakMarketTheme.colors.gray300,
-                ),
-            )
-        }
+        DescriptionLengthText(
+            description = description,
+            modifier = Modifier.padding(paddingValues),
+        )
+    }
+}
+
+@Composable
+private fun DescriptionLengthText(
+    description: String,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        horizontalArrangement = Arrangement.End,
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        Text(
+            text = "${description.length}/$DESCRIPTION_MAX_LENGTH",
+            style = NapzakMarketTheme.typography.caption10r.copy(
+                color = NapzakMarketTheme.colors.gray300,
+            ),
+        )
     }
 }
 
