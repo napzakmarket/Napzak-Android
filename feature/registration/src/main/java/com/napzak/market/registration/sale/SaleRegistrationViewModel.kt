@@ -45,7 +45,7 @@ class SaleRegistrationViewModel @Inject constructor(
     getProductPresignedUrlUseCase,
     uploadImageUseCase,
 ) {
-    private val productId: Long? = savedStateHandle.get<Long>(PRODUCT_ID_KEY)
+    private var productId: Long? = null
 
     private val _uiState = MutableStateFlow(SaleUiState())
     val saleUiState = _uiState.asStateFlow()
@@ -58,8 +58,9 @@ class SaleRegistrationViewModel @Inject constructor(
             savedStateHandle.getStateFlow<Long?>(PRODUCT_ID_KEY, null)
                 .filterNotNull()
                 .take(1)
-                .collect { productId ->
-                    getRegisteredSaleProduct(productId)
+                .collect { id ->
+                    productId = id
+                    getRegisteredSaleProduct(id)
                 }
         }
         viewModelScope.launch {
@@ -136,9 +137,9 @@ class SaleRegistrationViewModel @Inject constructor(
                 updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
             }
         } ?: run {
-            registerProductUseCase(product).onSuccess { productId ->
+            registerProductUseCase(product).onSuccess { id ->
                 updateLoadState(UiState.Success(Unit))
-                _sideEffect.emit(NavigateToDetail(productId))
+                _sideEffect.emit(NavigateToDetail(id))
             }.onFailure {
                 updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
             }
