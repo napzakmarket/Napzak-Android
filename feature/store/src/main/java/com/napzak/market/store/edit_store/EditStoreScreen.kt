@@ -20,7 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +48,7 @@ import com.napzak.market.store.edit_store.component.EditStoreNickNameSection
 import com.napzak.market.store.edit_store.component.EditStorePhotoSection
 import com.napzak.market.store.edit_store.component.EditStorePreferredGenreSection
 import com.napzak.market.store.edit_store.state.EditStoreUiState
+import com.napzak.market.store.model.NicknameValidationResult
 import com.napzak.market.store.model.StoreEditGenre
 
 private const val INPUT_TYPE = "image/*"
@@ -75,10 +75,6 @@ internal fun EditStoreRoute(
         viewModel.updatePhoto(photoType.value, uri)
     }
 
-    val submitEnabled by remember {
-        derivedStateOf { viewModel.checkSubmitButton(uiState) }
-    }
-
     LaunchedEffect(Unit) {
         viewModel.getEditProfile()
     }
@@ -92,12 +88,8 @@ internal fun EditStoreRoute(
 
     EditStoreScreen(
         uiState = uiState,
-        submitEnabled = submitEnabled,
         onStoreNameChange = {
-            viewModel.updateUiState(
-                name = it,
-                nickNameValidState = UiState.Empty,
-            )
+            viewModel.updateNickname(nickName = it)
         },
         onStoreIntroductionChange = { viewModel.updateUiState(description = it) },
         onStoreGenreChange = { viewModel.updateUiState(genres = it) },
@@ -115,7 +107,7 @@ internal fun EditStoreRoute(
                 )
             }
         },
-        onNameValidityCheckClick = viewModel::checkNicknameValidity,
+        onNameValidityCheckClick = viewModel::checkNicknameDuplication,
         onProceedButtonClick = viewModel::saveEditedProfile,
         modifier = modifier,
     )
@@ -125,7 +117,6 @@ internal fun EditStoreRoute(
 @Composable
 private fun EditStoreScreen(
     uiState: EditStoreUiState,
-    submitEnabled: Boolean,
     onStoreNameChange: (String) -> Unit,
     onStoreIntroductionChange: (String) -> Unit,
     onStoreGenreChange: (List<StoreEditGenre>) -> Unit,
@@ -151,7 +142,7 @@ private fun EditStoreScreen(
                     onProceedButtonClick()
                     focusManager.clearFocus()
                 },
-                enabled = submitEnabled,
+                enabled = uiState.submitEnabled,
             )
         },
         containerColor = NapzakMarketTheme.colors.white,
@@ -169,8 +160,9 @@ private fun EditStoreScreen(
                         storeName = nickname,
                         storeIntroduction = description,
                         storeGenres = preferredGenres,
-                        nickNameValidState = uiState.nickNameValidState,
-                        nickNameCheckEnabled = uiState.isNameChanged && nickname.isNotBlank(),
+                        nickNameValidationState = uiState.nickNameValidationState,
+                        nickNameDuplicationState = uiState.nickNameDuplicationState,
+                        nickNameCheckEnabled = uiState.checkNickNameEnabled,
                         onStoreNameChange = onStoreNameChange,
                         onStoreIntroductionChange = onStoreIntroductionChange,
                         onNameValidityCheckClick = onNameValidityCheckClick,
@@ -222,7 +214,8 @@ private fun SuccessScreen(
     storeName: String,
     storeIntroduction: String,
     storeGenres: List<StoreEditGenre>,
-    nickNameValidState: UiState<String>,
+    nickNameValidationState: NicknameValidationResult,
+    nickNameDuplicationState: NicknameValidationResult,
     nickNameCheckEnabled: Boolean,
     onStoreNameChange: (String) -> Unit,
     onStoreIntroductionChange: (String) -> Unit,
@@ -251,7 +244,8 @@ private fun SuccessScreen(
             onNameChange = {
                 onStoreNameChange(it)
             },
-            nickNameValidState = nickNameValidState,
+            nickNameValidationState = nickNameValidationState,
+            nickNameDuplicationState = nickNameDuplicationState,
             onNameValidityCheckClick = onNameValidityCheckClick,
             checkEnabled = nickNameCheckEnabled,
         )
@@ -326,7 +320,8 @@ private fun EditStoreScreenPreview() {
             onGenreSelectButtonClick = {},
             onPhotoChange = {},
             nickNameCheckEnabled = true,
-            nickNameValidState = UiState.Success("사용할 수 있는 이름이에요!"),
+            nickNameValidationState = NicknameValidationResult.Valid(),
+            nickNameDuplicationState = NicknameValidationResult.Valid(),
             modifier = Modifier.fillMaxSize(),
         )
     }
