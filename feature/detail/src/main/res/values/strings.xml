@@ -14,7 +14,7 @@
 
     <string name="detail_product_title_product_condition">상품 상태</string>
 
-    <string name="detail_product_title_delivery">배송 방법</string>
+    <string name="detail_product_title_delivery">배송비</string>
     <string name="detail_product_delivery_included">배송비 포함</string>
     <string name="detail_product_delivery_normal">일반 택배 %s원</string>
     <string name="detail_product_delivery_half">반값/알뜰 택배 %s원</string>
