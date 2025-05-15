@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
+import androidx.navigation.navOptions
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
@@ -255,7 +256,16 @@ private fun MainNavHost(
 
         registrationGraph(
             navigateToUp = navigator::navigateUp,
-            navigateToDetail = { navigator.navController.navigateToProductDetail(it) },
+            navigateToDetail = { productId ->
+                val navOptions = navOptions {
+                    navigator.navController.currentDestination?.route?.let {
+                        popUpTo(it) {
+                            inclusive = true
+                        }
+                    }
+                }
+                navigator.navController.navigateToProductDetail(productId, navOptions)
+            },
             navigateToGenreSearch = navigator.navController::navigateToGenreSearch,
             modifier = modifier,
         )
