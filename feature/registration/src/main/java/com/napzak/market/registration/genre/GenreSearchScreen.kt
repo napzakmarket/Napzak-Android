@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,10 +30,7 @@ import com.napzak.market.registration.genre.component.GenreSearchHeader
 import com.napzak.market.registration.genre.state.GenreContract.GenreSearchUiState
 import com.napzak.market.util.android.throttledNoRippleClickable
 import com.napzak.market.util.common.openUrl
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.delay
+
 private const val GENRE_REQUEST_URL = "https://form.typeform.com/to/C0E09Ymd"
 
 @Composable
@@ -105,6 +104,7 @@ fun GenreSearchScreen(
                                 color = NapzakMarketTheme.colors.gray400,
                             ),
                             modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(10.dp)
                                 .throttledNoRippleClickable(
                                     coroutineScope = coroutineScope,
