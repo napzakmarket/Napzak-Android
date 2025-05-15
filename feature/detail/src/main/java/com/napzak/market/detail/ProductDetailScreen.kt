@@ -149,7 +149,7 @@ private fun ProductDetailScreen(
                 val tradeType = TradeType.fromName(productDetail.tradeType)
                 val tradeStatus = TradeStatusType.get(productDetail.tradeStatus, tradeType)
 
-                ProductDetailSuccessScreen(
+                SuccessScreen(
                     productDetail = productDetail,
                     productPhotos = productPhotos.toImmutableList(),
                     marketInfo = storeInfo,
@@ -194,7 +194,7 @@ private fun ProductDetailScreen(
 }
 
 @Composable
-private fun ProductDetailSuccessScreen(
+private fun SuccessScreen(
     productDetail: ProductDetail,
     productPhotos: ImmutableList<ProductPhoto>,
     tradeType: TradeType,
@@ -303,7 +303,7 @@ private fun ProductDetailScreenPreview() {
     val tradeStatus = TradeStatusType.get(mockProductDetail.tradeStatus, tradeType)
 
     NapzakMarketTheme {
-        ProductDetailSuccessScreen(
+        SuccessScreen(
             productDetail = mockProductDetail,
             productPhotos = mockProductDetail.productPhotos.toImmutableList(),
             marketInfo = mockProductDetail.storeInfo,
