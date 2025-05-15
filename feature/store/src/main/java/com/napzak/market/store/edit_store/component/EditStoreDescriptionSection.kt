@@ -44,6 +44,7 @@ internal fun EditStoreDescriptionSection(
             hintTextStyle = NapzakMarketTheme.typography.caption12m,
             verticalAlignment = Alignment.Top,
             contentAlignment = Alignment.TopStart,
+            isSingleLined = false,
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxWidth()
