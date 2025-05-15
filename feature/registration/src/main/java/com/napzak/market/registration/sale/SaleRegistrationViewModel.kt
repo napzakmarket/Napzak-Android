@@ -61,7 +61,8 @@ class SaleRegistrationViewModel @Inject constructor(
                 .collect { productId ->
                     getRegisteredSaleProduct(productId)
                 }
-
+        }
+        viewModelScope.launch {
             GenreEventBus.genreSelected.collect { genre ->
                 updateGenre(genre)
             }
