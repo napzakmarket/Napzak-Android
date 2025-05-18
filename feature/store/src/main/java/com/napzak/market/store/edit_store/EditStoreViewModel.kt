@@ -14,7 +14,7 @@ import com.napzak.market.store.model.NicknameValidationResult
 import com.napzak.market.store.model.StoreEditGenre
 import com.napzak.market.store.model.StoreEditProfile
 import com.napzak.market.store.repository.StoreRepository
-import com.napzak.market.store.usecase.CheckNicknameValidationUseCase
+import com.napzak.market.store.usecase.ValidateNicknameUseCase
 import com.napzak.market.util.android.getHttpExceptionMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -33,7 +33,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class EditStoreViewModel @Inject constructor(
     private val storeRepository: StoreRepository,
-    private val checkNicknameValidationUseCase: CheckNicknameValidationUseCase,
+    private val validateNicknameUseCase: ValidateNicknameUseCase,
     private val uploadStorePhotoUseCase: UploadStorePhotoUseCase,
     private val getGenreNamesUseCase: GetGenreNamesUseCase,
 ) : ViewModel() {
@@ -113,13 +113,13 @@ internal class EditStoreViewModel @Inject constructor(
         storeRepository.getValidateNickname(_uiState.value.storeDetail.nickname)
             .onSuccess {
                 updateUiState(
-                    nickNameDuplicationState = NicknameValidationResult.Valid("사용 가능한 이름입니다!")
+                    nickNameDuplicationState = UiState.Success("사용할 수 있는 이름이에요!")
                 )
             }
             .onFailure { exception ->
                 val errorMessage = exception.getHttpExceptionMessage() ?: ""
                 updateUiState(
-                    nickNameDuplicationState = NicknameValidationResult.Invalid(errorMessage)
+                    nickNameDuplicationState = UiState.Failure(errorMessage)
                 )
             }
     }
@@ -140,18 +140,18 @@ internal class EditStoreViewModel @Inject constructor(
     }
 
     fun updateNickname(nickName: String) {
-        val nicknameValidationResult = checkNicknameValidationUseCase(nickName)
+        val nicknameValidationResult = validateNicknameUseCase(nickName)
         updateUiState(
             name = nickName,
             nickNameValidationState = nicknameValidationResult,
-            nickNameDuplicationState = NicknameValidationResult.Empty
+            nickNameDuplicationState = UiState.Empty
         )
     }
 
     fun updateUiState(
         loadState: UiState<Unit> = _uiState.value.loadState,
         nickNameValidationState: NicknameValidationResult = _uiState.value.nickNameValidationState,
-        nickNameDuplicationState: NicknameValidationResult = _uiState.value.nickNameDuplicationState,
+        nickNameDuplicationState: UiState<String> = _uiState.value.nickNameDuplicationState,
         searchedGenres: List<Genre> = _uiState.value.searchedGenres,
         originalStoreDetail: StoreEditProfile = _uiState.value.originalStoreDetail,
         storeDetail: StoreEditProfile = _uiState.value.storeDetail
@@ -173,7 +173,7 @@ internal class EditStoreViewModel @Inject constructor(
     fun updateUiState(
         loadState: UiState<Unit> = _uiState.value.loadState,
         nickNameValidationState: NicknameValidationResult = _uiState.value.nickNameValidationState,
-        nickNameDuplicationState: NicknameValidationResult = _uiState.value.nickNameDuplicationState,
+        nickNameDuplicationState: UiState<String> = _uiState.value.nickNameDuplicationState,
         searchedGenres: List<Genre> = _uiState.value.searchedGenres,
         originalStoreDetail: StoreEditProfile = _uiState.value.originalStoreDetail,
         coverUrl: String = _uiState.value.storeDetail.coverUrl,

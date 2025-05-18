@@ -185,7 +185,7 @@ private fun SuccessScreen(
     storeIntroduction: String,
     storeGenres: List<StoreEditGenre>,
     nickNameValidationState: NicknameValidationResult,
-    nickNameDuplicationState: NicknameValidationResult,
+    nickNameDuplicationState: UiState<String>,
     nickNameCheckEnabled: Boolean,
     onStoreNameChange: (String) -> Unit,
     onStoreIntroductionChange: (String) -> Unit,
@@ -290,8 +290,8 @@ private fun EditStoreScreenPreview() {
             onGenreSelectButtonClick = {},
             onPhotoChange = { _, _ -> },
             nickNameCheckEnabled = true,
-            nickNameValidationState = NicknameValidationResult.Valid(),
-            nickNameDuplicationState = NicknameValidationResult.Valid(),
+            nickNameValidationState = NicknameValidationResult.Uninitialized,
+            nickNameDuplicationState = UiState.Empty,
             modifier = Modifier.fillMaxSize(),
         )
     }

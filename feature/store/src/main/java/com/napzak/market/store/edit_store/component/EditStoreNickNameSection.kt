@@ -13,13 +13,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.component.textfield.NapzakDefaultTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.store.R.string.store_edit_button_name_check
+import com.napzak.market.feature.store.R.string.store_edit_error_empty
+import com.napzak.market.feature.store.R.string.store_edit_error_only_consonants
+import com.napzak.market.feature.store.R.string.store_edit_error_only_numbers
+import com.napzak.market.feature.store.R.string.store_edit_error_special_char
+import com.napzak.market.feature.store.R.string.store_edit_error_whitespace
 import com.napzak.market.feature.store.R.string.store_edit_hint_name
 import com.napzak.market.feature.store.R.string.store_edit_sub_title_name
 import com.napzak.market.feature.store.R.string.store_edit_title_name
 import com.napzak.market.store.model.NicknameValidationResult
+import com.napzak.market.store.model.NicknameValidationResult.Error.CONTAINS_CONSONANT
+import com.napzak.market.store.model.NicknameValidationResult.Error.EMPTY
+import com.napzak.market.store.model.NicknameValidationResult.Error.ONLY_CONSONANTS
+import com.napzak.market.store.model.NicknameValidationResult.Error.ONLY_NUMBERS
+import com.napzak.market.store.model.NicknameValidationResult.Error.SPECIAL_CHAR
+import com.napzak.market.store.model.NicknameValidationResult.Error.WHITESPACE
 import com.napzak.market.util.android.noRippleClickable
 
 @Composable
@@ -28,7 +40,7 @@ internal fun EditStoreNickNameSection(
     onNameChange: (String) -> Unit,
     checkEnabled: Boolean,
     nickNameValidationState: NicknameValidationResult,
-    nickNameDuplicationState: NicknameValidationResult,
+    nickNameDuplicationState: UiState<String>,
     onNameValidityCheckClick: () -> Unit,
 ) {
     EditStoreProfileContainer(
@@ -102,20 +114,20 @@ private fun NickNameCheckButton(
 @Composable
 private fun NickNameSupportingText(
     nickNameValidationState: NicknameValidationResult,
-    nickNameDuplicationState: NicknameValidationResult,
+    nickNameDuplicationState: UiState<String>,
     modifier: Modifier = Modifier,
 ) {
     val bulletedText = "\u2022 %s"
 
     val (supportingText, supportingTextColor) = when {
-        nickNameDuplicationState is NicknameValidationResult.Valid ->
-            bulletedText.format(nickNameDuplicationState.message) to NapzakMarketTheme.colors.green
+        nickNameDuplicationState is UiState.Success ->
+            bulletedText.format(nickNameDuplicationState.data) to NapzakMarketTheme.colors.green
 
-        nickNameDuplicationState is NicknameValidationResult.Invalid ->
-            bulletedText.format(nickNameDuplicationState.errorMessage) to NapzakMarketTheme.colors.red
+        nickNameDuplicationState is UiState.Failure ->
+            bulletedText.format(nickNameDuplicationState.msg) to NapzakMarketTheme.colors.red
 
         nickNameValidationState is NicknameValidationResult.Invalid ->
-            bulletedText.format(nickNameValidationState.errorMessage) to NapzakMarketTheme.colors.red
+            bulletedText.format(nickNameValidationState.error.toMessage()) to NapzakMarketTheme.colors.red
 
         else -> "" to NapzakMarketTheme.colors.gray300
     }
@@ -128,6 +140,19 @@ private fun NickNameSupportingText(
     )
 }
 
+@Composable
+fun NicknameValidationResult.Error.toMessage(): String {
+    val stringRes = when (this) {
+        EMPTY -> store_edit_error_empty
+        WHITESPACE -> store_edit_error_whitespace
+        SPECIAL_CHAR -> store_edit_error_special_char
+        ONLY_NUMBERS -> store_edit_error_only_numbers
+        ONLY_CONSONANTS -> store_edit_error_only_consonants
+        CONTAINS_CONSONANT -> store_edit_error_only_consonants
+    }
+    return stringResource(stringRes)
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun EditStoreNickNameSectionPreview() {
@@ -137,8 +162,8 @@ private fun EditStoreNickNameSectionPreview() {
                 marketName = "",
                 onNameChange = {},
                 checkEnabled = false,
-                nickNameValidationState = NicknameValidationResult.Empty,
-                nickNameDuplicationState = NicknameValidationResult.Empty,
+                nickNameValidationState = NicknameValidationResult.Valid,
+                nickNameDuplicationState = UiState.Success("사용 가능한 이름이에요!"),
                 onNameValidityCheckClick = {},
             )
         }

@@ -27,4 +27,10 @@
     <string name="store_edit_hint_introduction">어떤 장르를 좋아하고, 판매하는지!\n덕후력을 뽐내는 소개를 작성해주세요</string>
     <string name="store_edit_button_genre">관심 장르 설정</string>
     <string name="store_edit_button_proceed">확인</string>
+
+    <string name="store_edit_error_empty">최소 2자 이상 입력할 수 있어요.</string>
+    <string name="store_edit_error_whitespace">공백은 사용할 수 없어요.</string>
+    <string name="store_edit_error_special_char">특수문자는 사용할 수 없어요.</string>
+    <string name="store_edit_error_only_numbers">숫자만으로는 이름을 만들 수 없어요.</string>
+    <string name="store_edit_error_only_consonants">초성은 입력할 수 없어요.</string>"
 </resources>
