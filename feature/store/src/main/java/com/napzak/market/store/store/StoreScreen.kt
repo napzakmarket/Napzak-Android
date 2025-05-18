@@ -53,6 +53,7 @@ import com.napzak.market.common.type.MarketTab
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
+import com.napzak.market.designsystem.component.GenreFilterChip
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.component.tabbar.MarketTabBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -70,7 +71,6 @@ import com.napzak.market.genre.model.Genre
 import com.napzak.market.product.model.Product
 import com.napzak.market.store.component.BasicFilterChip
 import com.napzak.market.store.component.GenreChip
-import com.napzak.market.store.component.GenreFilterChip
 import com.napzak.market.store.component.StoreBottomSheetScreen
 import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.store.state.StoreBottomSheetState

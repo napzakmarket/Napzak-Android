@@ -39,13 +39,13 @@ import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.ic_down_chevron
+import com.napzak.market.designsystem.component.GenreFilterChip
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.explore.component.BasicFilterChip
 import com.napzak.market.explore.component.ExploreBottomSheetScreen
-import com.napzak.market.explore.component.GenreFilterChip
 import com.napzak.market.explore.component.GenreNavigationButton
 import com.napzak.market.explore.state.ExploreBottomSheetState
 import com.napzak.market.explore.state.ExploreUiState
