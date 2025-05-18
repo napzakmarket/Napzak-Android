@@ -353,7 +353,7 @@ private fun SuggestedGenreSection(
                 }
 
                 repeat(3 - rowItems.size) {
-                    Spacer(modifier = Modifier.weight(1f))
+                    Box(modifier = Modifier.width(100.dp))
                 }
             }
 
