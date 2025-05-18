@@ -53,7 +53,7 @@ internal class ReportState(
         get() = detail.isNotBlank() && contact.isNotBlank()
 
     fun onDetailChange(value: String) {
-        detail = value.takeIf { value.length < 200 } ?: detail
+        detail = value.take(200)
     }
 
     private fun getReasons(reportType: ReportType): List<Int> =
