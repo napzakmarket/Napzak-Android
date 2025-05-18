@@ -37,4 +37,7 @@
     <string name="detail_bottom_sheet_radio_button_reserved">예약중</string>
     <string name="detail_bottom_sheet_radio_button_complete_trade_sell">판매완료</string>
     <string name="detail_bottom_sheet_radio_button_complete_trade_buy">구매완료</string>
+
+    <string name="detail_dialog_delete_title">상품을 정말 삭제할까요?</string>
+    <string name="detail_dialog_delete_sub_title">한번 삭제한 상품은 다시 되돌릴 수 없어요.</string>
 </resources>

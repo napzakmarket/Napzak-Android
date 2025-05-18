@@ -41,6 +41,8 @@ import com.napzak.market.detail.component.group.ProductInformationGroup
 import com.napzak.market.detail.component.group.ProductInformationSellGroup
 import com.napzak.market.detail.component.group.ProductMarketGroup
 import com.napzak.market.detail.component.topbar.DetailTopBar
+import com.napzak.market.feature.detail.R.string.detail_dialog_delete_sub_title
+import com.napzak.market.feature.detail.R.string.detail_dialog_delete_title
 import com.napzak.market.feature.detail.R.string.detail_snack_bar_delete
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.model.ProductDetail.ProductPhoto
@@ -319,8 +321,8 @@ private fun ProductDetailDeleteDialog(
 ) {
     if (enabled) {
         NapzakDialog(
-            title = "상품을 정말 삭제할까요?",
-            subTitle = "한번 삭제한 상품은 다시 되돌릴 수 없어요.",
+            title = stringResource(detail_dialog_delete_title),
+            subTitle = stringResource(detail_dialog_delete_sub_title),
             dialogColor = NapzakDialogDefault.color.copy(
                 titleColor = NapzakMarketTheme.colors.red
             ),
