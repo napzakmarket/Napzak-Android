@@ -7,7 +7,7 @@
 
     <string name="store_filter_selling">판매중</string>
     <string name="store_filter_buying">구매중</string>
-    <string name="store_product">상품</string>
+    <string name="store_product">상품&#160;</string>
     <string name="store_count">%d개</string>
     <string name="store_edit_profile">프로필 편집</string>
 

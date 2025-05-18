@@ -6,6 +6,6 @@
     <string name="explore_empty_text"></string>
 
     <string name="explore_search_hint">어떤 상품을 찾고 계신가요?</string>
-    <string name="explore_product">상품</string>
+    <string name="explore_product">상품&#160;</string>
     <string name="explore_count">%d개</string>
 </resources>
