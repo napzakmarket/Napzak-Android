@@ -4,11 +4,9 @@ import android.app.Activity
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -20,14 +18,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.component.CommonSnackBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.detail.navigation.navigateToProductDetail
 import com.napzak.market.detail.navigation.productDetailGraph
@@ -41,6 +36,7 @@ import com.napzak.market.login.navigation.loginGraph
 import com.napzak.market.main.R.string.main_snack_bar_finish
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
+import com.napzak.market.main.component.MainSnackBarHost
 import com.napzak.market.mypage.navigation.mypageGraph
 import com.napzak.market.mypage.setting.navigation.navigateToSettings
 import com.napzak.market.mypage.setting.navigation.settingsGraph
@@ -96,6 +92,7 @@ fun MainScreen(
     }
 
     val statusBarColor = NapzakMarketTheme.colors.white
+
     SideEffect {
         systemUiController.setStatusBarColor(
             color = statusBarColor,
@@ -112,16 +109,10 @@ fun MainScreen(
             )
         },
         snackbarHost = {
-            SnackbarHost(snackBarHostState) {
-                CommonSnackBar(
-                    message = it.visuals.message,
-                    contentPadding = PaddingValues(horizontal = 17.dp, vertical = 15.dp),
-                    textStyle = NapzakMarketTheme.typography.caption12m.copy(
-                        color = NapzakMarketTheme.colors.white,
-                        textAlign = TextAlign.Center,
-                    )
-                )
-            }
+            MainSnackBarHost(
+                snackBarHostState = snackBarHostState,
+                imageRes = snackBarController.imageRes,
+            )
         },
         containerColor = NapzakMarketTheme.colors.white,
         modifier = Modifier.fillMaxSize(),
@@ -164,7 +155,6 @@ private fun MainNavHost(
     endApplicationAtHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     NavHost(
         enterTransition = {
             EnterTransition.None
