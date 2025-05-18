@@ -52,6 +52,8 @@ import com.napzak.market.feature.onboarding.R.string.onboarding_genre_title
 import com.napzak.market.onboarding.genre.component.GenreGridList
 import com.napzak.market.onboarding.genre.model.GenreUiModel
 import com.napzak.market.onboarding.genre.model.GenreUiState
+import com.napzak.market.util.android.model.ShadowDirection
+import com.napzak.market.util.android.napzakGradientShadow
 import com.napzak.market.util.android.noRippleClickable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -120,7 +122,7 @@ fun GenreScreen(
         modifier = modifier
             .fillMaxSize()
             .background(NapzakMarketTheme.colors.white)
-            .padding(horizontal = 20.dp, vertical = 10.dp)
+            .padding(vertical = 10.dp)
             .padding(
                 bottom = WindowInsets.navigationBars
                     .asPaddingValues()
@@ -132,7 +134,7 @@ fun GenreScreen(
         ) {
             Spacer(modifier = Modifier.height(50.dp))
 
-            GenreTopBar(onBackClick = onBackClick)
+            GenreTopBar(onBackClick = onBackClick,)
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -148,7 +150,8 @@ fun GenreScreen(
                 onSearchClick = onSearchTextSubmit,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                    .padding(bottom = 16.dp)
+                    .padding(horizontal = 20.dp),
                 readOnly = false,
                 enabled = true,
             )
@@ -162,16 +165,31 @@ fun GenreScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 12.dp),
+                        .padding(bottom = 12.dp)
+                        .padding(horizontal = 20.dp),
                     contentPaddingValues = PaddingValues(vertical = 8.dp),
                 )
             }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(2.dp)
+                    .napzakGradientShadow(
+                        height = 2.dp,
+                        startColor = Color(0x0D000000),
+                        endColor = Color.Transparent,
+                        direction = ShadowDirection.Bottom,
+                    )
+            )
 
             Box(modifier = Modifier.weight(1f)) {
                 GenreGridList(
                     genres = uiState.genres,
                     onGenreClick = onGenreClick,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp),
                 )
             }
         }
@@ -179,7 +197,8 @@ fun GenreScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter),
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (isShownSnackBar) {
@@ -216,7 +235,8 @@ private fun GenreTopBar(
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -240,29 +260,31 @@ private fun GenreTopBar(
 
 @Composable
 private fun GenreTitleSection() {
-    Text(
-        text = stringResource(onboarding_genre_selected_limitation),
-        style = NapzakMarketTheme.typography.caption10sb,
-        color = NapzakMarketTheme.colors.purple500,
-    )
+    Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+        Text(
+            text = stringResource(onboarding_genre_selected_limitation),
+            style = NapzakMarketTheme.typography.caption10sb,
+            color = NapzakMarketTheme.colors.purple500,
+        )
 
-    Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-    Text(
-        text = stringResource(onboarding_genre_title),
-        style = NapzakMarketTheme.typography.title20b,
-        color = NapzakMarketTheme.colors.gray400,
-    )
+        Text(
+            text = stringResource(onboarding_genre_title),
+            style = NapzakMarketTheme.typography.title20b,
+            color = NapzakMarketTheme.colors.gray400,
+        )
 
-    Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-    Text(
-        text = stringResource(onboarding_genre_sub_title),
-        style = NapzakMarketTheme.typography.caption12r,
-        color = NapzakMarketTheme.colors.gray300,
-    )
+        Text(
+            text = stringResource(onboarding_genre_sub_title),
+            style = NapzakMarketTheme.typography.caption12r,
+            color = NapzakMarketTheme.colors.gray300,
+        )
 
-    Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(18.dp))
+    }
 }
 
 @Preview(showBackground = true)
