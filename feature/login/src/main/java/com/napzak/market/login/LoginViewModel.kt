@@ -28,7 +28,7 @@ class LoginViewModel @Inject constructor(
             setKakaoLoginUseCase(token)
                 .onSuccess { response ->
                     when (response.role) {
-                        "ONBOARDING" -> {
+                        "ONBOARDING","WITHDRAWN" -> {
                             _uiState.update { it.copy(route = LoginFlowRoute.Terms) }
                         }
 
