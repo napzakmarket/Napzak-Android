@@ -5,5 +5,5 @@ enum class MarketTab(
 ) {
     SELL(label = "팔아요"),
     BUY(label = "구해요"),
-    REVIEW(label = "후기"),
+    REVIEW(label = "리뷰"),
 }
