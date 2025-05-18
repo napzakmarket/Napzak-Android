@@ -1,8 +1,10 @@
 package com.napzak.market.store.edit_store.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +35,8 @@ import com.napzak.market.store.model.NicknameValidationResult.Error.ONLY_NUMBERS
 import com.napzak.market.store.model.NicknameValidationResult.Error.SPECIAL_CHAR
 import com.napzak.market.store.model.NicknameValidationResult.Error.WHITESPACE
 import com.napzak.market.util.android.noRippleClickable
+
+private const val NICKNAME_MAX_LENGTH = 20
 
 @Composable
 internal fun EditStoreNickNameSection(
@@ -71,11 +75,19 @@ internal fun EditStoreNickNameSection(
                 }
             )
 
-            NickNameSupportingText(
-                nickNameValidationState = nickNameValidationState,
-                nickNameDuplicationState = nickNameDuplicationState,
-                modifier = Modifier.padding(top = 10.dp),
-            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .fillMaxWidth(),
+            ) {
+                NickNameSupportingText(
+                    nickNameValidationState = nickNameValidationState,
+                    nickNameDuplicationState = nickNameDuplicationState,
+                )
+
+                NicknameLengthText(nickname = marketName)
+            }
         }
     }
 }
@@ -138,6 +150,24 @@ private fun NickNameSupportingText(
         style = NapzakMarketTheme.typography.caption12sb,
         modifier = modifier,
     )
+}
+
+@Composable
+private fun NicknameLengthText(
+    nickname: String,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        horizontalArrangement = Arrangement.End,
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        Text(
+            text = "${nickname.length}/$NICKNAME_MAX_LENGTH",
+            style = NapzakMarketTheme.typography.caption10r.copy(
+                color = NapzakMarketTheme.colors.gray300,
+            ),
+        )
+    }
 }
 
 @Composable
