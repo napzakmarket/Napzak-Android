@@ -1,8 +1,16 @@
 package com.napzak.market.store.model
 
-sealed interface NicknameValidationResult {
-    data class Valid(val message: String = "") : NicknameValidationResult
-    data class Invalid(val errorMessage: String) : NicknameValidationResult
-    data object Empty : NicknameValidationResult
-}
+sealed class NicknameValidationResult {
+    object Uninitialized : NicknameValidationResult()
+    object Valid : NicknameValidationResult()
+    data class Invalid(val error: Error) : NicknameValidationResult()
 
+    enum class Error {
+        EMPTY,
+        WHITESPACE,
+        SPECIAL_CHAR,
+        ONLY_NUMBERS,
+        ONLY_CONSONANTS,
+        CONTAINS_CONSONANT,
+    }
+}

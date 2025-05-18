@@ -119,18 +119,19 @@ fun GenreScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(NapzakMarketTheme.colors.white),
+            .background(NapzakMarketTheme.colors.white)
+            .padding(horizontal = 20.dp, vertical = 10.dp)
+            .padding(
+                bottom = WindowInsets.navigationBars
+                    .asPaddingValues()
+                    .calculateBottomPadding()
+            ),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp, vertical = 40.dp)
-                .padding(
-                    bottom = WindowInsets.navigationBars
-                        .asPaddingValues()
-                        .calculateBottomPadding()
-                ),
+            modifier = Modifier,
         ) {
+            Spacer(modifier = Modifier.height(50.dp))
+
             GenreTopBar(onBackClick = onBackClick)
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -178,8 +179,7 @@ fun GenreScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(horizontal = 20.dp, vertical = 16.dp),
+                .align(Alignment.BottomCenter),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (isShownSnackBar) {
