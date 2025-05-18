@@ -220,7 +220,7 @@ private fun SuccessScreen(
             checkEnabled = nickNameCheckEnabled,
         )
 
-        SectionDivider(Modifier.padding(bottom = 30.dp))
+        SectionDivider(Modifier.padding(top = 13.dp, bottom = 30.dp))
 
         EditStoreDescriptionSection(
             description = storeIntroduction,
