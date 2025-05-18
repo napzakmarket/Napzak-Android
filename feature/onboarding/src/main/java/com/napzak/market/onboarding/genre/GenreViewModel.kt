@@ -40,45 +40,74 @@ class GenreViewModel @Inject constructor(
 
     fun onGenreClick(item: GenreUiModel): Boolean {
         var changed = false
+
         _uiState.update { state ->
             val isAlreadySelected = item.isSelected
-            val canSelectMore = state.selectedGenres.size < 7
+            val canSelectMore = state.selectedGenres.size < MAX_SELECTED_COUNT
 
-            val updatedGenres = state.genres.map {
-                if (it.id == item.id) {
-                    when {
-                        isAlreadySelected -> {
-                            changed = true
-                            it.copy(isSelected = false)
+            state.copy(
+                genres = state.genres.map {
+                    if (it.id == item.id) {
+                        when {
+                            isAlreadySelected -> {
+                                changed = true
+                                it.copy(isSelected = false)
+                            }
+
+                            canSelectMore -> {
+                                changed = true
+                                it.copy(isSelected = true)
+                            }
+
+                            else -> it
                         }
-
-                        canSelectMore -> {
-                            changed = true
-                            it.copy(isSelected = true)
-                        }
-
-                        else -> it
-                    }
-                } else it
-            }
-
-            state.copy(genres = updatedGenres)
+                    } else it
+                },
+                selectedGenres = updateSelectedGenresList(
+                    selectedGenres = state.selectedGenres,
+                    clickedItem = item,
+                    isAlreadySelected = isAlreadySelected,
+                    canSelectMore = canSelectMore,
+                ),
+            )
         }
+
         return changed
     }
 
-    fun onGenreRemove(genre: GenreUiModel) {
+    private fun updateSelectedGenresList(
+        selectedGenres: List<GenreUiModel>,
+        clickedItem: GenreUiModel,
+        isAlreadySelected: Boolean,
+        canSelectMore: Boolean,
+    ): List<GenreUiModel> {
+        return when {
+            isAlreadySelected -> selectedGenres.filterNot { it.id == clickedItem.id }
+            canSelectMore -> selectedGenres + clickedItem
+            else -> selectedGenres
+        }
+    }
+
+    fun onGenreRemove(item: GenreUiModel) {
         _uiState.update { state ->
-            val updated = state.genres.map {
-                if (it.id == genre.id) it.copy(isSelected = false) else it
-            }
-            state.copy(genres = updated)
+            state.copy(
+                genres = state.genres.map {
+                    if (it.id == item.id) it.copy(isSelected = false)
+                    else it
+                },
+                selectedGenres = state.selectedGenres.filterNot { it.id == item.id },
+            )
         }
     }
 
     fun onResetAllGenres() {
         _uiState.update { state ->
-            state.copy(genres = state.genres.map { it.copy(isSelected = false) })
+            state.copy(
+                genres = state.genres.map {
+                    if (it.isSelected) it.copy(isSelected = false) else it
+                },
+                selectedGenres = emptyList(),
+            )
         }
     }
 
@@ -148,5 +177,9 @@ class GenreViewModel @Inject constructor(
         _uiState.update {
             it.copy(genres = merged + additional)
         }
+    }
+
+    companion object{
+        private const val MAX_SELECTED_COUNT = 7
     }
 }
