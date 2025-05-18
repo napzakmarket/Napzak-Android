@@ -8,13 +8,14 @@ data class KakaoLogin(
 )
 
 enum class UserRole {
-    ONBOARDING, STORE;
+    ONBOARDING, STORE, WITHDRAWN;
 
     companion object {
         fun from(value: String): UserRole {
             return when (value) {
                 "ONBOARDING" -> ONBOARDING
                 "STORE" -> STORE
+                "WITHDRAWN" ->WITHDRAWN
                 else -> throw IllegalArgumentException("Unknown role: $value")
             }
         }

@@ -8,4 +8,6 @@
 
     <string name="dialog_register_sell">팔아요 등록</string>
     <string name="dialog_register_buy">구해요 등록</string>
+
+    <string name="main_snack_bar_finish">버튼을 한번 더 누르시면 종료돼요.</string>"
 </resources>

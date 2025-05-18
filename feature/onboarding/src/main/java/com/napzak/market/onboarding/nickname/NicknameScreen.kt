@@ -43,7 +43,7 @@ import com.napzak.market.feature.onboarding.R.string.onboarding_nickname_success
 import com.napzak.market.feature.onboarding.R.string.onboarding_nickname_title
 import com.napzak.market.feature.onboarding.R.string.onboarding_nickname_validation_button
 import com.napzak.market.onboarding.nickname.model.NicknameUiState
-import com.napzak.market.onboarding.nickname.model.NicknameValidationResult
+import com.napzak.market.store.model.NicknameValidationResult
 import com.napzak.market.util.android.noRippleClickable
 
 @Composable
@@ -76,11 +76,13 @@ fun NicknameScreen(
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
 ) {
+    val isValidationPassed = uiState.validationResult is NicknameValidationResult.Valid
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(NapzakMarketTheme.colors.white)
-            .padding(horizontal = 20.dp, vertical = 40.dp)
+            .padding(horizontal = 20.dp, vertical = 60.dp)
             .padding(
                 bottom = WindowInsets.navigationBars
                     .asPaddingValues()
@@ -125,11 +127,11 @@ fun NicknameScreen(
                 Box(
                     modifier = Modifier
                         .background(
-                            if (uiState.nickname.isNotBlank()) NapzakMarketTheme.colors.purple500
+                            if (isValidationPassed) NapzakMarketTheme.colors.purple500
                             else NapzakMarketTheme.colors.gray200,
                             RoundedCornerShape(10.dp),
                         )
-                        .clickable(enabled = uiState.nickname.isNotBlank()) {
+                        .clickable(enabled = isValidationPassed) {
                             onCheckDuplicationClick()
                         }
                         .padding(horizontal = 12.dp, vertical = 8.dp),
@@ -144,12 +146,29 @@ fun NicknameScreen(
             },
         )
 
-        NicknameValidationResultMessage(
-            validationResult = uiState.validationResult,
-            duplicationError = uiState.duplicationError,
-            isAvailable = uiState.isAvailable,
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            NicknameValidationResultMessage(
+                validationResult = uiState.validationResult,
+                duplicationError = uiState.duplicationError,
+                isAvailable = uiState.isAvailable,
+                modifier = Modifier.align(Alignment.CenterVertically),
+            )
 
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                text = "${uiState.nickname.length}/20",
+                style = NapzakMarketTheme.typography.caption12m,
+                color = NapzakMarketTheme.colors.gray300,
+                modifier = Modifier.align(Alignment.CenterVertically),
+            )
+        }
+        
         Spacer(modifier = Modifier.weight(1f))
 
         NapzakButton(
@@ -196,6 +215,7 @@ private fun NicknameValidationResultMessage(
     validationResult: NicknameValidationResult,
     duplicationError: String?,
     isAvailable: Boolean?,
+    modifier: Modifier,
 ) {
     when {
         duplicationError != null -> {
@@ -213,8 +233,9 @@ private fun NicknameValidationResultMessage(
         }
 
         validationResult is NicknameValidationResult.Invalid -> {
+            val error = validationResult as NicknameValidationResult.Invalid
             ValidationText(
-                message = validationResult.errorType.message,
+                message = stringResource(id = error.error.toMessageRes()),
                 color = NapzakMarketTheme.colors.red,
             )
         }
@@ -224,6 +245,8 @@ private fun NicknameValidationResultMessage(
         }
     }
 }
+
+
 
 @Composable
 private fun ValidationText(
