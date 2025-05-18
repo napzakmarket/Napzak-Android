@@ -75,11 +75,29 @@ internal class ExploreViewModel @Inject constructor(
             TradeType.BUY -> {
                 if (searchTerm.isEmpty()) {
                     productExploreRepository.getExploreBuyProducts(parameters as ExploreParameters)
-                        .onSuccess { updateLoadState(UiState.Success(ExploreProducts(it.second))) }
+                        .onSuccess {
+                            updateLoadState(
+                                UiState.Success(
+                                    ExploreProducts(
+                                        it.first,
+                                        it.second
+                                    )
+                                )
+                            )
+                        }
                         .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
                 } else {
                     productExploreRepository.getSearchBuyProducts(parameters as SearchParameters)
-                        .onSuccess { updateLoadState(UiState.Success(ExploreProducts(it.second))) }
+                        .onSuccess {
+                            updateLoadState(
+                                UiState.Success(
+                                    ExploreProducts(
+                                        it.first,
+                                        it.second
+                                    )
+                                )
+                            )
+                        }
                         .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
                 }
             }
@@ -87,11 +105,29 @@ internal class ExploreViewModel @Inject constructor(
             TradeType.SELL -> {
                 if (searchTerm.isEmpty()) {
                     productExploreRepository.getExploreSellProducts(parameters as ExploreParameters)
-                        .onSuccess { updateLoadState(UiState.Success(ExploreProducts(it.second))) }
+                        .onSuccess {
+                            updateLoadState(
+                                UiState.Success(
+                                    ExploreProducts(
+                                        it.first,
+                                        it.second
+                                    )
+                                )
+                            )
+                        }
                         .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
                 } else {
                     productExploreRepository.getSearchSellProducts(parameters as SearchParameters)
-                        .onSuccess { updateLoadState(UiState.Success(ExploreProducts(it.second))) }
+                        .onSuccess {
+                            updateLoadState(
+                                UiState.Success(
+                                    ExploreProducts(
+                                        it.first,
+                                        it.second
+                                    )
+                                )
+                            )
+                        }
                         .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
                 }
             }
@@ -211,7 +247,11 @@ internal class ExploreViewModel @Inject constructor(
                     }
                 }
 
-                updateLoadState(loadState = UiState.Success(ExploreProducts(updatedProducts)))
+                updateLoadState(
+                    loadState = UiState.Success(
+                        ExploreProducts(state.data.productCount, updatedProducts)
+                    )
+                )
             }
 
             else -> {}

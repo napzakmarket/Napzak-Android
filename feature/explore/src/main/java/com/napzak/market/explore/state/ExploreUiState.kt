@@ -20,5 +20,6 @@ data class ExploreUiState(
 )
 
 data class ExploreProducts(
+    val productCount: Int,
     val productList: List<Product>,
 )

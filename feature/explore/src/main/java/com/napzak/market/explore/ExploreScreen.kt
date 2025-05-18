@@ -163,6 +163,7 @@ private fun ExploreScreen(
                     sortOption = sortOption,
                     genreItems = genreSearchResultItems,
                     products = uiState.loadState.data.productList,
+                    productCount = uiState.loadState.data.productCount,
                     bottomSheetState = bottomSheetState,
                     onSearchNavigate = onSearchNavigate,
                     onTabClick = onTabClick,
@@ -196,6 +197,7 @@ private fun ExploreSuccessScreen(
     isSoldOutSelected: Boolean,
     sortOption: SortType,
     genreItems: List<Genre>,
+    productCount: Int,
     products: List<Product>,
     bottomSheetState: ExploreBottomSheetState,
     onSearchNavigate: () -> Unit,
@@ -268,6 +270,7 @@ private fun ExploreSuccessScreen(
 
         GenreAndProductList(
             genreList = filteredGenres,
+            productCount = productCount,
             productList = products,
             sortType = sortOption,
             onGenreButtonClick = onGenreDetailNavigate,
@@ -310,6 +313,7 @@ private fun ExploreSearchTextField(
 @Composable
 private fun GenreAndProductList(
     genreList: List<Genre>,
+    productCount: Int,
     productList: List<Product>,
     sortType: SortType,
     onGenreButtonClick: (Long) -> Unit,
@@ -349,7 +353,7 @@ private fun GenreAndProductList(
                                 append(stringResource(explore_product))
                             }
                             withStyle(style = SpanStyle(color = NapzakMarketTheme.colors.purple500)) {
-                                append(stringResource(explore_count, productList.size))
+                                append(stringResource(explore_count, productCount))
                             }
                         },
                         style = NapzakMarketTheme.typography.body14sb,
