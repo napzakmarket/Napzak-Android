@@ -254,7 +254,7 @@ private fun GenreList(
             )
         }
 
-        item { Spacer(Modifier.height(13.dp)) }
+        item { Spacer(Modifier.height(120.dp)) }
     }
 }
 
