@@ -1,7 +1,9 @@
 package com.napzak.market.search
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -11,10 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -30,6 +34,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,6 +43,7 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.search.R.drawable.ic_left_chevron
+import com.napzak.market.feature.search.R.drawable.ic_search_12
 import com.napzak.market.feature.search.R.string.search_hint
 import com.napzak.market.feature.search.R.string.search_suggested_genre
 import com.napzak.market.feature.search.R.string.search_suggested_search_text
@@ -189,6 +195,22 @@ private fun SearchSuccessScreen(
                     Spacer(Modifier.height(14.dp))
                 }
 
+                if (searchText.isNotEmpty()) {
+                    item {
+                        BasicResultNavigationButton(
+                            searchText = searchText,
+                            onButtonClick = onSearchClick,
+                        )
+
+                        Spacer(
+                            Modifier
+                                .fillMaxWidth()
+                                .background(color = NapzakMarketTheme.colors.gray10)
+                                .height(8.dp),
+                        )
+                    }
+                }
+
                 items(searchResultGenres) { genreItem ->
                     GenreNavigationButton(
                         genreName = genreItem.genreName,
@@ -205,6 +227,49 @@ private fun SearchSuccessScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun BasicResultNavigationButton(
+    searchText: String,
+    onButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .noRippleClickable(onButtonClick)
+            .background(color = NapzakMarketTheme.colors.white)
+            .padding(horizontal = 20.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(28.dp)
+                .border(
+                    width = 1.dp,
+                    color = NapzakMarketTheme.colors.gray10,
+                    shape = RoundedCornerShape(50.dp),
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(ic_search_12),
+                contentDescription = null,
+                tint = NapzakMarketTheme.colors.gray400,
+            )
+        }
+
+        Spacer(Modifier.width(6.dp))
+
+        Text(
+            text = searchText,
+            style = NapzakMarketTheme.typography.body14sb,
+            color = NapzakMarketTheme.colors.gray500,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 

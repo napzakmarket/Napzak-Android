@@ -43,7 +43,7 @@ internal fun GenreNavigationButton(
     ) {
         Text(
             text = genre,
-            style = NapzakMarketTheme.typography.caption12sb,
+            style = NapzakMarketTheme.typography.body14sb,
             color = NapzakMarketTheme.colors.gray500,
         )
 
