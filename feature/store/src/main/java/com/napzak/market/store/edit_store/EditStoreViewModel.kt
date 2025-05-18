@@ -14,6 +14,7 @@ import com.napzak.market.store.model.NicknameValidationResult
 import com.napzak.market.store.model.StoreEditGenre
 import com.napzak.market.store.model.StoreEditProfile
 import com.napzak.market.store.repository.StoreRepository
+import com.napzak.market.store.usecase.CheckNicknameDuplicationUseCase
 import com.napzak.market.store.usecase.ValidateNicknameUseCase
 import com.napzak.market.util.android.getHttpExceptionMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,6 +35,7 @@ import javax.inject.Inject
 internal class EditStoreViewModel @Inject constructor(
     private val storeRepository: StoreRepository,
     private val validateNicknameUseCase: ValidateNicknameUseCase,
+    private val checkNicknameDuplicationUseCase: CheckNicknameDuplicationUseCase,
     private val uploadStorePhotoUseCase: UploadStorePhotoUseCase,
     private val getGenreNamesUseCase: GetGenreNamesUseCase,
 ) : ViewModel() {
@@ -110,7 +112,7 @@ internal class EditStoreViewModel @Inject constructor(
     }
 
     fun checkNicknameDuplication() = viewModelScope.launch {
-        storeRepository.getValidateNickname(_uiState.value.storeDetail.nickname)
+        checkNicknameDuplicationUseCase(_uiState.value.storeDetail.nickname)
             .onSuccess {
                 updateUiState(
                     nickNameDuplicationState = UiState.Success("사용할 수 있는 이름이에요!")
