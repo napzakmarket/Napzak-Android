@@ -13,9 +13,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -23,8 +25,11 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.ProductConditionType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
+import com.napzak.market.designsystem.R.drawable.ic_delete_snackbar_16
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.HeartClickSnackBar
+import com.napzak.market.designsystem.component.dialog.NapzakDialog
+import com.napzak.market.designsystem.component.dialog.NapzakDialogDefault
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.detail.component.bottombar.ProductDetailBottomBar
 import com.napzak.market.detail.component.bottomsheet.MyProductBottomSheet
@@ -36,9 +41,13 @@ import com.napzak.market.detail.component.group.ProductInformationGroup
 import com.napzak.market.detail.component.group.ProductInformationSellGroup
 import com.napzak.market.detail.component.group.ProductMarketGroup
 import com.napzak.market.detail.component.topbar.DetailTopBar
+import com.napzak.market.feature.detail.R.string.detail_dialog_delete_sub_title
+import com.napzak.market.feature.detail.R.string.detail_dialog_delete_title
+import com.napzak.market.feature.detail.R.string.detail_snack_bar_delete
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.model.ProductDetail.ProductPhoto
 import com.napzak.market.product.model.ProductDetail.StoreInfo
+import com.napzak.market.util.android.LocalSnackBarController
 import com.napzak.market.util.common.formatToPriceString
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -55,11 +64,15 @@ internal fun ProductDetailRoute(
     viewModel: ProductDetailViewModel = hiltViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
+    val snackBarController = LocalSnackBarController.current
+    val context = LocalContext.current
+
     val uiState by viewModel.productDetail.collectAsStateWithLifecycle()
     val isInterested by viewModel.isInterested.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
+    LifecycleResumeEffect(Unit) {
         viewModel.getProductDetail()
+        onPauseOrDispose { /*No resource to clean up*/ }
     }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
@@ -68,6 +81,13 @@ internal fun ProductDetailRoute(
                 when (sideEffect) {
                     ProductDetailSideEffect.NavigateUp -> {
                         onNavigateUp()
+                    }
+
+                    is ProductDetailSideEffect.ShowDeleteSnackBar -> {
+                        snackBarController.show(
+                            message = context.getString(detail_snack_bar_delete),
+                            imageRes = ic_delete_snackbar_16,
+                        )
                     }
                 }
             }
@@ -105,6 +125,7 @@ private fun ProductDetailScreen(
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
     var sheetVisibility by remember { mutableStateOf(false) }
+    val deleteDialogVisibility = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -147,7 +168,7 @@ private fun ProductDetailScreen(
                 val tradeType = TradeType.fromName(productDetail.tradeType)
                 val tradeStatus = TradeStatusType.get(productDetail.tradeStatus, tradeType)
 
-                ProductDetailSuccessScreen(
+                SuccessScreen(
                     productDetail = productDetail,
                     productPhotos = productPhotos.toImmutableList(),
                     marketInfo = storeInfo,
@@ -157,31 +178,30 @@ private fun ProductDetailScreen(
                     modifier = Modifier.padding(innerPadding),
                 )
 
-                // TODO: 중첩 if문 로직 수정
-                if (sheetVisibility) {
-                    if (productDetail.isOwnedByCurrentUser) {
-                        MyProductBottomSheet(
-                            tradeType = tradeType,
-                            tradeStatus = tradeStatus,
-                            onDismissRequest = { sheetVisibility = false },
-                            onModifyClick = {
-                                onModifyProductClick(
-                                    productDetail.productId,
-                                    tradeType
-                                )
-                            },
-                            onStatusChange = { newStatus ->
-                                onTradeStatusChange(productDetail.productId, newStatus.typeName)
-                            },
-                            onDeleteClick = { onDeleteProductClick(productDetail.productId) },
+                ProductDetailBottomSheet(
+                    sheetVisibility = sheetVisibility,
+                    productDetail = productDetail,
+                    tradeType = tradeType,
+                    tradeStatus = tradeStatus,
+                    onModifyProductClick = {
+                        onModifyProductClick(
+                            productDetail.productId,
+                            tradeType
                         )
-                    } else {
-                        ProductBottomSheet(
-                            onReportClick = { onReportProductClick(productDetail.productId) },
-                            onDismissRequest = { sheetVisibility = false },
-                        )
-                    }
-                }
+                    },
+                    onDeleteProductClick = { deleteDialogVisibility.value = true },
+                    onReportProductClick = { onReportProductClick(productDetail.productId) },
+                    onTradeStatusChange = { newStatus ->
+                        onTradeStatusChange(productDetail.productId, newStatus.typeName)
+                    },
+                    onBottomSheetDismiss = { sheetVisibility = false },
+                )
+
+                ProductDetailDeleteDialog(
+                    enabled = deleteDialogVisibility.value,
+                    onConfirmClick = { onDeleteProductClick(productDetail.productId) },
+                    onDismissClick = { deleteDialogVisibility.value = false },
+                )
             }
 
             is UiState.Failure -> {}
@@ -192,7 +212,7 @@ private fun ProductDetailScreen(
 }
 
 @Composable
-private fun ProductDetailSuccessScreen(
+private fun SuccessScreen(
     productDetail: ProductDetail,
     productPhotos: ImmutableList<ProductPhoto>,
     tradeType: TradeType,
@@ -260,6 +280,58 @@ private fun ProductDetailSuccessScreen(
     }
 }
 
+@Composable
+private fun ProductDetailBottomSheet(
+    sheetVisibility: Boolean,
+    productDetail: ProductDetail,
+    tradeType: TradeType,
+    tradeStatus: TradeStatusType,
+    onModifyProductClick: () -> Unit,
+    onDeleteProductClick: () -> Unit,
+    onReportProductClick: () -> Unit,
+    onTradeStatusChange: (TradeStatusType) -> Unit,
+    onBottomSheetDismiss: () -> Unit,
+) {
+    when {
+        sheetVisibility && productDetail.isOwnedByCurrentUser -> {
+            MyProductBottomSheet(
+                tradeType = tradeType,
+                tradeStatus = tradeStatus,
+                onDismissRequest = onBottomSheetDismiss,
+                onModifyClick = onModifyProductClick,
+                onStatusChange = onTradeStatusChange,
+                onDeleteClick = onDeleteProductClick,
+            )
+        }
+
+        sheetVisibility && !productDetail.isOwnedByCurrentUser -> {
+            ProductBottomSheet(
+                onReportClick = onReportProductClick,
+                onDismissRequest = onBottomSheetDismiss,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ProductDetailDeleteDialog(
+    enabled: Boolean,
+    onConfirmClick: () -> Unit,
+    onDismissClick: () -> Unit,
+) {
+    if (enabled) {
+        NapzakDialog(
+            title = stringResource(detail_dialog_delete_title),
+            subTitle = stringResource(detail_dialog_delete_sub_title),
+            dialogColor = NapzakDialogDefault.color.copy(
+                titleColor = NapzakMarketTheme.colors.red
+            ),
+            onConfirmClick = onConfirmClick,
+            onDismissClick = onDismissClick,
+        )
+    }
+}
+
 @Preview(showBackground = true, heightDp = 780, widthDp = 360)
 @Composable
 private fun ProductDetailScreenPreview() {
@@ -301,7 +373,7 @@ private fun ProductDetailScreenPreview() {
     val tradeStatus = TradeStatusType.get(mockProductDetail.tradeStatus, tradeType)
 
     NapzakMarketTheme {
-        ProductDetailSuccessScreen(
+        SuccessScreen(
             productDetail = mockProductDetail,
             productPhotos = mockProductDetail.productPhotos.toImmutableList(),
             marketInfo = mockProductDetail.storeInfo,

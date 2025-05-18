@@ -52,7 +52,7 @@ internal class ProductDetailViewModel @Inject constructor(
     private val _sideEffect = Channel<ProductDetailSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
 
-    suspend fun getProductDetail() {
+    fun getProductDetail() = viewModelScope.launch {
         if (productId != null) {
             productDetailRepository.getProductDetail(productId)
                 .onSuccess { response ->
@@ -72,7 +72,21 @@ internal class ProductDetailViewModel @Inject constructor(
         if (initialLoading) {
             initialLoading = false
         } else if (productId != null) {
-            setInterestProductUseCase(productId, isInterested)
+            setInterestProductUseCase(productId, isInterested).onSuccess {
+                updateInterestCount(isInterested)
+            }
+        }
+    }
+
+    private fun updateInterestCount(isInterested: Boolean) {
+        val increaseCount = if (isInterested) -1 else 1
+
+        _productDetail.update { uiState ->
+            UiState.Success(
+                (uiState as UiState.Success).data.copy(
+                    interestCount = uiState.data.interestCount + increaseCount
+                )
+            )
         }
     }
 
@@ -88,6 +102,7 @@ internal class ProductDetailViewModel @Inject constructor(
         productDetailRepository.deleteProduct(productId)
             .onSuccess {
                 _sideEffect.send(ProductDetailSideEffect.NavigateUp)
+                _sideEffect.send(ProductDetailSideEffect.ShowDeleteSnackBar)
             }
             .onFailure(Timber::e)
     }
