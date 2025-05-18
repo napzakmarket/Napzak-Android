@@ -35,7 +35,7 @@ fun MyPageRoute(
     onRecentClick: () -> Unit,
     onFavoriteClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    onHelpClick: () -> Unit,
+    openWebLink: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MyPageViewModel = hiltViewModel(),
 ) {
@@ -49,7 +49,7 @@ fun MyPageRoute(
         onRecentClick = onRecentClick,
         onFavoriteClick = onFavoriteClick,
         onSettingsClick = onSettingsClick,
-        onHelpClick = onHelpClick,
+        onHelpClick = { if (uiState.serviceLink.isNotBlank()) { openWebLink(uiState.serviceLink)}},
         modifier = modifier,
     )
 }

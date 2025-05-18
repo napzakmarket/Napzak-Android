@@ -34,6 +34,7 @@ class MyPageViewModel @Inject constructor(
                         profileImageUrl = storeInfo.photoUrl,
                         salesCount = storeInfo.salesCount,
                         purchaseCount = storeInfo.purchaseCount,
+                        serviceLink = storeInfo.serviceLink
                     )
                 }
             }
