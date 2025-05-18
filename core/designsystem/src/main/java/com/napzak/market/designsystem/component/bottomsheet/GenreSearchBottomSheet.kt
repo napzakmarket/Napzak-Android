@@ -221,7 +221,7 @@ fun GenreSearchBottomSheet(
                     WarningSnackBar(
                         message = stringResource(warning_snackbar_genre_limit_message),
                         modifier = Modifier
-                            .padding(bottom = 40.dp)
+                            .padding(bottom = 36.dp)
                     )
                 }
 
