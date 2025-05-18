@@ -1,5 +1,6 @@
 package com.napzak.market.main
 
+import android.app.Activity
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
@@ -12,9 +13,13 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -33,6 +38,7 @@ import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.login.navigation.Login
 import com.napzak.market.login.navigation.loginGraph
+import com.napzak.market.main.R.string.main_snack_bar_finish
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.mypage.navigation.mypageGraph
@@ -67,13 +73,29 @@ fun MainScreen(
     restartApplication: () -> Unit,
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val systemUiController = rememberSystemUiController()
     val snackBarHostState = remember { SnackbarHostState() }
     val snackBarController = remember { SnackBarController(snackBarHostState, coroutineScope) }
 
-    val statusBarColor = NapzakMarketTheme.colors.white
+    var backPressedTime by remember { mutableLongStateOf(0) }
+    val mainBackHandlerEvent = remember(backPressedTime) {
+        {
+            if (navigator.isRegister) {
+                navigator.dismissRegisterDialog()
+            } else {
+                if (System.currentTimeMillis() - backPressedTime <= 3000) {
+                    (context as Activity).finish()
+                } else {
+                    snackBarController.show(context.getString(main_snack_bar_finish))
+                }
+                backPressedTime = System.currentTimeMillis()
+            }
+        }
+    }
 
+    val statusBarColor = NapzakMarketTheme.colors.white
     SideEffect {
         systemUiController.setStatusBarColor(
             color = statusBarColor,
@@ -127,6 +149,7 @@ fun MainScreen(
                 MainNavHost(
                     navigator = navigator,
                     restartApplication = restartApplication,
+                    endApplicationAtHome = mainBackHandlerEvent,
                     modifier = Modifier.padding(innerPadding),
                 )
             }
@@ -138,8 +161,10 @@ fun MainScreen(
 private fun MainNavHost(
     navigator: MainNavigator,
     restartApplication: () -> Unit,
+    endApplicationAtHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
     NavHost(
         enterTransition = {
             EnterTransition.None
@@ -185,7 +210,7 @@ private fun MainNavHost(
         )
 
         homeGraph(
-            navigateToUp = navigator::navigateUp,
+            navigateToUp = endApplicationAtHome,
             navigateToSearch = { navigator.navController.navigateToSearch() },
             navigateToProductDetail = { navigator.navController.navigateToProductDetail(it) },
             navigateToExploreSell = {
