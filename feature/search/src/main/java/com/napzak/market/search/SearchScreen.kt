@@ -31,7 +31,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -54,6 +56,7 @@ import com.napzak.market.search.component.SuggestedGenreCard
 import com.napzak.market.search.component.SuggestedKeywordChip
 import com.napzak.market.search.state.SearchUiState
 import com.napzak.market.util.android.noRippleClickable
+import kotlinx.coroutines.delay
 
 const val EMPTY_TEXT = ""
 
@@ -137,6 +140,15 @@ private fun SearchSuccessScreen(
     onRecommendedGenreClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(Unit) {
+        delay(100)
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -168,6 +180,7 @@ private fun SearchSuccessScreen(
                 hint = stringResource(search_hint),
                 onResetClick = { onTextChange(EMPTY_TEXT) },
                 onSearchClick = onSearchClick,
+                focusRequester = focusRequester,
             )
         }
 
