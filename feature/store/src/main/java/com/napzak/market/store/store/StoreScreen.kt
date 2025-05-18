@@ -177,7 +177,8 @@ private fun StoreScreen(
                     isOnSale = isOnSale,
                     sortType = sortOption,
                     genreItems = genreSearchResultItems,
-                    productList = (uiState.storeProductsState as UiState.Success<List<Product>>).data,
+                    productCount = (uiState.storeProductsState as UiState.Success<Pair<Int, List<Product>>>).data.first,
+                    productList = (uiState.storeProductsState as UiState.Success<Pair<Int, List<Product>>>).data.second,
                     bottomSheetState = bottomSheetState,
                     onProfileEditClick = onProfileEditClick,
                     onTabClicked = onTabClicked,
@@ -209,6 +210,7 @@ private fun StoreSuccessScreen(
     isOnSale: Boolean,
     sortType: SortType,
     genreItems: List<Genre>,
+    productCount: Int,
     productList: List<Product>,
     bottomSheetState: StoreBottomSheetState,
     onProfileEditClick: () -> Unit,
@@ -249,6 +251,7 @@ private fun StoreSuccessScreen(
             filteredGenres = filteredGenres,
             isOnSale = isOnSale,
             sortType = sortType,
+            productCount = productCount,
             productList = productList,
             onProfileEditClick = onProfileEditClick,
             onTabClicked = onTabClicked,
@@ -312,6 +315,7 @@ private fun StoreScrollSection(
     selectedTab: MarketTab,
     filteredGenres: List<Genre>,
     isOnSale: Boolean,
+    productCount: Int,
     productList: List<Product>,
     sortType: SortType,
     onProfileEditClick: () -> Unit,
@@ -389,7 +393,7 @@ private fun StoreScrollSection(
                                     append(stringResource(store_product))
                                 }
                                 withStyle(style = SpanStyle(color = NapzakMarketTheme.colors.purple500)) {
-                                    append(stringResource(store_count, productList.size))
+                                    append(stringResource(store_count, productCount))
                                 }
                             },
                             style = NapzakMarketTheme.typography.body14sb,
@@ -593,6 +597,7 @@ private fun StoreScreenPreview(modifier: Modifier = Modifier) {
             isOnSale = false,
             sortType = SortType.RECENT,
             genreItems = emptyList(),
+            productCount = 0,
             productList = emptyList(),
             bottomSheetState = StoreBottomSheetState(),
             onBackButtonClick = {},
