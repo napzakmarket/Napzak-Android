@@ -70,7 +70,7 @@ internal fun EditStoreRoute(
     EditStoreScreen(
         uiState = uiState,
         onStoreNameChange = {
-            viewModel.updateNickname(nickName = it)
+            viewModel.updateNickname(value = it)
         },
         onStoreIntroductionChange = { viewModel.updateUiState(description = it) },
         onStoreGenreChange = { viewModel.updateUiState(genres = it) },

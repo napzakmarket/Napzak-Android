@@ -139,10 +139,11 @@ internal class EditStoreViewModel @Inject constructor(
         }
     }
 
-    fun updateNickname(nickName: String) {
-        val nicknameValidationResult = validateNicknameUseCase(nickName)
+    fun updateNickname(value: String) {
+        val nickname = value.take(NICKNAME_MAX_LENGTH)
+        val nicknameValidationResult = validateNicknameUseCase(nickname)
         updateUiState(
-            name = nickName,
+            name = nickname,
             nickNameValidationState = nicknameValidationResult,
             nickNameDuplicationState = UiState.Empty
         )
@@ -195,7 +196,7 @@ internal class EditStoreViewModel @Inject constructor(
                 storeDetail = currentState.storeDetail.copy(
                     coverUrl = newCoverUrl,
                     photoUrl = newPhotoUrl,
-                    nickname = name.take(NICKNAME_MAX_LENGTH),
+                    nickname = name,
                     description = description.take(DESCRIPTION_MAX_LENGTH),
                     preferredGenres = genres.take(GENRE_MAX_LENGTH)
                 )
