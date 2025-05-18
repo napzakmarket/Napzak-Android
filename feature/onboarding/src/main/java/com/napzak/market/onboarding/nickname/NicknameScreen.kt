@@ -80,7 +80,7 @@ fun NicknameScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(NapzakMarketTheme.colors.white)
-            .padding(horizontal = 20.dp, vertical = 40.dp)
+            .padding(horizontal = 20.dp, vertical = 60.dp)
             .padding(
                 bottom = WindowInsets.navigationBars
                     .asPaddingValues()
