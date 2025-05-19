@@ -4,13 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.genre.usecase.SetPreferredGenreUseCase
 import com.napzak.market.genre.usecase.SetSearchPreferredGenresUseCase
+import com.napzak.market.onboarding.genre.model.GenreEvent
 import com.napzak.market.onboarding.genre.model.GenreUiModel
 import com.napzak.market.onboarding.genre.model.GenreUiState
 import com.napzak.market.store.usecase.SetRegisterGenres
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -27,6 +30,9 @@ class GenreViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(GenreUiState())
     val uiState: StateFlow<GenreUiState> = _uiState.asStateFlow()
 
+    private val _event = MutableSharedFlow<GenreEvent>()
+    val event: SharedFlow<GenreEvent> = _event
+
     private var searchJob: Job? = null
 
     fun updatePreferredGenre() {
@@ -38,41 +44,47 @@ class GenreViewModel @Inject constructor(
         }
     }
 
-    fun onGenreClick(item: GenreUiModel): Boolean {
+    fun onGenreClick(item: GenreUiModel) {
         var changed = false
+        val isAlreadySelected = item.isSelected
 
         _uiState.update { state ->
-            val isAlreadySelected = item.isSelected
             val canSelectMore = state.selectedGenres.size < MAX_SELECTED_COUNT
 
-            state.copy(
-                genres = state.genres.map {
-                    if (it.id == item.id) {
-                        when {
-                            isAlreadySelected -> {
-                                changed = true
-                                it.copy(isSelected = false)
-                            }
+            if (!isAlreadySelected && !canSelectMore) {
+                viewModelScope.launch { _event.emit(GenreEvent.MaxSelectionReached) }
+            }
 
-                            canSelectMore -> {
-                                changed = true
-                                it.copy(isSelected = true)
-                            }
-
-                            else -> it
+            val updatedGenres = state.genres.map {
+                if (it.id == item.id) {
+                    when {
+                        isAlreadySelected -> {
+                            changed = true
+                            it.copy(isSelected = false)
                         }
-                    } else it
-                },
-                selectedGenres = updateSelectedGenresList(
-                    selectedGenres = state.selectedGenres,
-                    clickedItem = item,
-                    isAlreadySelected = isAlreadySelected,
-                    canSelectMore = canSelectMore,
-                ),
+
+                        canSelectMore -> {
+                            changed = true
+                            it.copy(isSelected = true)
+                        }
+
+                        else -> it
+                    }
+                } else it
+            }
+
+            val updatedSelectedGenres = updateSelectedGenresList(
+                selectedGenres = state.selectedGenres,
+                clickedItem = item,
+                isAlreadySelected = isAlreadySelected,
+                canSelectMore = canSelectMore,
+            )
+
+            state.copy(
+                genres = updatedGenres,
+                selectedGenres = updatedSelectedGenres,
             )
         }
-
-        return changed
     }
 
     private fun updateSelectedGenresList(
