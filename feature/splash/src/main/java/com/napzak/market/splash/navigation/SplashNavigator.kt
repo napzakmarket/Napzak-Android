@@ -9,12 +9,14 @@ import com.napzak.market.splash.SplashRoute
 import kotlinx.serialization.Serializable
 
 fun NavGraphBuilder.splashGraph(
+    onNavigateToMain: () -> Unit,
     onNavigateToOnboarding: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<Splash> {
         SplashRoute(
             modifier = modifier.systemBarsPadding(),
+            onNavigateToMain = onNavigateToMain,
             onNavigateToOnboarding = onNavigateToOnboarding,
         )
     }

@@ -172,6 +172,12 @@ private fun MainNavHost(
         startDestination = navigator.startDestination
     ) {
         splashGraph(
+            onNavigateToMain = {
+                navigator.navController.navigate(Home) {
+                    popUpTo<Splash> { inclusive = true }
+                    launchSingleTop = true
+                }
+            },
             onNavigateToOnboarding = {
                 navigator.navController.navigate(Login) {
                     popUpTo<Splash> { inclusive = true }
