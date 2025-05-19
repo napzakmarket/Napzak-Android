@@ -53,7 +53,10 @@ internal fun EditStoreDescriptionSection(
                     NapzakMarketTheme.colors.gray50,
                     RoundedCornerShape(14.dp),
                 )
-                .padding(PaddingValues(14.dp, 16.dp, 14.dp, 16.dp)),
+                .padding(
+                    horizontal = 14.dp,
+                    vertical = 16.dp,
+                ),
         )
 
         Spacer(Modifier.height(14.dp))

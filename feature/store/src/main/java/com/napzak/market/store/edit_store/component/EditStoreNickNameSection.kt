@@ -52,7 +52,7 @@ internal fun EditStoreNickNameSection(
         subtitle = stringResource(store_edit_sub_title_name),
     ) {
         Column(
-            modifier = Modifier.padding(start = 20.dp, end = 20.dp),
+            modifier = Modifier.padding(horizontal = 20.dp),
         ) {
             NapzakDefaultTextField(
                 text = marketName,
