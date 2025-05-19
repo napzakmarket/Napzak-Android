@@ -115,7 +115,9 @@ internal fun RegistrationViewGroup(
             InputTextField(
                 text = productName,
                 onTextChange = {
-                    if (it.length <= MAX_PRODUCT_NAME) onProductNameChange(it)
+                    if (productName.length <= MAX_PRODUCT_NAME) {
+                        onProductNameChange(it.take(MAX_PRODUCT_NAME))
+                    }
                 },
                 hint = stringResource(product_name_hint),
             )
@@ -148,7 +150,9 @@ internal fun RegistrationViewGroup(
             InputTextField(
                 text = productDescription,
                 onTextChange = {
-                    if (it.length <= MAX_PRODUCT_DESCRIPTION) onProductDescriptionChange(it)
+                    if (productDescription.length <= MAX_PRODUCT_DESCRIPTION) {
+                        onProductDescriptionChange(it.take(MAX_PRODUCT_DESCRIPTION))
+                    }
                 },
                 hint = stringResource(product_description_hint),
                 modifier = Modifier.height(136.dp),
