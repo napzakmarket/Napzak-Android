@@ -10,10 +10,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.napzak.market.designsystem.R.drawable.ic_logo
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -21,13 +26,18 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SplashRoute(
+    onNavigateToMain: () -> Unit,
     onNavigateToOnboarding: () -> Unit,
+    viewModel: SplashViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
 ) {
     val systemUiController = rememberSystemUiController()
     val splashColor = NapzakMarketTheme.colors.purple500
     val originalColor = NapzakMarketTheme.colors.white
     val originalDarkIcons = true
+
+    var isDone by remember { mutableStateOf(false) }
+    var isSuccess by remember { mutableStateOf(false) }
 
     SideEffect {
         systemUiController.setSystemBarsColor(
@@ -46,8 +56,21 @@ fun SplashRoute(
     }
 
     LaunchedEffect(Unit) {
+        val result = viewModel.tryAutoLogin()
+        isSuccess = result.isSuccess
+
         delay(2500)
-        onNavigateToOnboarding()
+        isDone = true
+    }
+
+    LaunchedEffect(isDone, isSuccess) {
+        if (isDone) {
+            if (isSuccess) {
+                onNavigateToMain()
+            } else {
+                onNavigateToOnboarding()
+            }
+        }
     }
 
     SplashScreen(
@@ -55,7 +78,6 @@ fun SplashRoute(
         backgroundColor = splashColor,
     )
 }
-
 
 @Composable
 private fun SplashScreen(
