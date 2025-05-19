@@ -50,6 +50,7 @@ import com.napzak.market.feature.onboarding.R.string.onboarding_genre_skip
 import com.napzak.market.feature.onboarding.R.string.onboarding_genre_sub_title
 import com.napzak.market.feature.onboarding.R.string.onboarding_genre_title
 import com.napzak.market.onboarding.genre.component.GenreGridList
+import com.napzak.market.onboarding.genre.model.GenreEvent
 import com.napzak.market.onboarding.genre.model.GenreUiModel
 import com.napzak.market.onboarding.genre.model.GenreUiState
 import com.napzak.market.util.android.model.ShadowDirection
@@ -73,17 +74,23 @@ fun GenreRoute(
         viewModel.updatePreferredGenre()
     }
 
-    GenreScreen(
-        uiState = uiState,
-        onGenreClick = { genre ->
-            if (!viewModel.onGenreClick(genre) && uiState.selectedGenres.size >= 7) {
-                isShownSnackBar = true
-                scope.launch {
-                    delay(2000)
-                    isShownSnackBar = false
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                GenreEvent.MaxSelectionReached -> {
+                    isShownSnackBar = true
+                    scope.launch {
+                        delay(2000)
+                        isShownSnackBar = false
+                    }
                 }
             }
-        },
+        }
+    }
+
+    GenreScreen(
+        uiState = uiState,
+        onGenreClick = viewModel::onGenreClick,
         onGenreRemove = viewModel::onGenreRemove,
         onAllGenresReset = viewModel::onResetAllGenres,
         onSearchTextChange = viewModel::onSearchTextChange,

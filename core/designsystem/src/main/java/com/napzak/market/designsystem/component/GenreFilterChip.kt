@@ -1,5 +1,6 @@
-package com.napzak.market.explore.component
+package com.napzak.market.designsystem.component
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -12,30 +13,33 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_down_chevron
+import com.napzak.market.designsystem.R.string.genre_filter_genre
+import com.napzak.market.designsystem.R.string.genre_filter_genre_extra_count
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.explore.R.string.explore_ellipsis
-import com.napzak.market.feature.explore.R.string.explore_genre
-import com.napzak.market.feature.explore.R.string.explore_genre_extra_count
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.util.common.ellipsis
 
-const val CHARACTER_MAX_COUNT = 5
+private const val CHARACTER_MAX_COUNT = 5
 
 @Composable
-internal fun GenreFilterChip(
+fun GenreFilterChip(
     genreList: List<Genre>,
     onChipClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+    val formatGenreText = remember(genreList) { getFilterName(context, genreList) }
     val textColor = if (genreList.isEmpty()) NapzakMarketTheme.colors.gray400
     else NapzakMarketTheme.colors.white
     val borderColor = if (genreList.isEmpty()) NapzakMarketTheme.colors.gray100
@@ -52,7 +56,7 @@ internal fun GenreFilterChip(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = getFilterName(genreList),
+            text = formatGenreText,
             style = NapzakMarketTheme.typography.caption12sb,
             color = textColor,
         )
@@ -68,23 +72,17 @@ internal fun GenreFilterChip(
     }
 }
 
-@Composable
-private fun getFilterName(genreList: List<Genre>): String {
-    if (genreList.isEmpty()) return stringResource(explore_genre)
+private fun getFilterName(context: Context, genreList: List<Genre>): String {
+    if (genreList.isEmpty()) return context.getString(genre_filter_genre)
 
     val firstGenreName = genreList.first().genreName
-
-    val genreName = if (firstGenreName.length > CHARACTER_MAX_COUNT) {
-        stringResource(explore_ellipsis, firstGenreName.take(CHARACTER_MAX_COUNT - 1))
-    } else {
-        firstGenreName
-    }
+    val genreName = firstGenreName.ellipsis(CHARACTER_MAX_COUNT)
 
     return if (genreList.size == 1) {
         genreName
     } else {
-        stringResource(
-            explore_genre_extra_count,
+        context.getString(
+            genre_filter_genre_extra_count,
             genreName,
             genreList.size - 1
         )

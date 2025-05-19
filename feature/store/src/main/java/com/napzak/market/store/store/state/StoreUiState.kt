@@ -8,7 +8,7 @@ import com.napzak.market.store.model.StoreDetail
 @Immutable
 data class StoreUiState(
     val storeDetailState: UiState<StoreDetail>,
-    val storeProductsState: UiState<List<Product>>,
+    val storeProductsState: UiState<Pair<Int, List<Product>>>,
 ) {
     val isLoaded: UiState<Unit>
         get() = when {

@@ -4,13 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.genre.usecase.SetPreferredGenreUseCase
 import com.napzak.market.genre.usecase.SetSearchPreferredGenresUseCase
+import com.napzak.market.onboarding.genre.model.GenreEvent
 import com.napzak.market.onboarding.genre.model.GenreUiModel
 import com.napzak.market.onboarding.genre.model.GenreUiState
 import com.napzak.market.store.usecase.SetRegisterGenres
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -27,6 +30,9 @@ class GenreViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(GenreUiState())
     val uiState: StateFlow<GenreUiState> = _uiState.asStateFlow()
 
+    private val _event = MutableSharedFlow<GenreEvent>()
+    val event: SharedFlow<GenreEvent> = _event
+
     private var searchJob: Job? = null
 
     fun updatePreferredGenre() {
@@ -38,11 +44,16 @@ class GenreViewModel @Inject constructor(
         }
     }
 
-    fun onGenreClick(item: GenreUiModel): Boolean {
+    fun onGenreClick(item: GenreUiModel) {
         var changed = false
+        val isAlreadySelected = item.isSelected
+
         _uiState.update { state ->
-            val isAlreadySelected = item.isSelected
-            val canSelectMore = state.selectedGenres.size < 7
+            val canSelectMore = state.selectedGenres.size < MAX_SELECTED_COUNT
+
+            if (!isAlreadySelected && !canSelectMore) {
+                viewModelScope.launch { _event.emit(GenreEvent.MaxSelectionReached) }
+            }
 
             val updatedGenres = state.genres.map {
                 if (it.id == item.id) {
@@ -62,23 +73,53 @@ class GenreViewModel @Inject constructor(
                 } else it
             }
 
-            state.copy(genres = updatedGenres)
+            val updatedSelectedGenres = updateSelectedGenresList(
+                selectedGenres = state.selectedGenres,
+                clickedItem = item,
+                isAlreadySelected = isAlreadySelected,
+                canSelectMore = canSelectMore,
+            )
+
+            state.copy(
+                genres = updatedGenres,
+                selectedGenres = updatedSelectedGenres,
+            )
         }
-        return changed
     }
 
-    fun onGenreRemove(genre: GenreUiModel) {
+    private fun updateSelectedGenresList(
+        selectedGenres: List<GenreUiModel>,
+        clickedItem: GenreUiModel,
+        isAlreadySelected: Boolean,
+        canSelectMore: Boolean,
+    ): List<GenreUiModel> {
+        return when {
+            isAlreadySelected -> selectedGenres.filterNot { it.id == clickedItem.id }
+            canSelectMore -> selectedGenres + clickedItem
+            else -> selectedGenres
+        }
+    }
+
+    fun onGenreRemove(item: GenreUiModel) {
         _uiState.update { state ->
-            val updated = state.genres.map {
-                if (it.id == genre.id) it.copy(isSelected = false) else it
-            }
-            state.copy(genres = updated)
+            state.copy(
+                genres = state.genres.map {
+                    if (it.id == item.id) it.copy(isSelected = false)
+                    else it
+                },
+                selectedGenres = state.selectedGenres.filterNot { it.id == item.id },
+            )
         }
     }
 
     fun onResetAllGenres() {
         _uiState.update { state ->
-            state.copy(genres = state.genres.map { it.copy(isSelected = false) })
+            state.copy(
+                genres = state.genres.map {
+                    if (it.isSelected) it.copy(isSelected = false) else it
+                },
+                selectedGenres = emptyList(),
+            )
         }
     }
 
@@ -148,5 +189,9 @@ class GenreViewModel @Inject constructor(
         _uiState.update {
             it.copy(genres = merged + additional)
         }
+    }
+
+    companion object{
+        private const val MAX_SELECTED_COUNT = 7
     }
 }
