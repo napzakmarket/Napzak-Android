@@ -36,8 +36,7 @@ fun GenreSearchHeader(
                 elevation = 4.dp,
                 spotColor = NapzakMarketTheme.colors.transBlack,
                 ambientColor = NapzakMarketTheme.colors.transBlack,
-            )
-            .background(color = NapzakMarketTheme.colors.white)
+            ).background(color = NapzakMarketTheme.colors.white)
     ) {
         val paddedModifier = Modifier.padding(horizontal = 28.dp)
 

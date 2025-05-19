@@ -24,6 +24,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,7 +42,7 @@ class PurchaseRegistrationViewModel @Inject constructor(
     getProductPresignedUrlUseCase,
     uploadImageUseCase,
 ) {
-    private val productId: Long? = savedStateHandle.get<Long>(PRODUCT_ID_KEY)
+    private var productId: Long? = null
 
     private val _uiState = MutableStateFlow(PurchaseUiState())
     val purchaseUiState = _uiState.asStateFlow()
@@ -49,6 +51,15 @@ class PurchaseRegistrationViewModel @Inject constructor(
     val sideEffect = _sideEffect.asSharedFlow()
 
     init {
+        viewModelScope.launch {
+            savedStateHandle.getStateFlow<Long?>(PRODUCT_ID_KEY, null)
+                .filterNotNull()
+                .take(1)
+                .collect { id ->
+                    productId = id
+                    getRegisteredPurchaseProduct(id)
+                }
+        }
         viewModelScope.launch {
             GenreEventBus.genreSelected.collect { genre ->
                 updateGenre(genre)
@@ -91,20 +102,19 @@ class PurchaseRegistrationViewModel @Inject constructor(
                 updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
             }
         } ?: run {
-            registerProductUseCase(product).onSuccess { productId ->
+            registerProductUseCase(product).onSuccess { id ->
                 updateLoadState(UiState.Success(Unit))
-                _sideEffect.emit(NavigateToDetail(productId))
+                _sideEffect.emit(NavigateToDetail(id))
             }.onFailure {
                 updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
             }
         }
     }
 
-    fun getRegisteredPurchaseProduct() = viewModelScope.launch {
-        productId?.let { id ->
+    fun getRegisteredPurchaseProduct(productId: Long) = viewModelScope.launch {
             updateLoadState(UiState.Loading)
 
-            getRegisteredPurchaseProductUseCase(id).onSuccess { product ->
+            getRegisteredPurchaseProductUseCase(productId).onSuccess { product ->
                 _uiState.update {
                     it.copy(isNegotiable = product.isPriceNegotiable)
                 }
@@ -119,6 +129,5 @@ class PurchaseRegistrationViewModel @Inject constructor(
             }.onFailure {
                 updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
             }
-        }
     }
 }

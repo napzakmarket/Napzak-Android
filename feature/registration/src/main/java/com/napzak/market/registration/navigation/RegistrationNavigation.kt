@@ -1,5 +1,6 @@
 package com.napzak.market.registration.navigation
 
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -35,7 +36,7 @@ fun NavGraphBuilder.registrationGraph(
             navigateToUp = navigateToUp,
             navigateToDetail = navigateToDetail,
             navigateToGenreSearch = navigateToGenreSearch,
-            modifier = modifier,
+            modifier = modifier.systemBarsPadding(),
         )
     }
 
@@ -44,14 +45,14 @@ fun NavGraphBuilder.registrationGraph(
             navigateToUp = navigateToUp,
             navigateToDetail = navigateToDetail,
             navigateToGenreSearch = navigateToGenreSearch,
-            modifier = modifier,
+            modifier = modifier.systemBarsPadding(),
         )
     }
 
     composable<GenreSearch> {
         GenreSearchRoute(
             navigateToUp = navigateToUp,
-            modifier = modifier,
+            modifier = modifier.systemBarsPadding(),
         )
     }
 }

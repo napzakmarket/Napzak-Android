@@ -27,6 +27,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,7 +45,7 @@ class SaleRegistrationViewModel @Inject constructor(
     getProductPresignedUrlUseCase,
     uploadImageUseCase,
 ) {
-    private val productId: Long? = savedStateHandle.get<Long>(PRODUCT_ID_KEY)
+    private var productId: Long? = null
 
     private val _uiState = MutableStateFlow(SaleUiState())
     val saleUiState = _uiState.asStateFlow()
@@ -52,6 +54,15 @@ class SaleRegistrationViewModel @Inject constructor(
     val sideEffect = _sideEffect.asSharedFlow()
 
     init {
+        viewModelScope.launch {
+            savedStateHandle.getStateFlow<Long?>(PRODUCT_ID_KEY, null)
+                .filterNotNull()
+                .take(1)
+                .collect { id ->
+                    productId = id
+                    getRegisteredSaleProduct(id)
+                }
+        }
         viewModelScope.launch {
             GenreEventBus.genreSelected.collect { genre ->
                 updateGenre(genre)
@@ -126,46 +137,44 @@ class SaleRegistrationViewModel @Inject constructor(
                 updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
             }
         } ?: run {
-            registerProductUseCase(product).onSuccess { productId ->
+            registerProductUseCase(product).onSuccess { id ->
                 updateLoadState(UiState.Success(Unit))
-                _sideEffect.emit(NavigateToDetail(productId))
+                _sideEffect.emit(NavigateToDetail(id))
             }.onFailure {
                 updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
             }
         }
     }
 
-    fun getRegisteredSaleProduct() = viewModelScope.launch {
-        productId?.let { id ->
-            updateLoadState(UiState.Loading)
+    fun getRegisteredSaleProduct(productId: Long) = viewModelScope.launch {
+        updateLoadState(UiState.Loading)
 
-            getRegisteredSaleProductUseCase(id).onSuccess { product ->
-                _uiState.update {
-                    it.copy(
-                        condition = fromConditionByName(product.productCondition),
-                        isShippingFeeIncluded = product.isDeliveryIncluded,
-                        normalShippingFee = product.standardDeliveryFee.toString(),
-                        halfShippingFee = product.halfDeliveryFee.toString(),
-                    )
-                }
-                if (product.standardDeliveryFee > 0) updateNormalShippingFeeInclusion(true)
-                if (product.halfDeliveryFee > 0) updateHalfShippingFeeInclusion(true)
-
-                updatePhotos(product.imageUrls.map {
-                    Photo(
-                        uri = it.imageUrl.toUri(),
-                        photoId = it.photoId,
-                    )
-                })
-                updateGenre(Genre(product.genreId, product.genreName))
-                updateTitle(product.title)
-                updateDescription(product.description)
-                updatePrice(product.price.toString())
-
-                updateLoadState(UiState.Success(Unit))
-            }.onFailure {
-                updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
+        getRegisteredSaleProductUseCase(productId).onSuccess { product ->
+            _uiState.update {
+                it.copy(
+                    condition = fromConditionByName(product.productCondition),
+                    isShippingFeeIncluded = product.isDeliveryIncluded,
+                    normalShippingFee = product.standardDeliveryFee.toString(),
+                    halfShippingFee = product.halfDeliveryFee.toString(),
+                )
             }
+            if (product.standardDeliveryFee > 0) updateNormalShippingFeeInclusion(true)
+            if (product.halfDeliveryFee > 0) updateHalfShippingFeeInclusion(true)
+
+            updatePhotos(product.imageUrls.map {
+                Photo(
+                    uri = it.imageUrl.toUri(),
+                    photoId = it.photoId,
+                )
+            })
+            updateGenre(Genre(product.genreId, product.genreName))
+            updateTitle(product.title)
+            updateDescription(product.description)
+            updatePrice(product.price.toString())
+
+            updateLoadState(UiState.Success(Unit))
+        }.onFailure {
+            updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
         }
     }
 }
