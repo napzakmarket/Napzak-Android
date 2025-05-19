@@ -1,7 +1,6 @@
 package com.napzak.market.store.edit_store.component
 
 import android.net.Uri
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -49,25 +48,15 @@ internal fun EditStorePhotoSection(
 
     val photoType = remember { mutableStateOf(PhotoType.COVER) }
 
-    val imageStorageLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetMultipleContents()
-    ) { uris: List<Uri> -> onPhotoChange(photoType.value, uris.first()) }
-
     val photoPickerLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri -> onPhotoChange(photoType.value, uri) }
 
     val onPhotoClick: (PhotoType) -> Unit = { editedPhotoType ->
         photoType.value = editedPhotoType
-        when {
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> imageStorageLauncher.launch(
-                INPUT_TYPE
-            )
-
-            else -> photoPickerLauncher.launch(
-                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-            )
-        }
+        photoPickerLauncher.launch(
+            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        )
     }
 
     Box(
