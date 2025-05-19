@@ -20,11 +20,7 @@ class MyPageViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(MyPageUiState())
     val uiState: StateFlow<MyPageUiState> = _uiState.asStateFlow()
 
-    init {
-        fetchStoreInfo()
-    }
-
-    private fun fetchStoreInfo() = viewModelScope.launch {
+    fun fetchStoreInfo() = viewModelScope.launch {
         storeRepository.fetchStoreInfo()
             .onSuccess { storeInfo ->
                 _uiState.update {
