@@ -32,8 +32,10 @@ import com.napzak.market.explore.navigation.navigateToExplore
 import com.napzak.market.explore.navigation.navigateToGenreDetail
 import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.homeGraph
+import com.napzak.market.home.navigation.navigateToHome
 import com.napzak.market.login.navigation.Login
 import com.napzak.market.login.navigation.loginGraph
+import com.napzak.market.login.navigation.navigateToLogin
 import com.napzak.market.main.R.string.main_snack_bar_finish
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
@@ -173,11 +175,21 @@ private fun MainNavHost(
         startDestination = navigator.startDestination
     ) {
         splashGraph(
+            onNavigateToMain = {
+                navigator.navController.navigateToHome(
+                    navOptions {
+                        popUpTo<Splash> { inclusive = true }
+                        launchSingleTop = true
+                    }
+                )
+            },
             onNavigateToOnboarding = {
-                navigator.navController.navigate(Login) {
-                    popUpTo<Splash> { inclusive = true }
-                    launchSingleTop = true
-                }
+                navigator.navController.navigateToLogin(
+                    navOptions {
+                        popUpTo<Splash> { inclusive = true }
+                        launchSingleTop = true
+                    }
+                )
             }
         )
 

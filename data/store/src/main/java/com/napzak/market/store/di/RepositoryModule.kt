@@ -3,9 +3,11 @@ package com.napzak.market.store.di
 import com.napzak.market.store.repository.SettingRepository
 import com.napzak.market.store.repository.StoreRepository
 import com.napzak.market.store.repository.AuthRepository
+import com.napzak.market.store.repository.TokenProvider
 import com.napzak.market.store.repositoryimpl.SettingRepositoryImpl
 import com.napzak.market.store.repositoryimpl.StoreRepositoryImpl
 import com.napzak.market.store.repositoryimpl.AuthRepositoryImpl
+import com.napzak.market.store.repositoryimpl.TokenProviderImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -32,4 +34,9 @@ abstract class RepositoryModule {
     abstract fun bindTokenReissuer(
         impl: AuthRepositoryImpl
     ): AuthRepository
+
+    @Binds
+    abstract fun bindTokenProvider(
+        impl: TokenProviderImpl
+    ): TokenProvider
 }
