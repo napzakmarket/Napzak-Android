@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
+import androidx.navigation.navOptions
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
@@ -31,8 +32,10 @@ import com.napzak.market.explore.navigation.navigateToExplore
 import com.napzak.market.explore.navigation.navigateToGenreDetail
 import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.homeGraph
+import com.napzak.market.home.navigation.navigateToHome
 import com.napzak.market.login.navigation.Login
 import com.napzak.market.login.navigation.loginGraph
+import com.napzak.market.login.navigation.navigateToLogin
 import com.napzak.market.main.R.string.main_snack_bar_finish
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
@@ -173,16 +176,20 @@ private fun MainNavHost(
     ) {
         splashGraph(
             onNavigateToMain = {
-                navigator.navController.navigate(Home) {
-                    popUpTo<Splash> { inclusive = true }
-                    launchSingleTop = true
-                }
+                navigator.navController.navigateToHome(
+                    navOptions {
+                        popUpTo<Splash> { inclusive = true }
+                        launchSingleTop = true
+                    }
+                )
             },
             onNavigateToOnboarding = {
-                navigator.navController.navigate(Login) {
-                    popUpTo<Splash> { inclusive = true }
-                    launchSingleTop = true
-                }
+                navigator.navController.navigateToLogin(
+                    navOptions {
+                        popUpTo<Splash> { inclusive = true }
+                        launchSingleTop = true
+                    }
+                )
             }
         )
 
