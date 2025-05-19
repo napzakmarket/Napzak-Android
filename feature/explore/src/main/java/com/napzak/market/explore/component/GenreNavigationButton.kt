@@ -11,14 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.designsystem.R.drawable.ic_right_chevron
+import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.util.android.noRippleClickable
-import com.napzak.market.feature.explore.R.string.explore_ellipsis
+import com.napzak.market.util.common.ellipsis
 
 private const val MAX_LENGTH = 20
 
@@ -28,8 +27,7 @@ internal fun GenreNavigationButton(
     onBlockClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val genre = if (genreName.length > MAX_LENGTH) stringResource(explore_ellipsis, genreName.take(MAX_LENGTH))
-    else genreName
+    val genre = genreName.ellipsis(MAX_LENGTH)
 
     Row(
         modifier = modifier

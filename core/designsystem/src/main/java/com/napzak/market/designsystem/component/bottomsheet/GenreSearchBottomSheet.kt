@@ -1,5 +1,8 @@
 package com.napzak.market.designsystem.component.bottomsheet
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,13 +45,16 @@ import com.napzak.market.designsystem.R.string.genre_apply_button
 import com.napzak.market.designsystem.R.string.genre_search_genre_limit_notice
 import com.napzak.market.designsystem.R.string.genre_search_hint
 import com.napzak.market.designsystem.R.string.genre_search_select_genre
+import com.napzak.market.designsystem.R.string.warning_snackbar_genre_limit_message
 import com.napzak.market.designsystem.component.GenreChipButtonGroup
 import com.napzak.market.designsystem.component.GenreListItem
+import com.napzak.market.designsystem.component.WarningSnackBar
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.util.android.noRippleClickable
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -80,6 +86,8 @@ fun GenreSearchBottomSheet(
             initialSelectedGenreList
         )
     }
+    var isShownSnackBar by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) { sheetState.expand() }
     LaunchedEffect(searchText) { onTextChange(searchText) }
@@ -174,6 +182,12 @@ fun GenreSearchBottomSheet(
                             } else {
                                 if (selectedGenreList.size < 7) {
                                     selectedGenreList += genreItem
+                                } else {
+                                    isShownSnackBar = true
+                                    scope.launch {
+                                        delay(2000)
+                                        isShownSnackBar = false
+                                    }
                                 }
                             }
                         },
@@ -196,16 +210,32 @@ fun GenreSearchBottomSheet(
                     ),
             )
 
-            ButtonSection(
-                onButtonClick = {
-                    coroutineScope
-                        .launch { sheetState.hide() }
-                        .invokeOnCompletion {
-                            focusManager.clearFocus()
-                            onButtonClick(selectedGenreList)
-                        }
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                AnimatedVisibility(
+                    visible = isShownSnackBar,
+                    enter = fadeIn(initialAlpha = 0f),
+                    exit = fadeOut(targetAlpha = 0f),
+                ) {
+                    WarningSnackBar(
+                        message = stringResource(warning_snackbar_genre_limit_message),
+                        modifier = Modifier
+                            .padding(bottom = 36.dp)
+                    )
                 }
-            )
+
+                ButtonSection(
+                    onButtonClick = {
+                        coroutineScope
+                            .launch { sheetState.hide() }
+                            .invokeOnCompletion {
+                                focusManager.clearFocus()
+                                onButtonClick(selectedGenreList)
+                            }
+                    }
+                )
+            }
         }
     }
 }
@@ -254,7 +284,7 @@ private fun GenreList(
             )
         }
 
-        item { Spacer(Modifier.height(13.dp)) }
+        item { Spacer(Modifier.height(120.dp)) }
     }
 }
 

@@ -16,10 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.component.productItem.NapzakSmallProductItem
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.product.model.Product
 import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.util.common.formatToPriceString
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -83,12 +85,14 @@ private fun ProductsRow(
     ) {
         items(products) { product ->
             with(product) {
+                val isSellElseBuy = TradeType.fromName(tradeType) == TradeType.SELL
+                
                 NapzakSmallProductItem(
                     title = productName,
                     genre = genreName,
                     imgUrl = photo,
-                    price = price.toString(),
-                    isSellElseBuy = false,
+                    price = price.toString().formatToPriceString(),
+                    isSellElseBuy = isSellElseBuy,
                     isLiked = isInterested,
                     isMyItem = isOwnedByCurrentUser,
                     isSuggestionAllowed = isPriceNegotiable,

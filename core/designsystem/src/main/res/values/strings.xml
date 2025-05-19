@@ -39,4 +39,8 @@
 
     <!--TopBar-->
     <string name="top_bar_navigate_up">뒤로가기</string>
+
+    <!--GenreFilterChip-->
+    <string name="genre_filter_genre">장르</string>
+    <string name="genre_filter_genre_extra_count">%s 외 %d</string>
 </resources>

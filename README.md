@@ -25,21 +25,6 @@
 - 자신만의 독특한 스타일로 마켓의 개성을 드러낼 수 있어요.
 - 관심 장르, 소개글, 프로필 이미지로 직접 커스텀하여 나만의 마켓을 꾸며보세요.
 
- <br>
-
-| 온보딩 | 홈 | 탐색 | 마이페이지/내마켓보기 | 상세페이지 | 
-|:-------:|:-------:|:-------:|:-------:|:-------:|
-| <video src="https://github.com/user-attachments/assets/0881948b-431e-4cd4-9542-d3dd40f3c96b" width=300/> | <video src="https://github.com/user-attachments/assets/6058aa20-ec9d-48f6-9de5-08a4dafae018" width=300/> | <video src="https://github.com/user-attachments/assets/6d181305-f693-4891-9f32-e947ef6b710b" width=300/> | <video src="https://github.com/user-attachments/assets/24f6bf0a-359e-453d-8ca1-fd1dc993ef01" width=300/> | <video src="https://github.com/user-attachments/assets/00eda027-80a8-4cc2-a5f4-0f0d72ad7660" width=300/> |
-
-
-
-
-
-  <br>
-
-## ⛰️ Issue Tracking
-[납작마켓 안드로이드 이슈 관리 노션](https://understood-soldier-501.notion.site/10543e9a6b8346f2b166f5dbcb6e0625?v=c8a51898f31f4e08a656b600b617e0f2&pvs=4)
-
 <br>
 
 ## 📄 Conventions
@@ -104,50 +89,44 @@
 ## 🤓 OverView
 ```
 📦com.napzak.market
+├─📂build-logic
+├─📂app
 ├─📂core
 │  ├─📂common
 │  ├─📂designsystem
-│  ├─📂local
-│  └─📂network
-│  └─📂type
+│  ├─📂util
 ├─📂data
-│  ├─📂chat
-│  ├─📂detailpage
-│  ├─📂dummy
-│  ├─📂explore
+│  ├─📂banner
 │  ├─📂genre
-│  ├─📂home
 │  ├─📂interest
-│  ├─📂marketinfo
-│  ├─📂mypage
-│  └─📂registration
+│  ├─📂local
+│  ├─📂presigned-url
+│  ├─📂product
+│  ├─📂registration
+│  ├─📂remote
+│  ├─📂report
+│  └─📂store
 ├─📂domain
-│  ├─📂chat
-│  ├─📂detailpage
-│  ├─📂dummy
-│  ├─📂explore
+│  ├─📂banner
 │  ├─📂genre
-│  ├─📂home
 │  ├─📂interest
-│  ├─📂marketinfo
-│  ├─📂mypage
-│  └─📂registration
+│  ├─📂presigned-url
+│  ├─📂product
+│  ├─📂registration
+│  ├─📂report
+│  └─📂store
 ├─📂presentaion
-│  ├─📂chat
-│  ├─📂detailpage
-│  ├─📂dummy
+│  ├─📂detail
 │  ├─📂explore
 │  ├─📂home
+│  ├─📂login
 │  ├─📂main
-│  ├─📂genre
-│  ├─📂home
-│  ├─📂interest
-│  ├─📂marketinfo
-│  ├─📂mypage
 │  ├─📂onboarding
-│  ├─📂prepare
+│  ├─📂registration
+│  ├─📂report
+│  ├─📂search
 │  ├─📂splash
-│  └─📂registration
+│  └─📂store
 ```
 </br>
 
@@ -156,5 +135,5 @@
 | <img src="https://avatars.githubusercontent.com/u/101652649?v=4" width = "200"/> | <img src="https://avatars.githubusercontent.com/u/89915076?v=4" width = "200" /> | <img src="https://github.com/user-attachments/assets/6b4d5b3c-6c6b-433b-8e21-2f3d2a1da2ec" width = "200"/> | <img src="https://avatars.githubusercontent.com/u/182846193?v=4" width = "200"/> | <img src="https://github.com/user-attachments/assets/a78f59d9-6e3b-4ee9-8382-9149f111c442" width = "200"/> |
 |:-------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|
 |                      [이석준](https://github.com/boiledEgg-s)                      |                        [김채린](https://github.com/chrin05)                        |                       [김종명](https://github.com/jm991014)                        |                       [장재원](https://github.com/jangsjw)                        |                        [이연진](https://github.com/yeonjeen)                        |
-| `온보딩` <br> `홈` | `탐색` <br> `내마켓` | `등록` | `상세보기` <br> `마이페이지` | `멘토` |
+| `홈`, `상세보기`, `탈퇴` <br> `프로필 편집`, `신고` | `탐색`, `장르상세` <br> `내마켓` | `등록` <br> `물품 정보 수정` | `마이페이지` <br> `설정` | `로그인` <br> `온보딩` |
 

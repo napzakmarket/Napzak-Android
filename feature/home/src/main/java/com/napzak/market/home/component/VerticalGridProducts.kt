@@ -29,6 +29,7 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.home.R.string.home_button_more
 import com.napzak.market.product.model.Product
 import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.util.common.formatToPriceString
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -102,7 +103,7 @@ internal fun VerticalGridProducts(
                                 genre = genreName,
                                 title = productName,
                                 imgUrl = photo,
-                                price = price.toString(),
+                                price = price.toString().formatToPriceString(),
                                 createdDate = uploadTime,
                                 reviewCount = chatCount.toString(),
                                 likeCount = interestCount.toString(),
