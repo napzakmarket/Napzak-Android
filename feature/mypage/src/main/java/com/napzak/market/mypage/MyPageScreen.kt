@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,6 +26,7 @@ import com.napzak.market.mypage.component.MyPageMenuCard
 import com.napzak.market.mypage.component.MyPageProfileSection
 import com.napzak.market.mypage.model.MyPageViewModel
 import com.napzak.market.mypage.state.MyPageUiState
+import com.napzak.market.util.common.openUrl
 
 
 @Composable
@@ -35,11 +37,11 @@ fun MyPageRoute(
     onRecentClick: () -> Unit,
     onFavoriteClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    openWebLink: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MyPageViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     MyPageScreen(
         uiState = uiState,
@@ -49,7 +51,11 @@ fun MyPageRoute(
         onRecentClick = onRecentClick,
         onFavoriteClick = onFavoriteClick,
         onSettingsClick = onSettingsClick,
-        onHelpClick = { if (uiState.serviceLink.isNotBlank()) { openWebLink(uiState.serviceLink)}},
+        onHelpClick = {
+            if (uiState.serviceLink.isNotBlank()) {
+                context.openUrl(uiState.serviceLink)
+            }
+        },
         modifier = modifier,
     )
 }
