@@ -34,8 +34,6 @@ import com.napzak.market.feature.store.R.drawable.ic_profile_edit
 import com.napzak.market.presigned_url.type.PhotoType
 import com.napzak.market.util.android.noRippleClickable
 
-private const val INPUT_TYPE = "image/*"
-
 @Composable
 internal fun EditStorePhotoSection(
     storeCover: String,
