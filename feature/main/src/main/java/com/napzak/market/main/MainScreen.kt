@@ -292,7 +292,6 @@ private fun MainNavHost(
             navigateToRecent = { /* TODO: 최근 본 상품 화면으로 이동 */ },
             navigateToFavorite = { /* TODO: 찜 화면으로 이동 */ },
             navigateToSettings = navigator.navController::navigateToSettings,
-            navigateToHelp = { /* TODO: 고객센터 화면으로 이동 */ },
             modifier = modifier,
         )
 

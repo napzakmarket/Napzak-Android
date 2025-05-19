@@ -21,7 +21,6 @@ fun NavGraphBuilder.mypageGraph(
     navigateToRecent: () -> Unit,
     navigateToFavorite: () -> Unit,
     navigateToSettings: () -> Unit,
-    navigateToHelp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<MyPageNavigation> {
@@ -36,7 +35,6 @@ fun NavGraphBuilder.mypageGraph(
             onRecentClick = navigateToRecent,
             onFavoriteClick = navigateToFavorite,
             onSettingsClick = navigateToSettings,
-            onHelpClick = navigateToHelp,
             modifier = modifier,
         )
     }

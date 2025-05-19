@@ -9,4 +9,5 @@ data class MyPageUiState(
     val profileImageUrl: String = "",
     val salesCount: Int = 0,
     val purchaseCount: Int = 0,
+    val serviceLink: String = "",
 )
