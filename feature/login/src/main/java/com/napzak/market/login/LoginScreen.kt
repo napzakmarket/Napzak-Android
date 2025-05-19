@@ -84,7 +84,8 @@ private fun LoginScreen(
             progress = { progress },
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f),
+                .weight(1f)
+                .padding(30.dp),
         )
 
         KakaoLoginButton(onClick = onKakaoLoginClick)
