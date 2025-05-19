@@ -30,7 +30,7 @@ import com.napzak.market.genre.model.Genre
 import com.napzak.market.util.android.noRippleClickable
 import com.napzak.market.util.common.ellipsis
 
-const val CHARACTER_MAX_COUNT = 5
+private const val CHARACTER_MAX_COUNT = 5
 
 @Composable
 fun GenreFilterChip(
