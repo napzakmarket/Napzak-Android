@@ -18,5 +18,6 @@ data class GenreDetailUiState(
 )
 
 data class GenreDetailProducts(
+    val productCount: Int,
     val productList: List<Product>,
 )

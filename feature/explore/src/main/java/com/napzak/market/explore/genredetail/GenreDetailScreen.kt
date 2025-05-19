@@ -148,6 +148,7 @@ private fun GenreDetailScreen(
                     selectedTab = selectedTab,
                     isUnopenSelected = isUnopenSelected,
                     isSoldOutSelected = isSoldOutSelected,
+                    productCount = uiState.loadState.data.productCount,
                     productList = uiState.loadState.data.productList,
                     sortType = sortOption,
                     sortBottomSheetState = sortBottomSheetState,
@@ -175,6 +176,7 @@ private fun GenreDetailSuccessScreen(
     selectedTab: TradeType,
     isUnopenSelected: Boolean,
     isSoldOutSelected: Boolean,
+    productCount: Int,
     productList: List<Product>,
     sortType: SortType,
     sortBottomSheetState: Boolean,
@@ -209,6 +211,7 @@ private fun GenreDetailSuccessScreen(
             selectedTab = selectedTab,
             isUnopenSelected = isUnopenSelected,
             isSoldOutSelected = isSoldOutSelected,
+            productCount = productCount,
             productList = productList,
             sortType = sortType,
             onTabClick = onTabClick,
@@ -266,6 +269,7 @@ private fun GenreScrollSection(
     selectedTab: TradeType,
     isUnopenSelected: Boolean,
     isSoldOutSelected: Boolean,
+    productCount: Int,
     productList: List<Product>,
     sortType: SortType,
     onTabClick: (TradeType) -> Unit,
@@ -405,7 +409,7 @@ private fun GenreScrollSection(
                             append(stringResource(explore_product))
                         }
                         withStyle(style = SpanStyle(color = NapzakMarketTheme.colors.purple500)) {
-                            append(stringResource(explore_count, productList.size))
+                            append(stringResource(explore_count, productCount))
                         }
                     },
                     style = NapzakMarketTheme.typography.body14sb,
@@ -492,6 +496,7 @@ private fun GenreDetailScreenPreview(modifier: Modifier = Modifier) {
             selectedTab = TradeType.SELL,
             isUnopenSelected = false,
             isSoldOutSelected = false,
+            productCount = 0,
             productList = emptyList(),
             sortType = SortType.RECENT,
             sortBottomSheetState = false,

@@ -53,7 +53,8 @@ class StoreViewModel @Inject constructor(
     val bottomSheetState: StateFlow<StoreBottomSheetState> = _bottomSheetState.asStateFlow()
 
     private val _storeDetailState = MutableStateFlow<UiState<StoreDetail>>(UiState.Loading)
-    private val _storeProductsState = MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
+    private val _storeProductsState =
+        MutableStateFlow<UiState<Pair<Int, List<Product>>>>(UiState.Loading)
     val storeUiState: StateFlow<StoreUiState> = combine(
         _storeDetailState,
         _storeProductsState,
@@ -93,7 +94,9 @@ class StoreViewModel @Inject constructor(
             )
 
             result
-                .onSuccess { (_, it) -> _storeProductsState.value = UiState.Success(it) }
+                .onSuccess { (count, list) ->
+                    _storeProductsState.value = UiState.Success(Pair(count, list))
+                }
                 .onFailure { _storeProductsState.value = UiState.Failure(it.message.toString()) }
         }
     }
@@ -199,7 +202,8 @@ class StoreViewModel @Inject constructor(
         val state = storeUiState.value.storeProductsState
         when (state) {
             is UiState.Success -> {
-                val updatedProducts = state.data.map { product ->
+                val (count, products) = state.data
+                val updatedProducts = products.map { product ->
                     if (product.productId == productId) {
                         product.copy(isInterested = !product.isInterested)
                     } else {
@@ -207,7 +211,7 @@ class StoreViewModel @Inject constructor(
                     }
                 }
 
-                _storeProductsState.update { UiState.Success(updatedProducts) }
+                _storeProductsState.update { UiState.Success(Pair(count, updatedProducts)) }
             }
 
             else -> {}

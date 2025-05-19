@@ -17,6 +17,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -47,6 +49,7 @@ fun SearchTextField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     readOnly: Boolean = false,
+    focusRequester: FocusRequester = remember { FocusRequester() },
 ) {
     Box(
         modifier = modifier,
@@ -59,6 +62,7 @@ fun SearchTextField(
             textStyle = NapzakMarketTheme.typography.caption12sb,
             hintTextStyle = NapzakMarketTheme.typography.caption12m,
             modifier = Modifier
+                .focusRequester(focusRequester)
                 .clip(RoundedCornerShape(14.dp))
                 .background(NapzakMarketTheme.colors.gray50)
                 .padding(16.dp, 13.dp, 0.dp, 13.dp),
