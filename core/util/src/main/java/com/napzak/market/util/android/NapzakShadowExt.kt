@@ -7,7 +7,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.napzak.market.util.android.model.ShadowDirection
 
 /**
@@ -21,10 +20,10 @@ import com.napzak.market.util.android.model.ShadowDirection
  */
 
 fun Modifier.napzakGradientShadow(
-    height: Dp = 12.dp,
-    startColor: Color = Color(0x33000000),
-    endColor: Color = Color.Transparent,
-    direction: ShadowDirection = ShadowDirection.Bottom,
+    height: Dp,
+    startColor: Color,
+    endColor: Color,
+    direction: ShadowDirection,
 ): Modifier = this.then(
     Modifier.drawWithContent {
         drawContent()
