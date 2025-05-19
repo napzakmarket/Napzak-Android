@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,17 +35,10 @@ fun SplashRoute(
     val originalColor = NapzakMarketTheme.colors.white
     val originalDarkIcons = true
 
-    var isDone by remember { mutableStateOf(false) }
     var isSuccess by remember { mutableStateOf(false) }
 
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = splashColor,
-            darkIcons = false,
-        )
-    }
-
     DisposableEffect(Unit) {
+        systemUiController.setSystemBarsColor(color = splashColor, darkIcons = false)
         onDispose {
             systemUiController.setSystemBarsColor(
                 color = originalColor,
@@ -60,16 +52,10 @@ fun SplashRoute(
         isSuccess = result.isSuccess
 
         delay(2500)
-        isDone = true
-    }
-
-    LaunchedEffect(isDone, isSuccess) {
-        if (isDone) {
-            if (isSuccess) {
-                onNavigateToMain()
-            } else {
-                onNavigateToOnboarding()
-            }
+        if (isSuccess) {
+            onNavigateToMain()
+        } else {
+            onNavigateToOnboarding()
         }
     }
 
