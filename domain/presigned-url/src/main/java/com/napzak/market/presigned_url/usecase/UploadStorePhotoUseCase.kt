@@ -20,10 +20,12 @@ class UploadStorePhotoUseCase @Inject constructor(
         coverPhoto: String?,
         profilePhoto: String?
     ): Result<Map<PhotoType, String?>> = runCatching {
-        val photoMap = mapOf(
-            COVER_IMAGE_TITLE to coverPhoto,
-            PROFILE_IMAGE_TITLE to profilePhoto,
-        )
+
+        val photoMap = buildMap {
+            if (coverPhoto != null) put(COVER_IMAGE_TITLE, coverPhoto)
+            if (profilePhoto != null) put(PROFILE_IMAGE_TITLE, profilePhoto)
+        }
+
         val presignedUrlMap = getPresignedUrlMap(photoMap)
 
         putImageOnS3(presignedUrlMap[PhotoType.COVER], coverPhoto)
@@ -42,8 +44,8 @@ class UploadStorePhotoUseCase @Inject constructor(
      * @throws IllegalArgumentException 사진이 바뀌지 않았을 경우
      * @throws Throwable presigned url을 가져오지 못할 경우
      */
-    private suspend fun getPresignedUrlMap(photoMap: Map<String, String?>): Map<PhotoType, String> {
-        val imageTitles = photoMap.filter { it.value != null }.map { it.key }
+    private suspend fun getPresignedUrlMap(photoMap: Map<String, String>): Map<PhotoType, String> {
+        val imageTitles = photoMap.map { it.key }
         val presignedUrls = presignedUrlRepository.getProfilePresignedUrls(imageTitles).getOrThrow()
 
         // 각 케이스별로 presigned url이 있는지 확인, 없으면 -1 반환

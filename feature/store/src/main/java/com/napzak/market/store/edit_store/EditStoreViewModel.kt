@@ -10,9 +10,12 @@ import com.napzak.market.genre.usecase.GetGenreNamesUseCase
 import com.napzak.market.presigned_url.type.PhotoType
 import com.napzak.market.presigned_url.usecase.UploadStorePhotoUseCase
 import com.napzak.market.store.edit_store.state.EditStoreUiState
+import com.napzak.market.store.model.NicknameValidationResult
 import com.napzak.market.store.model.StoreEditGenre
 import com.napzak.market.store.model.StoreEditProfile
 import com.napzak.market.store.repository.StoreRepository
+import com.napzak.market.store.usecase.CheckNicknameDuplicationUseCase
+import com.napzak.market.store.usecase.ValidateNicknameUseCase
 import com.napzak.market.util.android.getHttpExceptionMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -31,6 +34,8 @@ import javax.inject.Inject
 @HiltViewModel
 internal class EditStoreViewModel @Inject constructor(
     private val storeRepository: StoreRepository,
+    private val validateNicknameUseCase: ValidateNicknameUseCase,
+    private val checkNicknameDuplicationUseCase: CheckNicknameDuplicationUseCase,
     private val uploadStorePhotoUseCase: UploadStorePhotoUseCase,
     private val getGenreNamesUseCase: GetGenreNamesUseCase,
 ) : ViewModel() {
@@ -71,7 +76,6 @@ internal class EditStoreViewModel @Inject constructor(
             .onSuccess { storeDetail ->
                 updateUiState(
                     loadState = UiState.Success(Unit),
-                    nickNameValidState = UiState.Empty,
                     storeDetail = storeDetail,
                     originalStoreDetail = storeDetail,
                 )
@@ -107,6 +111,21 @@ internal class EditStoreViewModel @Inject constructor(
         }
     }
 
+    fun checkNicknameDuplication() = viewModelScope.launch {
+        checkNicknameDuplicationUseCase(_uiState.value.storeDetail.nickname)
+            .onSuccess {
+                updateUiState(
+                    nickNameDuplicationState = UiState.Success("사용할 수 있는 이름이에요!")
+                )
+            }
+            .onFailure { exception ->
+                val errorMessage = exception.getHttpExceptionMessage() ?: ""
+                updateUiState(
+                    nickNameDuplicationState = UiState.Failure(errorMessage)
+                )
+            }
+    }
+
     fun updatePhoto(photoType: PhotoType, uri: Uri?) {
         if (uri != null) {
             val uriString = uri.toString()
@@ -122,42 +141,28 @@ internal class EditStoreViewModel @Inject constructor(
         }
     }
 
-    fun checkNicknameValidity() = viewModelScope.launch {
-        storeRepository.getValidateNickname(_uiState.value.storeDetail.nickname)
-            .onSuccess {
-                updateUiState(
-                    nickNameValidState = UiState.Success("사용할 수 있는 이름이에요!")
-                )
-            }
-            .onFailure { exception ->
-                updateUiState(
-                    nickNameValidState = UiState.Failure(
-                        exception.getHttpExceptionMessage() ?: ""
-                    )
-                )
-            }
+    fun updateNickname(value: String) {
+        val nickname = value.take(NICKNAME_MAX_LENGTH)
+        val nicknameValidationResult = validateNicknameUseCase(nickname)
+        updateUiState(
+            name = nickname,
+            nickNameValidationState = nicknameValidationResult,
+            nickNameDuplicationState = UiState.Empty
+        )
     }
-
-    fun checkSubmitButton(uiState: EditStoreUiState): Boolean {
-        with(uiState) {
-            val isNickNameValid = nickNameValidState is UiState.Success
-
-            return isNickNameValid || isDescriptionChanged || isGenresChanged
-                    || isCoverUrlChanged || isPhotoUrlChanged
-        }
-    }
-
 
     fun updateUiState(
         loadState: UiState<Unit> = _uiState.value.loadState,
-        nickNameValidState: UiState<String> = _uiState.value.nickNameValidState,
+        nickNameValidationState: NicknameValidationResult = _uiState.value.nickNameValidationState,
+        nickNameDuplicationState: UiState<String> = _uiState.value.nickNameDuplicationState,
         searchedGenres: List<Genre> = _uiState.value.searchedGenres,
         originalStoreDetail: StoreEditProfile = _uiState.value.originalStoreDetail,
         storeDetail: StoreEditProfile = _uiState.value.storeDetail
     ) {
         updateUiState(
             loadState = loadState,
-            nickNameValidState = nickNameValidState,
+            nickNameValidationState = nickNameValidationState,
+            nickNameDuplicationState = nickNameDuplicationState,
             searchedGenres = searchedGenres,
             originalStoreDetail = originalStoreDetail,
             coverUrl = storeDetail.coverUrl,
@@ -170,7 +175,8 @@ internal class EditStoreViewModel @Inject constructor(
 
     fun updateUiState(
         loadState: UiState<Unit> = _uiState.value.loadState,
-        nickNameValidState: UiState<String> = _uiState.value.nickNameValidState,
+        nickNameValidationState: NicknameValidationResult = _uiState.value.nickNameValidationState,
+        nickNameDuplicationState: UiState<String> = _uiState.value.nickNameDuplicationState,
         searchedGenres: List<Genre> = _uiState.value.searchedGenres,
         originalStoreDetail: StoreEditProfile = _uiState.value.originalStoreDetail,
         coverUrl: String = _uiState.value.storeDetail.coverUrl,
@@ -185,17 +191,24 @@ internal class EditStoreViewModel @Inject constructor(
         _uiState.update { currentState ->
             currentState.copy(
                 loadState = loadState,
-                nickNameValidState = nickNameValidState,
+                nickNameValidationState = nickNameValidationState,
+                nickNameDuplicationState = nickNameDuplicationState,
                 searchedGenres = searchedGenres,
                 originalStoreDetail = originalStoreDetail,
                 storeDetail = currentState.storeDetail.copy(
                     coverUrl = newCoverUrl,
                     photoUrl = newPhotoUrl,
                     nickname = name,
-                    description = description,
-                    preferredGenres = genres
+                    description = description.take(DESCRIPTION_MAX_LENGTH),
+                    preferredGenres = genres.take(GENRE_MAX_LENGTH)
                 )
             )
         }
+    }
+
+    companion object {
+        private const val NICKNAME_MAX_LENGTH = 20
+        private const val DESCRIPTION_MAX_LENGTH = 200
+        private const val GENRE_MAX_LENGTH = 7
     }
 }

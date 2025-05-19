@@ -38,15 +38,19 @@ class ValidateNicknameUseCase @Inject constructor() {
         private val VALID_CHAR_REGEX = Regex("^[가-힣a-zA-Z0-9]*$")
         private val ONLY_NUMBER_REGEX = Regex("^[0-9]+$")
         private val ONLY_CONSONANT_REGEX = Regex("^[ㄱ-ㅎ]+$")
-        private val CONSONANT_CHAR_SET = setOf(
-            'ㄱ'..'ㅎ',
-            'ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ',
-            'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ',
-            'ㅛ',
-            'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ',
-            'ㅠ',
-            'ㅡ', 'ㅢ',
-            'ㅣ',
-        )
+        private val CONSONANT_CHAR_SET = buildSet {
+            addAll('ㄱ'..'ㅎ')
+            addAll(
+                listOf(
+                    'ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ',
+                    'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ',
+                    'ㅛ',
+                    'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ',
+                    'ㅠ',
+                    'ㅡ', 'ㅢ',
+                    'ㅣ',
+                )
+            )
+        }
     }
 }

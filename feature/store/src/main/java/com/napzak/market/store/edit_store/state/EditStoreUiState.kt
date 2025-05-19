@@ -1,12 +1,16 @@
 package com.napzak.market.store.edit_store.state
 
+import androidx.compose.runtime.Stable
 import com.napzak.market.common.state.UiState
 import com.napzak.market.genre.model.Genre
+import com.napzak.market.store.model.NicknameValidationResult
 import com.napzak.market.store.model.StoreEditProfile
 
+@Stable
 internal data class EditStoreUiState(
     val loadState: UiState<Unit> = UiState.Loading,
-    val nickNameValidState: UiState<String> = UiState.Empty,
+    val nickNameValidationState: NicknameValidationResult = NicknameValidationResult.Uninitialized,
+    val nickNameDuplicationState: UiState<String> = UiState.Empty,
     val searchedGenres: List<Genre> = emptyList(),
     val originalStoreDetail: StoreEditProfile = EmptyStoreDetail,
     val storeDetail: StoreEditProfile = EmptyStoreDetail,
@@ -16,6 +20,14 @@ internal data class EditStoreUiState(
     val isGenresChanged get() = storeDetail.preferredGenres != originalStoreDetail.preferredGenres
     val isCoverUrlChanged get() = storeDetail.coverUrl != originalStoreDetail.coverUrl
     val isPhotoUrlChanged get() = storeDetail.photoUrl != originalStoreDetail.photoUrl
+
+    val checkNickNameEnabled
+        get() = nickNameValidationState is NicknameValidationResult.Valid && isNameChanged
+
+    val submitEnabled
+        get() = (isNameChanged && nickNameDuplicationState is UiState.Success)
+                || (!isNameChanged && (isDescriptionChanged || isGenresChanged || isCoverUrlChanged || isPhotoUrlChanged))
+
 
     companion object {
         val EmptyStoreDetail = StoreEditProfile(
