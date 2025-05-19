@@ -51,13 +51,31 @@ class GenreDetailViewModel @Inject constructor(
             when (selectedTab) {
                 TradeType.BUY -> {
                     productExploreRepository.getExploreBuyProducts(parameters)
-                        .onSuccess { updateLoadState(UiState.Success(GenreDetailProducts(it.second))) }
+                        .onSuccess {
+                            updateLoadState(
+                                UiState.Success(
+                                    GenreDetailProducts(
+                                        it.first,
+                                        it.second
+                                    )
+                                )
+                            )
+                        }
                         .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
                 }
 
                 TradeType.SELL -> {
                     productExploreRepository.getExploreSellProducts(parameters)
-                        .onSuccess { updateLoadState(UiState.Success(GenreDetailProducts(it.second))) }
+                        .onSuccess {
+                            updateLoadState(
+                                UiState.Success(
+                                    GenreDetailProducts(
+                                        it.first,
+                                        it.second
+                                    )
+                                )
+                            )
+                        }
                         .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
                 }
 
@@ -110,7 +128,11 @@ class GenreDetailViewModel @Inject constructor(
                     }
                 }
 
-                updateLoadState(loadState = UiState.Success(GenreDetailProducts(updatedProducts)))
+                updateLoadState(
+                    loadState = UiState.Success(
+                        GenreDetailProducts(state.data.productCount, updatedProducts)
+                    )
+                )
             }
 
             else -> {}
