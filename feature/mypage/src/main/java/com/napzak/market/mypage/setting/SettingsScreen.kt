@@ -37,7 +37,7 @@ import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_title
 import com.napzak.market.feature.mypage.R.string.settings_section_service_info_title
 import com.napzak.market.feature.mypage.R.string.settings_topbar_title
 import com.napzak.market.mypage.setting.component.SettingItem
-import com.napzak.market.mypage.setting.model.SettingViewModel
+import com.napzak.market.mypage.setting.type.SettingsMenu
 import com.napzak.market.util.android.noRippleClickable
 
 @Composable

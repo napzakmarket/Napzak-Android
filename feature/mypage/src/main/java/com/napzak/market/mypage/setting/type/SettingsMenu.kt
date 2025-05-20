@@ -1,4 +1,4 @@
-package com.napzak.market.mypage.setting
+package com.napzak.market.mypage.setting.type
 
 import androidx.annotation.StringRes
 import com.napzak.market.feature.mypage.R.string.settings_item_notice_title
