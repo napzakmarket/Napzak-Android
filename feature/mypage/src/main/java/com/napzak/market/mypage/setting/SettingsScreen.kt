@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,16 +40,17 @@ import com.napzak.market.feature.mypage.R.string.settings_topbar_title
 import com.napzak.market.mypage.setting.component.SettingItem
 import com.napzak.market.mypage.setting.type.SettingsMenu
 import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.util.common.openUrl
 
 @Composable
 fun SettingsRoute(
     onBackClick: () -> Unit,
     onLogoutConfirm: () -> Unit,
     onWithdrawClick: () -> Unit,
-    openWebLink: (String) -> Unit,
     viewModel: SettingViewModel = hiltViewModel()
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
     val state by viewModel.settingInfo.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
@@ -63,10 +65,10 @@ fun SettingsRoute(
         onBackClick = onBackClick,
         onLogoutConfirm = viewModel::signOutUser,
         onWithdrawClick = onWithdrawClick,
-        onNoticeClick = { if (state.noticeLink.isNotBlank()) openWebLink(state.noticeLink) },
-        onTermsClick = { if (state.termsLink.isNotBlank()) openWebLink(state.termsLink) },
-        onPrivacyClick = { if (state.privacyPolicyLink.isNotBlank()) openWebLink(state.privacyPolicyLink) },
-        onVersionClick = { if (state.versionInfoLink.isNotBlank()) openWebLink(state.versionInfoLink) },
+        onNoticeClick = { if (state.noticeLink.isNotBlank()) context.openUrl(state.noticeLink) },
+        onTermsClick = { if (state.termsLink.isNotBlank()) context.openUrl(state.termsLink) },
+        onPrivacyClick = { if (state.privacyPolicyLink.isNotBlank()) context.openUrl(state.privacyPolicyLink) },
+        onVersionClick = { if (state.versionInfoLink.isNotBlank()) context.openUrl(state.versionInfoLink) },
     )
 }
 

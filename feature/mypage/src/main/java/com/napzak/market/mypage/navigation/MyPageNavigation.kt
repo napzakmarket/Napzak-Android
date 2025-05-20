@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavController
@@ -23,7 +22,6 @@ import com.napzak.market.mypage.signout.SignOutSideEffect
 import com.napzak.market.mypage.signout.SignOutViewModel
 import com.napzak.market.util.android.horizontalSlideNavigation
 import com.napzak.market.util.android.sharedViewModel
-import com.napzak.market.util.common.openUrl
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToMyPage(navOptions: NavOptions? = null) =
@@ -65,15 +63,11 @@ fun NavGraphBuilder.mypageGraph(
     }
 
     composable<Settings> {
-        val context = LocalContext.current
 
         SettingsRoute(
             onBackClick = navigateToUp,
             onLogoutConfirm = restartApplication,
             onWithdrawClick = navController::navigateToSignOut,
-            openWebLink = { url ->
-                context.openUrl(url)
-            }
         )
     }
 
