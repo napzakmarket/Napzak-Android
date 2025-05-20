@@ -246,7 +246,7 @@ private fun HomeSingleBanner(
             .Builder(context)
             .data(banner.imageUrl)
             .build(),
-        contentDescription = null, // TODO: description 추가
+        contentDescription = null,
         contentScale = ContentScale.FillBounds,
         modifier = modifier
             .noRippleClickable { context.openUrl(banner.linkUrl) }
