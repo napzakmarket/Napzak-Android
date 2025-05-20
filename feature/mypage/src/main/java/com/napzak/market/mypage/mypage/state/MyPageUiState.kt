@@ -1,4 +1,4 @@
-package com.napzak.market.mypage.state
+package com.napzak.market.mypage.mypage.state
 
 import androidx.compose.runtime.Immutable
 

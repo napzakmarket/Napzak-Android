@@ -7,7 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.napzak.market.common.navigation.MainTabRoute
-import com.napzak.market.mypage.MyPageRoute
+import com.napzak.market.mypage.mypage.MyPageRoute
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToMyPage(navOptions: NavOptions? = null) =

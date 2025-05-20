@@ -1,4 +1,4 @@
-package com.napzak.market.mypage
+package com.napzak.market.mypage.mypage
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -22,11 +22,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.mypage_header_title
-import com.napzak.market.mypage.component.MyMarketButton
-import com.napzak.market.mypage.component.MyPageMenuCard
-import com.napzak.market.mypage.component.MyPageProfileSection
-import com.napzak.market.mypage.model.MyPageViewModel
-import com.napzak.market.mypage.state.MyPageUiState
+import com.napzak.market.mypage.mypage.component.MyMarketButton
+import com.napzak.market.mypage.mypage.component.MyPageMenuCard
+import com.napzak.market.mypage.mypage.component.MyPageProfileSection
+import com.napzak.market.mypage.mypage.state.MyPageUiState
 import com.napzak.market.util.common.openUrl
 
 

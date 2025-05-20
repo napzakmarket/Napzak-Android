@@ -1,4 +1,4 @@
-package com.napzak.market.mypage.component
+package com.napzak.market.mypage.mypage.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +26,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.mypage.MyPageMenu
+import com.napzak.market.mypage.mypage.type.MyPageMenu
 import com.napzak.market.util.android.noRippleClickable
 
 private const val ROW_COUNT = 2

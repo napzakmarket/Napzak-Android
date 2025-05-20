@@ -1,4 +1,4 @@
-package com.napzak.market.mypage.component
+package com.napzak.market.mypage.mypage.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
