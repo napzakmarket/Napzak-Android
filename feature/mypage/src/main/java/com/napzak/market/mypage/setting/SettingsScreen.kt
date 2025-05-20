@@ -37,6 +37,7 @@ import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_title
 import com.napzak.market.feature.mypage.R.string.settings_section_service_info_title
 import com.napzak.market.feature.mypage.R.string.settings_topbar_title
 import com.napzak.market.mypage.setting.component.SettingItem
+import com.napzak.market.mypage.setting.component.SettingVersionItem
 import com.napzak.market.mypage.setting.type.SettingsMenu
 import com.napzak.market.util.android.ScreenPreview
 import com.napzak.market.util.android.noRippleClickable
@@ -68,7 +69,6 @@ internal fun SettingsRoute(
         onNoticeClick = { if (state.noticeLink.isNotBlank()) context.openUrl(state.noticeLink) },
         onTermsClick = { if (state.termsLink.isNotBlank()) context.openUrl(state.termsLink) },
         onPrivacyClick = { if (state.privacyPolicyLink.isNotBlank()) context.openUrl(state.privacyPolicyLink) },
-        onVersionClick = { if (state.versionInfoLink.isNotBlank()) context.openUrl(state.versionInfoLink) },
     )
 }
 
@@ -78,7 +78,6 @@ private fun SettingsScreen(
     onNoticeClick: () -> Unit = {},
     onTermsClick: () -> Unit = {},
     onPrivacyClick: () -> Unit = {},
-    onVersionClick: () -> Unit = {},
     onLogoutConfirm: () -> Unit = {},
     onWithdrawClick: () -> Unit = {},
 ) {
@@ -114,19 +113,21 @@ private fun SettingsScreen(
 
                 Spacer(modifier = Modifier.height(28.dp))
 
-                SettingsMenu.entries.forEachIndexed { index, menu ->
+                SettingVersionItem(
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                SettingsMenu.entries.forEachIndexed { _, menu ->
+                    Spacer(modifier = Modifier.height(20.dp))
+
                     SettingItem(
                         title = stringResource(id = menu.titleResId),
                         onClick = when (menu) {
                             SettingsMenu.NOTICE -> onNoticeClick
                             SettingsMenu.TERMS_OF_USE -> onTermsClick
                             SettingsMenu.PRIVACY_POLICY -> onPrivacyClick
-                            SettingsMenu.VERSION_INFO -> onVersionClick
                         }
                     )
-                    if (index != SettingsMenu.entries.lastIndex) {
-                        Spacer(modifier = Modifier.height(20.dp))
-                    }
                 }
             }
 
@@ -215,7 +216,6 @@ private fun SettingsScreenPreview() {
             onNoticeClick = {},
             onTermsClick = {},
             onPrivacyClick = {},
-            onVersionClick = {},
             onLogoutConfirm = {
                 println("로그아웃 완료")
             },
