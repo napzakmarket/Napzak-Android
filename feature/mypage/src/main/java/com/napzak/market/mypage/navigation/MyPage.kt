@@ -11,7 +11,7 @@ import com.napzak.market.mypage.mypage.MyPageRoute
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToMyPage(navOptions: NavOptions? = null) =
-    navigate(MyPageNavigation, navOptions)
+    navigate(MyPage, navOptions)
 
 fun NavGraphBuilder.mypageGraph(
     navigateToUp: () -> Unit,
@@ -23,7 +23,7 @@ fun NavGraphBuilder.mypageGraph(
     navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    composable<MyPageNavigation> {
+    composable<MyPage> {
         BackHandler {
             navigateToUp()
         }
@@ -41,4 +41,4 @@ fun NavGraphBuilder.mypageGraph(
 }
 
 @Serializable
-data object MyPageNavigation : MainTabRoute
+data object MyPage : MainTabRoute

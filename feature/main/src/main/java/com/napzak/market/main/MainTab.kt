@@ -11,14 +11,14 @@ import com.napzak.market.designsystem.R.drawable.ic_nav_explore
 import com.napzak.market.designsystem.R.drawable.ic_nav_home
 import com.napzak.market.designsystem.R.drawable.ic_nav_user
 import com.napzak.market.dummy.navigation.Dummy
+import com.napzak.market.explore.navigation.Explore
+import com.napzak.market.home.navigation.Home
 import com.napzak.market.main.R.string.main_bottom_bar_chatting
 import com.napzak.market.main.R.string.main_bottom_bar_explore
 import com.napzak.market.main.R.string.main_bottom_bar_home
 import com.napzak.market.main.R.string.main_bottom_bar_my_page
 import com.napzak.market.main.R.string.main_bottom_bar_register
-import com.napzak.market.home.navigation.Home
-import com.napzak.market.explore.navigation.Explore
-import com.napzak.market.mypage.navigation.MyPageNavigation
+import com.napzak.market.mypage.navigation.MyPage
 
 
 // TODO: 구현 시작 시 수정
@@ -50,7 +50,7 @@ enum class MainTab(
     MY_PAGE(
         iconRes = ic_nav_user,
         title = main_bottom_bar_my_page,
-        route = MyPageNavigation,
+        route = MyPage,
     );
 
     companion object {
