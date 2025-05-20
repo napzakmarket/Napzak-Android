@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SignOutViewModel @Inject constructor(
+internal class SignOutViewModel @Inject constructor(
     private val storeRepository: StoreRepository,
 ) : ViewModel() {
     private val _sideEffect = MutableSharedFlow<SignOutSideEffect>()

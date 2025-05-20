@@ -21,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -39,11 +38,12 @@ import com.napzak.market.feature.mypage.R.string.settings_section_service_info_t
 import com.napzak.market.feature.mypage.R.string.settings_topbar_title
 import com.napzak.market.mypage.setting.component.SettingItem
 import com.napzak.market.mypage.setting.type.SettingsMenu
+import com.napzak.market.util.android.ScreenPreview
 import com.napzak.market.util.android.noRippleClickable
 import com.napzak.market.util.common.openUrl
 
 @Composable
-fun SettingsRoute(
+internal fun SettingsRoute(
     onBackClick: () -> Unit,
     onLogoutConfirm: () -> Unit,
     onWithdrawClick: () -> Unit,
@@ -73,7 +73,7 @@ fun SettingsRoute(
 }
 
 @Composable
-fun SettingsScreen(
+private fun SettingsScreen(
     onBackClick: () -> Unit = {},
     onNoticeClick: () -> Unit = {},
     onTermsClick: () -> Unit = {},
@@ -206,7 +206,7 @@ fun SettingsScreen(
     }
 }
 
-@Preview(showBackground = true)
+@ScreenPreview
 @Composable
 private fun SettingsScreenPreview() {
     NapzakMarketTheme {

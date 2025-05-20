@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -26,11 +25,12 @@ import com.napzak.market.mypage.mypage.component.MyMarketButton
 import com.napzak.market.mypage.mypage.component.MyPageMenuCard
 import com.napzak.market.mypage.mypage.component.MyPageProfileSection
 import com.napzak.market.mypage.mypage.state.MyPageUiState
+import com.napzak.market.util.android.ScreenPreview
 import com.napzak.market.util.common.openUrl
 
 
 @Composable
-fun MyPageRoute(
+internal fun MyPageRoute(
     onMyMarketClick: (Long) -> Unit,
     onSalesClick: () -> Unit,
     onPurchaseClick: () -> Unit,
@@ -65,7 +65,7 @@ fun MyPageRoute(
 }
 
 @Composable
-fun MyPageScreen(
+private fun MyPageScreen(
     uiState: MyPageUiState,
     onMyMarketClick: () -> Unit,
     onSalesClick: () -> Unit,
@@ -139,9 +139,9 @@ private fun MyPageHeader() {
     )
 }
 
+@ScreenPreview
 @Composable
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
-fun MyPageScreenPreview() {
+private fun MyPageScreenPreview() {
     NapzakMarketTheme {
         MyPageScreen(
             uiState = MyPageUiState(

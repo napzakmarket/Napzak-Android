@@ -32,7 +32,7 @@ import com.napzak.market.feature.mypage.R.string.mypage_sell_count
 import com.napzak.market.feature.mypage.R.string.mypage_sell_label
 
 @Composable
-fun MyPageProfileSection(
+internal fun MyPageProfileSection(
     nickname: String,
     profileImageUrl: String,
     salesCount: Int,

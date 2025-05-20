@@ -33,7 +33,7 @@ private const val ROW_COUNT = 2
 private const val COLUMN_COUNT = 3
 
 @Composable
-fun MyPageMenuCard(
+internal fun MyPageMenuCard(
     onSalesClick: () -> Unit,
     onPurchaseClick: () -> Unit,
     onRecentClick: () -> Unit,

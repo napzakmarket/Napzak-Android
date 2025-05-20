@@ -1,6 +1,6 @@
 package com.napzak.market.mypage.signout.type
 
-enum class SignOutReasonType(
+internal enum class SignOutReasonType(
     val reason: String,
 ) {
     HARD_TO_FIND("원하는 굿즈를 찾기 어려워요"),

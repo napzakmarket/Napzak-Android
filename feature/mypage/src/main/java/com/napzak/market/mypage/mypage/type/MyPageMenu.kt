@@ -15,7 +15,7 @@ import com.napzak.market.feature.mypage.R.string.mypage_recently_viewed
 import com.napzak.market.feature.mypage.R.string.mypage_sales_history
 import com.napzak.market.feature.mypage.R.string.mypage_settings
 
-enum class MyPageMenu(
+internal enum class MyPageMenu(
     @StringRes val titleRes: Int,
     @DrawableRes val iconRes: Int,
 ) {
