@@ -24,16 +24,17 @@ import com.napzak.market.util.android.horizontalSlideNavigation
 import com.napzak.market.util.android.sharedViewModel
 import kotlinx.serialization.Serializable
 
-fun NavController.navigateToMyPage(navOptions: NavOptions? = null) =
-    navigate(MyPage, navOptions)
+fun NavController.navigateToMyPage(navOptions: NavOptions? = null) {
+    this.navigate(MyPage, navOptions)
+}
 
 fun NavController.navigateToSettings(navOptions: NavOptions? = null) {
     this.navigate(Settings, navOptions)
 }
 
-fun NavHostController.navigateToSignOut(
-    navOptions: NavOptions? = null,
-) = navigate(route = SignOut, navOptions = navOptions)
+fun NavHostController.navigateToSignOut(navOptions: NavOptions? = null) {
+    this.navigate(route = SignOut, navOptions = navOptions)
+}
 
 fun NavGraphBuilder.mypageGraph(
     navController: NavHostController,
@@ -63,7 +64,6 @@ fun NavGraphBuilder.mypageGraph(
     }
 
     composable<Settings> {
-
         SettingsRoute(
             onBackClick = navigateToUp,
             onLogoutConfirm = restartApplication,
