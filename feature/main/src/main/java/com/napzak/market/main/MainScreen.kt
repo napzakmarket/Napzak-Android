@@ -41,8 +41,7 @@ import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.main.component.MainSnackBarHost
 import com.napzak.market.mypage.navigation.mypageGraph
-import com.napzak.market.mypage.setting.navigation.navigateToSettings
-import com.napzak.market.mypage.setting.navigation.settingsGraph
+import com.napzak.market.mypage.navigation.navigateToSettings
 import com.napzak.market.mypage.signout.navigation.navigateToSignOut
 import com.napzak.market.mypage.signout.navigation.signOutGraph
 import com.napzak.market.onboarding.navigation.Terms
@@ -297,6 +296,7 @@ private fun MainNavHost(
         )
 
         mypageGraph(
+            restartApplication = restartApplication,
             navigateToUp = navigator::navigateUp,
             navigateToMyMarket = { navigator.navController.navigateToStore(it) },
             navigateToSales = { /* TODO: 판매내역 화면으로 이동 */ },
@@ -304,13 +304,8 @@ private fun MainNavHost(
             navigateToRecent = { /* TODO: 최근 본 상품 화면으로 이동 */ },
             navigateToFavorite = { /* TODO: 찜 화면으로 이동 */ },
             navigateToSettings = navigator.navController::navigateToSettings,
+            navigateToSignOut = navigator.navController::navigateToSignOut,
             modifier = modifier,
-        )
-
-        settingsGraph(
-            navigateToBack = navigator::navigateUp,
-            onLogoutConfirm = restartApplication,
-            onWithdrawClick = navigator.navController::navigateToSignOut
         )
 
         signOutGraph(
