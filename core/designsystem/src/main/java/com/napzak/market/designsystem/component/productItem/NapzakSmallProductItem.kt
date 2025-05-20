@@ -20,6 +20,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -132,6 +133,7 @@ private fun ItemImageGroup(
     placeholderColor: Color = NapzakMarketTheme.colors.gray200,
 ) {
     val context = LocalContext.current
+    val imageShape = RoundedCornerShape(3.dp)
 
     Box(modifier = modifier) {
         AsyncImage(
@@ -143,10 +145,8 @@ private fun ItemImageGroup(
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .matchParentSize()
-                .background(
-                    color = placeholderColor,
-                    shape = RoundedCornerShape(3.dp),
-                ),
+                .clip(imageShape)
+                .background(color = placeholderColor),
         )
 
         TypeTag(
