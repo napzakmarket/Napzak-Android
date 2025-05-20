@@ -45,6 +45,6 @@
     <!-- Genre Search Components   -->
     <string name="genre_search_title">등록하실 상품의\n장르를 선택해주세요</string>
     <string name="genre_search_hint">어떤 장르의 굿즈인가요? 검색해보세요!</string>
-    <string name="genre_search_error">죄송해요, 찾으시는 장르 아직 없네요\n원하시는 장르를 알려주시면 빠르게 추가할게요!</string>
+    <string name="genre_search_error">죄송해요, 찾으시는 장르가 아직 없네요\n원하시는 장르를 알려주시면 빠르게 추가할게요!</string>
     <string name="genre_search_request">장르 추가 요청하기</string>
 </resources>
