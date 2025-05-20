@@ -572,8 +572,12 @@ private fun StoreInfoSection(
         Spacer(Modifier.height(20.dp))
 
         LazyRow(
+            modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalArrangement = Arrangement.spacedBy(
+                space = 5.dp,
+                alignment = Alignment.CenterHorizontally,
+            )
         ) {
             items(genrePreferences) { genre ->
                 GenreChip(
