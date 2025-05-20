@@ -96,25 +96,7 @@ private fun HomeScreen(
     Column(
         modifier = modifier.background(NapzakMarketTheme.colors.white),
     ) {
-        Box(
-            contentAlignment = Alignment.CenterStart,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Image(
-                painter = painterResource(img_logo_napzak),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 17.dp)
-                    .size(width = 101.dp, height = 33.dp)
-            )
-
-            /*Box(
-                modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 17.dp)
-                    .size(width = 101.dp, height = 33.dp)
-                    .background(NapzakMarketTheme.colors.purple500),
-            )*/
-        }
+        HomeTopBar()
 
         when (uiState.isLoaded) {
             is UiState.Success -> HomeSuccessScreen(
@@ -232,6 +214,22 @@ private fun HomeSuccessScreen(
                 .fillMaxWidth()
                 .height(165.dp)
                 .background(NapzakMarketTheme.colors.gray10)
+        )
+    }
+}
+
+@Composable
+private fun HomeTopBar() {
+    Box(
+        contentAlignment = Alignment.CenterStart,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Image(
+            painter = painterResource(img_logo_napzak),
+            contentDescription = null,
+            modifier = Modifier
+                .padding(horizontal = 20.dp, vertical = 17.dp)
+                .size(width = 101.dp, height = 33.dp)
         )
     }
 }
