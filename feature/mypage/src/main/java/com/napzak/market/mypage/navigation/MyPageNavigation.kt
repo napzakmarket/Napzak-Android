@@ -36,6 +36,18 @@ fun NavHostController.navigateToWithdraw(navOptions: NavOptions? = null) {
     this.navigate(route = Withdraw, navOptions = navOptions)
 }
 
+fun NavHostController.navigateToWithdrawDetail(navOptions: NavOptions? = null) {
+    this.navigate(route = WithdrawDetail, navOptions = navOptions)
+}
+
+fun NavHostController.navigateToWithdrawConfirm(navOptions: NavOptions? = null) {
+    this.navigate(route = WithdrawConfirm, navOptions = navOptions)
+}
+
+fun NavHostController.popBackStackOnCompleteWithdraw() {
+    this.popBackStack(Withdraw, inclusive = true)
+}
+
 fun NavGraphBuilder.mypageGraph(
     navController: NavHostController,
     restartApplication: () -> Unit,
@@ -82,7 +94,7 @@ fun NavGraphBuilder.mypageGraph(
 
             WithdrawReasonScreen(
                 onNavigateUpClick = navigateToUp,
-                onProceedClick = { navController.navigate(WithdrawDetail) },
+                onProceedClick = navController::navigateToWithdrawDetail,
                 onReasonSelect = { viewModel.withdrawReason = it },
                 modifier = systemBarPaddingModifier,
             )
@@ -95,7 +107,7 @@ fun NavGraphBuilder.mypageGraph(
                 onNavigateUpClick = navigateToUp,
                 onProceedClick = { detail ->
                     viewModel.withdrawDescription = detail
-                    navController.navigate(WithdrawConfirm)
+                    navController.navigateToWithdrawConfirm()
                 },
                 modifier = systemBarPaddingModifier,
             )
@@ -114,12 +126,8 @@ fun NavGraphBuilder.mypageGraph(
             }
 
             WithdrawConfirmScreen(
-                onConfirmClick = {
-                    viewModel.withdrawStore()
-                },
-                onCancelClick = {
-                    navController.popBackStack(WithdrawReason, inclusive = true)
-                },
+                onConfirmClick = viewModel::withdrawStore,
+                onCancelClick = navController::popBackStackOnCompleteWithdraw,
                 onNavigateUpClick = navigateToUp,
                 modifier = systemBarPaddingModifier,
             )
