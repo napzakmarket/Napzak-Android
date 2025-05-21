@@ -1,4 +1,4 @@
-package com.napzak.market.mypage.signout
+package com.napzak.market.mypage.withdraw
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
@@ -39,18 +39,18 @@ import com.napzak.market.feature.mypage.R.string.sign_out_top_bar
 import com.napzak.market.util.android.ScreenPreview
 
 @Composable
-internal fun SignOutConfirmScreen(
+internal fun WithdrawConfirmScreen(
     onCancelClick: () -> Unit,
     onConfirmClick: () -> Unit,
     onNavigateUpClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val innerScreenScrollState = rememberScrollState()
-    var isSignOutDialogVisible by rememberSaveable { mutableStateOf(false) }
+    var withdrawDialogVisible by rememberSaveable { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
         onDispose {
-            isSignOutDialogVisible = false
+            withdrawDialogVisible = false
         }
     }
 
@@ -62,8 +62,8 @@ internal fun SignOutConfirmScreen(
             )
         },
         bottomBar = {
-            SignOutConfirmBottomBar(
-                onConfirmClick = { isSignOutDialogVisible = true },
+            WithdrawConfirmBottomBar(
+                onConfirmClick = { withdrawDialogVisible = true },
                 onDismissClick = onCancelClick,
             )
         },
@@ -96,18 +96,18 @@ internal fun SignOutConfirmScreen(
     }
 
     AnimatedVisibility(
-        visible = isSignOutDialogVisible,
+        visible = withdrawDialogVisible,
     ) {
         NapzakDialog(
             title = stringResource(sign_out_dialog_title),
             onConfirmClick = onConfirmClick,
-            onDismissClick = { isSignOutDialogVisible = false },
+            onDismissClick = { withdrawDialogVisible = false },
         )
     }
 }
 
 @Composable
-private fun SignOutConfirmBottomBar(
+private fun WithdrawConfirmBottomBar(
     onConfirmClick: () -> Unit,
     onDismissClick: () -> Unit,
 ) {
@@ -158,9 +158,9 @@ private fun SignOutConfirmBottomBar(
 
 @ScreenPreview
 @Composable
-private fun SignOutReasonScreenPreview() {
+private fun WithdrawConfirmScreenPreview() {
     NapzakMarketTheme {
-        SignOutConfirmScreen(
+        WithdrawConfirmScreen(
             onCancelClick = {},
             onConfirmClick = {},
             onNavigateUpClick = {},

@@ -1,4 +1,4 @@
-package com.napzak.market.mypage.signout
+package com.napzak.market.mypage.withdraw
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,25 +13,21 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class SignOutViewModel @Inject constructor(
+internal class WithdrawViewModel @Inject constructor(
     private val storeRepository: StoreRepository,
 ) : ViewModel() {
-    private val _sideEffect = MutableSharedFlow<SignOutSideEffect>()
+    private val _sideEffect = MutableSharedFlow<WithdrawSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
-    var signOutReason by mutableStateOf("")
-    var signOutDescription by mutableStateOf("")
+    var withdrawReason by mutableStateOf("")
+    var withdrawDescription by mutableStateOf("")
 
-    fun proceedSignOut() {
+    fun withdrawStore() {
         viewModelScope.launch {
-            storeRepository.withdraw(signOutReason, signOutDescription)
+            storeRepository.withdraw(withdrawReason, withdrawDescription)
                 .onSuccess {
-                    _sideEffect.emit(SignOutSideEffect.SignOutComplete)
+                    _sideEffect.emit(WithdrawSideEffect.WithdrawComplete)
                 }
         }
-    }
-
-    companion object {
-        private const val STORE_ID = "storeId"
     }
 }

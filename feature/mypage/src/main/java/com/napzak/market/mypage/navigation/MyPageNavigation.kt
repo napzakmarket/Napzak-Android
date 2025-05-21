@@ -15,11 +15,11 @@ import com.napzak.market.common.navigation.MainTabRoute
 import com.napzak.market.common.navigation.Route
 import com.napzak.market.mypage.mypage.MyPageRoute
 import com.napzak.market.mypage.setting.SettingsRoute
-import com.napzak.market.mypage.signout.SignOutConfirmScreen
-import com.napzak.market.mypage.signout.SignOutDetailScreen
-import com.napzak.market.mypage.signout.SignOutReasonScreen
-import com.napzak.market.mypage.signout.SignOutSideEffect
-import com.napzak.market.mypage.signout.SignOutViewModel
+import com.napzak.market.mypage.withdraw.WithdrawConfirmScreen
+import com.napzak.market.mypage.withdraw.WithdrawDetailScreen
+import com.napzak.market.mypage.withdraw.WithdrawReasonScreen
+import com.napzak.market.mypage.withdraw.WithdrawSideEffect
+import com.napzak.market.mypage.withdraw.WithdrawViewModel
 import com.napzak.market.util.android.horizontalSlideNavigation
 import com.napzak.market.util.android.sharedViewModel
 import kotlinx.serialization.Serializable
@@ -32,8 +32,8 @@ fun NavController.navigateToSettings(navOptions: NavOptions? = null) {
     this.navigate(Settings, navOptions)
 }
 
-fun NavHostController.navigateToSignOut(navOptions: NavOptions? = null) {
-    this.navigate(route = SignOut, navOptions = navOptions)
+fun NavHostController.navigateToWithdraw(navOptions: NavOptions? = null) {
+    this.navigate(route = Withdraw, navOptions = navOptions)
 }
 
 fun NavGraphBuilder.mypageGraph(
@@ -67,58 +67,58 @@ fun NavGraphBuilder.mypageGraph(
         SettingsRoute(
             onBackClick = navigateToUp,
             onLogoutConfirm = restartApplication,
-            onWithdrawClick = navController::navigateToSignOut,
+            onWithdrawClick = navController::navigateToWithdraw,
         )
     }
 
-    horizontalSlideNavigation<SignOut, Route>(
-        startDestination = SignOutReason,
-        screens = listOf(SignOutReason, SignOutDetail, SignOutConfirm),
+    horizontalSlideNavigation<Withdraw, Route>(
+        startDestination = WithdrawReason,
+        screens = listOf(WithdrawReason, WithdrawDetail, WithdrawConfirm),
     ) {
         val systemBarPaddingModifier = Modifier.systemBarsPadding()
 
-        composable<SignOutReason> { backStackEntry ->
-            val viewModel = backStackEntry.sharedViewModel<SignOutViewModel>(navController)
+        composable<WithdrawReason> { backStackEntry ->
+            val viewModel = backStackEntry.sharedViewModel<WithdrawViewModel>(navController)
 
-            SignOutReasonScreen(
+            WithdrawReasonScreen(
                 onNavigateUpClick = navigateToUp,
-                onProceedClick = { navController.navigate(SignOutDetail) },
-                onReasonSelect = { viewModel.signOutReason = it },
+                onProceedClick = { navController.navigate(WithdrawDetail) },
+                onReasonSelect = { viewModel.withdrawReason = it },
                 modifier = systemBarPaddingModifier,
             )
         }
 
-        composable<SignOutDetail> { backStackEntry ->
-            val viewModel = backStackEntry.sharedViewModel<SignOutViewModel>(navController)
+        composable<WithdrawDetail> { backStackEntry ->
+            val viewModel = backStackEntry.sharedViewModel<WithdrawViewModel>(navController)
 
-            SignOutDetailScreen(
+            WithdrawDetailScreen(
                 onNavigateUpClick = navigateToUp,
                 onProceedClick = { detail ->
-                    viewModel.signOutDescription = detail
-                    navController.navigate(SignOutConfirm)
+                    viewModel.withdrawDescription = detail
+                    navController.navigate(WithdrawConfirm)
                 },
                 modifier = systemBarPaddingModifier,
             )
         }
 
-        composable<SignOutConfirm> { backStackEntry ->
-            val viewModel = backStackEntry.sharedViewModel<SignOutViewModel>(navController)
+        composable<WithdrawConfirm> { backStackEntry ->
+            val viewModel = backStackEntry.sharedViewModel<WithdrawViewModel>(navController)
             val lifecycleOwner = LocalLifecycleOwner.current
 
             LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
                 viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect {
-                    if (it is SignOutSideEffect.SignOutComplete) {
+                    if (it is WithdrawSideEffect.WithdrawComplete) {
                         restartApplication()
                     }
                 }
             }
 
-            SignOutConfirmScreen(
+            WithdrawConfirmScreen(
                 onConfirmClick = {
-                    viewModel.proceedSignOut()
+                    viewModel.withdrawStore()
                 },
                 onCancelClick = {
-                    navController.popBackStack(SignOutReason, inclusive = true)
+                    navController.popBackStack(WithdrawReason, inclusive = true)
                 },
                 onNavigateUpClick = navigateToUp,
                 modifier = systemBarPaddingModifier,
@@ -134,13 +134,13 @@ data object MyPage : MainTabRoute
 data object Settings : Route
 
 @Serializable
-data object SignOut : Route
+data object Withdraw : Route
 
 @Serializable
-private data object SignOutReason : Route
+private data object WithdrawReason : Route
 
 @Serializable
-private data object SignOutDetail : Route
+private data object WithdrawDetail : Route
 
 @Serializable
-private data object SignOutConfirm : Route
+private data object WithdrawConfirm : Route

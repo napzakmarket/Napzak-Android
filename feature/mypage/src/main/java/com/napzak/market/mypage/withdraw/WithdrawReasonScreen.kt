@@ -1,4 +1,4 @@
-package com.napzak.market.mypage.signout
+package com.napzak.market.mypage.withdraw
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,23 +31,23 @@ import com.napzak.market.feature.mypage.R.string.sign_out_reason_spinner_descrip
 import com.napzak.market.feature.mypage.R.string.sign_out_reason_spinner_title
 import com.napzak.market.feature.mypage.R.string.sign_out_reason_title
 import com.napzak.market.feature.mypage.R.string.sign_out_top_bar
-import com.napzak.market.mypage.signout.type.SignOutReasonType
+import com.napzak.market.mypage.withdraw.type.WithdrawReasonType
 import com.napzak.market.util.android.ScreenPreview
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
-internal fun SignOutReasonScreen(
+internal fun WithdrawReasonScreen(
     onReasonSelect: (String) -> Unit,
     onProceedClick: () -> Unit,
     onNavigateUpClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val innerScreenScrollState = rememberScrollState()
-    val signOutReasons = remember { SignOutReasonType.entries.map { it.reason } }
+    val withdrawReasons = remember { WithdrawReasonType.entries.map { it.reason } }
     val paddingModifier = Modifier.padding(horizontal = 20.dp)
 
     LaunchedEffect(Unit) {
-        onReasonSelect(signOutReasons.first())
+        onReasonSelect(withdrawReasons.first())
     }
 
     Scaffold(
@@ -122,8 +122,8 @@ internal fun SignOutReasonScreen(
             Spacer(Modifier.height(20.dp))
 
             NapzakSpinner(
-                options = signOutReasons.toImmutableList(),
-                initialOption = signOutReasons.first(),
+                options = withdrawReasons.toImmutableList(),
+                initialOption = withdrawReasons.first(),
                 onOptionSelect = onReasonSelect,
                 modifier = paddingModifier,
             )
@@ -133,12 +133,12 @@ internal fun SignOutReasonScreen(
 
 @ScreenPreview
 @Composable
-private fun SignOutReasonScreenPreview() {
+private fun WithdrawReasonScreenPreview() {
     NapzakMarketTheme {
-        var signOutReason by remember { mutableStateOf("") }
+        var withdrawReason by remember { mutableStateOf("") }
 
-        SignOutReasonScreen(
-            onReasonSelect = { signOutReason = it },
+        WithdrawReasonScreen(
+            onReasonSelect = { withdrawReason = it },
             onProceedClick = {},
             onNavigateUpClick = {},
         )
