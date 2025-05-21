@@ -14,7 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,6 +40,8 @@ import com.napzak.market.registration.component.RegistrationViewGroup
 import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.purchase.component.PriceNegotiationGroup
 import com.napzak.market.registration.purchase.state.PurchaseContract.PurchaseUiState
+import com.napzak.market.util.android.model.ShadowDirection
+import com.napzak.market.util.android.napzakGradientShadow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
@@ -122,6 +124,17 @@ fun PurchaseRegistrationScreen(
                     onCloseClick = onCloseClick,
                     modifier = Modifier.fillMaxWidth(),
                 )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(2.dp)
+                        .napzakGradientShadow(
+                            height = 2.dp,
+                            startColor = Color(0x0D000000),
+                            endColor = Color.Transparent,
+                            direction = ShadowDirection.Bottom,
+                        ),
+                )
             }
 
             item {
@@ -166,10 +179,11 @@ fun PurchaseRegistrationScreen(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .shadow(
-                    elevation = 4.dp,
-                    spotColor = NapzakMarketTheme.colors.transBlack,
-                    ambientColor = NapzakMarketTheme.colors.transBlack,
+                .napzakGradientShadow(
+                    height = 2.dp,
+                    startColor = Color(0x0D000000),
+                    endColor = Color.Transparent,
+                    direction = ShadowDirection.Top,
                 )
                 .background(NapzakMarketTheme.colors.white)
                 .then(paddedModifier)

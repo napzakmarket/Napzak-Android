@@ -9,7 +9,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -27,11 +26,6 @@ internal fun RegistrationTopBar(
 ) {
     Box(
         modifier = modifier
-            .shadow(
-                elevation = 4.dp,
-                spotColor = NapzakMarketTheme.colors.transBlack,
-                ambientColor = NapzakMarketTheme.colors.transBlack,
-            )
             .background(color = NapzakMarketTheme.colors.white)
             .padding(top = 32.dp, end = 12.dp, bottom = 20.dp),
     ) {
