@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -132,11 +134,22 @@ fun SaleRegistrationScreen(
         saleUiState.halfShippingFee,
     ) { checkButtonEnabled() }
 
+    val focusManager = LocalFocusManager.current
+    val scrollState = rememberLazyListState()
+
+    LaunchedEffect(scrollState.isScrollInProgress) {
+        if (scrollState.isScrollInProgress) {
+            focusManager.clearFocus()
+        }
+    }
+
     Box(
         modifier = modifier
             .background(NapzakMarketTheme.colors.white),
     ) {
-        LazyColumn {
+        LazyColumn(
+            state = scrollState,
+        ) {
             stickyHeader {
                 RegistrationTopBar(
                     title = stringResource(title, stringResource(sale)),

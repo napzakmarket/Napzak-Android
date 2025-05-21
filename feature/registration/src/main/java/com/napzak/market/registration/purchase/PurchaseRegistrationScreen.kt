@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -103,7 +104,6 @@ fun PurchaseRegistrationScreen(
     modifier: Modifier = Modifier,
 ) {
     val paddedModifier = Modifier.padding(horizontal = 20.dp)
-    val focusManager = LocalFocusManager.current
     val isButtonEnabled = remember(
         registrationUiState.imageUris,
         registrationUiState.genre,
@@ -113,11 +113,22 @@ fun PurchaseRegistrationScreen(
         purchaseUiState.isNegotiable,
     ) { checkButtonEnabled() }
 
+    val focusManager = LocalFocusManager.current
+    val state = rememberLazyListState()
+
+    LaunchedEffect(state.isScrollInProgress) {
+        if (state.isScrollInProgress) {
+            focusManager.clearFocus()
+        }
+    }
+
     Box(
         modifier = modifier
             .background(NapzakMarketTheme.colors.white),
     ) {
-        LazyColumn {
+        LazyColumn(
+            state = state,
+        ) {
             stickyHeader {
                 RegistrationTopBar(
                     title = stringResource(title, stringResource(purchase)),
