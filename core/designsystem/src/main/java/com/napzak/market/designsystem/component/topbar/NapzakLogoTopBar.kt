@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.napzak.market.designsystem.R.drawable.ic_logo
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
 @Composable
@@ -24,7 +25,7 @@ fun NapzakLogoTopBar(
         modifier = modifier.fillMaxWidth()
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(com.napzak.market.designsystem.R.drawable.ic_logo),
+            imageVector = ImageVector.vectorResource(ic_logo),
             contentDescription = null,
             tint = Color.Unspecified,
             modifier = Modifier.size(width = 101.dp, height = 33.dp),
