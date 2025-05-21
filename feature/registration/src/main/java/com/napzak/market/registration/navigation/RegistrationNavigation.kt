@@ -22,20 +22,24 @@ fun NavController.navigateToPurchaseRegistration(
     productId: Long? = null,
 ) = navigate(PurchaseRegistration(productId), navOptions)
 
-fun NavController.navigateToGenreSearch(navOptions: NavOptions? = null) =
-    navigate(GenreSearch, navOptions)
+fun NavController.navigateToGenreSearch(
+    navOptions: NavOptions? = null,
+    genreId: Long? = null,
+) = navigate(GenreSearch(genreId), navOptions)
 
 fun NavGraphBuilder.registrationGraph(
     navigateToUp: () -> Unit,
     navigateToDetail: (Long) -> Unit,
-    navigateToGenreSearch: () -> Unit,
+    navigateToGenreSearch: (Long?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<SaleRegistration> {
         SaleRegistrationRoute(
             navigateToUp = navigateToUp,
             navigateToDetail = navigateToDetail,
-            navigateToGenreSearch = navigateToGenreSearch,
+            navigateToGenreSearch = {
+                navigateToGenreSearch(it)
+            },
             modifier = modifier.systemBarsPadding(),
         )
     }
@@ -44,7 +48,9 @@ fun NavGraphBuilder.registrationGraph(
         PurchaseRegistrationRoute(
             navigateToUp = navigateToUp,
             navigateToDetail = navigateToDetail,
-            navigateToGenreSearch = navigateToGenreSearch,
+            navigateToGenreSearch = {
+                navigateToGenreSearch(it)
+            },
             modifier = modifier.systemBarsPadding(),
         )
     }
@@ -68,4 +74,6 @@ data class PurchaseRegistration(
 ) : Route
 
 @Serializable
-data object GenreSearch : Route
+data class GenreSearch(
+    val genreId: Long?,
+) : Route
