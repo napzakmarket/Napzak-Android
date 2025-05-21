@@ -37,9 +37,7 @@ fun NavGraphBuilder.registrationGraph(
         SaleRegistrationRoute(
             navigateToUp = navigateToUp,
             navigateToDetail = navigateToDetail,
-            navigateToGenreSearch = {
-                navigateToGenreSearch(it)
-            },
+            navigateToGenreSearch = navigateToGenreSearch,
             modifier = modifier.systemBarsPadding(),
         )
     }
@@ -48,9 +46,7 @@ fun NavGraphBuilder.registrationGraph(
         PurchaseRegistrationRoute(
             navigateToUp = navigateToUp,
             navigateToDetail = navigateToDetail,
-            navigateToGenreSearch = {
-                navigateToGenreSearch(it)
-            },
+            navigateToGenreSearch = navigateToGenreSearch,
             modifier = modifier.systemBarsPadding(),
         )
     }
