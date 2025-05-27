@@ -61,7 +61,7 @@ fun GenreFilterChip(
             Text(
                 text = stringResource(genre_filter_genre),
                 style = textStyle,
-                color = textColor
+                color = textColor,
             )
         } else {
             Row {
@@ -71,14 +71,14 @@ fun GenreFilterChip(
                     color = textColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.width(60.dp)
+                    modifier = Modifier.width(60.dp),
                 )
 
                 if (extraCount > 0) {
                     Text(
                         text = stringResource(genre_filter_genre_extra_count, extraCount),
                         style = textStyle,
-                        color = textColor
+                        color = textColor,
                     )
                 }
             }
