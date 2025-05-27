@@ -1,5 +1,6 @@
 package com.napzak.market.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,6 +30,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.banner.Banner
 import com.napzak.market.common.state.UiState
+import com.napzak.market.designsystem.R.drawable.img_logo_napzak
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.home.R.string.home_list_customized_sub_title
@@ -93,17 +96,7 @@ private fun HomeScreen(
     Column(
         modifier = modifier.background(NapzakMarketTheme.colors.white),
     ) {
-        Box(
-            contentAlignment = Alignment.CenterStart,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Box(
-                modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 17.dp)
-                    .size(width = 101.dp, height = 33.dp)
-                    .background(NapzakMarketTheme.colors.purple500),
-            )
-        }
+        HomeTopBar()
 
         when (uiState.isLoaded) {
             is UiState.Success -> HomeSuccessScreen(
@@ -226,6 +219,22 @@ private fun HomeSuccessScreen(
 }
 
 @Composable
+private fun HomeTopBar() {
+    Box(
+        contentAlignment = Alignment.CenterStart,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Image(
+            painter = painterResource(img_logo_napzak),
+            contentDescription = null,
+            modifier = Modifier
+                .padding(horizontal = 20.dp, vertical = 17.dp)
+                .size(width = 101.dp, height = 33.dp)
+        )
+    }
+}
+
+@Composable
 private fun HomeSingleBanner(
     banner: Banner,
     modifier: Modifier = Modifier,
@@ -237,7 +246,7 @@ private fun HomeSingleBanner(
             .Builder(context)
             .data(banner.imageUrl)
             .build(),
-        contentDescription = null, // TODO: description 추가
+        contentDescription = null,
         contentScale = ContentScale.FillBounds,
         modifier = modifier
             .noRippleClickable { context.openUrl(banner.linkUrl) }
