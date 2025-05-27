@@ -34,11 +34,9 @@ fun GenreFilterChip(
     onChipClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val genreText = if (genreList.isEmpty()) {
-        stringResource(genre_filter_genre)
-    } else {
-        genreList.first().genreName
-    }
+    val genreText =
+        if (genreList.isEmpty()) stringResource(genre_filter_genre)
+        else genreList.first().genreName
     val extraCount = genreList.size - 1
     val textColor =
         if (genreList.isEmpty()) NapzakMarketTheme.colors.gray400
