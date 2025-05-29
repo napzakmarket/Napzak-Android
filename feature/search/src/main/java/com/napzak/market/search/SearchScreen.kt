@@ -55,7 +55,7 @@ import com.napzak.market.search.component.GenreNavigationButton
 import com.napzak.market.search.component.SuggestedGenreCard
 import com.napzak.market.search.component.SuggestedKeywordChip
 import com.napzak.market.search.state.SearchUiState
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 import kotlinx.coroutines.delay
 
 const val EMPTY_TEXT = ""

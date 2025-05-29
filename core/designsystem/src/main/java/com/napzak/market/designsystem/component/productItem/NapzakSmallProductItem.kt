@@ -44,7 +44,7 @@ import com.napzak.market.designsystem.R.string.production_item_price
 import com.napzak.market.designsystem.R.string.production_item_price_suggestion
 import com.napzak.market.designsystem.R.string.production_item_sell
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.util.android.throttledNoRippleClickable
+import com.napzak.market.ui_util.throttledNoRippleClickable
 
 /**
  * 상품 아이템 (Thumbnail-Small), 가로 스크롤 목록에 사용됩니다.

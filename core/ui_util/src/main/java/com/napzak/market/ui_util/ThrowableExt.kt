@@ -1,4 +1,4 @@
-package com.napzak.market.util.android
+package com.napzak.market.ui_util
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

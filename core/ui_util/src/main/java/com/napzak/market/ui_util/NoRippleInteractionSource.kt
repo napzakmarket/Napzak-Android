@@ -1,4 +1,4 @@
-package com.napzak.market.util.android
+package com.napzak.market.ui_util
 
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource

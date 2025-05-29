@@ -1,4 +1,4 @@
-package com.napzak.market.util.android
+package com.napzak.market.remote
 
 import android.content.ContentResolver
 import android.net.Uri
@@ -9,6 +9,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okio.BufferedSink
 import okio.source
+
+private const val IMAGE = "image"
 
 class ContentUriRequestBody(
     private val contentResolver: ContentResolver,
@@ -46,5 +48,3 @@ class ContentUriRequestBody(
     fun toFormData(name: String = IMAGE) =
         MultipartBody.Part.createFormData(name, getFileName(), this)
 }
-
-private const val IMAGE = "image"
