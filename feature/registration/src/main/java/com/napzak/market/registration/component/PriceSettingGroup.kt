@@ -36,10 +36,10 @@ import com.napzak.market.designsystem.component.textfield.InputTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.purchase_price_error
 import com.napzak.market.ui_util.EmptyTextToolbar
-import com.napzak.market.util.android.addPrice
-import com.napzak.market.util.android.adjustToMaxPrice
-import com.napzak.market.util.android.priceSeparatorTransformation
-import com.napzak.market.util.android.priceToNumericTransformation
+import com.napzak.market.ui_util.addPrice
+import com.napzak.market.ui_util.adjustToMaxPrice
+import com.napzak.market.ui_util.priceSeparatorTransformation
+import com.napzak.market.ui_util.priceToNumericTransformation
 
 private const val THOUSAND = 1000
 private const val FIVE_THOUSAND = 5000
