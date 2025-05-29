@@ -32,7 +32,7 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.store.R.drawable.ic_profile_basic
 import com.napzak.market.feature.store.R.drawable.ic_profile_edit
 import com.napzak.market.presigned_url.type.PhotoType
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun EditStorePhotoSection(

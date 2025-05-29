@@ -1,4 +1,4 @@
-package com.napzak.market.util.android
+package com.napzak.market.ui_util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember

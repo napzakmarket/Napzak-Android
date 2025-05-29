@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_arrow_left
 import com.napzak.market.designsystem.R.string.top_bar_navigate_up
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 
 @Composable

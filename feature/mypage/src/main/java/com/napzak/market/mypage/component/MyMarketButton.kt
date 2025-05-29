@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_arrow_right_7
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.mypage_my_market
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun MyMarketButton(

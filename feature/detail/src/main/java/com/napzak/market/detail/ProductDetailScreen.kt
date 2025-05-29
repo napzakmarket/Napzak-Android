@@ -47,7 +47,7 @@ import com.napzak.market.feature.detail.R.string.detail_snack_bar_delete
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.model.ProductDetail.ProductPhoto
 import com.napzak.market.product.model.ProductDetail.StoreInfo
-import com.napzak.market.util.android.LocalSnackBarController
+import com.napzak.market.ui_util.LocalSnackBarController
 import com.napzak.market.util.common.formatToPriceString
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
