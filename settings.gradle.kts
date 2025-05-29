@@ -31,6 +31,7 @@ include(
     ":core:common",
     ":core:designsystem",
     ":core:util",
+    ":core:ui_util",
 )
 
 include(
