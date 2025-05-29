@@ -1,11 +1,15 @@
 package com.napzak.market.report
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
@@ -17,8 +21,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -87,6 +93,7 @@ internal fun ReportRoute(
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ReportScreen(
     reportState: ReportState,
@@ -95,10 +102,29 @@ private fun ReportScreen(
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
+    val imeVisible = WindowInsets.isImeVisible
 
     val focusManager = LocalFocusManager.current
-    val dropdownEnabled = remember { mutableStateOf(false) }
-    val disableDropDown = { dropdownEnabled.value = false }
+    var dropdownEnabled by remember { mutableStateOf(false) }
+    val disableDropDown = { dropdownEnabled = false }
+
+    LaunchedEffect(dropdownEnabled) {
+        if (dropdownEnabled) focusManager.clearFocus()
+    }
+
+    // 키보드가 내려가면 포커스 제거
+    LaunchedEffect(imeVisible) {
+        if (!imeVisible) {
+            focusManager.clearFocus(force = true)
+        }
+    }
+
+    BackHandler {
+        if (dropdownEnabled) disableDropDown()
+        else onNavigateUp()
+    }
+
+
 
     Scaffold(
         topBar = {
@@ -138,8 +164,8 @@ private fun ReportScreen(
 
             ReportReasonSection(
                 reportState = reportState,
-                dropdownEnabled = dropdownEnabled.value,
-                onDropdownClick = { dropdownEnabled.value = it },
+                dropdownEnabled = dropdownEnabled,
+                onDropdownClick = { dropdownEnabled = it },
                 modifier = Modifier.padding(horizontal = 20.dp),
             )
 
