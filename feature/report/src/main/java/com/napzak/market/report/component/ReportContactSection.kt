@@ -28,32 +28,33 @@ internal fun ReportContactSection(
     onTextFieldFocus: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Text(
-        text = stringResource(report_input_title_contact),
-        style = NapzakMarketTheme.typography.body14sb,
-        color = NapzakMarketTheme.colors.gray500,
-        modifier = modifier,
-    )
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(report_input_title_contact),
+            style = NapzakMarketTheme.typography.body14sb,
+            color = NapzakMarketTheme.colors.gray500,
+        )
 
-    Spacer(modifier = modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
 
-    NapzakDefaultTextField(
-        text = reportState.contact,
-        onTextChange = { reportState.contact = it },
-        hint = stringResource(report_input_place_holder_contact),
-        textStyle = NapzakMarketTheme.typography.caption12m,
-        textColor = NapzakMarketTheme.colors.gray500,
-        hintTextStyle = NapzakMarketTheme.typography.caption12m,
-        hintTextColor = NapzakMarketTheme.colors.gray200,
-        isSingleLined = true,
-        modifier = modifier
-            .clip(RoundedCornerShape(14.dp))
-            .background(NapzakMarketTheme.colors.gray50)
-            .padding(16.dp)
-            .onFocusEvent {
-                if (it.isFocused) onTextFieldFocus()
-            },
-    )
+        NapzakDefaultTextField(
+            text = reportState.contact,
+            onTextChange = { reportState.contact = it },
+            hint = stringResource(report_input_place_holder_contact),
+            textStyle = NapzakMarketTheme.typography.caption12m,
+            textColor = NapzakMarketTheme.colors.gray500,
+            hintTextStyle = NapzakMarketTheme.typography.caption12m,
+            hintTextColor = NapzakMarketTheme.colors.gray200,
+            isSingleLined = true,
+            modifier = Modifier
+                .clip(RoundedCornerShape(14.dp))
+                .background(NapzakMarketTheme.colors.gray50)
+                .padding(16.dp)
+                .onFocusEvent {
+                    if (it.isFocused) onTextFieldFocus()
+                },
+        )
+    }
 }
 
 @Preview(showBackground = true)

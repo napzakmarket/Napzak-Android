@@ -33,47 +33,48 @@ internal fun ReportDetailSection(
     onTextFieldFocus: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Text(
-        text = stringResource(report_input_title_detail),
-        style = NapzakMarketTheme.typography.body14sb,
-        color = NapzakMarketTheme.colors.gray500,
-        modifier = modifier,
-    )
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(report_input_title_detail),
+            style = NapzakMarketTheme.typography.body14sb,
+            color = NapzakMarketTheme.colors.gray500,
+        )
 
-    Spacer(modifier.height(16.dp))
+        Spacer(modifier.height(16.dp))
 
-    InputTextField(
-        text = reportState.detail,
-        onTextChange = reportState::onDetailChange,
-        hint = stringResource(report_input_place_holder_detail),
-        modifier = modifier
-            .defaultMinSize(minHeight = MinHeight)
-            .onFocusEvent {
-                if (it.isFocused) onTextFieldFocus()
-            },
-        textStyle = NapzakMarketTheme.typography.caption12sb,
-        textColor = NapzakMarketTheme.colors.gray400,
-        hintTextStyle = NapzakMarketTheme.typography.caption12m,
-        borderColor = NapzakMarketTheme.colors.gray200,
-        isSingleLined = false,
-        contentAlignment = Alignment.TopStart,
-        paddingValues = PaddingValues(16.dp),
-    )
+        InputTextField(
+            text = reportState.detail,
+            onTextChange = reportState::onDetailChange,
+            hint = stringResource(report_input_place_holder_detail),
+            textStyle = NapzakMarketTheme.typography.caption12sb,
+            textColor = NapzakMarketTheme.colors.gray400,
+            hintTextStyle = NapzakMarketTheme.typography.caption12m,
+            borderColor = NapzakMarketTheme.colors.gray200,
+            isSingleLined = false,
+            contentAlignment = Alignment.TopStart,
+            paddingValues = PaddingValues(16.dp),
+            modifier = Modifier
+                .defaultMinSize(minHeight = MinHeight)
+                .onFocusEvent {
+                    if (it.isFocused) onTextFieldFocus()
+                },
+        )
 
-    Spacer(modifier.height(9.dp))
+        Spacer(Modifier.height(9.dp))
 
-    Text(
-        text = stringResource(
-            report_input_letter_num_detail,
-            reportState.detail.length,
-            DETAIL_LENGTH_MAX
-        ),
-        style = NapzakMarketTheme.typography.caption10sb.copy(
-            color = NapzakMarketTheme.colors.gray300,
-            textAlign = TextAlign.End,
-        ),
-        modifier = modifier.fillMaxWidth(),
-    )
+        Text(
+            text = stringResource(
+                report_input_letter_num_detail,
+                reportState.detail.length,
+                DETAIL_LENGTH_MAX
+            ),
+            style = NapzakMarketTheme.typography.caption10sb.copy(
+                color = NapzakMarketTheme.colors.gray300,
+                textAlign = TextAlign.End,
+            ),
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
 }
 
 @Preview(showBackground = true)
