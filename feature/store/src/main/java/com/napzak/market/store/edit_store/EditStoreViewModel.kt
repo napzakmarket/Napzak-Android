@@ -16,7 +16,7 @@ import com.napzak.market.store.model.StoreEditProfile
 import com.napzak.market.store.repository.StoreRepository
 import com.napzak.market.store.usecase.CheckNicknameDuplicationUseCase
 import com.napzak.market.store.usecase.ValidateNicknameUseCase
-import com.napzak.market.util.android.getHttpExceptionMessage
+import com.napzak.market.ui_util.getHttpExceptionMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel

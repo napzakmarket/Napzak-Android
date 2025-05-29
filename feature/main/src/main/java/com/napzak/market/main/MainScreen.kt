@@ -63,8 +63,8 @@ import com.napzak.market.store.edit_store.navigation.editStoreGraph
 import com.napzak.market.store.edit_store.navigation.navigateToEditStore
 import com.napzak.market.store.store.navigation.navigateToStore
 import com.napzak.market.store.store.navigation.storeGraph
-import com.napzak.market.util.android.LocalSnackBarController
-import com.napzak.market.util.android.SnackBarController
+import com.napzak.market.ui_util.LocalSnackBarController
+import com.napzak.market.ui_util.SnackBarController
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable

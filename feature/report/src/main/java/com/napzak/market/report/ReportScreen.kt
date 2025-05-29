@@ -41,8 +41,8 @@ import com.napzak.market.report.component.ReportReasonSection
 import com.napzak.market.report.state.ReportState
 import com.napzak.market.report.state.rememberReportState
 import com.napzak.market.report.type.ReportType
+import com.napzak.market.ui_util.LocalSnackBarController
 import com.napzak.market.ui_util.noRippleClickable
-import com.napzak.market.util.android.LocalSnackBarController
 
 @Composable
 internal fun ReportRoute(
