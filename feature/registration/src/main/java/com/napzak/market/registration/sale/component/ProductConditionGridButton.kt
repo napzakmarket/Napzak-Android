@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.napzak.market.common.type.ProductConditionType
 import com.napzak.market.designsystem.R.drawable.ic_check_purple
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 private const val ITEM_CHUNK = 2
 

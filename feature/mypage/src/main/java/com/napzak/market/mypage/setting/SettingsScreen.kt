@@ -38,7 +38,7 @@ import com.napzak.market.feature.mypage.R.string.settings_section_service_info_t
 import com.napzak.market.feature.mypage.R.string.settings_topbar_title
 import com.napzak.market.mypage.setting.component.SettingItem
 import com.napzak.market.mypage.setting.model.SettingViewModel
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 fun SettingsRoute(

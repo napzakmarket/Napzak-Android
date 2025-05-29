@@ -20,7 +20,7 @@ import com.napzak.market.feature.registration.R.string.price_button_1000
 import com.napzak.market.feature.registration.R.string.price_button_10000
 import com.napzak.market.feature.registration.R.string.price_button_100000
 import com.napzak.market.feature.registration.R.string.price_button_5000
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun PriceIncrementer(

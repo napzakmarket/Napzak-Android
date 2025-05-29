@@ -27,7 +27,7 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.accept_negotiation
 import com.napzak.market.feature.registration.R.string.negotiation
 import com.napzak.market.feature.registration.R.string.negotiation_description
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun PriceNegotiationGroup(

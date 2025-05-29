@@ -34,7 +34,7 @@ import com.napzak.market.store.model.NicknameValidationResult.Error.ONLY_CONSONA
 import com.napzak.market.store.model.NicknameValidationResult.Error.ONLY_NUMBERS
 import com.napzak.market.store.model.NicknameValidationResult.Error.SPECIAL_CHAR
 import com.napzak.market.store.model.NicknameValidationResult.Error.WHITESPACE
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 private const val NICKNAME_MAX_LENGTH = 20
 

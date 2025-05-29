@@ -55,7 +55,7 @@ import com.napzak.market.feature.detail.R.string.detail_bottom_sheet_radio_butto
 import com.napzak.market.feature.detail.R.string.detail_bottom_sheet_radio_button_reserved
 import com.napzak.market.feature.detail.R.string.detail_bottom_sheet_setting
 import com.napzak.market.feature.detail.R.string.detail_snack_bar_trade_status
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
