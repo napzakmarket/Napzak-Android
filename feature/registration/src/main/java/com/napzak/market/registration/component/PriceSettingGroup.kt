@@ -35,9 +35,7 @@ import com.napzak.market.designsystem.R.drawable.ic_error_9
 import com.napzak.market.designsystem.component.textfield.InputTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.purchase_price_error
-import com.napzak.market.util.android.EmptyTextToolbar
-import com.napzak.market.util.android.LocalEmptyTextToolbar
-import com.napzak.market.util.android.LocalSnackBarController
+import com.napzak.market.ui_util.EmptyTextToolbar
 import com.napzak.market.util.android.addPrice
 import com.napzak.market.util.android.adjustToMaxPrice
 import com.napzak.market.util.android.priceSeparatorTransformation
