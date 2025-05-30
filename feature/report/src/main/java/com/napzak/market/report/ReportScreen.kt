@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -102,29 +104,15 @@ private fun ReportScreen(
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
-    val imeVisible = WindowInsets.isImeVisible
-
     val focusManager = LocalFocusManager.current
     var dropdownEnabled by remember { mutableStateOf(false) }
     val disableDropDown = { dropdownEnabled = false }
 
-    LaunchedEffect(dropdownEnabled) {
-        if (dropdownEnabled) focusManager.clearFocus()
-    }
-
-    // 키보드가 내려가면 포커스 제거
-    LaunchedEffect(imeVisible) {
-        if (!imeVisible) {
-            focusManager.clearFocus(force = true)
-        }
-    }
-
-    BackHandler {
-        if (dropdownEnabled) disableDropDown()
-        else onNavigateUp()
-    }
-
-
+    FocusSideEffectsHandler(
+        dropdownEnabled = dropdownEnabled,
+        disableDropDown = disableDropDown,
+        onNavigateUp = onNavigateUp,
+    )
 
     Scaffold(
         topBar = {
@@ -144,6 +132,8 @@ private fun ReportScreen(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
+                .consumeWindowInsets(innerPadding)
+                .imePadding()
                 .verticalScroll(scrollState)
                 .noRippleClickable {
                     focusManager.clearFocus()
@@ -243,6 +233,35 @@ private fun SectionDivider(
         color = NapzakMarketTheme.colors.gray10,
         modifier = modifier,
     )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun FocusSideEffectsHandler(
+    dropdownEnabled: Boolean,
+    disableDropDown: () -> Unit,
+    onNavigateUp: () -> Unit,
+) {
+    val focusManager = LocalFocusManager.current
+    val imeVisible = WindowInsets.isImeVisible
+
+    // 드롭다운 메뉴가 열리면 포커스 제거
+    LaunchedEffect(dropdownEnabled) {
+        if (dropdownEnabled) focusManager.clearFocus()
+    }
+
+    // 키보드가 내려가면 포커스 제거
+    LaunchedEffect(imeVisible) {
+        if (!imeVisible) {
+            focusManager.clearFocus(force = true)
+        }
+    }
+
+    // 드롭다운 메뉴가 열려있으면 백버튼으로 닫음
+    BackHandler {
+        if (dropdownEnabled) disableDropDown()
+        else onNavigateUp()
+    }
 }
 
 @Preview(showBackground = true)
