@@ -27,9 +27,9 @@ import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.ic_delete_snackbar_16
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
-import com.napzak.market.designsystem.component.HeartClickSnackBar
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.component.dialog.NapzakDialogDefault
+import com.napzak.market.designsystem.component.toast.HeartClickSnackBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.detail.component.bottombar.ProductDetailBottomBar
 import com.napzak.market.detail.component.bottomsheet.MyProductBottomSheet

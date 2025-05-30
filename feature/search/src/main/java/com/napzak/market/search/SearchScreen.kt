@@ -98,6 +98,7 @@ private fun SearchScreen(
     onRecommendedGenreClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
     when (uiState.loadState) {
         is UiState.Loading -> {
         }

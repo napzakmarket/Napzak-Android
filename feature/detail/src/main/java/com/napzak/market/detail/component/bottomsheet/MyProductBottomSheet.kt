@@ -42,9 +42,9 @@ import com.napzak.market.designsystem.R.drawable.ic_check_snackbar_18
 import com.napzak.market.designsystem.R.drawable.ic_delete_24
 import com.napzak.market.designsystem.R.drawable.ic_edit_24
 import com.napzak.market.designsystem.R.drawable.ic_setting_24
-import com.napzak.market.designsystem.component.CommonSnackBar
 import com.napzak.market.designsystem.component.bottomsheet.BottomSheetMenuItem
 import com.napzak.market.designsystem.component.bottomsheet.DragHandleBottomSheet
+import com.napzak.market.designsystem.component.toast.CommonSnackBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.detail.R.string.detail_bottom_sheet_delete
 import com.napzak.market.feature.detail.R.string.detail_bottom_sheet_edit

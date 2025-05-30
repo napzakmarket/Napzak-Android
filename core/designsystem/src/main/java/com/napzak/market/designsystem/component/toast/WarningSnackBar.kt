@@ -1,4 +1,4 @@
-package com.napzak.market.designsystem.component
+package com.napzak.market.designsystem.component.toast
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,9 +23,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R
-import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.designsystem.R.drawable.ic_warning_snackbar_12
 import com.napzak.market.designsystem.R.string.warning_snackbar_icon_description
+import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
 @Composable
 fun WarningSnackBar(
