@@ -66,7 +66,10 @@ internal class ProductDetailViewModel @Inject constructor(
         }
     }
 
-    fun updateIsInterested(isInterested: Boolean) = _isInterested.update { isInterested }
+    fun updateIsInterested(isInterested: Boolean) {
+        _isInterested.update { isInterested }
+        viewModelScope.launch { _sideEffect.send(ProductDetailSideEffect.ShowHeartToast) }
+    }
 
     private suspend fun setInterested(productId: Long?, isInterested: Boolean) {
         if (initialLoading) {
@@ -94,6 +97,16 @@ internal class ProductDetailViewModel @Inject constructor(
         productDetailRepository.patchTradeStatus(productId, tradeStatus)
             .onSuccess {
                 getProductDetail()
+                runCatching {
+                    val tradeType =
+                        (_productDetail.value as UiState.Success<ProductDetail>).data.tradeType
+                    _sideEffect.send(
+                        ProductDetailSideEffect.ShowStatusChangeToast(
+                            tradeStatus = tradeStatus,
+                            tradeType = tradeType
+                        )
+                    )
+                }
             }
             .onFailure(Timber::e)
     }
@@ -102,7 +115,7 @@ internal class ProductDetailViewModel @Inject constructor(
         productDetailRepository.deleteProduct(productId)
             .onSuccess {
                 _sideEffect.send(ProductDetailSideEffect.NavigateUp)
-                _sideEffect.send(ProductDetailSideEffect.ShowDeleteSnackBar)
+                _sideEffect.send(ProductDetailSideEffect.ShowDeleteToast)
             }
             .onFailure(Timber::e)
     }

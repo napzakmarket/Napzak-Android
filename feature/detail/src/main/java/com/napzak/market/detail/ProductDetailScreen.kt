@@ -3,14 +3,11 @@ package com.napzak.market.detail
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,11 +22,12 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.ProductConditionType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
+import com.napzak.market.designsystem.R.drawable.ic_check_snackbar_18
 import com.napzak.market.designsystem.R.drawable.ic_delete_snackbar_16
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.component.dialog.NapzakDialogDefault
-import com.napzak.market.designsystem.component.toast.HeartClickSnackBar
+import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.detail.component.bottombar.ProductDetailBottomBar
 import com.napzak.market.detail.component.bottomsheet.MyProductBottomSheet
@@ -44,14 +42,13 @@ import com.napzak.market.detail.component.topbar.DetailTopBar
 import com.napzak.market.feature.detail.R.string.detail_dialog_delete_sub_title
 import com.napzak.market.feature.detail.R.string.detail_dialog_delete_title
 import com.napzak.market.feature.detail.R.string.detail_snack_bar_delete
+import com.napzak.market.feature.detail.R.string.detail_snack_bar_trade_status
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.model.ProductDetail.ProductPhoto
 import com.napzak.market.product.model.ProductDetail.StoreInfo
-import com.napzak.market.ui_util.LocalSnackBarController
 import com.napzak.market.util.common.formatToPriceString
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.launch
 
 @Composable
 internal fun ProductDetailRoute(
@@ -64,8 +61,8 @@ internal fun ProductDetailRoute(
     viewModel: ProductDetailViewModel = hiltViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val snackBarController = LocalSnackBarController.current
     val context = LocalContext.current
+    val toast = LocalNapzakToast.current
 
     val uiState by viewModel.productDetail.collectAsStateWithLifecycle()
     val isInterested by viewModel.isInterested.collectAsStateWithLifecycle()
@@ -83,10 +80,31 @@ internal fun ProductDetailRoute(
                         onNavigateUp()
                     }
 
-                    is ProductDetailSideEffect.ShowDeleteSnackBar -> {
-                        snackBarController.show(
+                    is ProductDetailSideEffect.ShowDeleteToast -> {
+                        toast.showCommonToast(
                             message = context.getString(detail_snack_bar_delete),
-                            imageRes = ic_delete_snackbar_16,
+                            icon = ic_delete_snackbar_16,
+                        )
+                    }
+
+                    ProductDetailSideEffect.ShowHeartToast -> {
+                        if (isInterested) toast.showHeartToast(
+                            message = context.getString(heart_click_snackbar_message),
+                            yOffset = toast.toastOffsetWithBottomBar()
+                        )
+                        else toast.cancel()
+                    }
+
+                    is ProductDetailSideEffect.ShowStatusChangeToast -> {
+                        val tradeType = TradeType.fromName(sideEffect.tradeType)
+                        val tradeStatus = TradeStatusType.get(sideEffect.tradeStatus, tradeType)
+
+                        toast.showCommonToast(
+                            message = context.getString(
+                                detail_snack_bar_trade_status,
+                                tradeStatus.label
+                            ),
+                            icon = ic_check_snackbar_18
                         )
                     }
                 }
@@ -122,8 +140,6 @@ private fun ProductDetailScreen(
     onTradeStatusChange: (productId: Long, tradeStatus: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    val snackBarHostState = remember { SnackbarHostState() }
     var sheetVisibility by remember { mutableStateOf(false) }
     val deleteDialogVisibility = remember { mutableStateOf(false) }
 
@@ -140,20 +156,8 @@ private fun ProductDetailScreen(
                 ProductDetailBottomBar(
                     isLiked = isInterested,
                     onChatButtonClick = { onChatButtonClick(productId) },
-                    onLikeButtonClick = {
-                        onLikeButtonClick(productId)
-                        coroutineScope.launch {
-                            // NOTE: debounce 처리로 인해 스낵바 조건이 바뀜
-                            if (!isInterested) snackBarHostState.showSnackbar("")
-                            else snackBarHostState.currentSnackbarData?.dismiss()
-                        }
-                    },
+                    onLikeButtonClick = { onLikeButtonClick(productId) },
                 )
-            }
-        },
-        snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState) {
-                HeartClickSnackBar(message = stringResource(heart_click_snackbar_message))
             }
         },
         containerColor = NapzakMarketTheme.colors.white,
