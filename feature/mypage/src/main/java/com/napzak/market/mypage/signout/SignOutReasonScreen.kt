@@ -32,7 +32,7 @@ import com.napzak.market.feature.mypage.R.string.sign_out_reason_spinner_title
 import com.napzak.market.feature.mypage.R.string.sign_out_reason_title
 import com.napzak.market.feature.mypage.R.string.sign_out_top_bar
 import com.napzak.market.mypage.signout.type.SignOutReasonType
-import com.napzak.market.util.android.ScreenPreview
+import com.napzak.market.ui_util.ScreenPreview
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable

@@ -19,7 +19,7 @@ import com.napzak.market.designsystem.R
 import com.napzak.market.designsystem.R.drawable.ic_down_chevron
 import com.napzak.market.designsystem.R.drawable.ic_up_chevron
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 /**
  * bottomSheet 안에 들어가는 메뉴 아이템

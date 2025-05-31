@@ -38,7 +38,7 @@ import com.napzak.market.feature.registration.R.string.normal_shipping_hint
 import com.napzak.market.feature.registration.R.string.shipping_excluded
 import com.napzak.market.feature.registration.R.string.shipping_included
 import com.napzak.market.registration.component.ShippingFeeTextField
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 private const val EMPTY_STRING = ""
 private const val NORMAL_MAX_PRICE = 30_000

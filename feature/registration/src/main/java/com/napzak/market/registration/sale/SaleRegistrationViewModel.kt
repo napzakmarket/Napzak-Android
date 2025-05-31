@@ -21,7 +21,7 @@ import com.napzak.market.registration.sale.state.SaleContract.SaleUiState
 import com.napzak.market.registration.usecase.EditRegisteredProductUseCase
 import com.napzak.market.registration.usecase.GetRegisteredSaleProductUseCase
 import com.napzak.market.registration.usecase.RegisterProductUseCase
-import com.napzak.market.util.android.priceToNumericTransformation
+import com.napzak.market.ui_util.priceToNumericTransformation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

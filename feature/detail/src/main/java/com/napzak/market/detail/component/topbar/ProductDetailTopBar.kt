@@ -19,7 +19,7 @@ import com.napzak.market.feature.detail.R.drawable.ic_back
 import com.napzak.market.feature.detail.R.drawable.ic_option
 import com.napzak.market.feature.detail.R.string.detail_top_bar_content_description_back
 import com.napzak.market.feature.detail.R.string.detail_top_bar_content_description_option
-import com.napzak.market.util.android.napzakRippleClickable
+import com.napzak.market.ui_util.napzakRippleClickable
 
 @Composable
 internal fun DetailTopBar(

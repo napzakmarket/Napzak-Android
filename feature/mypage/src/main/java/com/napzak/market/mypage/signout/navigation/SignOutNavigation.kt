@@ -15,8 +15,8 @@ import com.napzak.market.mypage.signout.SignOutDetailScreen
 import com.napzak.market.mypage.signout.SignOutReasonScreen
 import com.napzak.market.mypage.signout.SignOutSideEffect
 import com.napzak.market.mypage.signout.SignOutViewModel
-import com.napzak.market.util.android.horizontalSlideNavigation
-import com.napzak.market.util.android.sharedViewModel
+import com.napzak.market.ui_util.horizontalSlideNavigation
+import com.napzak.market.ui_util.sharedViewModel
 import kotlinx.serialization.Serializable
 
 fun NavHostController.navigateToSignOut(

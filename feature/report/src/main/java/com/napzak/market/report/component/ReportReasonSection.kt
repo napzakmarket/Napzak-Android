@@ -34,7 +34,7 @@ import com.napzak.market.feature.report.R.string.report_input_title_reason
 import com.napzak.market.report.state.ReportState
 import com.napzak.market.report.state.rememberReportState
 import com.napzak.market.report.type.ReportType
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 

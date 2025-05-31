@@ -30,7 +30,7 @@ import com.napzak.market.registration.event.GenreEventBus
 import com.napzak.market.registration.genre.component.GenreSearchEmptyView
 import com.napzak.market.registration.genre.component.GenreSearchHeader
 import com.napzak.market.registration.genre.state.GenreContract.GenreSearchUiState
-import com.napzak.market.util.android.throttledNoRippleClickable
+import com.napzak.market.ui_util.throttledNoRippleClickable
 import com.napzak.market.util.common.openUrl
 
 private const val GENRE_REQUEST_URL = "https://form.typeform.com/to/C0E09Ymd"

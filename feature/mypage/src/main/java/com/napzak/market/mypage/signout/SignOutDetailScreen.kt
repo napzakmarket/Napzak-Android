@@ -34,8 +34,8 @@ import com.napzak.market.feature.mypage.R.string.sign_out_button_skip
 import com.napzak.market.feature.mypage.R.string.sign_out_detail_hint
 import com.napzak.market.feature.mypage.R.string.sign_out_detail_title
 import com.napzak.market.feature.mypage.R.string.sign_out_top_bar
-import com.napzak.market.util.android.ScreenPreview
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.ScreenPreview
+import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun SignOutDetailScreen(
