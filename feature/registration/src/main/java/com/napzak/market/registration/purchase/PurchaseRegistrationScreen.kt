@@ -41,8 +41,8 @@ import com.napzak.market.registration.component.RegistrationViewGroup
 import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.purchase.component.PriceNegotiationGroup
 import com.napzak.market.registration.purchase.state.PurchaseContract.PurchaseUiState
-import com.napzak.market.util.android.model.ShadowDirection
-import com.napzak.market.util.android.napzakGradientShadow
+import com.napzak.market.ui_util.ShadowDirection
+import com.napzak.market.ui_util.napzakGradientShadow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 

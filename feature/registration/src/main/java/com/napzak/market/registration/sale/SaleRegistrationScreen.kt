@@ -16,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -47,8 +46,8 @@ import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.sale.component.ProductConditionGridButton
 import com.napzak.market.registration.sale.component.ShippingFeeSelector
 import com.napzak.market.registration.sale.state.SaleContract.SaleUiState
-import com.napzak.market.util.android.model.ShadowDirection
-import com.napzak.market.util.android.napzakGradientShadow
+import com.napzak.market.ui_util.ShadowDirection
+import com.napzak.market.ui_util.napzakGradientShadow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
