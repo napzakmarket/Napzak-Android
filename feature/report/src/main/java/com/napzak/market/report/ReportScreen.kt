@@ -69,7 +69,7 @@ internal fun ReportRoute(
                     is ReportSideEffect.ShowToast -> {
                         toast.showCommonToast(
                             message = sideEffect.message,
-                            fontSize = NapzakToastFontType.SMALL
+                            fontType = NapzakToastFontType.SMALL
                         )
                     }
                 }

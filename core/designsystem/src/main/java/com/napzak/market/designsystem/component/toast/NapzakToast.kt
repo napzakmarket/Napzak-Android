@@ -33,10 +33,10 @@ class NapzakToast(
     fun showCommonToast(
         message: String,
         icon: Int? = null,
-        fontSize: NapzakToastFontType = NapzakToastFontType.LARGE,
+        fontType: NapzakToastFontType = NapzakToastFontType.LARGE,
     ) = makeText {
         val textStyle = with(NapzakMarketTheme.typography) {
-            when (fontSize) {
+            when (fontType) {
                 NapzakToastFontType.SMALL -> caption12m.copy(
                     textAlign = TextAlign.Center,
                 )
