@@ -41,8 +41,8 @@ import com.napzak.market.detail.component.group.ProductMarketGroup
 import com.napzak.market.detail.component.topbar.DetailTopBar
 import com.napzak.market.feature.detail.R.string.detail_dialog_delete_sub_title
 import com.napzak.market.feature.detail.R.string.detail_dialog_delete_title
-import com.napzak.market.feature.detail.R.string.detail_snack_bar_delete
-import com.napzak.market.feature.detail.R.string.detail_snack_bar_trade_status
+import com.napzak.market.feature.detail.R.string.detail_toast_delete
+import com.napzak.market.feature.detail.R.string.detail_toast_trade_status
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.model.ProductDetail.ProductPhoto
 import com.napzak.market.product.model.ProductDetail.StoreInfo
@@ -82,7 +82,7 @@ internal fun ProductDetailRoute(
 
                     is ProductDetailSideEffect.ShowDeleteToast -> {
                         toast.showCommonToast(
-                            message = context.getString(detail_snack_bar_delete),
+                            message = context.getString(detail_toast_delete),
                             icon = ic_delete_snackbar_16,
                         )
                     }
@@ -101,7 +101,7 @@ internal fun ProductDetailRoute(
 
                         toast.showCommonToast(
                             message = context.getString(
-                                detail_snack_bar_trade_status,
+                                detail_toast_trade_status,
                                 tradeStatus.label
                             ),
                             icon = ic_check_snackbar_18
