@@ -7,14 +7,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,6 +25,7 @@ import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.NapzakToast
+import com.napzak.market.designsystem.component.toast.NapzakToastFontType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.detail.navigation.navigateToProductDetail
 import com.napzak.market.detail.navigation.productDetailGraph
@@ -42,7 +41,6 @@ import com.napzak.market.login.navigation.navigateToLogin
 import com.napzak.market.main.R.string.main_snack_bar_finish
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
-import com.napzak.market.main.component.MainSnackBarHost
 import com.napzak.market.mypage.navigation.mypageGraph
 import com.napzak.market.mypage.setting.navigation.navigateToSettings
 import com.napzak.market.mypage.setting.navigation.settingsGraph
@@ -66,8 +64,6 @@ import com.napzak.market.store.edit_store.navigation.editStoreGraph
 import com.napzak.market.store.edit_store.navigation.navigateToEditStore
 import com.napzak.market.store.store.navigation.navigateToStore
 import com.napzak.market.store.store.navigation.storeGraph
-import com.napzak.market.ui_util.LocalSnackBarController
-import com.napzak.market.ui_util.SnackBarController
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -77,11 +73,9 @@ fun MainScreen(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val coroutineScope = rememberCoroutineScope()
     val systemUiController = rememberSystemUiController()
-    val snackBarHostState = remember { SnackbarHostState() }
-    val snackBarController = remember { SnackBarController(snackBarHostState, coroutineScope) }
 
+    val napzakToast = remember { NapzakToast(context, lifecycleOwner) }
     var backPressedTime by remember { mutableLongStateOf(0) }
     val mainBackHandlerEvent = remember(backPressedTime) {
         {
@@ -91,7 +85,10 @@ fun MainScreen(
                 if (System.currentTimeMillis() - backPressedTime <= 3000) {
                     (context as Activity).finish()
                 } else {
-                    snackBarController.show(context.getString(main_snack_bar_finish))
+                    napzakToast.showCommonToast(
+                        message = context.getString(main_snack_bar_finish),
+                        fontType = NapzakToastFontType.SMALL
+                    )
                 }
                 backPressedTime = System.currentTimeMillis()
             }
@@ -115,21 +112,11 @@ fun MainScreen(
                 onTabSelected = navigator::navigate,
             )
         },
-        snackbarHost = {
-            MainSnackBarHost(
-                snackBarHostState = snackBarHostState,
-                imageRes = snackBarController.imageRes,
-            )
-        },
         containerColor = NapzakMarketTheme.colors.white,
         modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
         CompositionLocalProvider(
-            LocalSnackBarController provides snackBarController,
-            LocalNapzakToast provides NapzakToast(
-                context = context,
-                lifecycleOwner = lifecycleOwner
-            )
+            LocalNapzakToast provides napzakToast
         ) {
             Box {
                 MainRegisterDialog(
