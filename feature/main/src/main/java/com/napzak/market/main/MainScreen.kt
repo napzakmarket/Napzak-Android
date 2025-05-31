@@ -19,11 +19,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
+import com.napzak.market.designsystem.component.toast.LocalNapzakToast
+import com.napzak.market.designsystem.component.toast.NapzakToast
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.detail.navigation.navigateToProductDetail
 import com.napzak.market.detail.navigation.productDetailGraph
@@ -73,6 +76,7 @@ fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     val coroutineScope = rememberCoroutineScope()
     val systemUiController = rememberSystemUiController()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -121,7 +125,11 @@ fun MainScreen(
         modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
         CompositionLocalProvider(
-            LocalSnackBarController provides snackBarController
+            LocalSnackBarController provides snackBarController,
+            LocalNapzakToast provides NapzakToast(
+                context = context,
+                lifecycleOwner = lifecycleOwner
+            )
         ) {
             Box {
                 MainRegisterDialog(
