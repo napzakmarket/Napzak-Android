@@ -14,6 +14,7 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.common)
     implementation(projects.core.util)
+    implementation(projects.core.uiUtil)
     implementation(projects.domain.product)
     implementation(projects.domain.banner)
     implementation(projects.domain.interest)

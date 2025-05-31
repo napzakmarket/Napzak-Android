@@ -26,8 +26,8 @@ import coil.request.ImageRequest
 import com.napzak.market.designsystem.R.drawable.ic_cancel_image_24
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.representative_tag
-import com.napzak.market.util.android.noRippleClickable
-import com.napzak.market.util.android.noRippleCombineClickable
+import com.napzak.market.ui_util.noRippleClickable
+import com.napzak.market.ui_util.noRippleCombineClickable
 
 /**
  * Photo container

@@ -1,4 +1,4 @@
-package com.napzak.market.util.android
+package com.napzak.market.ui_util
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue

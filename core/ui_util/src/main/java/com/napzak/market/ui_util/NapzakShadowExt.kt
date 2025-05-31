@@ -1,4 +1,4 @@
-package com.napzak.market.util.android
+package com.napzak.market.ui_util
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -7,7 +7,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import com.napzak.market.util.android.model.ShadowDirection
+import androidx.compose.ui.unit.dp
 
 /**
  * 컴포저블의 상/하/좌/우단에 자연스러운 그라데이션 그림자를 추가하는 Modifier 확장 함수입니다.
@@ -50,3 +50,14 @@ fun Modifier.napzakGradientShadow(
         }
     }
 )
+
+enum class ShadowDirection(
+    val offsetX: Dp,
+    val offsetY: Dp
+) {
+    Top(0.dp, -1.dp),
+    Bottom(0.dp, 1.dp),
+    Start(-1.dp, 0.dp),
+    End(1.dp, 0.dp),
+    None(0.dp, 0.dp),
+}

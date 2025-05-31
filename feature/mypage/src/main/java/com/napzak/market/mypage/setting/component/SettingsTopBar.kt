@@ -28,7 +28,7 @@ import com.napzak.market.designsystem.R.drawable.ic_arrow_left_9
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.settings_topbar_back_button_description
 import com.napzak.market.feature.mypage.R.string.settings_topbar_title
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun SettingsTopBar(
