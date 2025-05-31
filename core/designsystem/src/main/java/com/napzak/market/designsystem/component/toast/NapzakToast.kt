@@ -29,7 +29,11 @@ class NapzakToast(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner,
 ) : Toast(context) {
-
+    /**
+     * [CommonSnackBar] 디자인의 토스트 메시지를 보여줍니다.
+     * @param fontType SMALL은 caption12m, LARGE는 body14sb로 폰트를 설정합니다.
+     * @param [yOffset]을 통해 화면 하단과 토스트 메시지간 간격을 설정할 수 있습니다.
+     */
     fun showCommonToast(
         message: String,
         icon: Int? = null,
@@ -56,6 +60,10 @@ class NapzakToast(
         )
     }
 
+    /**
+     * [HeartClickSnackBar] 디자인의 토스트 메시지를 보여줍니다.
+     * @param [yOffset]을 통해 화면 하단과 토스트 메시지간 간격을 설정할 수 있습니다.
+     */
     fun showHeartToast(
         message: String,
         yOffset: Int = 100,
@@ -65,6 +73,10 @@ class NapzakToast(
         )
     }
 
+    /**
+     * [WarningSnackBar] 디자인의 토스트 메시지를 보여줍니다.
+     * @param [yOffset]을 통해 화면 하단과 토스트 메시지간 간격을 설정할 수 있습니다.
+     */
     fun showWarningToast(
         message: String,
         yOffset: Int = 100,
