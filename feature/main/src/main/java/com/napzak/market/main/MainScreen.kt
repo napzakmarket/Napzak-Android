@@ -87,7 +87,8 @@ fun MainScreen(
                 } else {
                     napzakToast.showCommonToast(
                         message = context.getString(main_snack_bar_finish),
-                        fontType = NapzakToastFontType.SMALL
+                        fontType = NapzakToastFontType.SMALL,
+                        yOffset = napzakToast.toastOffsetWithBottomBar()
                     )
                 }
                 backPressedTime = System.currentTimeMillis()

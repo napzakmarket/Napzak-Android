@@ -34,7 +34,8 @@ class NapzakToast(
         message: String,
         icon: Int? = null,
         fontType: NapzakToastFontType = NapzakToastFontType.LARGE,
-    ) = makeText {
+        yOffset: Int = 100,
+    ) = makeText(yOffset = yOffset) {
         val textStyle = with(NapzakMarketTheme.typography) {
             when (fontType) {
                 NapzakToastFontType.SMALL -> caption12m.copy(
@@ -66,6 +67,7 @@ class NapzakToast(
 
     fun showWarningToast(
         message: String,
+        yOffset: Int = 100,
     ) = makeText {
         WarningSnackBar(message = message)
     }
