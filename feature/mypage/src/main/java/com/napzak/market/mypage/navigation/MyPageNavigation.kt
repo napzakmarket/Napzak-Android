@@ -20,8 +20,8 @@ import com.napzak.market.mypage.withdraw.WithdrawDetailScreen
 import com.napzak.market.mypage.withdraw.WithdrawReasonScreen
 import com.napzak.market.mypage.withdraw.WithdrawSideEffect
 import com.napzak.market.mypage.withdraw.WithdrawViewModel
-import com.napzak.market.util.android.horizontalSlideNavigation
-import com.napzak.market.util.android.sharedViewModel
+import com.napzak.market.ui_util.horizontalSlideNavigation
+import com.napzak.market.ui_util.sharedViewModel
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToMyPage(navOptions: NavOptions? = null) {

@@ -39,10 +39,9 @@ import com.napzak.market.feature.mypage.R.string.settings_topbar_title
 import com.napzak.market.mypage.setting.component.SettingItem
 import com.napzak.market.mypage.setting.component.SettingVersionItem
 import com.napzak.market.mypage.setting.type.SettingsMenu
-import com.napzak.market.util.android.ScreenPreview
-import com.napzak.market.util.common.openUrl
-import com.napzak.market.mypage.setting.model.SettingViewModel
+import com.napzak.market.ui_util.ScreenPreview
 import com.napzak.market.ui_util.noRippleClickable
+import com.napzak.market.util.common.openUrl
 
 @Composable
 internal fun SettingsRoute(
