@@ -25,27 +25,45 @@ import com.napzak.market.ui_util.sharedViewModel
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToMyPage(navOptions: NavOptions? = null) {
-    this.navigate(MyPage, navOptions)
+    this.navigate(
+        route = MyPage,
+        navOptions = navOptions,
+    )
 }
 
 fun NavController.navigateToSettings(navOptions: NavOptions? = null) {
-    this.navigate(Settings, navOptions)
+    this.navigate(
+        route = Settings,
+        navOptions = navOptions,
+    )
 }
 
 fun NavHostController.navigateToWithdraw(navOptions: NavOptions? = null) {
-    this.navigate(route = Withdraw, navOptions = navOptions)
+    this.navigate(
+        route = Withdraw,
+        navOptions = navOptions,
+    )
 }
 
 fun NavHostController.navigateToWithdrawDetail(navOptions: NavOptions? = null) {
-    this.navigate(route = WithdrawDetail, navOptions = navOptions)
+    this.navigate(
+        route = WithdrawDetail,
+        navOptions = navOptions,
+    )
 }
 
 fun NavHostController.navigateToWithdrawConfirm(navOptions: NavOptions? = null) {
-    this.navigate(route = WithdrawConfirm, navOptions = navOptions)
+    this.navigate(
+        route = WithdrawConfirm,
+        navOptions = navOptions,
+    )
 }
 
 fun NavHostController.popBackStackOnCompleteWithdraw() {
-    this.popBackStack(Withdraw, inclusive = true)
+    this.popBackStack(
+        route = Withdraw,
+        inclusive = true,
+    )
 }
 
 fun NavGraphBuilder.mypageGraph(
