@@ -1,4 +1,4 @@
-package com.napzak.market.util.android
+package com.napzak.market.ui_util
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi

@@ -76,7 +76,7 @@ import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.store.state.StoreBottomSheetState
 import com.napzak.market.store.store.state.StoreOptionState
 import com.napzak.market.store.store.state.StoreUiState
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun StoreRoute(
@@ -572,8 +572,12 @@ private fun StoreInfoSection(
         Spacer(Modifier.height(20.dp))
 
         LazyRow(
+            modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalArrangement = Arrangement.spacedBy(
+                space = 5.dp,
+                alignment = Alignment.CenterHorizontally,
+            )
         ) {
             items(genrePreferences) { genre ->
                 GenreChip(

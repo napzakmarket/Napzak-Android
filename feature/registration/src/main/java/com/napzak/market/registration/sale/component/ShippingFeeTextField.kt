@@ -26,10 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.sale_price_tag
-import com.napzak.market.util.android.EmptyTextToolbar
-import com.napzak.market.util.android.adjustToMaxPrice
-import com.napzak.market.util.android.priceSeparatorTransformation
-import com.napzak.market.util.android.priceToNumericTransformation
+import com.napzak.market.ui_util.adjustToMaxPrice
+import com.napzak.market.ui_util.priceSeparatorTransformation
 
 @Composable
 fun ShippingFeeTextField(
@@ -41,7 +39,7 @@ fun ShippingFeeTextField(
     modifier: Modifier = Modifier,
 ) {
     var priceFieldValue by remember { mutableStateOf(TextFieldValue(price)) }
-    val emptyTextToolbar = remember { EmptyTextToolbar() }
+    val emptyTextToolbar = remember { com.napzak.market.ui_util.EmptyTextToolbar() }
 
     LaunchedEffect(price) {
         if (price != priceFieldValue.text) {

@@ -40,8 +40,9 @@ import com.napzak.market.mypage.setting.component.SettingItem
 import com.napzak.market.mypage.setting.component.SettingVersionItem
 import com.napzak.market.mypage.setting.type.SettingsMenu
 import com.napzak.market.util.android.ScreenPreview
-import com.napzak.market.util.android.noRippleClickable
 import com.napzak.market.util.common.openUrl
+import com.napzak.market.mypage.setting.model.SettingViewModel
+import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun SettingsRoute(

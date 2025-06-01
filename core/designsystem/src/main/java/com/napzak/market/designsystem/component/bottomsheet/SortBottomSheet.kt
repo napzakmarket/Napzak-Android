@@ -28,7 +28,7 @@ import com.napzak.market.common.type.SortType
 import com.napzak.market.designsystem.R.drawable.ic_check_purple
 import com.napzak.market.designsystem.R.drawable.ic_x_button_24
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 import kotlinx.coroutines.launch
 
 /**

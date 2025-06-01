@@ -44,7 +44,7 @@ import com.napzak.market.feature.onboarding.R.string.onboarding_nickname_title
 import com.napzak.market.feature.onboarding.R.string.onboarding_nickname_validation_button
 import com.napzak.market.onboarding.nickname.model.NicknameUiState
 import com.napzak.market.store.model.NicknameValidationResult
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun NicknameRoute(

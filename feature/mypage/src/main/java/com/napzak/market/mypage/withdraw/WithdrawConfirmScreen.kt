@@ -36,7 +36,7 @@ import com.napzak.market.feature.mypage.R.string.sign_out_confirm_description
 import com.napzak.market.feature.mypage.R.string.sign_out_confirm_title
 import com.napzak.market.feature.mypage.R.string.sign_out_dialog_title
 import com.napzak.market.feature.mypage.R.string.sign_out_top_bar
-import com.napzak.market.util.android.ScreenPreview
+import com.napzak.market.ui_util.ScreenPreview
 
 @Composable
 internal fun WithdrawConfirmScreen(
