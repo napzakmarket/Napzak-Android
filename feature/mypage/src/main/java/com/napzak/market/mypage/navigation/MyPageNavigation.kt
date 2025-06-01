@@ -83,9 +83,8 @@ fun NavGraphBuilder.mypageGraph(
         )
     }
 
-    horizontalSlideNavigation<Withdraw, Route>(
+    horizontalSlideNavigation<Withdraw>(
         startDestination = WithdrawReason,
-        screens = listOf(WithdrawReason, WithdrawDetail, WithdrawConfirm),
     ) {
         val systemBarPaddingModifier = Modifier.systemBarsPadding()
 
