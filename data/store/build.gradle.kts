@@ -15,6 +15,7 @@ dependencies {
     implementation(projects.data.remote)
     implementation(projects.domain.store)
     implementation(projects.data.local)
+    implementation(projects.core.util)
 
     implementation(libs.timber)
 }
