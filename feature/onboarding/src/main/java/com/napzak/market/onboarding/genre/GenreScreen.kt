@@ -39,9 +39,9 @@ import com.napzak.market.designsystem.R.drawable.ic_arrow_left
 import com.napzak.market.designsystem.R.drawable.ic_third_step_indicator
 import com.napzak.market.designsystem.R.string.warning_snackbar_genre_limit_message
 import com.napzak.market.designsystem.component.GenreChipButtonGroup
-import com.napzak.market.designsystem.component.WarningSnackBar
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.textfield.SearchTextField
+import com.napzak.market.designsystem.component.toast.WarningSnackBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.onboarding.R.string.onboarding_genre_done
 import com.napzak.market.feature.onboarding.R.string.onboarding_genre_edit_hint

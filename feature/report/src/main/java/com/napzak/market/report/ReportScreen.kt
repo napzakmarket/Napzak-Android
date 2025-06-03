@@ -42,6 +42,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.designsystem.component.button.NapzakButton
+import com.napzak.market.designsystem.component.toast.LocalNapzakToast
+import com.napzak.market.designsystem.component.toast.ToastFontType
+import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.report.R.drawable.ic_chevron_left
 import com.napzak.market.feature.report.R.string.report_button_submit
@@ -51,7 +54,6 @@ import com.napzak.market.report.component.ReportReasonSection
 import com.napzak.market.report.state.ReportState
 import com.napzak.market.report.state.rememberReportState
 import com.napzak.market.report.type.ReportType
-import com.napzak.market.ui_util.LocalSnackBarController
 import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
@@ -63,9 +65,9 @@ internal fun ReportRoute(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val napzakToast = LocalNapzakToast.current
 
     val reportState = rememberReportState(reportType)
-    val snackBarController = LocalSnackBarController.current
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
@@ -75,8 +77,13 @@ internal fun ReportRoute(
                         navigateUp()
                     }
 
-                    is ReportSideEffect.ShowSnackBar -> {
-                        snackBarController.show(sideEffect.message)
+                    is ReportSideEffect.ShowToast -> {
+                        napzakToast.makeText(
+                            toastType = ToastType.COMMON,
+                            message = sideEffect.message,
+                            fontType = ToastFontType.SMALL,
+                            yOffset = 50,
+                        )
                     }
                 }
             }
@@ -278,7 +285,7 @@ private fun ReportScreenPreview() {
         ReportScreen(
             reportState = reportState,
             onSubmitButtonClick = { },
-            onNavigateUp = {},
+            onNavigateUp = { },
         )
     }
 }
