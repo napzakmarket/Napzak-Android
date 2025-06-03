@@ -1,4 +1,4 @@
-package com.napzak.market.mypage.signout
+package com.napzak.market.mypage.withdraw
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -38,7 +38,7 @@ import com.napzak.market.ui_util.ScreenPreview
 import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
-internal fun SignOutDetailScreen(
+internal fun WithdrawDetailScreen(
     onProceedClick: (String) -> Unit,
     onNavigateUpClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -54,7 +54,7 @@ internal fun SignOutDetailScreen(
             )
         },
         bottomBar = {
-            SignOutDetailBottomBar(
+            WithdrawDetailBottomBar(
                 onProceedClick = { onProceedClick(inputText) },
                 onSkipClick = { onProceedClick("") },
                 isProceedEnabled = inputText.isNotBlank(),
@@ -106,7 +106,7 @@ internal fun SignOutDetailScreen(
 }
 
 @Composable
-private fun SignOutDetailBottomBar(
+private fun WithdrawDetailBottomBar(
     isProceedEnabled: Boolean,
     onProceedClick: () -> Unit,
     onSkipClick: () -> Unit,
@@ -136,9 +136,9 @@ private fun SignOutDetailBottomBar(
 
 @ScreenPreview
 @Composable
-private fun SignOutReasonScreenPreview() {
+private fun WithdrawDetailScreenPreview() {
     NapzakMarketTheme {
-        SignOutDetailScreen(
+        WithdrawDetailScreen(
             onProceedClick = {},
             onNavigateUpClick = {},
         )
