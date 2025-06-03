@@ -3,10 +3,10 @@
     <string name="report_input_title_reason">신고 사유</string>
     <string name="report_input_title_detail">상세 내용</string>
     <string name="report_input_place_holder_detail">
-        어떤 일이 있었나요? 💬\n\n
-        자세한 설명일수록 빠른 해결에 도움이 됩니다.\n
-        신고 내용은 비공개로 안전하게 처리되니 안심하세요.\n
-        안전한 거래 공간을 함께 만들어가요!
+        어떤 일이 있었나요? 💬
+        \n\n자세한 설명일수록 빠른 해결에 도움이 됩니다.
+        \n신고 내용은 비공개로 안전하게 처리되니 안심하세요.
+        \n안전한 거래 공간을 함께 만들어가요!
     </string>
     <string name="report_input_letter_num_detail">%d/%d</string>
     <string name="report_input_title_contact">연락처 입력</string>
