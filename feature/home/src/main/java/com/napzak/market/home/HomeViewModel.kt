@@ -10,11 +10,17 @@ import com.napzak.market.product.model.Product
 import com.napzak.market.product.repository.ProductRecommendationRepository
 import com.napzak.market.repository.BannerRepository
 import com.napzak.market.type.HomeBannerType
+import com.napzak.market.util.common.groupBy
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -56,6 +62,24 @@ internal class HomeViewModel @Inject constructor(
         )
     )
 
+    private val interestDebounceFlow = MutableSharedFlow<Pair<Long, Boolean>>()
+
+    init {
+        handleInterestDebounce()
+    }
+
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    fun handleInterestDebounce() = viewModelScope.launch {
+        interestDebounceFlow
+            .groupBy { it.first }
+            .flatMapMerge { (_, flow) -> flow.debounce(300L) }
+            .collect { (productId, isInterest) ->
+                interestProductUseCase(productId, isInterest)
+                    .onSuccess { getHomeProducts() }
+                    .onFailure(Timber::e)
+            }
+    }
+
     suspend fun getHomeProducts() {
         getRecommendedProducts()
         getPopularSellProducts()
@@ -87,8 +111,6 @@ internal class HomeViewModel @Inject constructor(
     }
 
     fun setInterest(productId: Long, isInterest: Boolean) = viewModelScope.launch {
-        interestProductUseCase(productId, isInterest)
-            .onSuccess { getHomeProducts() }
-            .onFailure(Timber::e)
+        interestDebounceFlow.emit(productId to isInterest)
     }
 }

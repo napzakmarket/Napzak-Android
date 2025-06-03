@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,7 +50,7 @@ import com.napzak.market.designsystem.R.string.production_item_price
 import com.napzak.market.designsystem.R.string.production_item_price_suggestion
 import com.napzak.market.designsystem.R.string.production_item_sell
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.ui_util.throttledNoRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 /**
  * 상품 아이템 (Thumbnail-Big)
@@ -319,8 +318,6 @@ private fun LikeButton(
     onLikeClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val coroutineScope = rememberCoroutineScope()
-
     val imageVector = if (isLiked) ic_heart_filled_14
     else ic_heart_unfilled_16
 
@@ -330,10 +327,7 @@ private fun LikeButton(
         tint = Color.Unspecified,
         modifier = modifier
             .clearAndSetSemantics { role = Role.Button }
-            .throttledNoRippleClickable(
-                coroutineScope = coroutineScope,
-                onClick = onLikeClick,
-            ),
+            .noRippleClickable(onClick = onLikeClick)
     )
 }
 
