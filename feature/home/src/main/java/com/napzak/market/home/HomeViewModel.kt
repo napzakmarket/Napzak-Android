@@ -14,6 +14,7 @@ import com.napzak.market.util.common.groupBy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -62,6 +64,9 @@ internal class HomeViewModel @Inject constructor(
         )
     )
 
+    private val _sideEffect = Channel<HomeSideEffect>()
+    val sideEffect = _sideEffect.receiveAsFlow()
+
     private val interestDebounceFlow = MutableSharedFlow<Pair<Long, Boolean>>()
 
     init {
@@ -75,7 +80,12 @@ internal class HomeViewModel @Inject constructor(
             .flatMapMerge { (_, flow) -> flow.debounce(300L) }
             .collect { (productId, isInterest) ->
                 interestProductUseCase(productId, isInterest)
-                    .onSuccess { getHomeProducts() }
+                    .onSuccess {
+                        getHomeProducts()
+
+                        //이전 상태를 기반으로 현재 좋아요 여부를 판단
+                        if (!isInterest) _sideEffect.send(HomeSideEffect.ShowInterestToast)
+                    }
                     .onFailure(Timber::e)
             }
     }
