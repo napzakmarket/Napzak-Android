@@ -238,13 +238,35 @@ private fun HomeSingleBanner(
 @ScreenPreview
 @Composable
 private fun HomeRoutePreview() {
+    val mockProducts = buildList {
+        repeat(5) { index ->
+            add(
+                Product(
+                    productId = index.toLong(),
+                    genreName = "장르",
+                    productName = "물품 이름",
+                    photo = "",
+                    price = 10000,
+                    uploadTime = "등록일",
+                    isInterested = false,
+                    tradeType = "SELL",
+                    tradeStatus = "BEFORE_TRADE",
+                    isPriceNegotiable = false,
+                    isOwnedByCurrentUser = false,
+                    interestCount = 5,
+                    chatCount = 5
+                )
+            )
+        }
+    }
+
     NapzakMarketTheme {
         HomeScreen(
             uiState = HomeUiState(
                 bannerLoadState = UiState.Success(mapOf()),
-                recommendProductLoadState = UiState.Success(listOf()),
-                popularSellLoadState = UiState.Success(listOf()),
-                popularBuyLoadState = UiState.Success(listOf()),
+                recommendProductLoadState = UiState.Success(mockProducts),
+                popularSellLoadState = UiState.Success(mockProducts),
+                popularBuyLoadState = UiState.Success(mockProducts),
             ),
             onSearchTextFieldClick = {},
             onProductClick = {},
