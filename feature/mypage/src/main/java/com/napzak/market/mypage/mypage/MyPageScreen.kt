@@ -1,4 +1,4 @@
-package com.napzak.market.mypage
+package com.napzak.market.mypage.mypage
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -8,30 +8,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.napzak.market.designsystem.component.topbar.NapzakLogoTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.mypage.R.string.mypage_header_title
-import com.napzak.market.mypage.component.MyMarketButton
-import com.napzak.market.mypage.component.MyPageMenuCard
-import com.napzak.market.mypage.component.MyPageProfileSection
-import com.napzak.market.mypage.model.MyPageViewModel
-import com.napzak.market.mypage.state.MyPageUiState
+import com.napzak.market.mypage.mypage.component.MyMarketButton
+import com.napzak.market.mypage.mypage.component.MyPageMenuCard
+import com.napzak.market.mypage.mypage.component.MyPageProfileSection
+import com.napzak.market.mypage.mypage.state.MyPageUiState
+import com.napzak.market.ui_util.ScreenPreview
 import com.napzak.market.util.common.openUrl
 
 
 @Composable
-fun MyPageRoute(
+internal fun MyPageRoute(
     onMyMarketClick: (Long) -> Unit,
     onSalesClick: () -> Unit,
     onPurchaseClick: () -> Unit,
@@ -66,7 +62,7 @@ fun MyPageRoute(
 }
 
 @Composable
-fun MyPageScreen(
+private fun MyPageScreen(
     uiState: MyPageUiState,
     onMyMarketClick: () -> Unit,
     onSalesClick: () -> Unit,
@@ -88,7 +84,7 @@ fun MyPageScreen(
                 .background(NapzakMarketTheme.colors.white)
                 .padding(horizontal = 20.dp),
         ) {
-            MyPageHeader()
+            NapzakLogoTopBar(modifier = Modifier.padding(vertical = 17.dp))
             Spacer(modifier = Modifier.height(30.dp))
             MyPageProfileSection(
                 nickname = uiState.nickname,
@@ -128,21 +124,9 @@ fun MyPageScreen(
     }
 }
 
+@ScreenPreview
 @Composable
-private fun MyPageHeader() {
-    Text(
-        text = stringResource(mypage_header_title),
-        color = Color.White,
-        modifier = Modifier
-            .padding(top = 60.dp)
-            .background(NapzakMarketTheme.colors.purple500)
-            .padding(horizontal = 12.dp, vertical = 6.dp),
-    )
-}
-
-@Composable
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
-fun MyPageScreenPreview() {
+private fun MyPageScreenPreview() {
     NapzakMarketTheme {
         MyPageScreen(
             uiState = MyPageUiState(

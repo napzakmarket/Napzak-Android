@@ -1,8 +1,7 @@
-package com.napzak.market.mypage.setting.model
+package com.napzak.market.mypage.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.napzak.market.mypage.setting.SettingSideEffect
 import com.napzak.market.store.model.SettingInfo
 import com.napzak.market.store.repository.SettingRepository
 import com.napzak.market.store.repository.StoreRepository
@@ -17,7 +16,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingViewModel @Inject constructor(
+internal class SettingViewModel @Inject constructor(
     private val settingRepository: SettingRepository,
     private val storeRepository: StoreRepository,
 ) : ViewModel() {
