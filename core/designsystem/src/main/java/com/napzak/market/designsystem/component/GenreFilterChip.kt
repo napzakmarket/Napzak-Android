@@ -26,7 +26,7 @@ import com.napzak.market.designsystem.R.string.genre_filter_genre
 import com.napzak.market.designsystem.R.string.genre_filter_genre_extra_count
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.genre.model.Genre
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 fun GenreFilterChip(
@@ -106,13 +106,13 @@ private fun GenreFilterChipPreview() {
             )
             GenreFilterChip(
                 genreList = listOf(
-                    Genre(0, "산리오산리오산리오산리오"),
+                    Genre(0, "산리오"),
                 ),
                 onChipClick = { },
             )
             GenreFilterChip(
                 genreList = listOf(
-                    Genre(0, "산리오산리오산리오산리오산리오산리오산리오"),
+                    Genre(0, "산리오"),
                     Genre(1, "산리오1"),
                     Genre(2, "산리오2"),
                     Genre(3, "산리오3")

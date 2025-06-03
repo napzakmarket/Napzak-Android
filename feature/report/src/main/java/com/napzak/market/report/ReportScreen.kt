@@ -1,11 +1,18 @@
 package com.napzak.market.report
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
@@ -17,11 +24,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -41,8 +51,8 @@ import com.napzak.market.report.component.ReportReasonSection
 import com.napzak.market.report.state.ReportState
 import com.napzak.market.report.state.rememberReportState
 import com.napzak.market.report.type.ReportType
-import com.napzak.market.util.android.LocalSnackBarController
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.LocalSnackBarController
+import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun ReportRoute(
@@ -87,6 +97,7 @@ internal fun ReportRoute(
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ReportScreen(
     reportState: ReportState,
@@ -95,10 +106,15 @@ private fun ReportScreen(
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
-
     val focusManager = LocalFocusManager.current
-    val dropdownEnabled = remember { mutableStateOf(false) }
-    val disableDropDown = { dropdownEnabled.value = false }
+    var dropdownEnabled by remember { mutableStateOf(false) }
+    val disableDropDown = { dropdownEnabled = false }
+
+    FocusSideEffectsHandler(
+        dropdownEnabled = dropdownEnabled,
+        disableDropDown = disableDropDown,
+        onNavigateUp = onNavigateUp,
+    )
 
     Scaffold(
         topBar = {
@@ -118,10 +134,14 @@ private fun ReportScreen(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
+                .consumeWindowInsets(innerPadding)
+                .imePadding()
                 .verticalScroll(scrollState)
-                .noRippleClickable {
-                    focusManager.clearFocus()
-                    disableDropDown()
+                .pointerInput(Unit) {
+                    detectVerticalDragGestures { _, _ ->
+                        focusManager.clearFocus()
+                        disableDropDown()
+                    }
                 }
         ) {
             Spacer(Modifier.height(40.dp))
@@ -138,8 +158,8 @@ private fun ReportScreen(
 
             ReportReasonSection(
                 reportState = reportState,
-                dropdownEnabled = dropdownEnabled.value,
-                onDropdownClick = { dropdownEnabled.value = it },
+                dropdownEnabled = dropdownEnabled,
+                onDropdownClick = { dropdownEnabled = it },
                 modifier = Modifier.padding(horizontal = 20.dp),
             )
 
@@ -217,6 +237,35 @@ private fun SectionDivider(
         color = NapzakMarketTheme.colors.gray10,
         modifier = modifier,
     )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun FocusSideEffectsHandler(
+    dropdownEnabled: Boolean,
+    disableDropDown: () -> Unit,
+    onNavigateUp: () -> Unit,
+) {
+    val focusManager = LocalFocusManager.current
+    val imeVisible = WindowInsets.isImeVisible
+
+    // 드롭다운 메뉴가 열리면 포커스 제거
+    LaunchedEffect(dropdownEnabled) {
+        if (dropdownEnabled) focusManager.clearFocus()
+    }
+
+    // 키보드가 내려가면 포커스 제거
+    LaunchedEffect(imeVisible) {
+        if (!imeVisible) {
+            focusManager.clearFocus(force = true)
+        }
+    }
+
+    // 드롭다운 메뉴가 열려있으면 백버튼으로 닫음
+    BackHandler {
+        if (dropdownEnabled) disableDropDown()
+        else onNavigateUp()
+    }
 }
 
 @Preview(showBackground = true)

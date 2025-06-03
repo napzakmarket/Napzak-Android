@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_cancel_search_12
 import com.napzak.market.designsystem.R.drawable.ic_search_12
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 /**
  * Search text field

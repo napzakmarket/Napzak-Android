@@ -56,7 +56,7 @@ import com.napzak.market.feature.explore.R.string.explore_search_hint
 import com.napzak.market.feature.explore.R.string.explore_unopened
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.product.model.Product
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun ExploreRoute(

@@ -19,7 +19,7 @@ import com.napzak.market.designsystem.R
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.genre_search_title
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 private const val BLANK = ""
 
@@ -36,7 +36,8 @@ fun GenreSearchHeader(
                 elevation = 4.dp,
                 spotColor = NapzakMarketTheme.colors.transBlack,
                 ambientColor = NapzakMarketTheme.colors.transBlack,
-            ).background(color = NapzakMarketTheme.colors.white)
+            )
+            .background(color = NapzakMarketTheme.colors.white)
     ) {
         val paddedModifier = Modifier.padding(horizontal = 28.dp)
 

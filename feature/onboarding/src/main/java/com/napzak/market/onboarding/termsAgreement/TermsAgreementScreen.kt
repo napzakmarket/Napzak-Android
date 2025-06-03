@@ -40,7 +40,7 @@ import com.napzak.market.feature.onboarding.R.string.onboarding_title
 import com.napzak.market.onboarding.termsAgreement.model.TermType
 import com.napzak.market.onboarding.termsAgreement.model.TermsAgreementUiState
 import com.napzak.market.onboarding.termsAgreement.model.getDisplayLabel
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 import com.napzak.market.util.common.openUrl
 
 @Composable

@@ -36,7 +36,7 @@ import com.napzak.market.feature.detail.R.string.detail_product_market_buy
 import com.napzak.market.feature.detail.R.string.detail_product_market_count
 import com.napzak.market.feature.detail.R.string.detail_product_market_group_title
 import com.napzak.market.feature.detail.R.string.detail_product_market_sell
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun ProductMarketGroup(
