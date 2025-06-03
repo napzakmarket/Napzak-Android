@@ -45,24 +45,27 @@ internal fun ReportReasonSection(
     onDropdownClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Text(
-        text = stringResource(report_input_title_reason),
-        style = NapzakMarketTheme.typography.body14sb,
-        color = NapzakMarketTheme.colors.gray500,
-        modifier = modifier,
-    )
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(report_input_title_reason),
+            style = NapzakMarketTheme.typography.body14sb,
+            color = NapzakMarketTheme.colors.gray500,
+        )
 
-    Spacer(modifier = modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-    ReportReasonDropDownMenu(
-        reasons = reportState.reasons.toImmutableList(),
-        selectedReason = reportState.reason,
-        onReasonSelect = { reportState.reason = it },
-        onDropdownClick = onDropdownClick,
-        dropdownEnabled = dropdownEnabled,
-        modifier = modifier
-            .fillMaxWidth(),
-    )
+        ReportReasonDropDownMenu(
+            reasons = reportState.reasons.toImmutableList(),
+            selectedReason = reportState.reason,
+            onReasonSelect = {
+                reportState.reason = it
+                onDropdownClick(!dropdownEnabled)
+            },
+            onDropdownClick = onDropdownClick,
+            dropdownEnabled = dropdownEnabled,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
 }
 
 @Composable
