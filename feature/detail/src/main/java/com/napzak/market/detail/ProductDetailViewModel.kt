@@ -7,6 +7,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
+import com.napzak.market.common.type.TradeStatusType
+import com.napzak.market.common.type.TradeType
+import com.napzak.market.detail.type.ProductDetailToastType
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.repository.ProductDetailRepository
@@ -68,7 +71,13 @@ internal class ProductDetailViewModel @Inject constructor(
 
     fun updateIsInterested(isInterested: Boolean) {
         _isInterested.update { isInterested }
-        viewModelScope.launch { _sideEffect.send(ProductDetailSideEffect.ShowHeartToast) }
+        viewModelScope.launch {
+            if (isInterested) {
+                _sideEffect.send(ProductDetailSideEffect.ShowToast(ProductDetailToastType.LIKE))
+            } else {
+                _sideEffect.send(ProductDetailSideEffect.CancelToast)
+            }
+        }
     }
 
     private suspend fun setInterested(productId: Long?, isInterested: Boolean) {
@@ -98,12 +107,13 @@ internal class ProductDetailViewModel @Inject constructor(
             .onSuccess {
                 getProductDetail()
                 runCatching {
-                    val tradeType =
+                    val tradeType = TradeType.fromName(
                         (_productDetail.value as UiState.Success<ProductDetail>).data.tradeType
+                    )
                     _sideEffect.send(
-                        ProductDetailSideEffect.ShowStatusChangeToast(
-                            tradeStatus = tradeStatus,
-                            tradeType = tradeType
+                        ProductDetailSideEffect.ShowToast(
+                            productDetailToastType = ProductDetailToastType.STATUS_CHANGE,
+                            message = TradeStatusType.get(tradeStatus, tradeType).label,
                         )
                     )
                 }
@@ -115,7 +125,7 @@ internal class ProductDetailViewModel @Inject constructor(
         productDetailRepository.deleteProduct(productId)
             .onSuccess {
                 _sideEffect.send(ProductDetailSideEffect.NavigateUp)
-                _sideEffect.send(ProductDetailSideEffect.ShowDeleteToast)
+                _sideEffect.send(ProductDetailSideEffect.ShowToast(ProductDetailToastType.DELETE))
             }
             .onFailure(Timber::e)
     }

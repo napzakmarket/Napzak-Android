@@ -22,12 +22,10 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.ProductConditionType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.R.drawable.ic_check_snackbar_18
-import com.napzak.market.designsystem.R.drawable.ic_delete_snackbar_16
-import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.component.dialog.NapzakDialogDefault
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
+import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.detail.component.bottombar.ProductDetailBottomBar
 import com.napzak.market.detail.component.bottomsheet.MyProductBottomSheet
@@ -41,8 +39,6 @@ import com.napzak.market.detail.component.group.ProductMarketGroup
 import com.napzak.market.detail.component.topbar.DetailTopBar
 import com.napzak.market.feature.detail.R.string.detail_dialog_delete_sub_title
 import com.napzak.market.feature.detail.R.string.detail_dialog_delete_title
-import com.napzak.market.feature.detail.R.string.detail_toast_delete
-import com.napzak.market.feature.detail.R.string.detail_toast_trade_status
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.model.ProductDetail.ProductPhoto
 import com.napzak.market.product.model.ProductDetail.StoreInfo
@@ -80,32 +76,25 @@ internal fun ProductDetailRoute(
                         onNavigateUp()
                     }
 
-                    is ProductDetailSideEffect.ShowDeleteToast -> {
-                        toast.showCommonToast(
-                            message = context.getString(detail_toast_delete),
-                            icon = ic_delete_snackbar_16,
-                        )
+                    is ProductDetailSideEffect.ShowToast -> {
+                        with(sideEffect.productDetailToastType) {
+                            val yOffset =
+                                if (this.toastType == ToastType.HEART)
+                                    toast.toastOffsetWithBottomBar()
+                                else 100
+
+                            toast.makeText(
+                                toastType = this.toastType,
+                                fontType = this.fontType,
+                                message = context.getString(this.stringRes, sideEffect.message),
+                                icon = this.iconRes,
+                                yOffset = yOffset,
+                            )
+                        }
                     }
 
-                    ProductDetailSideEffect.ShowHeartToast -> {
-                        if (isInterested) toast.showHeartToast(
-                            message = context.getString(heart_click_snackbar_message),
-                            yOffset = toast.toastOffsetWithBottomBar()
-                        )
-                        else toast.cancel()
-                    }
-
-                    is ProductDetailSideEffect.ShowStatusChangeToast -> {
-                        val tradeType = TradeType.fromName(sideEffect.tradeType)
-                        val tradeStatus = TradeStatusType.get(sideEffect.tradeStatus, tradeType)
-
-                        toast.showCommonToast(
-                            message = context.getString(
-                                detail_toast_trade_status,
-                                tradeStatus.label
-                            ),
-                            icon = ic_check_snackbar_18
-                        )
+                    is ProductDetailSideEffect.CancelToast -> {
+                        toast.cancel()
                     }
                 }
             }

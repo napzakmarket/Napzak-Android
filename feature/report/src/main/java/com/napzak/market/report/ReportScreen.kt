@@ -33,7 +33,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
-import com.napzak.market.designsystem.component.toast.NapzakToastFontType
+import com.napzak.market.designsystem.component.toast.ToastFontType
+import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.report.R.drawable.ic_chevron_left
 import com.napzak.market.feature.report.R.string.report_button_submit
@@ -54,7 +55,7 @@ internal fun ReportRoute(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val toast = LocalNapzakToast.current
+    val napzakToast = LocalNapzakToast.current
 
     val reportState = rememberReportState(reportType)
 
@@ -67,9 +68,11 @@ internal fun ReportRoute(
                     }
 
                     is ReportSideEffect.ShowToast -> {
-                        toast.showCommonToast(
+                        napzakToast.makeText(
+                            toastType = ToastType.COMMON,
                             message = sideEffect.message,
-                            fontType = NapzakToastFontType.SMALL
+                            fontType = ToastFontType.SMALL,
+                            yOffset = 50,
                         )
                     }
                 }

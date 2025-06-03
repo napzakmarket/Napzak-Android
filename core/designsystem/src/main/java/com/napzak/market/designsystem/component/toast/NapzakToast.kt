@@ -5,6 +5,7 @@ import android.view.Gravity
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -25,28 +26,60 @@ val LocalNapzakToast = staticCompositionLocalOf<NapzakToast> {
     error("no NapzakToast instance provided")
 }
 
+@Immutable
 class NapzakToast(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner,
 ) : Toast(context) {
     /**
-     * [CommonSnackBar] 디자인의 토스트 메시지를 보여줍니다.
+     * 납작마켓의 커스텀 토스트 메시지를 출력합니다.
+     *
+     * @param toastType 토스트 메시지의 종류를 나타냅니다.
+     * @param message 토스트 메시지의 내용입니다.
+     * @param icon 토스트 메시지의 아이콘입니다.
      * @param fontType SMALL은 caption12m, LARGE는 body14sb로 폰트를 설정합니다.
      * @param [yOffset]을 통해 화면 하단과 토스트 메시지간 간격을 설정할 수 있습니다.
      */
-    fun showCommonToast(
+    fun makeText(
+        toastType: ToastType,
         message: String,
         icon: Int? = null,
-        fontType: NapzakToastFontType = NapzakToastFontType.LARGE,
-        yOffset: Int = 100,
-    ) = makeText(yOffset = yOffset) {
+        fontType: ToastFontType = ToastFontType.SMALL,
+        yOffset: Int = 0,
+    ) {
+        when (toastType) {
+            ToastType.COMMON -> showCommonToast(
+                message = message,
+                icon = icon,
+                fontType = fontType,
+                yOffset = yOffset,
+            )
+
+            ToastType.HEART -> showHeartToast(
+                message = message,
+                yOffset = yOffset,
+            )
+
+            ToastType.WARNING -> showWarningToast(
+                message = message,
+                yOffset = yOffset,
+            )
+        }
+    }
+
+    private fun showCommonToast(
+        message: String,
+        icon: Int?,
+        fontType: ToastFontType,
+        yOffset: Int,
+    ) = setView(yOffset = yOffset) {
         val textStyle = with(NapzakMarketTheme.typography) {
             when (fontType) {
-                NapzakToastFontType.SMALL -> caption12m.copy(
+                ToastFontType.SMALL -> caption12m.copy(
                     textAlign = TextAlign.Center,
                 )
 
-                NapzakToastFontType.LARGE -> body14sb.copy(
+                ToastFontType.LARGE -> body14sb.copy(
                     textAlign = TextAlign.Center,
                 )
             }
@@ -60,32 +93,24 @@ class NapzakToast(
         )
     }
 
-    /**
-     * [HeartClickSnackBar] 디자인의 토스트 메시지를 보여줍니다.
-     * @param [yOffset]을 통해 화면 하단과 토스트 메시지간 간격을 설정할 수 있습니다.
-     */
-    fun showHeartToast(
+    private fun showHeartToast(
         message: String,
-        yOffset: Int = 100,
-    ) = makeText(yOffset = yOffset) {
+        yOffset: Int,
+    ) = setView(yOffset = yOffset) {
         HeartClickSnackBar(
             message = message,
         )
     }
 
-    /**
-     * [WarningSnackBar] 디자인의 토스트 메시지를 보여줍니다.
-     * @param [yOffset]을 통해 화면 하단과 토스트 메시지간 간격을 설정할 수 있습니다.
-     */
-    fun showWarningToast(
+    private fun showWarningToast(
         message: String,
-        yOffset: Int = 100,
-    ) = makeText {
+        yOffset: Int,
+    ) = setView(yOffset = yOffset) {
         WarningSnackBar(message = message)
     }
 
-    private fun makeText(
-        yOffset: Int = 100,
+    private fun setView(
+        yOffset: Int = 0,
         content: @Composable () -> Unit,
     ) {
         val views = ComposeView(context)
@@ -111,3 +136,4 @@ class NapzakToast(
         return with(Density(context)) { 100.dp.toPx() }.toInt()
     }
 }
+

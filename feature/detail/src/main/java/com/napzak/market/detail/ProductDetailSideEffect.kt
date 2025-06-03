@@ -1,10 +1,13 @@
 package com.napzak.market.detail
 
-sealed interface ProductDetailSideEffect {
-    data class ShowStatusChangeToast(val tradeStatus: String, val tradeType: String) :
-        ProductDetailSideEffect
+import com.napzak.market.detail.type.ProductDetailToastType
 
-    data object ShowDeleteToast : ProductDetailSideEffect
-    data object ShowHeartToast : ProductDetailSideEffect
+sealed interface ProductDetailSideEffect {
+    data class ShowToast(
+        val productDetailToastType: ProductDetailToastType,
+        val message: String = "",
+    ) : ProductDetailSideEffect
+
+    data object CancelToast : ProductDetailSideEffect
     data object NavigateUp : ProductDetailSideEffect
 }

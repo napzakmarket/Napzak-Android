@@ -25,7 +25,7 @@ import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.NapzakToast
-import com.napzak.market.designsystem.component.toast.NapzakToastFontType
+import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.detail.navigation.navigateToProductDetail
 import com.napzak.market.detail.navigation.productDetailGraph
@@ -85,10 +85,10 @@ fun MainScreen(
                 if (System.currentTimeMillis() - backPressedTime <= 3000) {
                     (context as Activity).finish()
                 } else {
-                    napzakToast.showCommonToast(
+                    napzakToast.makeText(
                         message = context.getString(main_snack_bar_finish),
-                        fontType = NapzakToastFontType.SMALL,
-                        yOffset = napzakToast.toastOffsetWithBottomBar()
+                        yOffset = napzakToast.toastOffsetWithBottomBar(),
+                        toastType = ToastType.COMMON,
                     )
                 }
                 backPressedTime = System.currentTimeMillis()
