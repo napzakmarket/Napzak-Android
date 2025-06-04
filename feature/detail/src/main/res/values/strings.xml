@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="detail_snack_bar_trade_status">상품 상태를 \“%s\"으로 변경하였습니다.</string>
-    <string name="detail_snack_bar_delete">상품이 삭제되었습니다.</string>
+    <string name="detail_toast_trade_status">상품 상태를 \“%s\"으로 변경하였습니다.</string>
+    <string name="detail_toast_delete">상품이 삭제되었습니다.</string>
 
     <string name="detail_top_bar_content_description_back">뒤로가기</string>
     <string name="detail_top_bar_content_description_option">옵션</string>

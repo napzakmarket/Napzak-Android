@@ -48,12 +48,12 @@ import com.napzak.market.designsystem.R.string.genre_search_select_genre
 import com.napzak.market.designsystem.R.string.warning_snackbar_genre_limit_message
 import com.napzak.market.designsystem.component.GenreChipButtonGroup
 import com.napzak.market.designsystem.component.GenreListItem
-import com.napzak.market.designsystem.component.WarningSnackBar
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.textfield.SearchTextField
+import com.napzak.market.designsystem.component.toast.WarningSnackBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.genre.model.Genre
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

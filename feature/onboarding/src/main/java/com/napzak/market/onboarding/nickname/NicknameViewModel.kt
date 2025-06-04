@@ -6,7 +6,7 @@ import com.napzak.market.onboarding.nickname.model.NicknameUiState
 import com.napzak.market.store.usecase.CheckNicknameDuplicationUseCase
 import com.napzak.market.store.usecase.SetNicknameUseCase
 import com.napzak.market.store.usecase.ValidateNicknameUseCase
-import com.napzak.market.util.android.getHttpExceptionMessage
+import com.napzak.market.ui_util.getHttpExceptionMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

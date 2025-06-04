@@ -20,7 +20,7 @@ import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.component.productItem.NapzakSmallProductItem
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.product.model.Product
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.ui_util.noRippleClickable
 import com.napzak.market.util.common.formatToPriceString
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList

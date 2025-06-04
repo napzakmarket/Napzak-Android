@@ -8,6 +8,10 @@ plugins {
 
 android {
     setNameSpace("feature.mypage")
+
+    defaultConfig {
+        buildConfigField("String", "VERSION_NAME", "\"${libs.versions.versionName.get()}\"")
+    }
 }
 
 dependencies {
@@ -15,6 +19,7 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.common)
     implementation(projects.core.util)
+    implementation(projects.core.uiUtil)
     implementation(projects.domain.store)
     implementation(projects.feature.detail)
 

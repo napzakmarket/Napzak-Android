@@ -19,8 +19,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -37,18 +37,21 @@ import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_title
 import com.napzak.market.feature.mypage.R.string.settings_section_service_info_title
 import com.napzak.market.feature.mypage.R.string.settings_topbar_title
 import com.napzak.market.mypage.setting.component.SettingItem
-import com.napzak.market.mypage.setting.model.SettingViewModel
-import com.napzak.market.util.android.noRippleClickable
+import com.napzak.market.mypage.setting.component.SettingVersionItem
+import com.napzak.market.mypage.setting.type.SettingsMenu
+import com.napzak.market.ui_util.ScreenPreview
+import com.napzak.market.ui_util.noRippleClickable
+import com.napzak.market.util.common.openUrl
 
 @Composable
-fun SettingsRoute(
+internal fun SettingsRoute(
     onBackClick: () -> Unit,
     onLogoutConfirm: () -> Unit,
     onWithdrawClick: () -> Unit,
-    openWebLink: (String) -> Unit,
     viewModel: SettingViewModel = hiltViewModel()
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
     val state by viewModel.settingInfo.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
@@ -63,20 +66,18 @@ fun SettingsRoute(
         onBackClick = onBackClick,
         onLogoutConfirm = viewModel::signOutUser,
         onWithdrawClick = onWithdrawClick,
-        onNoticeClick = { if (state.noticeLink.isNotBlank()) openWebLink(state.noticeLink) },
-        onTermsClick = { if (state.termsLink.isNotBlank()) openWebLink(state.termsLink) },
-        onPrivacyClick = { if (state.privacyPolicyLink.isNotBlank()) openWebLink(state.privacyPolicyLink) },
-        onVersionClick = { if (state.versionInfoLink.isNotBlank()) openWebLink(state.versionInfoLink) },
+        onNoticeClick = { if (state.noticeLink.isNotBlank()) context.openUrl(state.noticeLink) },
+        onTermsClick = { if (state.termsLink.isNotBlank()) context.openUrl(state.termsLink) },
+        onPrivacyClick = { if (state.privacyPolicyLink.isNotBlank()) context.openUrl(state.privacyPolicyLink) },
     )
 }
 
 @Composable
-fun SettingsScreen(
+private fun SettingsScreen(
     onBackClick: () -> Unit = {},
     onNoticeClick: () -> Unit = {},
     onTermsClick: () -> Unit = {},
     onPrivacyClick: () -> Unit = {},
-    onVersionClick: () -> Unit = {},
     onLogoutConfirm: () -> Unit = {},
     onWithdrawClick: () -> Unit = {},
 ) {
@@ -112,19 +113,21 @@ fun SettingsScreen(
 
                 Spacer(modifier = Modifier.height(28.dp))
 
-                SettingsMenu.entries.forEachIndexed { index, menu ->
+                SettingVersionItem(
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                SettingsMenu.entries.forEachIndexed { _, menu ->
+                    Spacer(modifier = Modifier.height(20.dp))
+
                     SettingItem(
                         title = stringResource(id = menu.titleResId),
                         onClick = when (menu) {
                             SettingsMenu.NOTICE -> onNoticeClick
                             SettingsMenu.TERMS_OF_USE -> onTermsClick
                             SettingsMenu.PRIVACY_POLICY -> onPrivacyClick
-                            SettingsMenu.VERSION_INFO -> onVersionClick
                         }
                     )
-                    if (index != SettingsMenu.entries.lastIndex) {
-                        Spacer(modifier = Modifier.height(20.dp))
-                    }
                 }
             }
 
@@ -204,7 +207,7 @@ fun SettingsScreen(
     }
 }
 
-@Preview(showBackground = true)
+@ScreenPreview
 @Composable
 private fun SettingsScreenPreview() {
     NapzakMarketTheme {
@@ -213,7 +216,6 @@ private fun SettingsScreenPreview() {
             onNoticeClick = {},
             onTermsClick = {},
             onPrivacyClick = {},
-            onVersionClick = {},
             onLogoutConfirm = {
                 println("로그아웃 완료")
             },
