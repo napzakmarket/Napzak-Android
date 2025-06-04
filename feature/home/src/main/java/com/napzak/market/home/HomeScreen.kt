@@ -39,10 +39,12 @@ import com.napzak.market.feature.home.R.string.home_list_interested_buy_title
 import com.napzak.market.feature.home.R.string.home_list_interested_sell_sub_title
 import com.napzak.market.feature.home.R.string.home_list_interested_sell_title
 import com.napzak.market.feature.home.R.string.home_search_text_field_hint
+import com.napzak.market.feature.home.R.string.home_toast_interest
 import com.napzak.market.home.component.HorizontalAutoScrolledImages
 import com.napzak.market.home.component.HorizontalScrollableProducts
 import com.napzak.market.home.component.VerticalGridProducts
 import com.napzak.market.home.state.HomeUiState
+import com.napzak.market.home.type.HomeProductType
 import com.napzak.market.product.model.Product
 import com.napzak.market.type.HomeBannerType
 import com.napzak.market.ui_util.ScreenPreview
@@ -66,6 +68,7 @@ internal fun HomeRoute(
     val uiState by viewModel.homeUiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val napzakToast = LocalNapzakToast.current
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         with(viewModel) {
@@ -80,8 +83,12 @@ internal fun HomeRoute(
                 HomeSideEffect.ShowInterestToast -> {
                     napzakToast.makeText(
                         toastType = ToastType.HEART,
-                        message = "짬한 상품에 추가되었습니다.",
+                        message = context.getString(home_toast_interest),
                     )
+                }
+
+                HomeSideEffect.CancelInterestToast -> {
+                    napzakToast.cancel()
                 }
             }
         }
@@ -103,7 +110,7 @@ private fun HomeScreen(
     uiState: HomeUiState,
     onSearchTextFieldClick: () -> Unit,
     onProductClick: (Long) -> Unit,
-    onLikeButtonClick: (Long, Boolean) -> Unit,
+    onLikeButtonClick: (Long, Boolean, HomeProductType) -> Unit,
     onMostInterestedSellNavigate: () -> Unit,
     onMostInterestedBuyNavigate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -143,7 +150,7 @@ private fun HomeSuccessScreen(
     banners: ImmutableMap<HomeBannerType, List<Banner>>,
     onSearchTextFieldClick: () -> Unit,
     onProductClick: (Long) -> Unit,
-    onLikeButtonClick: (Long, Boolean) -> Unit,
+    onLikeButtonClick: (Long, Boolean, HomeProductType) -> Unit,
     onMostInterestedSellNavigate: () -> Unit,
     onMostInterestedBuyNavigate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -185,7 +192,9 @@ private fun HomeSuccessScreen(
             title = stringResource(home_list_customized_title, nickname),
             subTitle = stringResource(home_list_customized_sub_title, nickname),
             onProductClick = onProductClick,
-            onLikeClick = onLikeButtonClick,
+            onLikeClick = { productId, isInterest ->
+                onLikeButtonClick(productId, isInterest, HomeProductType.RECOMMEND)
+            },
             modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 32.dp),
         )
 
@@ -201,7 +210,9 @@ private fun HomeSuccessScreen(
             title = stringResource(home_list_interested_sell_title),
             subTitle = stringResource(home_list_interested_sell_sub_title),
             onProductClick = onProductClick,
-            onLikeClick = onLikeButtonClick,
+            onLikeClick = { productId, isInterest ->
+                onLikeButtonClick(productId, isInterest, HomeProductType.POPULAR_SELL)
+            },
             onMoreClick = onMostInterestedSellNavigate,
             modifier = Modifier
                 .padding(top = 30.dp)
@@ -221,7 +232,9 @@ private fun HomeSuccessScreen(
             title = stringResource(home_list_interested_buy_title),
             subTitle = stringResource(home_list_interested_buy_sub_title),
             onProductClick = onProductClick,
-            onLikeClick = onLikeButtonClick,
+            onLikeClick = { productId, isInterest ->
+                onLikeButtonClick(productId, isInterest, HomeProductType.POPULAR_BUY)
+            },
             onMoreClick = onMostInterestedBuyNavigate,
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 40.dp),
         )
@@ -293,7 +306,7 @@ private fun HomeRoutePreview() {
             ),
             onSearchTextFieldClick = {},
             onProductClick = {},
-            onLikeButtonClick = { _, _ -> },
+            onLikeButtonClick = { _, _, _ -> },
             onMostInterestedSellNavigate = { },
             onMostInterestedBuyNavigate = { },
         )

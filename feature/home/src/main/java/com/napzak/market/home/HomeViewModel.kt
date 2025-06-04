@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.napzak.market.banner.Banner
 import com.napzak.market.common.state.UiState
 import com.napzak.market.home.state.HomeUiState
+import com.napzak.market.home.type.HomeProductType
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.product.model.Product
 import com.napzak.market.product.repository.ProductRecommendationRepository
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -39,8 +41,14 @@ internal class HomeViewModel @Inject constructor(
         MutableStateFlow<UiState<Map<HomeBannerType, List<Banner>>>>(UiState.Loading)
     private val _recommendProductLoadState =
         MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
-    private val _popularSellLoadState = MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
-    private val _popularBuyLoadState = MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
+    private val _popularSellLoadState =
+        MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
+    private val _popularBuyLoadState =
+        MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
+
+
+    private val lastSuccessfulLoadedProducts =
+        mutableMapOf<HomeProductType, UiState<List<Product>>>()
 
     val homeUiState: StateFlow<HomeUiState> = combine(
         _bannerLoadState,
@@ -80,16 +88,23 @@ internal class HomeViewModel @Inject constructor(
     fun handleInterestDebounce() = viewModelScope.launch {
         interestDebounceFlow
             .groupBy { it.first }
-            .flatMapMerge { (_, flow) -> flow.debounce(300L) }
+            .flatMapMerge { (_, flow) -> flow.debounce(DEBOUNCE_DELAY) }
             .collect { (productId, isInterest) ->
                 interestProductUseCase(productId, isInterest)
-                    .onSuccess {
-                        getHomeProducts()
-
-                        //이전 상태를 기반으로 현재 좋아요 여부를 판단
-                        if (!isInterest) _sideEffect.send(HomeSideEffect.ShowInterestToast)
+                    .onSuccess { getHomeProducts() }
+                    .onFailure {
+                        // TODO: 통신 실패에 대한 처리 (현재: 마지막 성공 상태로 복구)
+                        Timber.e(it.message.toString())
+                        lastSuccessfulLoadedProducts[HomeProductType.RECOMMEND]?.let { recommendProductState ->
+                            _recommendProductLoadState.value = recommendProductState
+                        }
+                        lastSuccessfulLoadedProducts[HomeProductType.POPULAR_SELL]?.let { popularSellState ->
+                            _popularSellLoadState.value = popularSellState
+                        }
+                        lastSuccessfulLoadedProducts[HomeProductType.POPULAR_BUY]?.let { popularBuyState ->
+                            _popularBuyLoadState.value = popularBuyState
+                        }
                     }
-                    .onFailure(Timber::e)
             }
     }
 
@@ -110,23 +125,68 @@ internal class HomeViewModel @Inject constructor(
             .onSuccess {
                 nickname.value = it.first
                 _recommendProductLoadState.value = UiState.Success(it.second)
+                lastSuccessfulLoadedProducts[HomeProductType.RECOMMEND] = UiState.Success(it.second)
             }
             .onFailure { _recommendProductLoadState.value = UiState.Failure(it.message.toString()) }
     }
 
     private suspend fun getPopularSellProducts() {
         productRepository.getPopularSellProducts()
-            .onSuccess { _popularSellLoadState.value = UiState.Success(it) }
+            .onSuccess {
+                _popularSellLoadState.value = UiState.Success(it)
+                lastSuccessfulLoadedProducts[HomeProductType.POPULAR_SELL] = UiState.Success(it)
+            }
             .onFailure { _popularSellLoadState.value = UiState.Failure(it.message.toString()) }
     }
 
     private suspend fun getPopularBuyProducts() {
         productRepository.getPopularBuyProducts()
-            .onSuccess { _popularBuyLoadState.value = UiState.Success(it) }
+            .onSuccess {
+                _popularBuyLoadState.value = UiState.Success(it)
+                lastSuccessfulLoadedProducts[HomeProductType.POPULAR_BUY] = UiState.Success(it)
+            }
             .onFailure { _popularBuyLoadState.value = UiState.Failure(it.message.toString()) }
     }
 
-    fun setInterest(productId: Long, isInterest: Boolean) = viewModelScope.launch {
+    fun setInterest(
+        productId: Long,
+        isInterest: Boolean,
+        productType: HomeProductType = HomeProductType.RECOMMEND
+    ) = viewModelScope.launch {
+        val flow = when (productType) {
+            HomeProductType.RECOMMEND -> _recommendProductLoadState
+            HomeProductType.POPULAR_SELL -> _popularSellLoadState
+            HomeProductType.POPULAR_BUY -> _popularBuyLoadState
+        }
+
+        (flow.value as UiState.Success<List<Product>>).data.forEach { product ->
+            if (product.productId == productId) {
+                flow.update { currentState ->
+                    (currentState as UiState.Success<List<Product>>).copy(
+                        data = currentState.data.map {
+                            if (it.productId == productId) {
+                                interestDebounceFlow.emit(productId to isInterest)
+                                it.copy(isInterested = !isInterest)
+                            } else {
+                                it
+                            }
+                        }
+                    )
+                }
+            }
+        }
+
         interestDebounceFlow.emit(productId to isInterest)
+
+        //이전 상태를 기반으로 현재 좋아요 여부를 판단
+        when (isInterest) {
+            true -> _sideEffect.send(HomeSideEffect.CancelInterestToast)
+            false -> _sideEffect.send(HomeSideEffect.ShowInterestToast)
+        }
+    }
+
+    companion object {
+        private const val DEBOUNCE_DELAY = 300L
     }
 }
+
