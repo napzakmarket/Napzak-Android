@@ -175,7 +175,7 @@ internal class ExploreViewModel @Inject constructor(
     }
 
     private fun updateGenreItemsInBottomSheet() = viewModelScope.launch {
-        genreNameRepository.getGenreNames(cursor = null)
+        genreNameRepository.getGenreNames(cursor = null, size = 39)
             .onSuccess { genres ->
                 _uiState.update { currentState ->
                     currentState.copy(
