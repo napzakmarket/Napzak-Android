@@ -34,6 +34,7 @@ internal class HomeViewModel @Inject constructor(
     private val bannerRepository: BannerRepository,
     private val interestProductUseCase: SetInterestProductUseCase,
 ) : ViewModel() {
+    private val nickname = MutableStateFlow("")
     private val _bannerLoadState =
         MutableStateFlow<UiState<Map<HomeBannerType, List<Banner>>>>(UiState.Loading)
     private val _recommendProductLoadState =
@@ -48,6 +49,7 @@ internal class HomeViewModel @Inject constructor(
         _popularBuyLoadState,
     ) { bannerLoadState, recommendProductLoadState, popularSellLoadState, popularBuyLoadState ->
         HomeUiState(
+            nickname = nickname.value,
             bannerLoadState = bannerLoadState,
             recommendProductLoadState = recommendProductLoadState,
             popularSellLoadState = popularSellLoadState,
@@ -57,6 +59,7 @@ internal class HomeViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = HomeUiState(
+            nickname = "",
             bannerLoadState = UiState.Loading,
             recommendProductLoadState = UiState.Loading,
             popularSellLoadState = UiState.Loading,
@@ -104,7 +107,10 @@ internal class HomeViewModel @Inject constructor(
 
     private suspend fun getRecommendedProducts() {
         productRepository.getRecommendedProducts()
-            .onSuccess { _recommendProductLoadState.value = UiState.Success(it.second) }
+            .onSuccess {
+                nickname.value = it.first
+                _recommendProductLoadState.value = UiState.Success(it.second)
+            }
             .onFailure { _recommendProductLoadState.value = UiState.Failure(it.message.toString()) }
     }
 

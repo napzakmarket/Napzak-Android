@@ -47,6 +47,7 @@ import com.napzak.market.product.model.Product
 import com.napzak.market.type.HomeBannerType
 import com.napzak.market.ui_util.ScreenPreview
 import com.napzak.market.ui_util.noRippleClickable
+import com.napzak.market.util.common.ellipsis
 import com.napzak.market.util.common.openUrl
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
@@ -114,6 +115,7 @@ private fun HomeScreen(
 
         when (uiState.isLoaded) {
             is UiState.Success -> HomeSuccessScreen(
+                nickname = uiState.nickname.ellipsis(10),
                 productRecommends = (uiState.recommendProductLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
                 sellProducts = (uiState.popularSellLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
                 buyProducts = (uiState.popularBuyLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
@@ -134,6 +136,7 @@ private fun HomeScreen(
 
 @Composable
 private fun HomeSuccessScreen(
+    nickname: String,
     productRecommends: ImmutableList<Product>,
     sellProducts: ImmutableList<Product>,
     buyProducts: ImmutableList<Product>,
@@ -179,8 +182,8 @@ private fun HomeSuccessScreen(
 
         HorizontalScrollableProducts(
             products = productRecommends,
-            title = stringResource(home_list_customized_title),
-            subTitle = stringResource(home_list_customized_sub_title),
+            title = stringResource(home_list_customized_title, nickname),
+            subTitle = stringResource(home_list_customized_sub_title, nickname),
             onProductClick = onProductClick,
             onLikeClick = onLikeButtonClick,
             modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 32.dp),
@@ -282,6 +285,7 @@ private fun HomeRoutePreview() {
     NapzakMarketTheme {
         HomeScreen(
             uiState = HomeUiState(
+                nickname = "납자기장독대나무다리어카센터미널뛰기러기찻길동무",
                 bannerLoadState = UiState.Success(mapOf()),
                 recommendProductLoadState = UiState.Success(mockProducts),
                 popularSellLoadState = UiState.Success(mockProducts),
