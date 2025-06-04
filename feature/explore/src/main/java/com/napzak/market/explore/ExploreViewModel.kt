@@ -36,9 +36,9 @@ internal class ExploreViewModel @Inject constructor(
     private val genreNameRepository: GenreNameRepository,
     private val setInterestProductUseCase: SetInterestProductUseCase,
 ) : ViewModel() {
-    val searchTerm: String = savedStateHandle.get<String>(SEARCH_TERM_KEY) ?: ""
-    val sortType: SortType = savedStateHandle.get<SortType>(SORT_TYPE_KEY) ?: SortType.RECENT
-    val tradeType: TradeType = savedStateHandle.get<TradeType>(TRADE_TYPE_KEY) ?: TradeType.SELL
+    val searchTerm = savedStateHandle.get<String>(SEARCH_TERM_KEY)
+    val sortType = savedStateHandle.get<SortType>(SORT_TYPE_KEY)
+    val tradeType = savedStateHandle.get<TradeType>(TRADE_TYPE_KEY)
 
     private val _uiState = MutableStateFlow(ExploreUiState())
     val uiState = _uiState.asStateFlow()
@@ -49,9 +49,15 @@ internal class ExploreViewModel @Inject constructor(
     private val _genreSearchTerm = MutableStateFlow("")
     val genreSearchTerm = _genreSearchTerm.asStateFlow()
 
+    init {
+        if (sortType != null) updateSortOption(sortType)
+        if (tradeType != null) updateTradeType(tradeType)
+        updateGenreItemsInBottomSheet()
+    }
+
     fun updateExploreInformation() = viewModelScope.launch {
         val parameters = with(uiState.value) {
-            if (searchTerm.isEmpty()) {
+            if (searchTerm.isNullOrEmpty()) {
                 ExploreParameters(
                     sort = sortOption.toString(),
                     genreIds = filteredGenres.extractGenreIds(),
@@ -73,7 +79,7 @@ internal class ExploreViewModel @Inject constructor(
 
         when (uiState.value.selectedTab) {
             TradeType.BUY -> {
-                if (searchTerm.isEmpty()) {
+                if (searchTerm.isNullOrEmpty()) {
                     productExploreRepository.getExploreBuyProducts(parameters as ExploreParameters)
                         .onSuccess {
                             updateLoadState(
@@ -103,7 +109,7 @@ internal class ExploreViewModel @Inject constructor(
             }
 
             TradeType.SELL -> {
-                if (searchTerm.isEmpty()) {
+                if (searchTerm.isNullOrEmpty()) {
                     productExploreRepository.getExploreSellProducts(parameters as ExploreParameters)
                         .onSuccess {
                             updateLoadState(
@@ -163,7 +169,7 @@ internal class ExploreViewModel @Inject constructor(
         }
     }
 
-    fun updateGenreItemsInBottomSheet() = viewModelScope.launch {
+    private fun updateGenreItemsInBottomSheet() = viewModelScope.launch {
         genreNameRepository.getGenreNames(cursor = null)
             .onSuccess { genres ->
                 _uiState.update { currentState ->

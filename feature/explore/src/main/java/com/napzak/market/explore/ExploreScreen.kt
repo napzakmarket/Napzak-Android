@@ -69,12 +69,6 @@ internal fun ExploreRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val bottomSheetState by viewModel.bottomSheetState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.updateSortOption(viewModel.sortType)
-        viewModel.updateTradeType(viewModel.tradeType)
-        viewModel.updateGenreItemsInBottomSheet()
-    }
-
     LaunchedEffect(
         uiState.selectedTab,
         uiState.filteredGenres,
@@ -124,7 +118,7 @@ internal fun ExploreRoute(
 
 @Composable
 private fun ExploreScreen(
-    searchTerm: String,
+    searchTerm: String?,
     uiState: ExploreUiState,
     bottomSheetState: ExploreBottomSheetState,
     onDismissRequest: (BottomSheetType) -> Unit,
@@ -190,7 +184,7 @@ private fun ExploreScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ExploreSuccessScreen(
-    searchTerm: String,
+    searchTerm: String?,
     selectedTab: TradeType,
     filteredGenres: List<Genre>,
     isUnopenSelected: Boolean,
@@ -226,7 +220,7 @@ private fun ExploreSuccessScreen(
             .padding(top = 54.dp),
     ) {
         ExploreSearchTextField(
-            searchTerm = searchTerm,
+            searchTerm = searchTerm ?: "",
             modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .noRippleClickable(onSearchNavigate),
