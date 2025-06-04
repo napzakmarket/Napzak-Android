@@ -24,12 +24,10 @@ internal class WithdrawViewModel @Inject constructor(
 
     fun withdrawStore() {
         viewModelScope.launch {
-            withdrawUseCase(
-                title = withdrawReason,
-                description = withdrawDescription.ifBlank { null }
-            ).onSuccess {
-                _sideEffect.emit(WithdrawSideEffect.WithdrawComplete)
-            }
+            withdrawUseCase(withdrawReason, withdrawDescription)
+                .onSuccess {
+                    _sideEffect.emit(WithdrawSideEffect.WithdrawComplete)
+                }
         }
     }
 }
