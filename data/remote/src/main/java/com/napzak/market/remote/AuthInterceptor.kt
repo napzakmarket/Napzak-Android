@@ -1,7 +1,7 @@
 package com.napzak.market.remote
 
-import com.napzak.market.store.repository.StoreStateManager
-import com.napzak.market.store.repository.TokenProvider
+import com.napzak.market.util.android.StoreStateManager
+import com.napzak.market.util.android.TokenProvider
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response

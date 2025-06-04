@@ -27,7 +27,7 @@ import com.napzak.market.mypage.component.MyPageMenuCard
 import com.napzak.market.mypage.component.MyPageProfileSection
 import com.napzak.market.mypage.model.MyPageViewModel
 import com.napzak.market.mypage.state.MyPageUiState
-import com.napzak.market.util.common.openUrl
+import com.napzak.market.ui_util.openUrl
 
 
 @Composable

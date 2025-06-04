@@ -48,7 +48,7 @@ import com.napzak.market.product.model.Product
 import com.napzak.market.type.HomeBannerType
 import com.napzak.market.ui_util.ScreenPreview
 import com.napzak.market.ui_util.noRippleClickable
-import com.napzak.market.util.common.openUrl
+import com.napzak.market.ui_util.openUrl
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList

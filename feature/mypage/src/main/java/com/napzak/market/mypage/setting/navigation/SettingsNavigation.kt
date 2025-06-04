@@ -7,7 +7,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.napzak.market.common.navigation.Route
 import com.napzak.market.mypage.setting.SettingsRoute
-import com.napzak.market.util.common.openUrl
+import com.napzak.market.ui_util.openUrl
 import kotlinx.serialization.Serializable
 
 @Serializable

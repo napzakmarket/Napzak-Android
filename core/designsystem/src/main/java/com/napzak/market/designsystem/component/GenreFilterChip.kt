@@ -28,7 +28,7 @@ import com.napzak.market.designsystem.R.string.genre_filter_genre_extra_count
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.ui_util.noRippleClickable
-import com.napzak.market.util.common.ellipsis
+import com.napzak.market.ui_util.ellipsis
 
 private const val CHARACTER_MAX_COUNT = 5
 
