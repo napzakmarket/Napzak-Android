@@ -5,5 +5,6 @@ interface TokenProvider {
     suspend fun getRefreshToken(): String?
     suspend fun setTokens(accessToken: String, refreshToken: String)
     suspend fun reissueAccessToken(): String?
-    suspend fun clear()
+    suspend fun clearAccessToken()
+    suspend fun clearAllTokens()
 }

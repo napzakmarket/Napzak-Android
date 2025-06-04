@@ -18,10 +18,6 @@ class TokenProviderImpl @Inject constructor(
         tokenDataStore.setTokens(accessToken, refreshToken)
     }
 
-    override suspend fun clear() {
-        tokenDataStore.clearInfo()
-    }
-
     override suspend fun reissueAccessToken(): String? {
         val refreshToken = getRefreshToken() ?: return null
 
@@ -29,5 +25,13 @@ class TokenProviderImpl @Inject constructor(
             .onSuccess { newAccessToken ->
                 setTokens(newAccessToken, refreshToken)
             }.getOrNull()
+    }
+
+    override suspend fun clearAccessToken() {
+        tokenDataStore.setAccessToken(null)
+    }
+
+    override suspend fun clearAllTokens() {
+        tokenDataStore.clearTokens(null, null)
     }
 }
