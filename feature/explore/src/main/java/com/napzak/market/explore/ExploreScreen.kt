@@ -93,7 +93,7 @@ internal fun ExploreRoute(
         viewModel.updateGenreSearchResult()
     }
 
-    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+    LaunchedEffect(Unit) {
         viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
