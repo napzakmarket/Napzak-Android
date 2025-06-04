@@ -26,6 +26,32 @@ class TokenDataStore @Inject constructor(
         }
     }
 
+    suspend fun setAccessToken(token: String?) {
+        preferenceDataStore.edit { preferences ->
+            if (token == null) {
+                preferences.remove(preferencesAccessTokenKey)
+            } else {
+                preferences[preferencesAccessTokenKey] = token
+            }
+        }
+    }
+
+    suspend fun clearTokens(accessToken: String?, refreshToken: String?) {
+        preferenceDataStore.edit { preferences ->
+            if (accessToken == null) {
+                preferences.remove(preferencesAccessTokenKey)
+            } else {
+                preferences[preferencesAccessTokenKey] = accessToken
+            }
+
+            if (refreshToken == null) {
+                preferences.remove(preferencesRefreshTokenKey)
+            } else {
+                preferences[preferencesRefreshTokenKey] = refreshToken
+            }
+        }
+    }
+
     suspend fun clearInfo() {
         preferenceDataStore.edit { preferences ->
             preferences.remove(preferencesAccessTokenKey)
@@ -37,7 +63,7 @@ class TokenDataStore @Inject constructor(
         private const val ACCESS_TOKEN_KEY = "access_token"
         private const val REFRESH_TOKEN_KEY = "refresh_token"
 
-        private val preferencesAccessTokenKey = stringPreferencesKey(ACCESS_TOKEN_KEY)
-        private val preferencesRefreshTokenKey = stringPreferencesKey(REFRESH_TOKEN_KEY)
+        val preferencesAccessTokenKey = stringPreferencesKey(ACCESS_TOKEN_KEY)
+        val preferencesRefreshTokenKey = stringPreferencesKey(REFRESH_TOKEN_KEY)
     }
 }
