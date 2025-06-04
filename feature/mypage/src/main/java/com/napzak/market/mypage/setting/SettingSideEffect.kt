@@ -1,5 +1,5 @@
 package com.napzak.market.mypage.setting
 
-sealed class SettingSideEffect {
+internal sealed class SettingSideEffect {
     data object OnSignOutComplete : SettingSideEffect()
 }

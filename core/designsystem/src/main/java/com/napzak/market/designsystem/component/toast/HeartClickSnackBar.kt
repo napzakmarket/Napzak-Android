@@ -1,4 +1,4 @@
-package com.napzak.market.designsystem.component
+package com.napzak.market.designsystem.component.toast
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,9 +20,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R
-import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.designsystem.R.drawable.ic_heartclick_snackbar_12
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_icon_description
+import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
 @Composable
 fun HeartClickSnackBar(

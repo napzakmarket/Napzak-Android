@@ -7,23 +7,25 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
+import com.napzak.market.designsystem.component.toast.LocalNapzakToast
+import com.napzak.market.designsystem.component.toast.NapzakToast
+import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.detail.navigation.navigateToProductDetail
 import com.napzak.market.detail.navigation.productDetailGraph
@@ -39,12 +41,7 @@ import com.napzak.market.login.navigation.navigateToLogin
 import com.napzak.market.main.R.string.main_snack_bar_finish
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
-import com.napzak.market.main.component.MainSnackBarHost
 import com.napzak.market.mypage.navigation.mypageGraph
-import com.napzak.market.mypage.setting.navigation.navigateToSettings
-import com.napzak.market.mypage.setting.navigation.settingsGraph
-import com.napzak.market.mypage.signout.navigation.navigateToSignOut
-import com.napzak.market.mypage.signout.navigation.signOutGraph
 import com.napzak.market.onboarding.navigation.Terms
 import com.napzak.market.onboarding.navigation.onboardingGraph
 import com.napzak.market.registration.navigation.navigateToGenreSearch
@@ -63,8 +60,6 @@ import com.napzak.market.store.edit_store.navigation.editStoreGraph
 import com.napzak.market.store.edit_store.navigation.navigateToEditStore
 import com.napzak.market.store.store.navigation.navigateToStore
 import com.napzak.market.store.store.navigation.storeGraph
-import com.napzak.market.ui_util.LocalSnackBarController
-import com.napzak.market.ui_util.SnackBarController
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -73,11 +68,10 @@ fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+    val lifecycleOwner = LocalLifecycleOwner.current
     val systemUiController = rememberSystemUiController()
-    val snackBarHostState = remember { SnackbarHostState() }
-    val snackBarController = remember { SnackBarController(snackBarHostState, coroutineScope) }
 
+    val napzakToast = remember { NapzakToast(context, lifecycleOwner) }
     var backPressedTime by remember { mutableLongStateOf(0) }
     val mainBackHandlerEvent = remember(backPressedTime) {
         {
@@ -87,7 +81,11 @@ fun MainScreen(
                 if (System.currentTimeMillis() - backPressedTime <= 3000) {
                     (context as Activity).finish()
                 } else {
-                    snackBarController.show(context.getString(main_snack_bar_finish))
+                    napzakToast.makeText(
+                        message = context.getString(main_snack_bar_finish),
+                        yOffset = napzakToast.toastOffsetWithBottomBar(),
+                        toastType = ToastType.COMMON,
+                    )
                 }
                 backPressedTime = System.currentTimeMillis()
             }
@@ -111,17 +109,11 @@ fun MainScreen(
                 onTabSelected = navigator::navigate,
             )
         },
-        snackbarHost = {
-            MainSnackBarHost(
-                snackBarHostState = snackBarHostState,
-                imageRes = snackBarController.imageRes,
-            )
-        },
         containerColor = NapzakMarketTheme.colors.white,
         modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
         CompositionLocalProvider(
-            LocalSnackBarController provides snackBarController
+            LocalNapzakToast provides napzakToast
         ) {
             Box {
                 MainRegisterDialog(
@@ -297,26 +289,15 @@ private fun MainNavHost(
         )
 
         mypageGraph(
+            navController = navigator.navController,
             navigateToUp = navigator::navigateUp,
             navigateToMyMarket = { navigator.navController.navigateToStore(it) },
             navigateToSales = { /* TODO: 판매내역 화면으로 이동 */ },
             navigateToPurchase = { /* TODO: 구매내역 화면으로 이동 */ },
             navigateToRecent = { /* TODO: 최근 본 상품 화면으로 이동 */ },
             navigateToFavorite = { /* TODO: 찜 화면으로 이동 */ },
-            navigateToSettings = navigator.navController::navigateToSettings,
+            restartApplication = restartApplication,
             modifier = modifier,
-        )
-
-        settingsGraph(
-            navigateToBack = navigator::navigateUp,
-            onLogoutConfirm = restartApplication,
-            onWithdrawClick = navigator.navController::navigateToSignOut
-        )
-
-        signOutGraph(
-            navController = navigator.navController,
-            onNavigateUp = navigator::navigateUp,
-            restartApp = restartApplication,
         )
     }
 }

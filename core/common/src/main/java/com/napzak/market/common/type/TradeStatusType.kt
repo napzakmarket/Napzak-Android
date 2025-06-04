@@ -3,7 +3,7 @@ package com.napzak.market.common.type
 enum class TradeStatusType(
     val label: String,
 ) {
-    BEFORE_TRADE(label = ""),
+    BEFORE_TRADE(label = "판매중"),
     COMPLETED_SELL(label = "판매 완료"),
     COMPLETED_BUY(label = "구매 완료"),
     RESERVED(label = "예약중");

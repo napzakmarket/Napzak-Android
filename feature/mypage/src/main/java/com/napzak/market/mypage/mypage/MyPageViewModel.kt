@@ -1,8 +1,8 @@
-package com.napzak.market.mypage.model
+package com.napzak.market.mypage.mypage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.napzak.market.mypage.state.MyPageUiState
+import com.napzak.market.mypage.mypage.state.MyPageUiState
 import com.napzak.market.store.repository.StoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MyPageViewModel @Inject constructor(
+internal class MyPageViewModel @Inject constructor(
     private val storeRepository: StoreRepository,
 ) : ViewModel() {
 

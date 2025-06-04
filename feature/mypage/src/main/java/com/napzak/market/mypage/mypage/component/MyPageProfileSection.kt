@@ -1,4 +1,4 @@
-package com.napzak.market.mypage.component
+package com.napzak.market.mypage.mypage.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -32,7 +32,7 @@ import com.napzak.market.feature.mypage.R.string.mypage_sell_count
 import com.napzak.market.feature.mypage.R.string.mypage_sell_label
 
 @Composable
-fun MyPageProfileSection(
+internal fun MyPageProfileSection(
     nickname: String,
     profileImageUrl: String,
     salesCount: Int,

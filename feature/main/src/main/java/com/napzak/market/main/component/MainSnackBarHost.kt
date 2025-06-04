@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.component.CommonSnackBar
+import com.napzak.market.designsystem.component.toast.CommonSnackBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
 @Composable

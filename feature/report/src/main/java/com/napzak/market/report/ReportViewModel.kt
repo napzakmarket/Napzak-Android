@@ -48,10 +48,8 @@ internal class ReportViewModel @Inject constructor(
                 )
             }
         }.onSuccess {
-            Timber.tag("ReportViewModel")
-                .d("checking if this message appears at the end of the log")
             _sideEffect.send(ReportSideEffect.NavigateUp)
-            _sideEffect.send(ReportSideEffect.ShowSnackBar(REPORT_SNACK_BAR_MESSAGE))
+            _sideEffect.send(ReportSideEffect.ShowToast(REPORT_SNACK_BAR_MESSAGE))
         }.onFailure(Timber::e)
     }
 
@@ -78,9 +76,9 @@ internal class ReportViewModel @Inject constructor(
     companion object {
         private const val ID = "id"
         private const val REPORT_SNACK_BAR_MESSAGE =
-            "\n소중한 신고 감사합니다! \uD83D\uDE4F\n\n\n" +
-                    "신고 내용을 꼼꼼히 검토하여\n\n" +
-                    "입력하신 연락처로 결과를 안내해드릴게요.\n\n" +
+            "소중한 신고 감사합니다! \uD83D\uDE4F\n\n" +
+                    "신고 내용을 꼼꼼히 검토하여\n" +
+                    "입력하신 연락처로 결과를 안내해드릴게요.\n" +
                     "추가 정보가 필요할 경우 동일한 연락처로 문의드릴 수 있어요."
     }
 }
