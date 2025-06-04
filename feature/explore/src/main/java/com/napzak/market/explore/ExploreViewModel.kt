@@ -19,11 +19,13 @@ import com.napzak.market.product.model.SearchParameters
 import com.napzak.market.product.repository.ProductExploreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -48,6 +50,9 @@ internal class ExploreViewModel @Inject constructor(
 
     private val _genreSearchTerm = MutableStateFlow("")
     val genreSearchTerm = _genreSearchTerm.asStateFlow()
+
+    private val _sideEffect = Channel<ExploreSideEffect>()
+    val sideEffect = _sideEffect.receiveAsFlow()
 
     init {
         if (sortType != null) updateSortOption(sortType)
@@ -258,6 +263,12 @@ internal class ExploreViewModel @Inject constructor(
                         ExploreProducts(state.data.productCount, updatedProducts)
                     )
                 )
+
+                if (!isLiked) {
+                    _sideEffect.send(ExploreSideEffect.ShowHeartToast)
+                } else {
+                    _sideEffect.send(ExploreSideEffect.CancelToast)
+                }
             }
 
             else -> {}
