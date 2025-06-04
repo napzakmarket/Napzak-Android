@@ -1,8 +1,9 @@
-package com.napzak.market.store.repository
+package com.napzak.market.util.android
 
 interface TokenProvider {
     suspend fun getAccessToken(): String?
     suspend fun getRefreshToken(): String?
     suspend fun setTokens(accessToken: String, refreshToken: String)
+    suspend fun reissueAccessToken(): String?
     suspend fun clear()
 }
