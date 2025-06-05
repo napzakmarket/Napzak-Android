@@ -10,12 +10,26 @@ class TokenProviderImpl @Inject constructor(
     private val authRepository: AuthRepository,
 ) : TokenProvider {
 
-    override suspend fun getAccessToken(): String? = tokenDataStore.getAccessToken()
+    override suspend fun getAccessToken(): String? =
+        tokenDataStore.getAccessToken()
 
-    override suspend fun getRefreshToken(): String? = tokenDataStore.getRefreshToken()
+    override suspend fun getRefreshToken(): String? =
+        tokenDataStore.getRefreshToken()
 
     override suspend fun setTokens(accessToken: String, refreshToken: String) {
         tokenDataStore.setTokens(accessToken, refreshToken)
+    }
+
+    override suspend fun updateAccessToken(token: String?) {
+        tokenDataStore.updateAccessToken(token)
+    }
+
+    override suspend fun updateRefreshToken(token: String?) {
+        tokenDataStore.updateRefreshToken(token)
+    }
+
+    override suspend fun clearTokens() {
+        tokenDataStore.clearTokens()
     }
 
     override suspend fun reissueAccessToken(): String? {
@@ -23,15 +37,7 @@ class TokenProviderImpl @Inject constructor(
 
         return authRepository.reissueAccessToken(refreshToken)
             .onSuccess { newAccessToken ->
-                setTokens(newAccessToken, refreshToken)
+                updateAccessToken(newAccessToken)
             }.getOrNull()
-    }
-
-    override suspend fun clearAccessToken() {
-        tokenDataStore.setAccessToken(null)
-    }
-
-    override suspend fun clearAllTokens() {
-        tokenDataStore.clearTokens(null, null)
     }
 }

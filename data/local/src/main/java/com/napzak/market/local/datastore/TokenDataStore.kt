@@ -26,36 +26,26 @@ class TokenDataStore @Inject constructor(
         }
     }
 
-    suspend fun setAccessToken(token: String?) {
-        preferenceDataStore.edit { preferences ->
-            if (token == null) {
-                preferences.remove(preferencesAccessTokenKey)
-            } else {
-                preferences[preferencesAccessTokenKey] = token
-            }
-        }
-    }
-
-    suspend fun clearTokens(accessToken: String?, refreshToken: String?) {
-        preferenceDataStore.edit { preferences ->
-            if (accessToken == null) {
-                preferences.remove(preferencesAccessTokenKey)
-            } else {
-                preferences[preferencesAccessTokenKey] = accessToken
-            }
-
-            if (refreshToken == null) {
-                preferences.remove(preferencesRefreshTokenKey)
-            } else {
-                preferences[preferencesRefreshTokenKey] = refreshToken
-            }
-        }
-    }
-
-    suspend fun clearInfo() {
+    suspend fun clearTokens() {
         preferenceDataStore.edit { preferences ->
             preferences.remove(preferencesAccessTokenKey)
             preferences.remove(preferencesRefreshTokenKey)
+        }
+    }
+
+    suspend fun updateAccessToken(token: String?) {
+        preferenceDataStore.edit { preferences ->
+            token?.let {
+                preferences[preferencesAccessTokenKey] = it
+            } ?: preferences.remove(preferencesAccessTokenKey)
+        }
+    }
+
+    suspend fun updateRefreshToken(token: String?) {
+        preferenceDataStore.edit { preferences ->
+            token?.let {
+                preferences[preferencesRefreshTokenKey] = it
+            } ?: preferences.remove(preferencesRefreshTokenKey)
         }
     }
 
