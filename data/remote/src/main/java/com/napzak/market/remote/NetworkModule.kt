@@ -6,9 +6,8 @@ import com.napzak.market.remote.qualifier.DUMMY
 import com.napzak.market.remote.qualifier.JWT
 import com.napzak.market.remote.qualifier.NoAuth
 import com.napzak.market.remote.qualifier.S3
-import com.napzak.market.store.repository.AuthRepository
-import com.napzak.market.store.repository.StoreStateManager
-import com.napzak.market.store.repository.TokenProvider
+import com.napzak.market.util.android.StoreStateManager
+import com.napzak.market.util.android.TokenProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -76,21 +75,11 @@ object NetworkModule {
     fun provideAuthInterceptor(
         tokenProvider: TokenProvider,
         storeStateManager: StoreStateManager,
-        authRepository: AuthRepository,
     ): AuthInterceptor = AuthInterceptor(
         tokenProvider = tokenProvider,
         storeStateManager = storeStateManager,
         reissueToken = {
-            val refreshToken = tokenProvider.getRefreshToken() ?: return@AuthInterceptor null
-
-            authRepository.reissueAccessToken(refreshToken)
-                .onSuccess { newAccessToken ->
-                    tokenProvider.setTokens(
-                        accessToken = newAccessToken,
-                        refreshToken = refreshToken
-                    )
-                    newAccessToken
-                }.getOrNull()
+            tokenProvider.reissueAccessToken()
         }
     )
 

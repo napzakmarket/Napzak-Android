@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.util.common.ellipsis
+import com.napzak.market.ui_util.ellipsis
 
 private const val MAX_LENGTH = 5
 

@@ -1,7 +1,7 @@
 package com.napzak.market.store.di
 
-import com.napzak.market.store.repository.StoreStateManager
 import com.napzak.market.store.repositoryimpl.StoreStateManagerImpl
+import com.napzak.market.util.android.StoreStateManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,5 +13,5 @@ import javax.inject.Singleton
 object AuthModule {
     @Provides
     @Singleton
-    fun provideUserStateManager(): StoreStateManager = StoreStateManagerImpl()
+    fun provideStoreStateManager(): StoreStateManager = StoreStateManagerImpl()
 }

@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_right_chevron
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
-import com.napzak.market.util.common.ellipsis
+import com.napzak.market.ui_util.ellipsis
 
 private const val MAX_LENGTH = 20
 

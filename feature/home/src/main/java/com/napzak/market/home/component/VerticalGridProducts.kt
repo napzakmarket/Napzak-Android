@@ -29,7 +29,7 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.home.R.string.home_button_more
 import com.napzak.market.product.model.Product
 import com.napzak.market.ui_util.noRippleClickable
-import com.napzak.market.util.common.formatToPriceString
+import com.napzak.market.ui_util.formatToPriceString
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
