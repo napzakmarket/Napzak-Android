@@ -56,6 +56,8 @@ import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
 
+private const val NICKNAME_MAX_LENGTH = 10
+
 @Composable
 internal fun HomeRoute(
     onSearchNavigate: () -> Unit,
@@ -122,7 +124,7 @@ private fun HomeScreen(
 
         when (uiState.isLoaded) {
             is UiState.Success -> HomeSuccessScreen(
-                nickname = uiState.nickname.ellipsis(10),
+                nickname = uiState.nickname.ellipsis(NICKNAME_MAX_LENGTH),
                 productRecommends = (uiState.recommendProductLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
                 sellProducts = (uiState.popularSellLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
                 buyProducts = (uiState.popularBuyLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
