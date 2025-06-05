@@ -20,12 +20,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.banner.Banner
 import com.napzak.market.common.state.UiState
+import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.textfield.SearchTextField
+import com.napzak.market.designsystem.component.toast.LocalNapzakToast
+import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.component.topbar.NapzakLogoTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.home.R.string.home_list_customized_sub_title
@@ -39,15 +44,19 @@ import com.napzak.market.home.component.HorizontalAutoScrolledImages
 import com.napzak.market.home.component.HorizontalScrollableProducts
 import com.napzak.market.home.component.VerticalGridProducts
 import com.napzak.market.home.state.HomeUiState
+import com.napzak.market.home.type.HomeProductType
 import com.napzak.market.product.model.Product
 import com.napzak.market.type.HomeBannerType
 import com.napzak.market.ui_util.ScreenPreview
+import com.napzak.market.ui_util.ellipsis
 import com.napzak.market.ui_util.noRippleClickable
 import com.napzak.market.ui_util.openUrl
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
+
+private const val NICKNAME_MAX_LENGTH = 10
 
 @Composable
 internal fun HomeRoute(
@@ -59,11 +68,31 @@ internal fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.homeUiState.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val napzakToast = LocalNapzakToast.current
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         with(viewModel) {
             getBanners()
             getHomeProducts()
+        }
+    }
+
+    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect {
+            when (it) {
+                HomeSideEffect.ShowInterestToast -> {
+                    napzakToast.makeText(
+                        toastType = ToastType.HEART,
+                        message = context.getString(heart_click_snackbar_message),
+                    )
+                }
+
+                HomeSideEffect.CancelInterestToast -> {
+                    napzakToast.cancel()
+                }
+            }
         }
     }
 
@@ -83,7 +112,7 @@ private fun HomeScreen(
     uiState: HomeUiState,
     onSearchTextFieldClick: () -> Unit,
     onProductClick: (Long) -> Unit,
-    onLikeButtonClick: (Long, Boolean) -> Unit,
+    onLikeButtonClick: (Long, Boolean, HomeProductType) -> Unit,
     onMostInterestedSellNavigate: () -> Unit,
     onMostInterestedBuyNavigate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -95,6 +124,7 @@ private fun HomeScreen(
 
         when (uiState.isLoaded) {
             is UiState.Success -> HomeSuccessScreen(
+                nickname = uiState.nickname.ellipsis(NICKNAME_MAX_LENGTH),
                 productRecommends = (uiState.recommendProductLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
                 sellProducts = (uiState.popularSellLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
                 buyProducts = (uiState.popularBuyLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
@@ -115,13 +145,14 @@ private fun HomeScreen(
 
 @Composable
 private fun HomeSuccessScreen(
+    nickname: String,
     productRecommends: ImmutableList<Product>,
     sellProducts: ImmutableList<Product>,
     buyProducts: ImmutableList<Product>,
     banners: ImmutableMap<HomeBannerType, List<Banner>>,
     onSearchTextFieldClick: () -> Unit,
     onProductClick: (Long) -> Unit,
-    onLikeButtonClick: (Long, Boolean) -> Unit,
+    onLikeButtonClick: (Long, Boolean, HomeProductType) -> Unit,
     onMostInterestedSellNavigate: () -> Unit,
     onMostInterestedBuyNavigate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -160,10 +191,12 @@ private fun HomeSuccessScreen(
 
         HorizontalScrollableProducts(
             products = productRecommends,
-            title = stringResource(home_list_customized_title),
-            subTitle = stringResource(home_list_customized_sub_title),
+            title = stringResource(home_list_customized_title, nickname),
+            subTitle = stringResource(home_list_customized_sub_title, nickname),
             onProductClick = onProductClick,
-            onLikeClick = onLikeButtonClick,
+            onLikeClick = { productId, isInterest ->
+                onLikeButtonClick(productId, isInterest, HomeProductType.RECOMMEND)
+            },
             modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 32.dp),
         )
 
@@ -179,7 +212,9 @@ private fun HomeSuccessScreen(
             title = stringResource(home_list_interested_sell_title),
             subTitle = stringResource(home_list_interested_sell_sub_title),
             onProductClick = onProductClick,
-            onLikeClick = onLikeButtonClick,
+            onLikeClick = { productId, isInterest ->
+                onLikeButtonClick(productId, isInterest, HomeProductType.POPULAR_SELL)
+            },
             onMoreClick = onMostInterestedSellNavigate,
             modifier = Modifier
                 .padding(top = 30.dp)
@@ -199,7 +234,9 @@ private fun HomeSuccessScreen(
             title = stringResource(home_list_interested_buy_title),
             subTitle = stringResource(home_list_interested_buy_sub_title),
             onProductClick = onProductClick,
-            onLikeClick = onLikeButtonClick,
+            onLikeClick = { productId, isInterest ->
+                onLikeButtonClick(productId, isInterest, HomeProductType.POPULAR_BUY)
+            },
             onMoreClick = onMostInterestedBuyNavigate,
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 40.dp),
         )
@@ -238,17 +275,40 @@ private fun HomeSingleBanner(
 @ScreenPreview
 @Composable
 private fun HomeRoutePreview() {
+    val mockProducts = buildList {
+        repeat(5) { index ->
+            add(
+                Product(
+                    productId = index.toLong(),
+                    genreName = "장르",
+                    productName = "물품 이름",
+                    photo = "",
+                    price = 10000,
+                    uploadTime = "등록일",
+                    isInterested = false,
+                    tradeType = "SELL",
+                    tradeStatus = "BEFORE_TRADE",
+                    isPriceNegotiable = false,
+                    isOwnedByCurrentUser = false,
+                    interestCount = 5,
+                    chatCount = 5
+                )
+            )
+        }
+    }
+
     NapzakMarketTheme {
         HomeScreen(
             uiState = HomeUiState(
+                nickname = "납자기장독대나무다리어카센터미널뛰기러기찻길동무",
                 bannerLoadState = UiState.Success(mapOf()),
-                recommendProductLoadState = UiState.Success(listOf()),
-                popularSellLoadState = UiState.Success(listOf()),
-                popularBuyLoadState = UiState.Success(listOf()),
+                recommendProductLoadState = UiState.Success(mockProducts),
+                popularSellLoadState = UiState.Success(mockProducts),
+                popularBuyLoadState = UiState.Success(mockProducts),
             ),
             onSearchTextFieldClick = {},
             onProductClick = {},
-            onLikeButtonClick = { _, _ -> },
+            onLikeButtonClick = { _, _, _ -> },
             onMostInterestedSellNavigate = { },
             onMostInterestedBuyNavigate = { },
         )
