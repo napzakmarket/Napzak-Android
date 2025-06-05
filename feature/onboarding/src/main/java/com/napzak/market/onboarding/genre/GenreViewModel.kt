@@ -180,14 +180,14 @@ class GenreViewModel @Inject constructor(
         val isSearching = _uiState.value.searchText.isNotBlank()
 
         val updatedList = if (isSearching) {
-            newGenres
-                .filterNot { genre ->
-                    selected.containsKey(genre.genreId)
-                }
-                .map { genre -> genre.toUiModel(isSelected = false) }
+            newGenres.map { genre ->
+                val isSelected = selected.containsKey(genre.genreId)
+                genre.toUiModel(isSelected = isSelected)
+            }
         } else {
             newGenres.map { genre ->
-                genre.toUiModel(isSelected = selected.containsKey(genre.genreId))
+                val isSelected = selected.containsKey(genre.genreId)
+                genre.toUiModel(isSelected = isSelected)
             }
         }
 
