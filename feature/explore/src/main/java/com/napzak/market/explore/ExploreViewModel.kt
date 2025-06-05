@@ -208,7 +208,7 @@ internal class ExploreViewModel @Inject constructor(
     }
 
     private fun updateGenreItemsInBottomSheet() = viewModelScope.launch {
-        genreNameRepository.getGenreNames(cursor = null, size = 39)
+        genreNameRepository.getGenreNames(cursor = null, size = INIT_GENRE_LIST_SIZE)
             .onSuccess { genres ->
                 _uiState.update { currentState ->
                     currentState.copy(
@@ -318,6 +318,7 @@ internal class ExploreViewModel @Inject constructor(
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L
+        private const val INIT_GENRE_LIST_SIZE = 39
         private const val SEARCH_TERM_KEY = "searchTerm"
         private const val SORT_TYPE_KEY = "sortType"
         private const val TRADE_TYPE_KEY = "tradeType"
