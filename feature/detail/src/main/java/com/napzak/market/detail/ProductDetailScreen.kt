@@ -42,7 +42,7 @@ import com.napzak.market.feature.detail.R.string.detail_dialog_delete_title
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.model.ProductDetail.ProductPhoto
 import com.napzak.market.product.model.ProductDetail.StoreInfo
-import com.napzak.market.util.common.formatToPriceString
+import com.napzak.market.ui_util.formatToPriceString
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 

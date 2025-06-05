@@ -10,5 +10,5 @@ data class WithdrawResponse(
     @SerialName("withdrawTitle")
     val withdrawTitle: String,
     @SerialName("withdrawDescription")
-    val withdrawDescription: String,
+    val withdrawDescription: String? = null,
 )
