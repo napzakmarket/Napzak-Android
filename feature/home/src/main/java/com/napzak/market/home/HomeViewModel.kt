@@ -89,8 +89,8 @@ internal class HomeViewModel @Inject constructor(
         interestDebounceFlow
             .groupBy { it.first }
             .flatMapMerge { (_, flow) -> flow.debounce(DEBOUNCE_DELAY) }
-            .collect { (productId, isInterest) ->
-                interestProductUseCase(productId, isInterest)
+            .collect { (productId, isInterested) ->
+                interestProductUseCase(productId, isInterested)
                     .onSuccess { getHomeProducts() }
                     .onFailure {
                         // TODO: 통신 실패에 대한 처리 (현재: 마지막 성공 상태로 복구)
@@ -150,7 +150,7 @@ internal class HomeViewModel @Inject constructor(
 
     fun setInterest(
         productId: Long,
-        isInterest: Boolean,
+        isInterested: Boolean,
         productType: HomeProductType = HomeProductType.RECOMMEND
     ) = viewModelScope.launch {
         val flow = when (productType) {
@@ -163,8 +163,8 @@ internal class HomeViewModel @Inject constructor(
             (currentState as UiState.Success<List<Product>>).copy(
                 data = currentState.data.map {
                     if (it.productId == productId) {
-                        interestDebounceFlow.emit(productId to isInterest)
-                        it.copy(isInterested = !isInterest)
+                        interestDebounceFlow.emit(productId to isInterested)
+                        it.copy(isInterested = !isInterested)
                     } else {
                         it
                     }
@@ -173,7 +173,7 @@ internal class HomeViewModel @Inject constructor(
         }
 
         //이전 상태를 기반으로 현재 좋아요 여부를 판단
-        when (isInterest) {
+        when (isInterested) {
             true -> _sideEffect.send(HomeSideEffect.CancelInterestToast)
             false -> _sideEffect.send(HomeSideEffect.ShowInterestToast)
         }
