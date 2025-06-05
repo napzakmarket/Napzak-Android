@@ -1,6 +1,6 @@
 package com.napzak.market.store.store
 
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -82,7 +82,7 @@ class StoreViewModel @Inject constructor(
     private val _sideEffect = Channel<StoreSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
 
-    private val lastSuccessfulLoadedProducts = mutableStateListOf<Pair<Int, List<Product>>>()
+    private val lastSuccessfulLoadedProducts = mutableStateOf(0 to emptyList<Product>())
     private val interestDebounceFlow = MutableSharedFlow<Pair<Long, Boolean>>()
 
     init {
@@ -104,12 +104,12 @@ class StoreViewModel @Inject constructor(
                     .onSuccess { updateStoreProducts() }
                     .onFailure {
                         Timber.e(it.message.toString())
-                        lastSuccessfulLoadedProducts.lastOrNull()?.let { lastProducts ->
+                        lastSuccessfulLoadedProducts.let { lastProducts ->
                             _storeProductsState.update {
                                 UiState.Success(
                                     Pair(
-                                        lastProducts.first,
-                                        lastProducts.second
+                                        lastProducts.value.first,
+                                        lastProducts.value.second,
                                     )
                                 )
                             }
@@ -137,6 +137,7 @@ class StoreViewModel @Inject constructor(
             result
                 .onSuccess { (count, list) ->
                     _storeProductsState.value = UiState.Success(Pair(count, list))
+                    lastSuccessfulLoadedProducts.value = count to list
                 }
                 .onFailure { _storeProductsState.value = UiState.Failure(it.message.toString()) }
         }
@@ -252,11 +253,7 @@ class StoreViewModel @Inject constructor(
                         product
                     }
                 }
-
                 _storeProductsState.update { UiState.Success(Pair(count, updatedProducts)) }
-
-                lastSuccessfulLoadedProducts.clear()
-                lastSuccessfulLoadedProducts.add(count to updatedProducts)
 
                 when (isInterested) {
                     true -> _sideEffect.send(StoreSideEffect.CancelToast)
