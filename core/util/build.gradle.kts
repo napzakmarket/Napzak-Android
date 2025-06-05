@@ -1,7 +1,3 @@
 plugins {
-    kotlin("jvm")
-}
-
-kotlin {
-    jvmToolchain(17)
+    id("com.napzak.market.buildlogic.convention.kotlin")
 }
