@@ -2,10 +2,11 @@
 <resources>
     <string name="home_button_more">자세히 보기</string>
     <string name="home_search_text_field_hint">어떤 상품을 찾고 계신가요?</string>
-    <string name="home_list_customized_title">납자기님을 위한 맞춤 PICK!</string>
-    <string name="home_list_customized_sub_title">납자기님의 취향에 딱 맞는 아이템들을 모아봤어요.</string>
+    <string name="home_list_customized_title">%s님을 위한 맞춤 PICK!</string>
+    <string name="home_list_customized_sub_title">%s님의 취향에 딱 맞는 아이템들을 모아봤어요.</string>
     <string name="home_list_interested_sell_title">지금 가장 많이 찜한 납작템</string>
     <string name="home_list_interested_sell_sub_title">놓치면 아쉬운 인기 아이템들을 구경해볼까요?</string>
     <string name="home_list_interested_buy_title">다른 유저들은\n어떤 아이템을 찾고 있을까요?</string>
     <string name="home_list_interested_buy_sub_title">덕심 가득한 리스트에서 취향을 나눠보세요.</string>
+    <string name="home_toast_interest">찜한 상품에 추가되었어요!</string>
 </resources>
