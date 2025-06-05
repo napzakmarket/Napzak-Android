@@ -1,5 +1,6 @@
 package com.napzak.market.store.store
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,8 +19,12 @@ import com.napzak.market.store.repository.StoreRepository
 import com.napzak.market.store.store.state.StoreBottomSheetState
 import com.napzak.market.store.store.state.StoreOptionState
 import com.napzak.market.store.store.state.StoreUiState
+import com.napzak.market.ui_util.groupBy
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +32,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -72,9 +79,43 @@ class StoreViewModel @Inject constructor(
         )
     )
 
+    private val _sideEffect = Channel<StoreSideEffect>()
+    val sideEffect = _sideEffect.receiveAsFlow()
+
+    private val lastSuccessfulLoadedProducts = mutableStateListOf<Pair<Int, List<Product>>>()
+    private val interestDebounceFlow = MutableSharedFlow<Pair<Long, Boolean>>()
+
+    init {
+        handleInterestDebounce()
+    }
+
     fun getStoreInformation() {
         updateStoreDetail()
         updateStoreProducts()
+    }
+
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    fun handleInterestDebounce() = viewModelScope.launch {
+        interestDebounceFlow
+            .groupBy { it.first }
+            .flatMapMerge { (_, flow) -> flow.debounce(DEBOUNCE_DELAY) }
+            .collect { (productId, isInterested) ->
+                setInterestProductUseCase(productId, isInterested)
+                    .onSuccess { updateStoreProducts() }
+                    .onFailure {
+                        Timber.e(it.message.toString())
+                        lastSuccessfulLoadedProducts.lastOrNull()?.let { lastProducts ->
+                            _storeProductsState.update {
+                                UiState.Success(
+                                    Pair(
+                                        lastProducts.first,
+                                        lastProducts.second
+                                    )
+                                )
+                            }
+                        }
+                    }
+            }
     }
 
     fun updateStoreDetail() = viewModelScope.launch {
@@ -198,13 +239,14 @@ class StoreViewModel @Inject constructor(
         }
     }
 
-    fun updateProductIsInterested(productId: Long, isLiked: Boolean) = viewModelScope.launch {
+    fun updateProductIsInterested(productId: Long, isInterested: Boolean) = viewModelScope.launch {
         val state = storeUiState.value.storeProductsState
         when (state) {
             is UiState.Success -> {
                 val (count, products) = state.data
                 val updatedProducts = products.map { product ->
                     if (product.productId == productId) {
+                        interestDebounceFlow.emit(productId to isInterested)
                         product.copy(isInterested = !product.isInterested)
                     } else {
                         product
@@ -212,12 +254,18 @@ class StoreViewModel @Inject constructor(
                 }
 
                 _storeProductsState.update { UiState.Success(Pair(count, updatedProducts)) }
+
+                lastSuccessfulLoadedProducts.clear()
+                lastSuccessfulLoadedProducts.add(count to updatedProducts)
+
+                when (isInterested) {
+                    true -> _sideEffect.send(StoreSideEffect.CancelToast)
+                    false -> _sideEffect.send(StoreSideEffect.ShowHeartToast)
+                }
             }
 
             else -> {}
         }
-
-        setInterestProductUseCase(productId, isLiked)
     }
 
     companion object {
