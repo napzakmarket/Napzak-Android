@@ -139,7 +139,7 @@ internal fun ExploreRoute(
         },
         onProductDetailNavigate = onProductDetailNavigate,
         onLikeButtonClick = { id, value ->
-            viewModel.updateProductIsInterested(productId = id, isLiked = value)
+            viewModel.updateProductIsInterested(productId = id, isInterested = value)
         },
         modifier = modifier,
     )

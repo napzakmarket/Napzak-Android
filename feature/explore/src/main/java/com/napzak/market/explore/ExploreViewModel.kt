@@ -1,5 +1,6 @@
 package com.napzak.market.explore
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,14 +18,18 @@ import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.product.model.ExploreParameters
 import com.napzak.market.product.model.SearchParameters
 import com.napzak.market.product.repository.ProductExploreRepository
+import com.napzak.market.ui_util.groupBy
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -54,10 +59,38 @@ internal class ExploreViewModel @Inject constructor(
     private val _sideEffect = Channel<ExploreSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
 
+    private val lastSuccessfulLoadedProducts = mutableStateListOf<ExploreProducts>()
+    private val interestDebounceFlow = MutableSharedFlow<Pair<Long, Boolean>>()
+
     init {
         if (sortType != null) updateSortOption(sortType)
         if (tradeType != null) updateTradeType(tradeType)
         updateGenreItemsInBottomSheet()
+        handleInterestDebounce()
+    }
+
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    fun handleInterestDebounce() = viewModelScope.launch {
+        interestDebounceFlow
+            .groupBy { it.first }
+            .flatMapMerge { (_, flow) -> flow.debounce(DEBOUNCE_DELAY) }
+            .collect { (productId, isInterested) ->
+                setInterestProductUseCase(productId, isInterested)
+                    .onSuccess { updateExploreInformation() }
+                    .onFailure {
+                        Timber.e(it.message.toString())
+                        lastSuccessfulLoadedProducts.lastOrNull()?.let { lastProducts ->
+                            updateLoadState(
+                                UiState.Success(
+                                    ExploreProducts(
+                                        lastProducts.productCount,
+                                        lastProducts.productList,
+                                    )
+                                )
+                            )
+                        }
+                    }
+            }
     }
 
     fun updateExploreInformation() = viewModelScope.launch {
@@ -247,34 +280,33 @@ internal class ExploreViewModel @Inject constructor(
         }
     }
 
-    fun updateProductIsInterested(productId: Long, isLiked: Boolean) = viewModelScope.launch {
+    fun updateProductIsInterested(productId: Long, isInterested: Boolean) = viewModelScope.launch {
         when (val state = uiState.value.loadState) {
             is UiState.Success -> {
                 val updatedProducts = state.data.productList.map { product ->
                     if (product.productId == productId) {
+                        interestDebounceFlow.emit(productId to isInterested)
                         product.copy(isInterested = !product.isInterested)
                     } else {
                         product
                     }
                 }
 
-                updateLoadState(
-                    loadState = UiState.Success(
-                        ExploreProducts(state.data.productCount, updatedProducts)
-                    )
-                )
+                val newState = ExploreProducts(state.data.productCount, updatedProducts)
+                updateLoadState(UiState.Success(newState))
 
-                if (!isLiked) {
-                    _sideEffect.send(ExploreSideEffect.ShowHeartToast)
-                } else {
-                    _sideEffect.send(ExploreSideEffect.CancelToast)
+                lastSuccessfulLoadedProducts.add(newState)
+
+                when (isInterested) {
+                    true -> _sideEffect.send(ExploreSideEffect.CancelToast)
+                    false -> _sideEffect.send(ExploreSideEffect.ShowHeartToast)
                 }
             }
 
             else -> {}
         }
 
-        setInterestProductUseCase(productId, isLiked)
+        setInterestProductUseCase(productId, isInterested)
     }
 
     private fun updateLoadState(loadState: UiState<ExploreProducts>) =
