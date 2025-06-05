@@ -176,8 +176,6 @@ internal class HomeViewModel @Inject constructor(
             }
         }
 
-        interestDebounceFlow.emit(productId to isInterest)
-
         //이전 상태를 기반으로 현재 좋아요 여부를 판단
         when (isInterest) {
             true -> _sideEffect.send(HomeSideEffect.CancelInterestToast)
