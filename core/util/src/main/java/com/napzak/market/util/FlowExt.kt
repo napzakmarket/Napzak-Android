@@ -1,4 +1,4 @@
-package com.napzak.market.util.common
+package com.napzak.market.util
 
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel

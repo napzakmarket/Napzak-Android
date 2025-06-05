@@ -11,7 +11,7 @@ import com.napzak.market.product.model.Product
 import com.napzak.market.product.repository.ProductRecommendationRepository
 import com.napzak.market.repository.BannerRepository
 import com.napzak.market.type.HomeBannerType
-import com.napzak.market.util.common.groupBy
+import com.napzak.market.util.groupBy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
