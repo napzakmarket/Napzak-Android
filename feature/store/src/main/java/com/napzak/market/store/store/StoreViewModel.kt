@@ -175,7 +175,7 @@ class StoreViewModel @Inject constructor(
     }
 
     fun updateGenreItemsInBottomSheet() = viewModelScope.launch {
-        genreNameRepository.getGenreNames(cursor = null)
+        genreNameRepository.getGenreNames(cursor = null, size = INIT_GENRE_LIST_SIZE)
             .onSuccess { genres ->
                 _storeOptionState.update { currentState ->
                     currentState.copy(
@@ -270,6 +270,7 @@ class StoreViewModel @Inject constructor(
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L
+        private const val INIT_GENRE_LIST_SIZE = 39
         private const val STORE_ID_KEY = "storeId"
     }
 }
