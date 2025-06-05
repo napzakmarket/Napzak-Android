@@ -26,7 +26,7 @@ class AuthInterceptor @Inject constructor(
 
         val response = chain.proceed(newRequest)
 
-        if (response.code == 401 && !storeStateManager.isDeleting()) {
+        if (response.code == 401 && !storeStateManager.isDeletingStore()) {
             val newAccessToken = runBlocking { reissueToken() }
 
             return if (newAccessToken != null) {
