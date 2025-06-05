@@ -159,21 +159,17 @@ internal class HomeViewModel @Inject constructor(
             HomeProductType.POPULAR_BUY -> _popularBuyLoadState
         }
 
-        (flow.value as UiState.Success<List<Product>>).data.forEach { product ->
-            if (product.productId == productId) {
-                flow.update { currentState ->
-                    (currentState as UiState.Success<List<Product>>).copy(
-                        data = currentState.data.map {
-                            if (it.productId == productId) {
-                                interestDebounceFlow.emit(productId to isInterest)
-                                it.copy(isInterested = !isInterest)
-                            } else {
-                                it
-                            }
-                        }
-                    )
+        flow.update { currentState ->
+            (currentState as UiState.Success<List<Product>>).copy(
+                data = currentState.data.map {
+                    if (it.productId == productId) {
+                        interestDebounceFlow.emit(productId to isInterest)
+                        it.copy(isInterested = !isInterest)
+                    } else {
+                        it
+                    }
                 }
-            }
+            )
         }
 
         //이전 상태를 기반으로 현재 좋아요 여부를 판단
