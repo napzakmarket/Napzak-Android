@@ -13,6 +13,6 @@ class LogoutUseCase @Inject constructor(
     suspend operator fun invoke(): Result<Unit> = runCatching {
         storeRepository.logout()
         storeStateManager.setIsDeleting(false)
-        tokenProvider.clearAccessToken()
+        tokenProvider.updateAccessToken(null)
     }
 }

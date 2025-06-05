@@ -14,7 +14,6 @@ class CheckAutoLoginUseCase @Inject constructor(
 
         val newAccessToken = authRepository.reissue(refreshToken)
 
-        val oldRefreshToken = refreshToken
-        tokenProvider.setTokens(newAccessToken, oldRefreshToken)
+        tokenProvider.updateAccessToken(newAccessToken)
     }
 }

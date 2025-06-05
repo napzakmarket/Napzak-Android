@@ -19,6 +19,6 @@ class WithdrawUseCase @Inject constructor(
         storeRepository.withdraw(title, description)
             .getOrThrow()
 
-        tokenProvider.clearAllTokens()
+        tokenProvider.clearTokens()
     }
 }
