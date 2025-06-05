@@ -6,6 +6,8 @@ import com.napzak.market.remote.qualifier.DUMMY
 import com.napzak.market.remote.qualifier.JWT
 import com.napzak.market.remote.qualifier.NoAuth
 import com.napzak.market.remote.qualifier.S3
+import com.napzak.market.util.android.StoreStateManager
+import com.napzak.market.util.android.TokenProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -71,8 +73,15 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideAuthInterceptor(
-        tokenDataStore: TokenDataStore
-    ): AuthInterceptor = AuthInterceptor(tokenDataStore)
+        tokenProvider: TokenProvider,
+        storeStateManager: StoreStateManager,
+    ): AuthInterceptor = AuthInterceptor(
+        tokenProvider = tokenProvider,
+        storeStateManager = storeStateManager,
+        reissueToken = {
+            tokenProvider.reissueAccessToken()
+        }
+    )
 
     @JWT
     @Provides

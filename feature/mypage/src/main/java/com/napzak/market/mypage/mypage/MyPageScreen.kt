@@ -23,7 +23,7 @@ import com.napzak.market.mypage.mypage.component.MyPageMenuCard
 import com.napzak.market.mypage.mypage.component.MyPageProfileSection
 import com.napzak.market.mypage.mypage.state.MyPageUiState
 import com.napzak.market.ui_util.ScreenPreview
-import com.napzak.market.util.common.openUrl
+import com.napzak.market.ui_util.openUrl
 
 
 @Composable

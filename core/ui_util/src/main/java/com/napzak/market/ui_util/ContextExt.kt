@@ -1,4 +1,4 @@
-package com.napzak.market.util.common
+package com.napzak.market.ui_util
 
 import android.content.Context
 import android.content.Intent

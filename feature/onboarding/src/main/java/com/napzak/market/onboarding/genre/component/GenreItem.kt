@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.napzak.market.designsystem.R.drawable.ic_heart
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.util.common.ellipsis
+import com.napzak.market.ui_util.ellipsis
 
 @Composable
 fun GenreItem(

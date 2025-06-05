@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.store.model.SettingInfo
 import com.napzak.market.store.repository.SettingRepository
-import com.napzak.market.store.repository.StoreRepository
+import com.napzak.market.store.usecase.LogoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class SettingViewModel @Inject constructor(
     private val settingRepository: SettingRepository,
-    private val storeRepository: StoreRepository,
+    private val logoutUseCase: LogoutUseCase,
 ) : ViewModel() {
 
     private val _settingInfo = MutableStateFlow(SettingInfo("", "", "", ""))
@@ -40,7 +40,7 @@ internal class SettingViewModel @Inject constructor(
     }
 
     fun signOutUser() = viewModelScope.launch {
-        storeRepository.logout()
+        logoutUseCase()
             .onSuccess {
                 _sideEffect.send(SettingSideEffect.OnSignOutComplete)
             }
