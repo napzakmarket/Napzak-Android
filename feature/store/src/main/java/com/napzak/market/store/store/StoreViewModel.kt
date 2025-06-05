@@ -99,8 +99,14 @@ class StoreViewModel @Inject constructor(
         interestDebounceFlow
             .groupBy { it.first }
             .flatMapMerge { (_, flow) -> flow.debounce(DEBOUNCE_DELAY) }
-            .collect { (productId, isInterested) ->
-                setInterestProductUseCase(productId, isInterested)
+            .collect { (productId, finalState) ->
+                val originalState = lastSuccessfulLoadedProducts.value.second
+                    .firstOrNull { it.productId == productId }
+                    ?.isInterested
+
+                if (originalState != finalState) return@collect //원래 값과 동일한 값이 되면 api 호출 생략
+
+                setInterestProductUseCase(productId, finalState)
                     .onSuccess { updateStoreProducts() }
                     .onFailure {
                         Timber.e(it.message.toString())
