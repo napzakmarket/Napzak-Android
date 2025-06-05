@@ -27,6 +27,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.banner.Banner
 import com.napzak.market.common.state.UiState
+import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
@@ -39,7 +40,6 @@ import com.napzak.market.feature.home.R.string.home_list_interested_buy_title
 import com.napzak.market.feature.home.R.string.home_list_interested_sell_sub_title
 import com.napzak.market.feature.home.R.string.home_list_interested_sell_title
 import com.napzak.market.feature.home.R.string.home_search_text_field_hint
-import com.napzak.market.feature.home.R.string.home_toast_interest
 import com.napzak.market.home.component.HorizontalAutoScrolledImages
 import com.napzak.market.home.component.HorizontalScrollableProducts
 import com.napzak.market.home.component.VerticalGridProducts
@@ -85,7 +85,7 @@ internal fun HomeRoute(
                 HomeSideEffect.ShowInterestToast -> {
                     napzakToast.makeText(
                         toastType = ToastType.HEART,
-                        message = context.getString(home_toast_interest),
+                        message = context.getString(heart_click_snackbar_message),
                     )
                 }
 
