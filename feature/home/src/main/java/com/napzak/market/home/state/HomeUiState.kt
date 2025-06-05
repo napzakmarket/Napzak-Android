@@ -6,6 +6,7 @@ import com.napzak.market.product.model.Product
 import com.napzak.market.type.HomeBannerType
 
 internal data class HomeUiState(
+    val nickname: String,
     val bannerLoadState: UiState<Map<HomeBannerType, List<Banner>>>,
     val recommendProductLoadState: UiState<List<Product>>,
     val popularSellLoadState: UiState<List<Product>>,

@@ -41,7 +41,7 @@ import com.napzak.market.onboarding.termsAgreement.model.TermType
 import com.napzak.market.onboarding.termsAgreement.model.TermsAgreementUiState
 import com.napzak.market.onboarding.termsAgreement.model.getDisplayLabel
 import com.napzak.market.ui_util.noRippleClickable
-import com.napzak.market.util.common.openUrl
+import com.napzak.market.ui_util.openUrl
 
 @Composable
 fun TermsAgreementRoute(
