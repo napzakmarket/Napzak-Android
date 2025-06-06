@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.napzak.market.genre.model.Genre
 
 @HiltViewModel
 class GenreViewModel @Inject constructor(
@@ -174,20 +175,24 @@ class GenreViewModel @Inject constructor(
         }
     }
 
-    private fun updateGenresAllSelection(newGenres: List<com.napzak.market.genre.model.Genre>) {
+    private fun updateGenresAllSelection(newGenres: List<Genre>) {
         val selected = _uiState.value.selectedGenres.associateBy { it.id }
+        val isSearching = _uiState.value.searchText.isNotBlank()
 
-        val merged = newGenres.map { genre ->
-            val wasSelected = selected[genre.genreId] != null
-            genre.toUiModel(isSelected = wasSelected)
-        }
-
-        val additional = selected.values.filterNot { selectedItem ->
-            merged.any { it.id == selectedItem.id }
+        val updatedList = if (isSearching) {
+            newGenres.map { genre ->
+                val isSelected = selected.containsKey(genre.genreId)
+                genre.toUiModel(isSelected = isSelected)
+            }
+        } else {
+            newGenres.map { genre ->
+                val isSelected = selected.containsKey(genre.genreId)
+                genre.toUiModel(isSelected = isSelected)
+            }
         }
 
         _uiState.update {
-            it.copy(genres = merged + additional)
+            it.copy(genres = updatedList)
         }
     }
 
