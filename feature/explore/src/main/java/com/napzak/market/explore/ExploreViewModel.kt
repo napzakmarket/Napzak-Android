@@ -1,6 +1,5 @@
 package com.napzak.market.explore
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,6 +15,7 @@ import com.napzak.market.genre.model.extractGenreIds
 import com.napzak.market.genre.repository.GenreNameRepository
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.product.model.ExploreParameters
+import com.napzak.market.product.model.Product
 import com.napzak.market.product.model.SearchParameters
 import com.napzak.market.product.repository.ProductExploreRepository
 import com.napzak.market.ui_util.groupBy
@@ -59,7 +59,7 @@ internal class ExploreViewModel @Inject constructor(
     private val _sideEffect = Channel<ExploreSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
 
-    private val lastSuccessfulLoadedProducts = mutableStateListOf<ExploreProducts>()
+    private var lastSuccessfulLoadedProducts = 0 to emptyList<Product>()
     private val interestDebounceFlow = MutableSharedFlow<Pair<Long, Boolean>>()
 
     init {
@@ -74,21 +74,25 @@ internal class ExploreViewModel @Inject constructor(
         interestDebounceFlow
             .groupBy { it.first }
             .flatMapMerge { (_, flow) -> flow.debounce(DEBOUNCE_DELAY) }
-            .collect { (productId, isInterested) ->
-                setInterestProductUseCase(productId, isInterested)
+            .collect { (productId, finalState) ->
+                val originalState = lastSuccessfulLoadedProducts.second
+                    .firstOrNull { it.productId == productId }
+                    ?.isInterested
+
+                if (originalState != finalState) return@collect //원래 값과 동일한 값이 되면 api 호출 생략
+
+                setInterestProductUseCase(productId, finalState)
                     .onSuccess { updateExploreInformation() }
                     .onFailure {
                         Timber.e(it.message.toString())
-                        lastSuccessfulLoadedProducts.lastOrNull()?.let { lastProducts ->
-                            updateLoadState(
-                                UiState.Success(
-                                    ExploreProducts(
-                                        lastProducts.productCount,
-                                        lastProducts.productList,
-                                    )
+                        updateLoadState(
+                            UiState.Success(
+                                ExploreProducts(
+                                    productCount = lastSuccessfulLoadedProducts.first,
+                                    productList = lastSuccessfulLoadedProducts.second,
                                 )
                             )
-                        }
+                        )
                     }
             }
     }
@@ -128,6 +132,7 @@ internal class ExploreViewModel @Inject constructor(
                                     )
                                 )
                             )
+                            lastSuccessfulLoadedProducts = it
                         }
                         .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
                 } else {
@@ -141,6 +146,7 @@ internal class ExploreViewModel @Inject constructor(
                                     )
                                 )
                             )
+                            lastSuccessfulLoadedProducts = it
                         }
                         .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
                 }
@@ -158,6 +164,7 @@ internal class ExploreViewModel @Inject constructor(
                                     )
                                 )
                             )
+                            lastSuccessfulLoadedProducts = it
                         }
                         .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
                 } else {
@@ -171,6 +178,7 @@ internal class ExploreViewModel @Inject constructor(
                                     )
                                 )
                             )
+                            lastSuccessfulLoadedProducts = it
                         }
                         .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
                 }
@@ -295,8 +303,6 @@ internal class ExploreViewModel @Inject constructor(
                 val newState = ExploreProducts(state.data.productCount, updatedProducts)
                 updateLoadState(UiState.Success(newState))
 
-                lastSuccessfulLoadedProducts.add(newState)
-
                 when (isInterested) {
                     true -> _sideEffect.send(ExploreSideEffect.CancelToast)
                     false -> _sideEffect.send(ExploreSideEffect.ShowHeartToast)
@@ -305,8 +311,6 @@ internal class ExploreViewModel @Inject constructor(
 
             else -> {}
         }
-
-        setInterestProductUseCase(productId, isInterested)
     }
 
     private fun updateLoadState(loadState: UiState<ExploreProducts>) =
