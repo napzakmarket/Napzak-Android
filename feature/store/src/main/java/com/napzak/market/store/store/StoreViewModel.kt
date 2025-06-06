@@ -1,6 +1,5 @@
 package com.napzak.market.store.store
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -82,7 +81,7 @@ class StoreViewModel @Inject constructor(
     private val _sideEffect = Channel<StoreSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
 
-    private val lastSuccessfulLoadedProducts = mutableStateOf(0 to emptyList<Product>())
+    private var lastSuccessfulLoadedProducts = 0 to emptyList<Product>()
     private val interestDebounceFlow = MutableSharedFlow<Pair<Long, Boolean>>()
 
     init {
@@ -100,7 +99,7 @@ class StoreViewModel @Inject constructor(
             .groupBy { it.first }
             .flatMapMerge { (_, flow) -> flow.debounce(DEBOUNCE_DELAY) }
             .collect { (productId, finalState) ->
-                val originalState = lastSuccessfulLoadedProducts.value.second
+                val originalState = lastSuccessfulLoadedProducts.second
                     .firstOrNull { it.productId == productId }
                     ?.isInterested
 
@@ -110,15 +109,8 @@ class StoreViewModel @Inject constructor(
                     .onSuccess { updateStoreProducts() }
                     .onFailure {
                         Timber.e(it.message.toString())
-                        lastSuccessfulLoadedProducts.let { lastProducts ->
-                            _storeProductsState.update {
-                                UiState.Success(
-                                    Pair(
-                                        lastProducts.value.first,
-                                        lastProducts.value.second,
-                                    )
-                                )
-                            }
+                        _storeProductsState.update {
+                            UiState.Success(lastSuccessfulLoadedProducts)
                         }
                     }
             }
@@ -141,9 +133,9 @@ class StoreViewModel @Inject constructor(
             )
 
             result
-                .onSuccess { (count, list) ->
-                    _storeProductsState.value = UiState.Success(Pair(count, list))
-                    lastSuccessfulLoadedProducts.value = count to list
+                .onSuccess { it ->
+                    _storeProductsState.value = UiState.Success(it)
+                    lastSuccessfulLoadedProducts = it
                 }
                 .onFailure { _storeProductsState.value = UiState.Failure(it.message.toString()) }
         }
