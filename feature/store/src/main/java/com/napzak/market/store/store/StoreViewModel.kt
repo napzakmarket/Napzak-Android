@@ -18,8 +18,12 @@ import com.napzak.market.store.repository.StoreRepository
 import com.napzak.market.store.store.state.StoreBottomSheetState
 import com.napzak.market.store.store.state.StoreOptionState
 import com.napzak.market.store.store.state.StoreUiState
+import com.napzak.market.ui_util.groupBy
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +31,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -72,9 +78,42 @@ class StoreViewModel @Inject constructor(
         )
     )
 
+    private val _sideEffect = Channel<StoreSideEffect>()
+    val sideEffect = _sideEffect.receiveAsFlow()
+
+    private var lastSuccessfulLoadedProducts = 0 to emptyList<Product>()
+    private val interestDebounceFlow = MutableSharedFlow<Pair<Long, Boolean>>()
+
+    init {
+        handleInterestDebounce()
+    }
+
     fun getStoreInformation() {
         updateStoreDetail()
         updateStoreProducts()
+    }
+
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    fun handleInterestDebounce() = viewModelScope.launch {
+        interestDebounceFlow
+            .groupBy { it.first }
+            .flatMapMerge { (_, flow) -> flow.debounce(DEBOUNCE_DELAY) }
+            .collect { (productId, finalState) ->
+                val originalState = lastSuccessfulLoadedProducts.second
+                    .firstOrNull { it.productId == productId }
+                    ?.isInterested
+
+                if (originalState != finalState) return@collect //원래 값과 동일한 값이 되면 api 호출 생략
+
+                setInterestProductUseCase(productId, finalState)
+                    .onSuccess { updateStoreProducts() }
+                    .onFailure {
+                        Timber.e(it.message.toString())
+                        _storeProductsState.update {
+                            UiState.Success(lastSuccessfulLoadedProducts)
+                        }
+                    }
+            }
     }
 
     fun updateStoreDetail() = viewModelScope.launch {
@@ -94,8 +133,9 @@ class StoreViewModel @Inject constructor(
             )
 
             result
-                .onSuccess { (count, list) ->
-                    _storeProductsState.value = UiState.Success(Pair(count, list))
+                .onSuccess { it ->
+                    _storeProductsState.value = UiState.Success(it)
+                    lastSuccessfulLoadedProducts = it
                 }
                 .onFailure { _storeProductsState.value = UiState.Failure(it.message.toString()) }
         }
@@ -134,7 +174,7 @@ class StoreViewModel @Inject constructor(
     }
 
     fun updateGenreItemsInBottomSheet() = viewModelScope.launch {
-        genreNameRepository.getGenreNames(cursor = null)
+        genreNameRepository.getGenreNames(cursor = null, size = INIT_GENRE_LIST_SIZE)
             .onSuccess { genres ->
                 _storeOptionState.update { currentState ->
                     currentState.copy(
@@ -198,30 +238,34 @@ class StoreViewModel @Inject constructor(
         }
     }
 
-    fun updateProductIsInterested(productId: Long, isLiked: Boolean) = viewModelScope.launch {
+    fun updateProductIsInterested(productId: Long, isInterested: Boolean) = viewModelScope.launch {
         val state = storeUiState.value.storeProductsState
         when (state) {
             is UiState.Success -> {
                 val (count, products) = state.data
                 val updatedProducts = products.map { product ->
                     if (product.productId == productId) {
+                        interestDebounceFlow.emit(productId to isInterested)
                         product.copy(isInterested = !product.isInterested)
                     } else {
                         product
                     }
                 }
-
                 _storeProductsState.update { UiState.Success(Pair(count, updatedProducts)) }
+
+                when (isInterested) {
+                    true -> _sideEffect.send(StoreSideEffect.CancelToast)
+                    false -> _sideEffect.send(StoreSideEffect.ShowHeartToast)
+                }
             }
 
             else -> {}
         }
-
-        setInterestProductUseCase(productId, isLiked)
     }
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L
+        private const val INIT_GENRE_LIST_SIZE = 39
         private const val STORE_ID_KEY = "storeId"
     }
 }
