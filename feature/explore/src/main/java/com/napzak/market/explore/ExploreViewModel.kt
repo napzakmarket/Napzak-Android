@@ -15,15 +15,22 @@ import com.napzak.market.genre.model.extractGenreIds
 import com.napzak.market.genre.repository.GenreNameRepository
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.product.model.ExploreParameters
+import com.napzak.market.product.model.Product
 import com.napzak.market.product.model.SearchParameters
 import com.napzak.market.product.repository.ProductExploreRepository
+import com.napzak.market.ui_util.groupBy
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -36,9 +43,9 @@ internal class ExploreViewModel @Inject constructor(
     private val genreNameRepository: GenreNameRepository,
     private val setInterestProductUseCase: SetInterestProductUseCase,
 ) : ViewModel() {
-    val searchTerm: String = savedStateHandle.get<String>(SEARCH_TERM_KEY) ?: ""
-    val sortType: SortType = savedStateHandle.get<SortType>(SORT_TYPE_KEY) ?: SortType.RECENT
-    val tradeType: TradeType = savedStateHandle.get<TradeType>(TRADE_TYPE_KEY) ?: TradeType.SELL
+    val searchTerm = savedStateHandle.get<String>(SEARCH_TERM_KEY)
+    val sortType = savedStateHandle.get<SortType>(SORT_TYPE_KEY)
+    val tradeType = savedStateHandle.get<TradeType>(TRADE_TYPE_KEY)
 
     private val _uiState = MutableStateFlow(ExploreUiState())
     val uiState = _uiState.asStateFlow()
@@ -49,9 +56,50 @@ internal class ExploreViewModel @Inject constructor(
     private val _genreSearchTerm = MutableStateFlow("")
     val genreSearchTerm = _genreSearchTerm.asStateFlow()
 
+    private val _sideEffect = Channel<ExploreSideEffect>()
+    val sideEffect = _sideEffect.receiveAsFlow()
+
+    private var lastSuccessfulLoadedProducts = 0 to emptyList<Product>()
+    private val interestDebounceFlow = MutableSharedFlow<Pair<Long, Boolean>>()
+
+    init {
+        if (sortType != null) updateSortOption(sortType)
+        if (tradeType != null) updateTradeType(tradeType)
+        updateGenreItemsInBottomSheet()
+        handleInterestDebounce()
+    }
+
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    fun handleInterestDebounce() = viewModelScope.launch {
+        interestDebounceFlow
+            .groupBy { it.first }
+            .flatMapMerge { (_, flow) -> flow.debounce(DEBOUNCE_DELAY) }
+            .collect { (productId, finalState) ->
+                val originalState = lastSuccessfulLoadedProducts.second
+                    .firstOrNull { it.productId == productId }
+                    ?.isInterested
+
+                if (originalState != finalState) return@collect //원래 값과 동일한 값이 되면 api 호출 생략
+
+                setInterestProductUseCase(productId, finalState)
+                    .onSuccess { updateExploreInformation() }
+                    .onFailure {
+                        Timber.e(it.message.toString())
+                        updateLoadState(
+                            UiState.Success(
+                                ExploreProducts(
+                                    productCount = lastSuccessfulLoadedProducts.first,
+                                    productList = lastSuccessfulLoadedProducts.second,
+                                )
+                            )
+                        )
+                    }
+            }
+    }
+
     fun updateExploreInformation() = viewModelScope.launch {
         val parameters = with(uiState.value) {
-            if (searchTerm.isEmpty()) {
+            if (searchTerm.isNullOrEmpty()) {
                 ExploreParameters(
                     sort = sortOption.toString(),
                     genreIds = filteredGenres.extractGenreIds(),
@@ -73,7 +121,7 @@ internal class ExploreViewModel @Inject constructor(
 
         when (uiState.value.selectedTab) {
             TradeType.BUY -> {
-                if (searchTerm.isEmpty()) {
+                if (searchTerm.isNullOrEmpty()) {
                     productExploreRepository.getExploreBuyProducts(parameters as ExploreParameters)
                         .onSuccess {
                             updateLoadState(
@@ -84,6 +132,7 @@ internal class ExploreViewModel @Inject constructor(
                                     )
                                 )
                             )
+                            lastSuccessfulLoadedProducts = it
                         }
                         .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
                 } else {
@@ -97,13 +146,14 @@ internal class ExploreViewModel @Inject constructor(
                                     )
                                 )
                             )
+                            lastSuccessfulLoadedProducts = it
                         }
                         .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
                 }
             }
 
             TradeType.SELL -> {
-                if (searchTerm.isEmpty()) {
+                if (searchTerm.isNullOrEmpty()) {
                     productExploreRepository.getExploreSellProducts(parameters as ExploreParameters)
                         .onSuccess {
                             updateLoadState(
@@ -114,6 +164,7 @@ internal class ExploreViewModel @Inject constructor(
                                     )
                                 )
                             )
+                            lastSuccessfulLoadedProducts = it
                         }
                         .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
                 } else {
@@ -127,6 +178,7 @@ internal class ExploreViewModel @Inject constructor(
                                     )
                                 )
                             )
+                            lastSuccessfulLoadedProducts = it
                         }
                         .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
                 }
@@ -163,8 +215,8 @@ internal class ExploreViewModel @Inject constructor(
         }
     }
 
-    fun updateGenreItemsInBottomSheet() = viewModelScope.launch {
-        genreNameRepository.getGenreNames(cursor = null)
+    private fun updateGenreItemsInBottomSheet() = viewModelScope.launch {
+        genreNameRepository.getGenreNames(cursor = null, size = INIT_GENRE_LIST_SIZE)
             .onSuccess { genres ->
                 _uiState.update { currentState ->
                     currentState.copy(
@@ -236,28 +288,29 @@ internal class ExploreViewModel @Inject constructor(
         }
     }
 
-    fun updateProductIsInterested(productId: Long, isLiked: Boolean) = viewModelScope.launch {
+    fun updateProductIsInterested(productId: Long, isInterested: Boolean) = viewModelScope.launch {
         when (val state = uiState.value.loadState) {
             is UiState.Success -> {
                 val updatedProducts = state.data.productList.map { product ->
                     if (product.productId == productId) {
+                        interestDebounceFlow.emit(productId to isInterested)
                         product.copy(isInterested = !product.isInterested)
                     } else {
                         product
                     }
                 }
 
-                updateLoadState(
-                    loadState = UiState.Success(
-                        ExploreProducts(state.data.productCount, updatedProducts)
-                    )
-                )
+                val newState = ExploreProducts(state.data.productCount, updatedProducts)
+                updateLoadState(UiState.Success(newState))
+
+                when (isInterested) {
+                    true -> _sideEffect.send(ExploreSideEffect.CancelToast)
+                    false -> _sideEffect.send(ExploreSideEffect.ShowHeartToast)
+                }
             }
 
             else -> {}
         }
-
-        setInterestProductUseCase(productId, isLiked)
     }
 
     private fun updateLoadState(loadState: UiState<ExploreProducts>) =
@@ -269,6 +322,7 @@ internal class ExploreViewModel @Inject constructor(
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L
+        private const val INIT_GENRE_LIST_SIZE = 39
         private const val SEARCH_TERM_KEY = "searchTerm"
         private const val SORT_TYPE_KEY = "sortType"
         private const val TRADE_TYPE_KEY = "tradeType"
