@@ -8,13 +8,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,6 +41,8 @@ import com.napzak.market.registration.component.RegistrationViewGroup
 import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.purchase.component.PriceNegotiationGroup
 import com.napzak.market.registration.purchase.state.PurchaseContract.PurchaseUiState
+import com.napzak.market.ui_util.ShadowDirection
+import com.napzak.market.ui_util.napzakGradientShadow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
@@ -47,7 +50,7 @@ import kotlinx.collections.immutable.toPersistentList
 fun PurchaseRegistrationRoute(
     navigateToUp: () -> Unit,
     navigateToDetail: (Long) -> Unit,
-    navigateToGenreSearch: () -> Unit,
+    navigateToGenreSearch: (Long?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PurchaseRegistrationViewModel = hiltViewModel(),
 ) {
@@ -71,7 +74,7 @@ fun PurchaseRegistrationRoute(
         onImageSelect = viewModel::updatePhotos,
         onPhotoPress = viewModel::updateRepresentPhoto,
         onDeleteClick = viewModel::deletePhoto,
-        onGenreClick = navigateToGenreSearch,
+        onGenreClick = { navigateToGenreSearch(registrationUiState.genre?.genreId) },
         onProductNameChange = viewModel::updateTitle,
         onProductDescriptionChange = viewModel::updateDescription,
         onPriceChange = viewModel::updatePrice,
@@ -101,7 +104,6 @@ fun PurchaseRegistrationScreen(
     modifier: Modifier = Modifier,
 ) {
     val paddedModifier = Modifier.padding(horizontal = 20.dp)
-    val focusManager = LocalFocusManager.current
     val isButtonEnabled = remember(
         registrationUiState.imageUris,
         registrationUiState.genre,
@@ -111,16 +113,38 @@ fun PurchaseRegistrationScreen(
         purchaseUiState.isNegotiable,
     ) { checkButtonEnabled() }
 
+    val focusManager = LocalFocusManager.current
+    val state = rememberLazyListState()
+
+    LaunchedEffect(state.isScrollInProgress) {
+        if (state.isScrollInProgress) {
+            focusManager.clearFocus()
+        }
+    }
+
     Box(
         modifier = modifier
             .background(NapzakMarketTheme.colors.white),
     ) {
-        LazyColumn {
+        LazyColumn(
+            state = state,
+        ) {
             stickyHeader {
                 RegistrationTopBar(
                     title = stringResource(title, stringResource(purchase)),
                     onCloseClick = onCloseClick,
                     modifier = Modifier.fillMaxWidth(),
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(2.dp)
+                        .napzakGradientShadow(
+                            height = 2.dp,
+                            startColor = Color(0x0D000000),
+                            endColor = Color.Transparent,
+                            direction = ShadowDirection.Bottom,
+                        ),
                 )
             }
 
@@ -166,10 +190,11 @@ fun PurchaseRegistrationScreen(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .shadow(
-                    elevation = 4.dp,
-                    spotColor = NapzakMarketTheme.colors.transBlack,
-                    ambientColor = NapzakMarketTheme.colors.transBlack,
+                .napzakGradientShadow(
+                    height = 2.dp,
+                    startColor = Color(0x0D000000),
+                    endColor = Color.Transparent,
+                    direction = ShadowDirection.Top,
                 )
                 .background(NapzakMarketTheme.colors.white)
                 .then(paddedModifier)

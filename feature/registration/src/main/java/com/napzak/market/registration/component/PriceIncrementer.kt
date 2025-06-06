@@ -64,7 +64,7 @@ private fun PriceButton(
 
     Text(
         text = priceUnit,
-        style = NapzakMarketTheme.typography.caption12m.copy(
+        style = NapzakMarketTheme.typography.caption10r.copy(
             color = NapzakMarketTheme.colors.gray100,
         ),
         modifier = modifier
@@ -73,7 +73,7 @@ private fun PriceButton(
             .border(
                 width = 1.dp,
                 color = NapzakMarketTheme.colors.gray100,
-                shape = shape
+                shape = shape,
             )
             .padding(horizontal = 10.dp, vertical = 4.dp)
             .noRippleClickable(onClick),

@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -42,6 +43,10 @@ fun GenreSearchRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val searchTerm by viewModel.searchTerm.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.updateSelectedGenre()
+    }
 
     GenreSearchScreen(
         onBackClick = navigateToUp,
@@ -102,11 +107,17 @@ fun GenreSearchScreen(
                         Row(
                             modifier = Modifier.padding(horizontal = 18.dp, vertical = 4.dp),
                         ) {
+                            val textStyle =
+                                if (uiState.selectedGenreId == genre.genreId) NapzakMarketTheme.typography.body14sb.copy(
+                                    color = NapzakMarketTheme.colors.purple500,
+                                )
+                                else NapzakMarketTheme.typography.body14r.copy(
+                                    color = NapzakMarketTheme.colors.gray400,
+                                )
+
                             Text(
                                 text = genre.genreName,
-                                style = NapzakMarketTheme.typography.body14r.copy(
-                                    color = NapzakMarketTheme.colors.gray400,
-                                ),
+                                style = textStyle,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(10.dp)

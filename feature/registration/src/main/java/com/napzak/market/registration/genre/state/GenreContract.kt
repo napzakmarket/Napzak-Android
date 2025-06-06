@@ -11,5 +11,6 @@ class GenreContract {
     data class GenreSearchUiState(
         val loadState: UiState<Unit> = UiState.Loading,
         val genres: ImmutableList<Genre> = persistentListOf(),
+        val selectedGenreId: Long? = null,
     )
 }
