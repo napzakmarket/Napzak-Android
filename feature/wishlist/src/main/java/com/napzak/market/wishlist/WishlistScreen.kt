@@ -15,6 +15,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -22,6 +24,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.ic_left_chevron
@@ -32,18 +37,24 @@ import com.napzak.market.feature.wishlist.R.string.wishlist_back_button
 import com.napzak.market.feature.wishlist.R.string.wishlist_title
 import com.napzak.market.product.model.Product
 import com.napzak.market.ui_util.noRippleClickable
+import com.napzak.market.wishlist.state.WishlistUiState
 import kotlin.collections.chunked
 
 @Composable
 internal fun WishlistRoute(
     modifier: Modifier = Modifier,
+    viewModel: WishlistViewModel = hiltViewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState.selectedTab) {
+        viewModel.updateWishlistInformation()
+    }
 
     WishlistScreen(
-        selectedTab = TradeType.SELL,
-        products = emptyList(),
+        uiState = uiState,
         onBackButtonClick = {},
-        onTabClick = {},
+        onTabClick = viewModel::updateTradeType,
         onProductDetailNavigate = {},
         onLikeButtonClick = { id, value -> },
         modifier = modifier,
@@ -52,6 +63,40 @@ internal fun WishlistRoute(
 
 @Composable
 private fun WishlistScreen(
+    uiState: WishlistUiState,
+    onBackButtonClick: () -> Unit,
+    onTabClick: (TradeType) -> Unit,
+    onProductDetailNavigate: (Long) -> Unit,
+    onLikeButtonClick: (Long, Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    when (uiState.loadState) {
+        is UiState.Loading -> {
+        }
+
+        is UiState.Empty -> {
+        }
+
+        is UiState.Failure -> {
+        }
+
+        is UiState.Success -> {
+            with(uiState) {
+                WishlistSuccessScreen(
+                    selectedTab = selectedTab,
+                    products = uiState.loadState.data.interestProducts,
+                    onBackButtonClick = onBackButtonClick,
+                    onTabClick = onTabClick,
+                    onProductDetailNavigate = onProductDetailNavigate,
+                    onLikeButtonClick = onLikeButtonClick,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun WishlistSuccessScreen(
     selectedTab: TradeType,
     products: List<Product>,
     onBackButtonClick: () -> Unit,
@@ -74,7 +119,7 @@ private fun WishlistScreen(
                 imageVector = ImageVector.vectorResource(ic_left_chevron),
                 contentDescription = stringResource(wishlist_back_button),
                 tint = NapzakMarketTheme.colors.black,
-                modifier = Modifier.noRippleClickable(onBackButtonClick)
+                modifier = Modifier.noRippleClickable(onBackButtonClick),
             )
 
             Spacer(Modifier.width(4.dp))
@@ -146,9 +191,7 @@ private fun WishlistProducts(
                     }
                 }
 
-                if (rowItems.size == 1) {
-                    Spacer(modifier = Modifier.weight(1f))
-                }
+                if (rowItems.size == 1) Spacer(modifier = Modifier.weight(1f))
             }
         }
 
@@ -160,15 +203,16 @@ private fun WishlistProducts(
 
 @Preview
 @Composable
-private fun WishlistScreenPreview(modifier: Modifier = Modifier) {
+private fun WishlistSuccessScreenPreview(modifier: Modifier = Modifier) {
     NapzakMarketTheme {
-        WishlistScreen(
+        WishlistSuccessScreen(
             selectedTab = TradeType.SELL,
             products = emptyList(),
             onBackButtonClick = {},
             onTabClick = {},
             onProductDetailNavigate = {},
             onLikeButtonClick = { id, value -> },
+            modifier = modifier,
         )
     }
 }
