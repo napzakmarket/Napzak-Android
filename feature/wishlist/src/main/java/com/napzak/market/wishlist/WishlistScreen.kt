@@ -19,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -33,6 +34,7 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.ic_left_chevron
+import com.napzak.market.designsystem.R.drawable.img_empty_product
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
@@ -106,6 +108,12 @@ private fun WishlistScreen(
         }
 
         is UiState.Empty -> {
+            WishlistEmptyScreen(
+                selectedTab = uiState.selectedTab,
+                onBackButtonClick = onBackButtonClick,
+                onTabClick = onTabClick,
+                modifier = modifier,
+            )
         }
 
         is UiState.Failure -> {
@@ -128,6 +136,59 @@ private fun WishlistScreen(
 }
 
 @Composable
+fun WishlistEmptyScreen(
+    selectedTab: TradeType,
+    onBackButtonClick: () -> Unit,
+    onTabClick: (TradeType) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(color = NapzakMarketTheme.colors.white)
+            .padding(top = 58.dp),
+    ) {
+        WishlistTopSection(
+            selectedTab = selectedTab,
+            onBackButtonClick = onBackButtonClick,
+            onTabClick = onTabClick,
+        )
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .align(alignment = Alignment.CenterHorizontally),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(img_empty_product),
+                contentDescription = null,
+                tint = Color.Unspecified,
+            )
+
+            Spacer(Modifier.height(20.dp))
+
+            Text(
+                text = "아직 찜한 소장품이 없어요",
+                style = NapzakMarketTheme.typography.body16sb.copy(
+                    color = NapzakMarketTheme.colors.gray300,
+                )
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            Text(
+                text = "아직 찜한 소장품이 없어요",
+                style = NapzakMarketTheme.typography.caption12sb.copy(
+                    color = NapzakMarketTheme.colors.gray200,
+                )
+            )
+        }
+    }
+}
+
+@Composable
 private fun WishlistSuccessScreen(
     selectedTab: TradeType,
     products: List<Product>,
@@ -143,31 +204,10 @@ private fun WishlistSuccessScreen(
             .background(color = NapzakMarketTheme.colors.white)
             .padding(top = 58.dp),
     ) {
-        Row(
-            modifier = Modifier.padding(start = 20.dp, bottom = 18.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(ic_left_chevron),
-                contentDescription = stringResource(wishlist_back_button),
-                tint = NapzakMarketTheme.colors.black,
-                modifier = Modifier.noRippleClickable(onBackButtonClick),
-            )
-
-            Spacer(Modifier.width(4.dp))
-
-            Text(
-                text = stringResource(wishlist_title),
-                style = NapzakMarketTheme.typography.body16b.copy(
-                    color = NapzakMarketTheme.colors.black,
-                )
-            )
-        }
-
-        TradeTypeTabBar(
+        WishlistTopSection(
             selectedTab = selectedTab,
-            onTabClicked = onTabClick,
-            modifier = Modifier.padding(horizontal = 20.dp),
+            onBackButtonClick = onBackButtonClick,
+            onTabClick = onTabClick,
         )
 
         WishlistProducts(
@@ -176,6 +216,41 @@ private fun WishlistSuccessScreen(
             onLikeButtonClick = onLikeButtonClick,
         )
     }
+}
+
+@Composable
+private fun WishlistTopSection(
+    selectedTab: TradeType,
+    onBackButtonClick: () -> Unit,
+    onTabClick: (TradeType) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.padding(start = 20.dp, bottom = 18.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(ic_left_chevron),
+            contentDescription = stringResource(wishlist_back_button),
+            tint = NapzakMarketTheme.colors.black,
+            modifier = Modifier.noRippleClickable(onBackButtonClick),
+        )
+
+        Spacer(Modifier.width(4.dp))
+
+        Text(
+            text = stringResource(wishlist_title),
+            style = NapzakMarketTheme.typography.body16b.copy(
+                color = NapzakMarketTheme.colors.black,
+            )
+        )
+    }
+
+    TradeTypeTabBar(
+        selectedTab = selectedTab,
+        onTabClicked = onTabClick,
+        modifier = Modifier.padding(horizontal = 20.dp),
+    )
 }
 
 @Composable
@@ -237,14 +312,20 @@ private fun WishlistProducts(
 @Composable
 private fun WishlistSuccessScreenPreview(modifier: Modifier = Modifier) {
     NapzakMarketTheme {
-        WishlistSuccessScreen(
+//        WishlistSuccessScreen(
+//            selectedTab = TradeType.SELL,
+//            products = emptyList(),
+//            onBackButtonClick = {},
+//            onTabClick = {},
+//            onProductDetailNavigate = {},
+//            onLikeButtonClick = { id, value -> },
+//            modifier = modifier,
+//        )
+
+        WishlistEmptyScreen(
             selectedTab = TradeType.SELL,
-            products = emptyList(),
             onBackButtonClick = {},
             onTabClick = {},
-            onProductDetailNavigate = {},
-            onLikeButtonClick = { id, value -> },
-            modifier = modifier,
         )
     }
 }
