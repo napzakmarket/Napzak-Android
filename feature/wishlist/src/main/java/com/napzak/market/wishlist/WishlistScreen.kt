@@ -42,6 +42,8 @@ import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.wishlist.R.string.wishlist_back_button
+import com.napzak.market.feature.wishlist.R.string.wishlist_no_items_subtitle
+import com.napzak.market.feature.wishlist.R.string.wishlist_no_items_title
 import com.napzak.market.feature.wishlist.R.string.wishlist_title
 import com.napzak.market.product.model.Product
 import com.napzak.market.ui_util.noRippleClickable
@@ -170,7 +172,7 @@ fun WishlistEmptyScreen(
             Spacer(Modifier.height(20.dp))
 
             Text(
-                text = "아직 찜한 소장품이 없어요",
+                text = stringResource(wishlist_no_items_title),
                 style = NapzakMarketTheme.typography.body16sb.copy(
                     color = NapzakMarketTheme.colors.gray300,
                 )
@@ -179,7 +181,7 @@ fun WishlistEmptyScreen(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "아직 찜한 소장품이 없어요",
+                text = stringResource(wishlist_no_items_subtitle),
                 style = NapzakMarketTheme.typography.caption12sb.copy(
                     color = NapzakMarketTheme.colors.gray200,
                 )
