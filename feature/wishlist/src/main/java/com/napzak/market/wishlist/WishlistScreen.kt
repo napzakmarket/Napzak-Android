@@ -138,7 +138,7 @@ private fun WishlistScreen(
 }
 
 @Composable
-fun WishlistEmptyScreen(
+private fun WishlistEmptyScreen(
     selectedTab: TradeType,
     onBackButtonClick: () -> Unit,
     onTabClick: (TradeType) -> Unit,
