@@ -20,18 +20,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.ic_left_chevron
+import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
+import com.napzak.market.designsystem.component.toast.LocalNapzakToast
+import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.wishlist.R.string.wishlist_back_button
 import com.napzak.market.feature.wishlist.R.string.wishlist_title
@@ -45,10 +51,33 @@ internal fun WishlistRoute(
     modifier: Modifier = Modifier,
     viewModel: WishlistViewModel = hiltViewModel(),
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
+    val toast = LocalNapzakToast.current
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState.selectedTab) {
         viewModel.updateWishlistInformation()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle)
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    is WishlistSideEffect.ShowHeartToast -> {
+                        toast.makeText(
+                            toastType = ToastType.HEART,
+                            message = context.getString(heart_click_snackbar_message),
+                            yOffset = toast.toastOffsetWithBottomBar()
+                        )
+                    }
+
+                    is WishlistSideEffect.CancelToast -> {
+                        toast.cancel()
+                    }
+                }
+            }
     }
 
     WishlistScreen(
@@ -56,7 +85,9 @@ internal fun WishlistRoute(
         onBackButtonClick = {},
         onTabClick = viewModel::updateTradeType,
         onProductDetailNavigate = {},
-        onLikeButtonClick = { id, value -> },
+        onLikeButtonClick = { id, value ->
+            viewModel.updateProductIsInterested(productId = id, isInterested = value)
+        },
         modifier = modifier,
     )
 }
@@ -89,6 +120,7 @@ private fun WishlistScreen(
                     onTabClick = onTabClick,
                     onProductDetailNavigate = onProductDetailNavigate,
                     onLikeButtonClick = onLikeButtonClick,
+                    modifier = modifier,
                 )
             }
         }
