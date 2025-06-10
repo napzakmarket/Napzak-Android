@@ -12,6 +12,6 @@ data class WishlistUiState(
 )
 
 data class WishListProducts(
-    val interestSellList: List<Product>,
+    val interestProducts: List<Product>,
     val nextCursor: String = "",
 )
