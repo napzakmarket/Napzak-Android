@@ -23,6 +23,7 @@ dependencies {
     implementation(projects.feature.splash)
     implementation(projects.feature.mypage)
     implementation(projects.feature.login)
+    implementation(projects.feature.chat)
 
     implementation(projects.core.designsystem)
     implementation(projects.core.common)
