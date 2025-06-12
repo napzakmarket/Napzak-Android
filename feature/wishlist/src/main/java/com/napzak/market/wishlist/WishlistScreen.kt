@@ -46,6 +46,8 @@ import com.napzak.market.feature.wishlist.R.string.wishlist_no_items_subtitle
 import com.napzak.market.feature.wishlist.R.string.wishlist_no_items_title
 import com.napzak.market.feature.wishlist.R.string.wishlist_title
 import com.napzak.market.product.model.Product
+import com.napzak.market.ui_util.ShadowDirection
+import com.napzak.market.ui_util.napzakGradientShadow
 import com.napzak.market.ui_util.noRippleClickable
 import com.napzak.market.wishlist.state.WishlistUiState
 import kotlin.collections.chunked
@@ -230,7 +232,15 @@ private fun WishlistTopSection(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.padding(start = 20.dp, bottom = 18.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .napzakGradientShadow(
+                height = 2.dp,
+                startColor = Color(0xFF000000),
+                endColor = Color.Transparent,
+                direction = ShadowDirection.Bottom,
+            )
+            .padding(start = 20.dp, bottom = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -240,7 +250,7 @@ private fun WishlistTopSection(
             modifier = Modifier.noRippleClickable(onBackButtonClick),
         )
 
-        Spacer(Modifier.width(4.dp))
+        Spacer(Modifier.width(6.dp))
 
         Text(
             text = stringResource(wishlist_title),
@@ -253,7 +263,15 @@ private fun WishlistTopSection(
     TradeTypeTabBar(
         selectedTab = selectedTab,
         onTabClicked = onTabClick,
-        modifier = Modifier.padding(horizontal = 20.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .napzakGradientShadow(
+                height = 2.dp,
+                startColor = Color(0xFF000000),
+                endColor = Color.Transparent,
+                direction = ShadowDirection.Bottom,
+            )
+            .padding(horizontal = 20.dp),
     )
 }
 
@@ -316,20 +334,20 @@ private fun WishlistProducts(
 @Composable
 private fun WishlistSuccessScreenPreview(modifier: Modifier = Modifier) {
     NapzakMarketTheme {
-//        WishlistSuccessScreen(
-//            selectedTab = TradeType.SELL,
-//            products = emptyList(),
-//            onBackButtonClick = {},
-//            onTabClick = {},
-//            onProductDetailNavigate = {},
-//            onLikeButtonClick = { id, value -> },
-//            modifier = modifier,
-//        )
-
-        WishlistEmptyScreen(
+        WishlistSuccessScreen(
             selectedTab = TradeType.SELL,
+            products = emptyList(),
             onBackButtonClick = {},
             onTabClick = {},
+            onProductDetailNavigate = {},
+            onLikeButtonClick = { id, value -> },
+            modifier = modifier,
         )
+
+//        WishlistEmptyScreen(
+//            selectedTab = TradeType.SELL,
+//            onBackButtonClick = {},
+//            onTabClick = {},
+//        )
     }
 }
