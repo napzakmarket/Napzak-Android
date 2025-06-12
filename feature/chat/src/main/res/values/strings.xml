@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="chat_room_input_field_gallery">갤러리</string>
+    <string name="chat_room_input_field_send">전송</string>
+</resources>
