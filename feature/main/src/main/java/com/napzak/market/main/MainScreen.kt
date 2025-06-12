@@ -60,6 +60,8 @@ import com.napzak.market.store.edit_store.navigation.editStoreGraph
 import com.napzak.market.store.edit_store.navigation.navigateToEditStore
 import com.napzak.market.store.store.navigation.navigateToStore
 import com.napzak.market.store.store.navigation.storeGraph
+import com.napzak.market.wishlist.navigation.navigateToWishlist
+import com.napzak.market.wishlist.navigation.wishlistGraph
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -297,8 +299,14 @@ private fun MainNavHost(
             navigateToSales = { /* TODO: 판매내역 화면으로 이동 */ },
             navigateToPurchase = { /* TODO: 구매내역 화면으로 이동 */ },
             navigateToRecent = { /* TODO: 최근 본 상품 화면으로 이동 */ },
-            navigateToFavorite = { /* TODO: 찜 화면으로 이동 */ },
+            navigateToFavorite = { navigator.navController.navigateToWishlist() },
             restartApplication = restartApplication,
+            modifier = modifier,
+        )
+
+        wishlistGraph(
+            navigateToUp = navigator::navigateUp,
+            navigateToProductDetail = { navigator.navController.navigateToProductDetail(it) },
             modifier = modifier,
         )
     }

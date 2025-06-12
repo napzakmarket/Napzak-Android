@@ -52,6 +52,8 @@ import kotlin.collections.chunked
 
 @Composable
 internal fun WishlistRoute(
+    onNavigateUp: () -> Unit,
+    onProductDetailNavigate: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: WishlistViewModel = hiltViewModel(),
 ) {
@@ -86,9 +88,9 @@ internal fun WishlistRoute(
 
     WishlistScreen(
         uiState = uiState,
-        onBackButtonClick = {},
+        onBackButtonClick = onNavigateUp,
         onTabClick = viewModel::updateTradeType,
-        onProductDetailNavigate = {},
+        onProductDetailNavigate = onProductDetailNavigate,
         onLikeButtonClick = { id, value ->
             viewModel.updateProductIsInterested(productId = id, isInterested = value)
         },
