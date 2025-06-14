@@ -141,7 +141,7 @@ internal class WishlistViewModel @Inject constructor(
                 }
 
                 val newState =
-                    WishListProducts(lastSuccessfulLoadedProducts, state.data.nextCursor)
+                    WishListProducts(updatedProducts, state.data.nextCursor)
                 updateLoadState(UiState.Success(newState))
 
                 when (isInterested) {
