@@ -2,4 +2,9 @@
 <resources>
     <string name="chat_room_input_field_gallery">갤러리</string>
     <string name="chat_room_input_field_send">전송</string>
+    <string name="chat_room_is_not_read">1</string>
+
+    <string name="chat_room_product_title_sell">팔아요 상품 문의가 도착했어요!</string>
+    <string name="chat_room_product_title_buy">구해요 상품 문의가 도착했어요!</string>
+    <string name="chat_room_product_button">상품 보러 가기</string>
 </resources>
