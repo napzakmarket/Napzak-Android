@@ -34,7 +34,7 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.ic_left_chevron
-import com.napzak.market.designsystem.R.drawable.img_empty_product
+import com.napzak.market.designsystem.R.drawable.img_empty_wishlist
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
@@ -168,7 +168,7 @@ private fun WishlistEmptyScreen(
             verticalArrangement = Arrangement.Center,
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(img_empty_product),
+                imageVector = ImageVector.vectorResource(img_empty_wishlist),
                 contentDescription = null,
                 tint = Color.Unspecified,
             )
