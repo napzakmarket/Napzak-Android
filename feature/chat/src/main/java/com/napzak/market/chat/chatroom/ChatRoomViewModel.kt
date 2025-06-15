@@ -38,4 +38,8 @@ internal class ChatRoomViewModel @Inject constructor() : ViewModel() {
     fun sendChat(chat: String) = viewModelScope.launch {
         Timber.d("try to send chat: $chat")
     }
+
+    fun exitChatRoom(chatRoomId: Long) = viewModelScope.launch {
+        Timber.d("try to exit chatroom: $chatRoomId")
+    }
 }
