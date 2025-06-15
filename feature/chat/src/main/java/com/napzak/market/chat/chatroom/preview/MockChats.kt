@@ -1,10 +1,11 @@
-package com.napzak.market.chat.chatroom.test
+package com.napzak.market.chat.chatroom.preview
 
 import com.napzak.market.chat.chatroom.model.ChatDirection
 import com.napzak.market.chat.chatroom.model.ChatItem
 import com.napzak.market.product.model.Product
 
-internal val mockChats =
+internal val mockChats
+    get() =
     listOf<ChatItem<*>>(
         ChatItem.Notice(
             notice = "채팅방을 나갔습니다",
@@ -82,22 +83,25 @@ internal val mockChats =
         ),
         ChatItem.Product(
             direction = ChatDirection.RECEIVED,
-            product = Product(
-                productId = 1,
-                genreName = "은혼",
-                productName = "은혼 긴토키 히지카타 룩업",
-                photo = "",
-                price = 129000,
-                uploadTime = "",
-                isInterested = true,
-                tradeType = "SELL",
-                tradeStatus = "RESERVED",
-                isPriceNegotiable = false,
-                isOwnedByCurrentUser = false,
-                interestCount = 10,
-                chatCount = 10,
-            ),
+            product = mockProduct,
             timeStamp = "오후 7:30",
             isRead = true,
         )
+    )
+
+val mockProduct
+    get() = Product(
+        productId = 1,
+        genreName = "은혼",
+        productName = "은혼 긴토키 히지카타 룩업",
+        photo = "",
+        price = 129000,
+        uploadTime = "",
+        isInterested = true,
+        tradeType = "SELL",
+        tradeStatus = "RESERVED",
+        isPriceNegotiable = false,
+        isOwnedByCurrentUser = false,
+        interestCount = 10,
+        chatCount = 10,
     )
