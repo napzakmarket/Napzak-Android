@@ -30,10 +30,12 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.product.model.Product
 import com.napzak.market.ui_util.ShadowDirection
 import com.napzak.market.ui_util.napzakGradientShadow
+import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun ChatRoomProductSection(
     product: Product,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val innerPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
@@ -46,6 +48,7 @@ internal fun ChatRoomProductSection(
                 endColor = NapzakMarketTheme.colors.transWhite,
                 direction = ShadowDirection.Bottom,
             )
+            .noRippleClickable(onClick)
             .padding(innerPadding),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -134,6 +137,7 @@ private fun ChatRoomProductPreview() {
     NapzakMarketTheme {
         ChatRoomProductSection(
             product = mockProduct,
+            onClick = {},
             modifier = Modifier.fillMaxWidth(),
         )
     }
