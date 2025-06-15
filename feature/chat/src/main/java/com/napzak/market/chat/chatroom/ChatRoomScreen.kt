@@ -317,7 +317,9 @@ private fun EmptyChatScreen(
         Image(
             imageVector = ImageVector.vectorResource(com.napzak.market.designsystem.R.drawable.img_empty_chat_room),
             contentDescription = null,
-            modifier = Modifier.align(Alignment.Start)
+            modifier = Modifier
+                .align(Alignment.Start)
+                .padding(start = 13.dp)
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
