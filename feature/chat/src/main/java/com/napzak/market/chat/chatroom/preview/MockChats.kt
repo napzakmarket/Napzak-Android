@@ -21,13 +21,13 @@ internal val mockChats
             direction = ChatDirection.RECEIVED,
             text = "한 번만 봐주세요.",
             timeStamp = "오후 8:00",
-            isRead = false,
+            isRead = true,
         ),
         ChatItem.Text(
             direction = ChatDirection.SENT,
             text = "신고합니다.",
             timeStamp = "오후 7:30",
-            isRead = false,
+            isRead = true,
         ),
         ChatItem.Text(
             direction = ChatDirection.RECEIVED,
@@ -39,7 +39,7 @@ internal val mockChats
             direction = ChatDirection.RECEIVED,
             text = "구매 할까말까 할까말까",
             timeStamp = "오후 7:30",
-            isRead = false,
+            isRead = true,
         ),
         ChatItem.Date(
             date = "2025년 4월 30일",
