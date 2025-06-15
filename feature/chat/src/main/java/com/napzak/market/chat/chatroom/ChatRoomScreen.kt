@@ -48,11 +48,15 @@ import com.napzak.market.chat.chatroom.model.ChatItem
 import com.napzak.market.chat.chatroom.model.ChatRoom
 import com.napzak.market.chat.chatroom.preview.mockChats
 import com.napzak.market.common.state.UiState
+import com.napzak.market.designsystem.R.drawable.img_empty_chat_room
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.feature.chat.R.string.chat_room_empty_guide_1
+import com.napzak.market.feature.chat.R.string.chat_room_empty_guide_2
 import com.napzak.market.feature.chat.R.string.chat_room_input_field_hint
 import com.napzak.market.ui_util.ScreenPreview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+
 
 @Composable
 internal fun ChatRoomRoute(
@@ -315,7 +319,7 @@ private fun EmptyChatScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         Image(
-            imageVector = ImageVector.vectorResource(com.napzak.market.designsystem.R.drawable.img_empty_chat_room),
+            imageVector = ImageVector.vectorResource(img_empty_chat_room),
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.Start)
@@ -323,12 +327,12 @@ private fun EmptyChatScreen(
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "채팅을 시작해보세요!",
+            text = stringResource(chat_room_empty_guide_1),
             style = NapzakMarketTheme.typography.body14sb,
             color = NapzakMarketTheme.colors.gray300,
         )
         Text(
-            text = "안전한 거래를 위해 먼저 이야기를 나눠보세요",
+            text = stringResource(chat_room_empty_guide_2),
             style = NapzakMarketTheme.typography.caption12sb,
             color = NapzakMarketTheme.colors.gray200,
         )
