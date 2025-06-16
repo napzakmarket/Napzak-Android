@@ -37,7 +37,7 @@ internal fun WishlistTopSection(
             .fillMaxWidth()
             .napzakGradientShadow(
                 height = 2.dp,
-                startColor = Color(0xFF000000),
+                startColor = Color(0xFF000000), // TODO: shadow 컬러값 변경
                 endColor = Color.Transparent,
                 direction = ShadowDirection.Bottom,
             )
@@ -68,7 +68,7 @@ internal fun WishlistTopSection(
             .fillMaxWidth()
             .napzakGradientShadow(
                 height = 2.dp,
-                startColor = Color(0xFF000000),
+                startColor = Color(0xFF000000), // TODO: shadow 컬러값 변경
                 endColor = Color.Transparent,
                 direction = ShadowDirection.Bottom,
             )
