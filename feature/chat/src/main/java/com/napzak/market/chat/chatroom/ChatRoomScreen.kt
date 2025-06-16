@@ -313,17 +313,14 @@ private fun EmptyChatScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Image(
             imageVector = ImageVector.vectorResource(img_empty_chat_room),
             contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(start = 13.dp)
+            modifier = Modifier.padding(end = 80.dp)
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
