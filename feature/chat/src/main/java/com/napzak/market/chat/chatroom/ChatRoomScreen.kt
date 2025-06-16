@@ -3,8 +3,9 @@ package com.napzak.market.chat.chatroom
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,8 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -125,7 +126,7 @@ internal fun ChatRoomScreen(
                 ChatRoomProductSection(
                     product = chatRoom.product,
                     onClick = { onProductDetailClick(chatRoom.product.productId) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
                 if (chatItems.isEmpty()) {
                     EmptyChatScreen(
@@ -173,49 +174,39 @@ private fun ChatRoomRecordView(
     opponentImageUrl: String,
     modifier: Modifier = Modifier,
 ) {
-    val scrollState = rememberScrollState()
     val context = LocalContext.current
     val opponentProfileImageRequest = ImageRequest
         .Builder(context)
         .data(opponentImageUrl)
         .build()
 
-    Column(
-        modifier = modifier
-            .verticalScroll(
-                state = scrollState,
-                reverseScrolling = true,
-            ),
+    LazyColumn(
+        reverseLayout = true,
+        contentPadding = PaddingValues(vertical = 30.dp),
+        modifier = modifier,
     ) {
-        Spacer(modifier = Modifier.height(30.dp))
+        itemsIndexed(chatItems) { index, chatItem ->
+            val previousChatItem =
+                if (index > 0) chatItems[index - 1] else null
+            val nextChatItem =
+                if (index < chatItems.lastIndex) chatItems[index + 1] else null
 
-        // TODO: 채팅의 순서에 따라 chatMessages.reversed() 사용 여부 결정
-        chatItems.reversed().let { reversedChatItems ->
-            reversedChatItems.forEachIndexed { index, chatItem ->
-                val previousChatItem =
-                    if (index > 0) reversedChatItems[index - 1] else null
-                val nextChatItem =
-                    if (index < reversedChatItems.lastIndex) reversedChatItems[index + 1] else null
-
-                ChatItemSpacer(
-                    currentChatItem = chatItem,
-                    previousChatItem = previousChatItem
-                )
-                ChatItemRenderer(
-                    opponentImageRequest = opponentProfileImageRequest,
-                    chatItem = chatItem,
-                    nextChatItem = nextChatItem,
-                    previousChatItem = previousChatItem,
-                )
-            }
+            ChatItemSpacer(
+                currentChatItem = chatItem,
+                previousChatItem = previousChatItem,
+            )
+            ChatItemRenderer(
+                opponentImageRequest = opponentProfileImageRequest,
+                chatItem = chatItem,
+                nextChatItem = previousChatItem,
+                previousChatItem = nextChatItem,
+            )
         }
-
-        Spacer(modifier = Modifier.height(30.dp))
     }
 }
 
 @Composable
-private fun ColumnScope.ChatItemRenderer(
+private fun ChatItemRenderer(
     chatItem: ChatItem<*>,
     modifier: Modifier = Modifier,
     nextChatItem: ChatItem<*>? = null,
@@ -228,18 +219,25 @@ private fun ColumnScope.ChatItemRenderer(
     val timeStamp = chatItem.timeStamp.takeIf {
         !isTimeStampEqualsNext || !isChatDirectionEqualsNext
     }
-
+    val chatItemAlignment = when (chatItem.direction) {
+        ChatDirection.SENT -> Alignment.TopEnd
+        ChatDirection.RECEIVED -> Alignment.TopStart
+        null -> Alignment.Center
+    }
     val content: @Composable () -> Unit = {
         when (chatItem) {
             is ChatItem.Text -> {
-                ChatText(text = chatItem.text, chatDirection = chatItem.direction)
+                ChatText(
+                    text = chatItem.text,
+                    chatDirection = chatItem.direction,
+                )
             }
 
             is ChatItem.Image -> {
                 ChatImageItem(
                     imageUrl = chatItem.imageUrl,
                     onClick = {},
-                    modifier = modifier
+                    modifier = modifier,
                 )
             }
 
@@ -259,7 +257,6 @@ private fun ColumnScope.ChatItemRenderer(
             is ChatItem.Date -> {
                 ChatDate(
                     date = chatItem.date,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
                 )
             }
 
@@ -267,31 +264,33 @@ private fun ColumnScope.ChatItemRenderer(
                 ChatNotice(
                     notice = chatItem.notice,
                     modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
                         .padding(horizontal = 16.dp),
                 )
             }
         }
     }
 
-    when (chatItem.direction) {
-        ChatDirection.SENT -> MyChatItemContainer(
-            timeStamp = timeStamp,
-            content = content,
-            modifier = modifier.align(Alignment.End),
-            isRead = chatItem.isRead,
-        )
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = chatItemAlignment,
+    ) {
+        when (chatItem.direction) {
+            ChatDirection.SENT -> MyChatItemContainer(
+                timeStamp = timeStamp,
+                content = content,
+                isRead = chatItem.isRead,
+            )
 
-        ChatDirection.RECEIVED -> OpponentChatItemContainer(
-            imageRequest = opponentImageRequest,
-            isProfileImageVisible = !isChatDirectionEqualsPrevious,
-            timeStamp = timeStamp,
-            content = content,
-            modifier = modifier.align(Alignment.Start),
-            isRead = chatItem.isRead,
-        )
+            ChatDirection.RECEIVED -> OpponentChatItemContainer(
+                imageRequest = opponentImageRequest,
+                isProfileImageVisible = !isChatDirectionEqualsPrevious,
+                timeStamp = timeStamp,
+                content = content,
+                isRead = chatItem.isRead,
+            )
 
-        null -> content() // ChatDate()가 표시된다.
+            null -> content() // ChatDate()가 표시된다.
+        }
     }
 }
 
