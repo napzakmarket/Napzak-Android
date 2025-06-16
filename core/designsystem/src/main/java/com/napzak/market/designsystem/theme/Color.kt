@@ -108,7 +108,7 @@ class NapzakMarketColors(
         private set
     var kakaoBlack by mutableStateOf(kakaoBlack)
         private set
-    var shadowBlack by mutableStateOf(kakaoBlack)
+    var shadowBlack by mutableStateOf(shadowBlack)
         private set
     var isLight by mutableStateOf(isLight)
 
