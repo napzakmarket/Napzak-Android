@@ -224,72 +224,73 @@ private fun ChatItemRenderer(
         ChatDirection.RECEIVED -> Alignment.TopStart
         null -> Alignment.Center
     }
-    val content: @Composable () -> Unit = {
-        when (chatItem) {
-            is ChatItem.Text -> {
-                ChatText(
-                    text = chatItem.text,
-                    chatDirection = chatItem.direction,
-                )
-            }
-
-            is ChatItem.Image -> {
-                ChatImageItem(
-                    imageUrl = chatItem.imageUrl,
-                    onClick = {},
-                    modifier = modifier,
-                )
-            }
-
-            is ChatItem.Product -> {
-                with(chatItem) {
-                    ChatProduct(
-                        direction = direction,
-                        tradeType = product.tradeType,
-                        genre = product.genreName,
-                        name = product.productName,
-                        price = product.price.toString(),
-                        onNavigateClick = {},
-                    )
-                }
-            }
-
-            is ChatItem.Date -> {
-                ChatDate(
-                    date = chatItem.date,
-                )
-            }
-
-            is ChatItem.Notice -> {
-                ChatNotice(
-                    notice = chatItem.notice,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp),
-                )
-            }
-        }
-    }
 
     Box(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         contentAlignment = chatItemAlignment,
     ) {
         when (chatItem.direction) {
             ChatDirection.SENT -> MyChatItemContainer(
                 timeStamp = timeStamp,
-                content = content,
                 isRead = chatItem.isRead,
+                content = { ChatItemView(chatItem = chatItem) },
             )
 
             ChatDirection.RECEIVED -> OpponentChatItemContainer(
                 imageRequest = opponentImageRequest,
                 isProfileImageVisible = !isChatDirectionEqualsPrevious,
                 timeStamp = timeStamp,
-                content = content,
                 isRead = chatItem.isRead,
+                content = { ChatItemView(chatItem = chatItem) },
             )
 
-            null -> content() // ChatDate()가 표시된다.
+            null -> ChatItemView(chatItem = chatItem) // ChatDate()가 표시된다.
+        }
+    }
+}
+
+@Composable
+private fun ChatItemView(chatItem: ChatItem<*>) {
+    when (chatItem) {
+        is ChatItem.Text -> {
+            ChatText(
+                text = chatItem.text,
+                chatDirection = chatItem.direction,
+            )
+        }
+
+        is ChatItem.Image -> {
+            ChatImageItem(
+                imageUrl = chatItem.imageUrl,
+                onClick = {},
+            )
+        }
+
+        is ChatItem.Product -> {
+            with(chatItem) {
+                ChatProduct(
+                    direction = direction,
+                    tradeType = product.tradeType,
+                    genre = product.genreName,
+                    name = product.productName,
+                    price = product.price.toString(),
+                    onNavigateClick = {},
+                )
+            }
+        }
+
+        is ChatItem.Date -> {
+            ChatDate(
+                date = chatItem.date,
+            )
+        }
+
+        is ChatItem.Notice -> {
+            ChatNotice(
+                notice = chatItem.notice,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp),
+            )
         }
     }
 }
@@ -348,7 +349,7 @@ private fun ChatRoomScreenPreview() {
             onReportClick = {},
             onExitChatRoomClick = {},
             onNavigateUp = {},
-            chatRoomState = UiState.Success(ChatRoom.mock)
+            chatRoomState = UiState.Success(ChatRoom.mock),
         )
     }
 }

@@ -29,7 +29,7 @@ import com.napzak.market.ui_util.noRippleClickable
 internal fun ChatImageItem(
     imageUrl: String,
     onClick: () -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val shape = RoundedCornerShape(12.dp)
