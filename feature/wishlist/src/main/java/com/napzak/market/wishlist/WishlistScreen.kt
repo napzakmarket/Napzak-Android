@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
@@ -33,22 +32,17 @@ import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.R.drawable.ic_left_chevron
 import com.napzak.market.designsystem.R.drawable.img_empty_wishlist
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
-import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.wishlist.R.string.wishlist_back_button
 import com.napzak.market.feature.wishlist.R.string.wishlist_no_items_subtitle
 import com.napzak.market.feature.wishlist.R.string.wishlist_no_items_title
-import com.napzak.market.feature.wishlist.R.string.wishlist_title
 import com.napzak.market.product.model.Product
-import com.napzak.market.ui_util.ShadowDirection
-import com.napzak.market.ui_util.napzakGradientShadow
 import com.napzak.market.ui_util.noRippleClickable
+import com.napzak.market.wishlist.component.WishlistTopSection
 import com.napzak.market.wishlist.state.WishlistUiState
 import kotlin.collections.chunked
 
@@ -222,57 +216,6 @@ private fun WishlistSuccessScreen(
             onLikeButtonClick = onLikeButtonClick,
         )
     }
-}
-
-@Composable
-private fun WishlistTopSection(
-    selectedTab: TradeType,
-    onBackButtonClick: () -> Unit,
-    onTabClick: (TradeType) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .napzakGradientShadow(
-                height = 2.dp,
-                startColor = Color(0xFF000000),
-                endColor = Color.Transparent,
-                direction = ShadowDirection.Bottom,
-            )
-            .padding(start = 20.dp, bottom = 18.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_left_chevron),
-            contentDescription = stringResource(wishlist_back_button),
-            tint = NapzakMarketTheme.colors.black,
-            modifier = Modifier.noRippleClickable(onBackButtonClick),
-        )
-
-        Spacer(Modifier.width(6.dp))
-
-        Text(
-            text = stringResource(wishlist_title),
-            style = NapzakMarketTheme.typography.body16b.copy(
-                color = NapzakMarketTheme.colors.black,
-            )
-        )
-    }
-
-    TradeTypeTabBar(
-        selectedTab = selectedTab,
-        onTabClicked = onTabClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .napzakGradientShadow(
-                height = 2.dp,
-                startColor = Color(0xFF000000),
-                endColor = Color.Transparent,
-                direction = ShadowDirection.Bottom,
-            )
-            .padding(horizontal = 20.dp),
-    )
 }
 
 @Composable
