@@ -186,9 +186,9 @@ private fun ChatRoomRecordView(
         modifier = modifier,
     ) {
         itemsIndexed(chatItems) { index, chatItem ->
-            val previousChatItem =
-                if (index > 0) chatItems[index - 1] else null
             val nextChatItem =
+                if (index > 0) chatItems[index - 1] else null
+            val previousChatItem =
                 if (index < chatItems.lastIndex) chatItems[index + 1] else null
 
             ChatItemSpacer(
@@ -198,8 +198,8 @@ private fun ChatRoomRecordView(
             ChatItemRenderer(
                 opponentImageRequest = opponentProfileImageRequest,
                 chatItem = chatItem,
-                nextChatItem = previousChatItem,
-                previousChatItem = nextChatItem,
+                nextChatItem = nextChatItem,
+                previousChatItem = previousChatItem,
             )
         }
     }
