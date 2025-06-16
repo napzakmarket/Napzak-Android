@@ -83,7 +83,7 @@ private fun ChatTextField(
     suffix: @Composable () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val shape = RoundedCornerShape(20.dp);
+    val shape = RoundedCornerShape(20.dp)
     val backgroundColor = NapzakMarketTheme.colors.gray50
     val innerPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
     val textStyle = NapzakMarketTheme.typography.body14r
