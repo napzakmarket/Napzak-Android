@@ -343,11 +343,18 @@ private fun WishlistSuccessScreenPreview(modifier: Modifier = Modifier) {
             onLikeButtonClick = { id, value -> },
             modifier = modifier,
         )
+    }
+}
 
-//        WishlistEmptyScreen(
-//            selectedTab = TradeType.SELL,
-//            onBackButtonClick = {},
-//            onTabClick = {},
-//        )
+@Preview
+@Composable
+private fun WishlistEmptyScreenPreview(modifier: Modifier = Modifier) {
+    NapzakMarketTheme {
+        WishlistEmptyScreen(
+            selectedTab = TradeType.SELL,
+            onBackButtonClick = {},
+            onTabClick = {},
+            modifier = modifier,
+        )
     }
 }
