@@ -14,4 +14,6 @@
 
     <string name="chat_room_empty_guide_1">채팅을 시작해보세요!</string>
     <string name="chat_room_empty_guide_2">안전한 거래를 위해 먼저 이야기를 나눠보세요</string>
+
+    <string name="chat_list_message_overflow">999+</string>
 </resources>
