@@ -17,4 +17,6 @@
 
     <string name="chat_list_top_bar">채팅</string>
     <string name="chat_list_message_overflow">999+</string>
+    <string name="chat_list_empty_guide_1">아직 시작된 대화가 없어요</string>
+    <string name="chat_list_empty_guide_2">관심 있는 아이템이 있다면 대화를 시작해보세요</string>
 </resources>
