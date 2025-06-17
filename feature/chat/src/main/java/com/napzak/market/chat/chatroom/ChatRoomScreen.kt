@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
@@ -78,9 +79,11 @@ internal fun ChatRoomRoute(
     }
 
     ChatRoomScreen(
+        chat = viewModel.chat,
         chatItems = chatItems.toImmutableList(),
         chatRoomState = chatRoomState,
         opponentImageUrl = "",
+        onChatChange = { viewModel.chat = it },
         onProductDetailClick = onProductDetailNavigate,
         onReportClick = onStoreReportNavigate,
         onExitChatRoomClick = viewModel::exitChatRoom,
@@ -92,9 +95,11 @@ internal fun ChatRoomRoute(
 
 @Composable
 internal fun ChatRoomScreen(
+    chat: String,
     chatItems: ImmutableList<ChatItem<*>>,
     chatRoomState: UiState<ChatRoom>,
     opponentImageUrl: String,
+    onChatChange: (String) -> Unit,
     onProductDetailClick: (Long) -> Unit,
     onReportClick: (Long) -> Unit,
     onExitChatRoomClick: (Long) -> Unit,
@@ -102,6 +107,8 @@ internal fun ChatRoomScreen(
     onSendChatClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val focusManager = LocalFocusManager.current
+
     when (chatRoomState) {
         is UiState.Loading -> {
             /*TODO: 로딩화면 구현*/
@@ -147,8 +154,10 @@ internal fun ChatRoomScreen(
                 }
 
                 ChatRoomInputField(
+                    text = chat,
                     hint = stringResource(chat_room_input_field_hint),
                     onSendClick = onSendChatClick,
+                    onTextChange = onChatChange,
                     onGalleryClick = {},
                 )
             }
@@ -342,8 +351,10 @@ private fun EmptyChatScreen(
 private fun ChatRoomScreenPreview() {
     NapzakMarketTheme {
         ChatRoomScreen(
+            chat = "",
             chatItems = mockChats.toImmutableList(),
             opponentImageUrl = "",
+            onChatChange = {},
             onSendChatClick = {},
             onProductDetailClick = {},
             onReportClick = {},
@@ -359,8 +370,10 @@ private fun ChatRoomScreenPreview() {
 private fun ChatRoomScreenEmptyPreview() {
     NapzakMarketTheme {
         ChatRoomScreen(
+            chat = "",
             chatItems = emptyList<ChatItem<*>>().toImmutableList(),
             opponentImageUrl = "",
+            onChatChange = {},
             onSendChatClick = {},
             onProductDetailClick = {},
             onReportClick = {},

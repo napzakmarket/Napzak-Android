@@ -1,5 +1,8 @@
 package com.napzak.market.chat.chatroom
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.chat.chatroom.model.ChatItem
@@ -23,6 +26,7 @@ internal class ChatRoomViewModel @Inject constructor() : ViewModel() {
     private val _chatRoom = MutableStateFlow<UiState<ChatRoom>>(UiState.Loading)
     val chatRoom: StateFlow<UiState<ChatRoom>> = _chatRoom.asStateFlow()
 
+    var chat by mutableStateOf("")
 
     suspend fun fetchChatItems() {
         // TODO: 채팅 내역을 가져오는 로직 구현
@@ -37,6 +41,7 @@ internal class ChatRoomViewModel @Inject constructor() : ViewModel() {
 
     fun sendChat(chat: String) = viewModelScope.launch {
         Timber.d("try to send chat: $chat")
+        this@ChatRoomViewModel.chat = ""
     }
 
     fun exitChatRoom(chatRoomId: Long) = viewModelScope.launch {

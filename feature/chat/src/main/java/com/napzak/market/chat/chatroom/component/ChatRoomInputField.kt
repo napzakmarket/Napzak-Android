@@ -10,10 +10,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,13 +30,13 @@ import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun ChatRoomInputField(
+    text: String,
     hint: String,
+    onTextChange: (String) -> Unit,
     onSendClick: (String) -> Unit,
     onGalleryClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var text by rememberSaveable { mutableStateOf("") }
-
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -62,13 +58,15 @@ internal fun ChatRoomInputField(
         Spacer(modifier = Modifier.width(16.dp))
         ChatTextField(
             text = text,
-            onTextChange = { text = it },
+            onTextChange = onTextChange,
             hint = hint,
             modifier = Modifier.weight(1f),
             suffix = {
                 SendButton(
                     enabled = text.isNotBlank(),
-                    onClick = { onSendClick(text) },
+                    onClick = {
+                        onSendClick(text)
+                    },
                 )
             },
         )
@@ -140,6 +138,8 @@ private fun SendButton(
 private fun ChatRoomInputFieldPreview() {
     NapzakMarketTheme {
         ChatRoomInputField(
+            text = "",
+            onTextChange = {},
             hint = "메시지를 입력해주세요",
             onSendClick = {},
             onGalleryClick = {},
