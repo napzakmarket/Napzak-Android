@@ -43,6 +43,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 internal fun ChatListRoute(
     onChatRoomNavigate: (Long) -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: ChatListViewModel = hiltViewModel(),
 ) {
     val chatRooms by viewModel.chatRoomsState.collectAsStateWithLifecycle()
@@ -58,6 +59,7 @@ internal fun ChatListRoute(
     ChatListScreen(
         chatRoomsState = chatRooms,
         onChatRoomClick = { chatRoom -> onChatRoomNavigate(chatRoom.chatRoomId) },
+        modifier = modifier,
     )
 }
 
