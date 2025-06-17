@@ -11,7 +11,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.feature.dummy)
     implementation(projects.feature.onboarding)
     implementation(projects.feature.home)
     implementation(projects.feature.explore)
