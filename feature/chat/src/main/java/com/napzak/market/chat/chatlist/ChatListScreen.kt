@@ -136,7 +136,8 @@ private fun ChatListColumn(
     onChatRoomClick: (ChatRoomDetail) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val chatDivider = @Composable {
+    @Composable
+    fun ChatDivider() {
         HorizontalDivider(thickness = 1.dp, color = NapzakMarketTheme.colors.gray50)
     }
 
@@ -145,7 +146,7 @@ private fun ChatListColumn(
         contentPadding = PaddingValues(vertical = 25.dp),
     ) {
         items(chatRooms) { chatRoom ->
-            chatDivider()
+            ChatDivider()
             with(chatRoom) {
                 ChatRoomItem(
                     nickname = storeName,
@@ -157,7 +158,7 @@ private fun ChatListColumn(
                 )
             }
         }
-        item { chatDivider() }
+        item { ChatDivider() }
     }
 }
 
