@@ -167,7 +167,7 @@ private fun EmptyChatListScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.padding(),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
