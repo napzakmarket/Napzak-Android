@@ -46,7 +46,7 @@ internal fun ChatListRoute(
     modifier: Modifier = Modifier,
     viewModel: ChatListViewModel = hiltViewModel(),
 ) {
-    val chatRooms by viewModel.chatRoomsState.collectAsStateWithLifecycle()
+    val chatRoomsState by viewModel.chatRoomsState.collectAsStateWithLifecycle()
 
     LifecycleResumeEffect(Unit) {
         viewModel.fetchChatRooms()
@@ -57,7 +57,7 @@ internal fun ChatListRoute(
     }
 
     ChatListScreen(
-        chatRoomsState = chatRooms,
+        chatRoomsState = chatRoomsState,
         onChatRoomClick = { chatRoom -> onChatRoomNavigate(chatRoom.chatRoomId) },
         modifier = modifier,
     )
