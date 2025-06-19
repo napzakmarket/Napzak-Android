@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.ic_left_chevron
@@ -23,7 +24,7 @@ import com.napzak.market.feature.wishlist.R.string.wishlist_back_button
 import com.napzak.market.feature.wishlist.R.string.wishlist_title
 import com.napzak.market.ui_util.ShadowDirection
 import com.napzak.market.ui_util.napzakGradientShadow
-import com.napzak.market.ui_util.noRippleClickable
+import com.napzak.market.ui_util.napzakRippleClickable
 
 @Composable
 internal fun WishlistTopSection(
@@ -48,7 +49,10 @@ internal fun WishlistTopSection(
             imageVector = ImageVector.vectorResource(ic_left_chevron),
             contentDescription = stringResource(wishlist_back_button),
             tint = NapzakMarketTheme.colors.black,
-            modifier = Modifier.noRippleClickable(onBackButtonClick),
+            modifier = Modifier.napzakRippleClickable(
+                role = Role.Button,
+                onClick = onBackButtonClick
+            ),
         )
 
         Spacer(Modifier.width(6.dp))
