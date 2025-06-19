@@ -23,8 +23,8 @@ fun NavController.navigateToPurchaseRegistration(
 ) = navigate(PurchaseRegistration(productId), navOptions)
 
 fun NavController.navigateToGenreSearch(
-    navOptions: NavOptions? = null,
     genreId: Long? = null,
+    navOptions: NavOptions? = null,
 ) = navigate(GenreSearch(genreId), navOptions)
 
 fun NavGraphBuilder.registrationGraph(
