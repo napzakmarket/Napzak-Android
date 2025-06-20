@@ -20,6 +20,10 @@ class ContentUriRequestBody(
     private var size = -1L
 
     init {
+        getImageMetaData()
+    }
+    
+    private fun getImageMetaData() = runCatching {
         contentResolver.query(
             uri,
             arrayOf(MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DISPLAY_NAME),
