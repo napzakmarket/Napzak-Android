@@ -3,6 +3,7 @@ package com.napzak.market.main
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import com.napzak.market.chat.navigation.ChatList
 import com.napzak.market.common.navigation.MainTabRoute
 import com.napzak.market.common.navigation.Route
 import com.napzak.market.designsystem.R.drawable.ic_nav_add
@@ -43,7 +44,7 @@ enum class MainTab(
     CHAT(
         iconRes = ic_nav_chat,
         title = main_bottom_bar_chatting,
-        route = Chat(),
+        route = ChatList,
     ),
     MY_PAGE(
         iconRes = ic_nav_user,
@@ -63,10 +64,6 @@ enum class MainTab(
         }
     }
 }
-
-// TODO: 채팅화면 구현 시 이동
-@Serializable
-class Chat : MainTabRoute;
 
 // TODO: Registration 관련 모듈로 이동
 @Serializable
