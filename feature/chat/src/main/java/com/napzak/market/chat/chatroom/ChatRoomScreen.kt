@@ -224,6 +224,7 @@ private fun ChatItemRenderer(
     previousChatItem: ChatItem<*>? = null,
     opponentImageRequest: ImageRequest,
 ) {
+    val isPreviousItemProduct = previousChatItem is ChatItem.Product
     val isChatDirectionEqualsPrevious = chatItem.direction == previousChatItem?.direction
     val isChatDirectionEqualsNext = chatItem.direction == nextChatItem?.direction
     val isTimeStampEqualsNext = chatItem.timeStamp == nextChatItem?.timeStamp
@@ -249,7 +250,7 @@ private fun ChatItemRenderer(
 
             ChatDirection.RECEIVED -> OpponentChatItemContainer(
                 imageRequest = opponentImageRequest,
-                isProfileImageVisible = !isChatDirectionEqualsPrevious,
+                isProfileImageVisible = !isChatDirectionEqualsPrevious || isPreviousItemProduct,
                 isProduct = chatItem is ChatItem.Product,
                 timeStamp = timeStamp,
                 isRead = chatItem.isRead,
