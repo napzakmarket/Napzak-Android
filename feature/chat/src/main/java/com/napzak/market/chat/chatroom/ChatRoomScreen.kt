@@ -184,10 +184,12 @@ private fun ChatRoomRecordView(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val opponentProfileImageRequest = ImageRequest
-        .Builder(context)
-        .data(opponentImageUrl)
-        .build()
+    val opponentProfileImageRequest = remember(opponentImageUrl) {
+        ImageRequest
+            .Builder(context)
+            .data(opponentImageUrl)
+            .build()
+    }
 
     LazyColumn(
         reverseLayout = true,
