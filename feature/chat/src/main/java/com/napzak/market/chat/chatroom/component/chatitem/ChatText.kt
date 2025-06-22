@@ -1,19 +1,20 @@
 package com.napzak.market.chat.chatroom.component.chatitem
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.chat.chatroom.model.ChatDirection
@@ -25,22 +26,23 @@ internal fun ChatText(
     chatDirection: ChatDirection,
     modifier: Modifier = Modifier,
 ) {
-    val maxWidthDp = (LocalConfiguration.current.screenWidthDp * (262 / 360f)).dp
     val (textColor, backgroundColor, shape) = getChatTextDesign(chatDirection)
     val innerPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
     val textStyle = NapzakMarketTheme.typography.body14r
 
-    Box(
+    BoxWithConstraints(
         modifier = modifier
-            .widthIn(max = maxWidthDp)
             .clip(shape = shape)
-            .background(color = backgroundColor)
-            .padding(innerPadding)
+            .background(color = backgroundColor),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = text,
             style = textStyle,
             color = textColor,
+            modifier = Modifier
+                .widthIn(max = maxWidth * 0.72f)
+                .padding(innerPadding),
         )
     }
 }
@@ -76,7 +78,7 @@ private fun getChatTextDesign(senderType: ChatDirection) = when (senderType) {
 @Composable
 private fun ChatTextPreview() {
     NapzakMarketTheme {
-        Column {
+        Column(modifier = Modifier.fillMaxWidth()) {
             ChatText(
                 text = "안녕하세요!",
                 chatDirection = ChatDirection.SENT,

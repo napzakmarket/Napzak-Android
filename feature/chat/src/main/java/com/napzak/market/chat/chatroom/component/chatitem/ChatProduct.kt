@@ -3,6 +3,7 @@ package com.napzak.market.chat.chatroom.component.chatitem
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -43,49 +43,52 @@ internal fun ChatProduct(
     modifier: Modifier = Modifier,
 ) {
     val containerColor = NapzakMarketTheme.colors.gray50
-    val itemWidthDp = (LocalConfiguration.current.screenWidthDp * 210 / 360f).dp
     val shape = when (direction) {
         ChatDirection.SENT -> RoundedCornerShape(
             topStart = 12.dp,
             topEnd = 12.dp,
-            bottomStart = 12.dp
+            bottomStart = 12.dp,
         )
 
         ChatDirection.RECEIVED -> RoundedCornerShape(
             topStart = 12.dp,
             topEnd = 12.dp,
-            bottomEnd = 12.dp
+            bottomEnd = 12.dp,
         )
     }
 
-    Column(
-        modifier = modifier
-            .width(itemWidthDp)
-            .clip(shape)
-            .background(color = containerColor, shape = shape),
+    BoxWithConstraints(
+        modifier = modifier,
     ) {
-        ChatProductHeader(
-            tradeType = tradeType,
-        )
-        Spacer(
-            modifier = Modifier.height(16.dp),
-        )
-        ChatProductDetailView(
-            genre = genre,
-            name = name,
-            price = price,
-            modifier = Modifier.padding(horizontal = 20.dp),
-        )
-        Spacer(
-            modifier = Modifier.height(15.dp),
-        )
-        ChatProductButton(
-            onClick = onNavigateClick,
-            modifier = Modifier.padding(horizontal = 20.dp),
-        )
-        Spacer(
-            modifier = Modifier.height(12.dp),
-        )
+        Column(
+            modifier = Modifier
+                .width(maxWidth * 0.64f)
+                .clip(shape)
+                .background(color = containerColor, shape = shape),
+        ) {
+            ChatProductHeader(
+                tradeType = tradeType,
+            )
+            Spacer(
+                modifier = Modifier.height(16.dp),
+            )
+            ChatProductDetailView(
+                genre = genre,
+                name = name,
+                price = price,
+                modifier = Modifier.padding(horizontal = 20.dp),
+            )
+            Spacer(
+                modifier = Modifier.height(15.dp),
+            )
+            ChatProductButton(
+                onClick = onNavigateClick,
+                modifier = Modifier.padding(horizontal = 20.dp),
+            )
+            Spacer(
+                modifier = Modifier.height(12.dp),
+            )
+        }
     }
 }
 
@@ -178,13 +181,15 @@ private fun ChatProductButton(
 @Composable
 private fun ChatProductPreview() {
     NapzakMarketTheme {
-        ChatProduct(
-            direction = ChatDirection.SENT,
-            tradeType = "SELL",
-            genre = "식품",
-            name = "김치",
-            price = "1000원",
-            onNavigateClick = {},
-        )
+        Column(modifier = Modifier.fillMaxWidth()) {
+            ChatProduct(
+                direction = ChatDirection.SENT,
+                tradeType = "SELL",
+                genre = "식품",
+                name = "김치",
+                price = "1000원",
+                onNavigateClick = {},
+            )
+        }
     }
 }
