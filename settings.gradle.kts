@@ -72,4 +72,5 @@ include(
     ":feature:splash",
     ":feature:login",
     ":feature:chat",
+    ":feature:wishlist",
 )

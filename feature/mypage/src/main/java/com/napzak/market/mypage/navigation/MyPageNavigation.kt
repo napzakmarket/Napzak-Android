@@ -74,7 +74,7 @@ fun NavGraphBuilder.mypageGraph(
     navigateToSales: () -> Unit,
     navigateToPurchase: () -> Unit,
     navigateToRecent: () -> Unit,
-    navigateToFavorite: () -> Unit,
+    navigateToWishlist: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<MyPage> {
@@ -87,7 +87,7 @@ fun NavGraphBuilder.mypageGraph(
             onSalesClick = navigateToSales,
             onPurchaseClick = navigateToPurchase,
             onRecentClick = navigateToRecent,
-            onFavoriteClick = navigateToFavorite,
+            onFavoriteClick = navigateToWishlist,
             onSettingsClick = navController::navigateToSettings,
             modifier = modifier,
         )

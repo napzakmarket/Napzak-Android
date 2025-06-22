@@ -62,6 +62,8 @@ import com.napzak.market.store.edit_store.navigation.editStoreGraph
 import com.napzak.market.store.edit_store.navigation.navigateToEditStore
 import com.napzak.market.store.store.navigation.navigateToStore
 import com.napzak.market.store.store.navigation.storeGraph
+import com.napzak.market.wishlist.navigation.navigateToWishlist
+import com.napzak.market.wishlist.navigation.wishlistGraph
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -208,8 +210,8 @@ private fun MainNavHost(
 
         homeGraph(
             navigateToUp = endApplicationAtHome,
-            navigateToSearch = { navigator.navController.navigateToSearch() },
-            navigateToProductDetail = { navigator.navController.navigateToProductDetail(it) },
+            navigateToSearch = navigator.navController::navigateToSearch,
+            navigateToProductDetail = navigator.navController::navigateToProductDetail,
             navigateToExploreSell = {
                 navigator.navController.navigateToExplore(
                     tradeType = TradeType.SELL,
@@ -228,26 +230,26 @@ private fun MainNavHost(
         exploreGraph(
             navigateToUp = navigator::navigateUp,
             navigateToHome = { navigator.navController.popBackStack(Home, inclusive = false) },
-            navigateToSearch = { navigator.navController.navigateToSearch() },
-            navigateToGenreDetail = { navigator.navController.navigateToGenreDetail(it) },
-            navigateToProductDetail = { navigator.navController.navigateToProductDetail(it) },
+            navigateToSearch = navigator.navController::navigateToSearch,
+            navigateToGenreDetail = navigator.navController::navigateToGenreDetail,
+            navigateToProductDetail = navigator.navController::navigateToProductDetail,
             modifier = modifier,
         )
 
         searchGraph(
-            navigateToPrevious = { navigator.navController.popBackStack() },
+            navigateToPrevious = navigator::navigateUp,
             navigateToSearchResult = { searchTerm ->
                 navigator.navController.popBackStack(Search, inclusive = true)
                 navigator.navController.navigateToExplore(searchTerm)
             },
-            navigateToGenreDetail = { navigator.navController.navigateToGenreDetail(it) },
+            navigateToGenreDetail = navigator.navController::navigateToGenreDetail,
         )
 
         storeGraph(
             navigateToUp = navigator::navigateUp,
-            navigateToProfileEdit = { navigator.navController.navigateToEditStore(it) },
-            navigateToProductDetail = { navigator.navController.navigateToProductDetail(it) },
-            navigateToStoreReport = { navigator.navController.navigateToUserReport(it) },
+            navigateToProfileEdit = navigator.navController::navigateToEditStore,
+            navigateToProductDetail = navigator.navController::navigateToProductDetail,
+            navigateToStoreReport = navigator.navController::navigateToUserReport,
         )
 
         editStoreGraph(
@@ -255,7 +257,7 @@ private fun MainNavHost(
         )
 
         productDetailGraph(
-            onMarketNavigate = { navigator.navController.navigateToStore(it) },
+            onMarketNavigate = navigator.navController::navigateToStore,
             onChatNavigate = {}, //TODO: 채팅 화면으로 이동
             onModifyNavigate = { productId, tradeType ->
                 when (tradeType) {
@@ -267,7 +269,7 @@ private fun MainNavHost(
                     else -> {}
                 }
             },
-            onReportNavigate = { navigator.navController.navigateToProductReport(it) },
+            onReportNavigate = navigator.navController::navigateToProductReport,
             onNavigateUp = navigator::navigateUp,
         )
 
@@ -287,20 +289,24 @@ private fun MainNavHost(
                 }
                 navigator.navController.navigateToProductDetail(productId, navOptions)
             },
-            navigateToGenreSearch = {
-                navigator.navController.navigateToGenreSearch(genreId = it)
-            },
+            navigateToGenreSearch = navigator.navController::navigateToGenreSearch,
         )
 
         mypageGraph(
             navController = navigator.navController,
             navigateToUp = navigator::navigateUp,
-            navigateToMyMarket = { navigator.navController.navigateToStore(it) },
+            navigateToMyMarket = navigator.navController::navigateToStore,
             navigateToSales = { /* TODO: 판매내역 화면으로 이동 */ },
             navigateToPurchase = { /* TODO: 구매내역 화면으로 이동 */ },
             navigateToRecent = { /* TODO: 최근 본 상품 화면으로 이동 */ },
-            navigateToFavorite = { /* TODO: 찜 화면으로 이동 */ },
+            navigateToWishlist = navigator.navController::navigateToWishlist,
             restartApplication = restartApplication,
+            modifier = modifier,
+        )
+
+        wishlistGraph(
+            navigateToUp = navigator::navigateUp,
+            navigateToProductDetail = navigator.navController::navigateToProductDetail,
             modifier = modifier,
         )
 
