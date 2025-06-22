@@ -250,6 +250,7 @@ private fun ChatItemRenderer(
             ChatDirection.RECEIVED -> OpponentChatItemContainer(
                 imageRequest = opponentImageRequest,
                 isProfileImageVisible = !isChatDirectionEqualsPrevious,
+                isProduct = chatItem is ChatItem.Product,
                 timeStamp = timeStamp,
                 isRead = chatItem.isRead,
                 content = { ChatItemView(chatItem = chatItem) },

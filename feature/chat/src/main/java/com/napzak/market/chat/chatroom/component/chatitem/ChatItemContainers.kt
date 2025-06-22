@@ -49,6 +49,7 @@ internal fun MyChatItemContainer(
 internal fun OpponentChatItemContainer(
     imageRequest: ImageRequest,
     isProfileImageVisible: Boolean,
+    isProduct: Boolean,
     isRead: Boolean,
     timeStamp: String?,
     modifier: Modifier = Modifier,
@@ -62,10 +63,10 @@ internal fun OpponentChatItemContainer(
     Row(
         modifier = modifier,
     ) {
-        if (isProfileImageVisible)
-            ProfileImage(imageRequest = imageRequest)
-        else
-            Spacer(modifier = Modifier.size(40.dp))
+        when {
+            !isProduct && isProfileImageVisible -> ProfileImage(imageRequest = imageRequest)
+            !isProduct && !isProfileImageVisible -> Spacer(modifier = Modifier.size(40.dp))
+        }
 
         Row(
             modifier = Modifier.padding(contentPaddingValues),
