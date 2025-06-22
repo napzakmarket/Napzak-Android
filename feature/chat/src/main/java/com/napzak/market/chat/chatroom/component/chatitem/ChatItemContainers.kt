@@ -33,12 +33,12 @@ internal fun MyChatItemContainer(
 ) {
     Row(
         modifier = modifier,
-        verticalAlignment = Alignment.Bottom
+        verticalAlignment = Alignment.Bottom,
     ) {
         ChatLabels(
             isRead = isRead,
             timeStamp = timeStamp,
-            alignment = Alignment.End
+            alignment = Alignment.End,
         )
         Spacer(modifier = Modifier.width(4.dp))
         content()
@@ -70,13 +70,13 @@ internal fun OpponentChatItemContainer(
         Row(
             modifier = Modifier.padding(contentPaddingValues),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.Bottom,
         ) {
             content()
             ChatLabels(
                 isRead = isRead,
                 timeStamp = timeStamp,
-                alignment = Alignment.Start
+                alignment = Alignment.Start,
             )
         }
     }
