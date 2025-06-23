@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "687835236815",
+    "project_id": "napzak-market",
+    "storage_bucket": "napzak-market.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687835236815:android:4a62c66ff0304ca966aaba",
+        "android_client_info": {
+          "package_name": "com.napzak.market"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8qO9FxYCuIpQtoyy3AlleAwex99KPHbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
