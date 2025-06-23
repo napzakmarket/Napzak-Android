@@ -38,6 +38,7 @@ val gradWhite = Color(0x00FFFFFF)
 // Etc
 val kakaoYellow = Color(0xFFFEE500)
 val kakaoBlack = Color(0xFF000000)
+val shadowBlack = Color(0x44000000)
 
 @Stable
 class NapzakMarketColors(
@@ -62,6 +63,7 @@ class NapzakMarketColors(
     gradWhite: Color,
     kakaoYellow: Color,
     kakaoBlack: Color,
+    shadowBlack: Color,
     isLight: Boolean
 ) {
     var purple500 by mutableStateOf(purple500)
@@ -106,6 +108,8 @@ class NapzakMarketColors(
         private set
     var kakaoBlack by mutableStateOf(kakaoBlack)
         private set
+    var shadowBlack by mutableStateOf(shadowBlack)
+        private set
     var isLight by mutableStateOf(isLight)
 
     fun copy(): NapzakMarketColors = NapzakMarketColors(
@@ -130,6 +134,7 @@ class NapzakMarketColors(
         gradWhite,
         kakaoYellow,
         kakaoBlack,
+        shadowBlack,
         isLight
     )
 
@@ -155,6 +160,7 @@ class NapzakMarketColors(
         gradWhite = other.gradWhite
         kakaoYellow = other.kakaoYellow
         kakaoBlack = other.kakaoBlack
+        shadowBlack = other.shadowBlack
         isLight = other.isLight
     }
 }
@@ -181,6 +187,7 @@ fun NapzakMarketLightColors(
     GradWhite: Color = gradWhite,
     KakaoYellow: Color = kakaoYellow,
     KakaoBlack: Color = kakaoBlack,
+    ShadowBlack: Color = shadowBlack,
 ) = NapzakMarketColors(
     Purple500,
     Purple200,
@@ -203,5 +210,6 @@ fun NapzakMarketLightColors(
     GradWhite,
     KakaoYellow,
     KakaoBlack,
+    ShadowBlack,
     isLight = true
 )
