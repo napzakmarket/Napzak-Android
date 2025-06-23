@@ -3,7 +3,10 @@ import java.util.Properties
 plugins {
     id("com.napzak.market.buildlogic.convention.application")
     id("com.napzak.market.buildlogic.primitive.hilt")
+    id("com.android.application")
+    id("com.google.gms.google-services")
 }
+
 val localProperties = Properties().apply {
     load(File(rootDir, "local.properties").inputStream())
 }
@@ -56,4 +59,7 @@ dependencies {
     implementation(libs.androidx.multidex)
     implementation(libs.androidx.multidex)
     implementation(libs.lottie.compose)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
 }

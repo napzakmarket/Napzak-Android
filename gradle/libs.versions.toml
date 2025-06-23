@@ -55,6 +55,9 @@ roomCompiler = "2.7.1"
 multidex = "2.0.1"
 accompanistSystemuicontroller = "0.28.0"
 
+googleServices = "4.4.2"
+firebaseBom = "33.15.0"
+
 [libraries]
 ## android
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -129,6 +132,10 @@ androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", vers
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 androidx-multidex = { group = "androidx.multidex", name = "multidex", version.ref = "multidex" }
 
+## firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+
 [bundles]
 coroutine = [
     "coroutines-core",
@@ -146,4 +153,4 @@ kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref =
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
