@@ -1,5 +1,6 @@
 package com.napzak.market.registration.genre
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
@@ -18,8 +19,11 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class GenreSearchViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getGenreNamesUseCase: GetGenreNamesUseCase,
 ) : ViewModel() {
+    private val genreId: Long? = savedStateHandle.get<Long>(GENRE_ID_KEY)
+
     private val _uiState = MutableStateFlow(GenreSearchUiState())
     val uiState = _uiState.asStateFlow()
 
@@ -32,6 +36,10 @@ class GenreSearchViewModel @Inject constructor(
                 updateGenreSearchResult()
             }
         }
+    }
+
+    fun updateSelectedGenre() = _uiState.update {
+        it.copy(selectedGenreId = genreId)
     }
 
     fun updateSearchTerm(searchTerm: String) = _searchTerm.update { searchTerm }
@@ -52,5 +60,6 @@ class GenreSearchViewModel @Inject constructor(
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L
+        private const val GENRE_ID_KEY = "genreId"
     }
 }

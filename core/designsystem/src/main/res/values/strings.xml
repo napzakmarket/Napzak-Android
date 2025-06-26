@@ -39,6 +39,7 @@
 
     <!--TopBar-->
     <string name="top_bar_navigate_up">뒤로가기</string>
+    <string name="top_bar_menu">메뉴</string>
 
     <!--GenreFilterChip-->
     <string name="genre_filter_genre">장르</string>

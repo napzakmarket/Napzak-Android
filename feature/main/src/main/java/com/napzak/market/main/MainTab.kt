@@ -3,6 +3,7 @@ package com.napzak.market.main
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import com.napzak.market.chat.navigation.ChatList
 import com.napzak.market.common.navigation.MainTabRoute
 import com.napzak.market.common.navigation.Route
 import com.napzak.market.designsystem.R.drawable.ic_nav_add
@@ -10,7 +11,6 @@ import com.napzak.market.designsystem.R.drawable.ic_nav_chat
 import com.napzak.market.designsystem.R.drawable.ic_nav_explore
 import com.napzak.market.designsystem.R.drawable.ic_nav_home
 import com.napzak.market.designsystem.R.drawable.ic_nav_user
-import com.napzak.market.dummy.navigation.Dummy
 import com.napzak.market.explore.navigation.Explore
 import com.napzak.market.home.navigation.Home
 import com.napzak.market.main.R.string.main_bottom_bar_chatting
@@ -19,9 +19,8 @@ import com.napzak.market.main.R.string.main_bottom_bar_home
 import com.napzak.market.main.R.string.main_bottom_bar_my_page
 import com.napzak.market.main.R.string.main_bottom_bar_register
 import com.napzak.market.mypage.navigation.MyPage
+import kotlinx.serialization.Serializable
 
-
-// TODO: 구현 시작 시 수정
 enum class MainTab(
     @DrawableRes val iconRes: Int,
     @StringRes val title: Int,
@@ -40,12 +39,12 @@ enum class MainTab(
     REGISTER(
         iconRes = ic_nav_add,
         title = main_bottom_bar_register,
-        route = Dummy,
+        route = Registration(),
     ),
     CHAT(
         iconRes = ic_nav_chat,
         title = main_bottom_bar_chatting,
-        route = Dummy,
+        route = ChatList,
     ),
     MY_PAGE(
         iconRes = ic_nav_user,
@@ -65,3 +64,7 @@ enum class MainTab(
         }
     }
 }
+
+// TODO: Registration 관련 모듈로 이동
+@Serializable
+class Registration : MainTabRoute

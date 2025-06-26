@@ -8,10 +8,6 @@ annotation class JWT
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class DUMMY
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
 annotation class S3
 
 @Qualifier

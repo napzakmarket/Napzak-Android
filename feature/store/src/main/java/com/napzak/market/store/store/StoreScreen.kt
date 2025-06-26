@@ -44,7 +44,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.common.state.UiState
@@ -53,9 +55,12 @@ import com.napzak.market.common.type.MarketTab
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
+import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.GenreFilterChip
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.component.tabbar.MarketTabBar
+import com.napzak.market.designsystem.component.toast.LocalNapzakToast
+import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.store.R.drawable.ic_down_chevron_7
 import com.napzak.market.feature.store.R.drawable.ic_kebap
@@ -87,6 +92,10 @@ internal fun StoreRoute(
     modifier: Modifier = Modifier,
     viewModel: StoreViewModel = hiltViewModel(),
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val toast = LocalNapzakToast.current
+    val context = LocalContext.current
+
     val uiState by viewModel.storeUiState.collectAsStateWithLifecycle()
     val storeOptionState by viewModel.storeOptionState.collectAsStateWithLifecycle()
     val bottomSheetState by viewModel.bottomSheetState.collectAsStateWithLifecycle()
@@ -99,6 +108,25 @@ internal fun StoreRoute(
 
     LaunchedEffect(storeOptionState) {
         viewModel.updateStoreProducts()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle)
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    is StoreSideEffect.ShowHeartToast -> {
+                        toast.makeText(
+                            toastType = ToastType.HEART,
+                            message = context.getString(heart_click_snackbar_message),
+                            yOffset = 20,
+                        )
+                    }
+
+                    is StoreSideEffect.CancelToast -> {
+                        toast.cancel()
+                    }
+                }
+            }
     }
 
     StoreScreen(
@@ -130,7 +158,7 @@ internal fun StoreRoute(
         },
         onProductItemClick = onProductDetailNavigate,
         onLikeButtonClick = { id, value ->
-            viewModel.updateProductIsInterested(productId = id, isLiked = value)
+            viewModel.updateProductIsInterested(productId = id, isInterested = value)
         },
         onStoreReportButtonClick = {
             viewModel.updateBottomSheetVisibility(BottomSheetType.STORE_REPORT)

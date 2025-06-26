@@ -19,7 +19,6 @@ class RegistrationContract {
     )
 
     sealed class RegistrationSideEffect {
-        // TODO: API 연결 후 상세 페이지 연동 필요
         data class NavigateToDetail(val productId: Long) : RegistrationSideEffect()
     }
 }

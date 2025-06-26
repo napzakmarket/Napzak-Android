@@ -11,10 +11,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.napzak.market.chat.navigation.navigateToChatList
 import com.napzak.market.explore.navigation.navigateToExplore
 import com.napzak.market.home.navigation.navigateToHome
 import com.napzak.market.mypage.navigation.navigateToMyPage
 import com.napzak.market.splash.navigation.Splash
+import com.napzak.market.wishlist.navigation.Wishlist
 
 class MainNavigator(
     val navController: NavHostController,
@@ -30,8 +32,11 @@ class MainNavigator(
 
     val currentTab: MainTab?
         @Composable get() =
-            if (isRegister) MainTab.REGISTER
-            else MainTab.find { tab -> currentDestination?.hasRoute(tab::class) == true }
+            when {
+                isRegister -> MainTab.REGISTER
+                currentDestination?.hasRoute(Wishlist::class) == true -> MainTab.MY_PAGE
+                else -> MainTab.find { tab -> currentDestination?.hasRoute(tab::class) == true }
+            }
 
     fun navigate(tab: MainTab) {
         if (tab != MainTab.REGISTER && isRegister) dismissRegisterDialog()
@@ -52,7 +57,7 @@ class MainNavigator(
             MainTab.REGISTER -> {
                 isRegister = isRegister.not()
             }
-            MainTab.CHAT -> {} //TODO: 체팅 추가 예정
+            MainTab.CHAT -> navController.navigateToChatList()
             MainTab.MY_PAGE -> navController.navigateToMyPage(navOptions)
         }
     }
@@ -63,8 +68,15 @@ class MainNavigator(
     }
 
     @Composable
-    fun showBottomBar() = MainTab.contains {
-        currentDestination?.hasRoute(it::class) == true
+    fun showBottomBar(): Boolean {
+        val isMainTabRoute = MainTab.contains {
+            currentDestination?.hasRoute(it::class) == true
+        }
+
+        val isAdditionalBottomRoute =
+            currentDestination?.hasRoute(Wishlist::class) == true
+
+        return isMainTabRoute || isAdditionalBottomRoute
     }
 
     fun dismissRegisterDialog() {

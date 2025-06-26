@@ -11,7 +11,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.feature.dummy)
     implementation(projects.feature.onboarding)
     implementation(projects.feature.home)
     implementation(projects.feature.explore)
@@ -23,6 +22,8 @@ dependencies {
     implementation(projects.feature.splash)
     implementation(projects.feature.mypage)
     implementation(projects.feature.login)
+    implementation(projects.feature.chat)
+    implementation(projects.feature.wishlist)
 
     implementation(projects.core.designsystem)
     implementation(projects.core.common)

@@ -37,7 +37,6 @@ include(
 include(
     ":data:remote",
     ":data:local",
-    ":data:dummy",
     ":data:store",
     ":data:product",
     ":data:registration",
@@ -49,7 +48,6 @@ include(
 )
 
 include(
-    ":domain:dummy",
     ":domain:store",
     ":domain:product",
     ":domain:registration",
@@ -62,7 +60,6 @@ include(
 
 include(
     ":feature:main",
-    ":feature:dummy",
     ":feature:home",
     ":feature:mypage",
     ":feature:explore",
@@ -74,4 +71,6 @@ include(
     ":feature:detail",
     ":feature:splash",
     ":feature:login",
+    ":feature:chat",
+    ":feature:wishlist",
 )

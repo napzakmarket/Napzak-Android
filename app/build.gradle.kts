@@ -39,7 +39,6 @@ dependencies {
     implementation(projects.data.remote)
     implementation(projects.data.local)
     implementation(projects.data.banner)
-    implementation(projects.data.dummy)
     implementation(projects.data.store)
     implementation(projects.data.genre)
     implementation(projects.data.interest)
