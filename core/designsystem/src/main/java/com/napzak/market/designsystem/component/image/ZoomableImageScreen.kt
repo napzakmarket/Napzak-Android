@@ -20,15 +20,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.napzak.market.designsystem.R
+import com.napzak.market.designsystem.R.drawable.ic_arrow_left
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.ui_util.ScreenPreview
 import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
@@ -42,12 +40,13 @@ fun ZoomableImageScreen(
 
     Box(
         modifier = modifier
+            .fillMaxSize()
             .background(color = NapzakMarketTheme.colors.black)
             .onGloballyPositioned { rootSize = it.size },
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left),
+            imageVector = ImageVector.vectorResource(ic_arrow_left),
             contentDescription = null,
             tint = NapzakMarketTheme.colors.white,
             modifier = Modifier
@@ -59,7 +58,7 @@ fun ZoomableImageScreen(
         AsyncImage(
             model = imageRequest,
             contentDescription = contentDescription,
-            modifier = Modifier.zoomable(rootSize)
+            modifier = Modifier.zoomable(rootSize),
         )
     }
 }
@@ -118,17 +117,4 @@ private fun Modifier.zoomable(
             translationY = offset.y,
         )
         .transformable(state = state)
-}
-
-@ScreenPreview
-@Composable
-private fun ZoomableImageScreenPreview() {
-    ZoomableImageScreen(
-        imageRequest = ImageRequest.Builder(LocalContext.current)
-            .data(R.drawable.img_empty_chat_list)
-            .build(),
-        contentDescription = null,
-        modifier = Modifier.fillMaxSize(),
-        onBackClick = {},
-    )
 }
