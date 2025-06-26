@@ -18,5 +18,5 @@
     <string name="onboarding_error_whitespace">공백은 사용할 수 없어요.</string>
     <string name="onboarding_error_special_char">특수문자는 사용할 수 없어요.</string>
     <string name="onboarding_error_only_numbers">숫자만으로는 이름을 만들 수 없어요.</string>
-    <string name="onboarding_error_only_consonants">초성은 입력할 수 없어요.</string>
+    <string name="onboarding_error_only_consonants">이름은 ‘가’, ‘나’처럼 완성된 글자로만 입력해 주세요.</string>
 </resources>
