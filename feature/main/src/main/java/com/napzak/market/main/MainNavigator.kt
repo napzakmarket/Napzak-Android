@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.napzak.market.chat.navigation.navigateToChatList
 import com.napzak.market.explore.navigation.navigateToExplore
 import com.napzak.market.home.navigation.navigateToHome
 import com.napzak.market.mypage.navigation.navigateToMyPage
@@ -56,7 +57,7 @@ class MainNavigator(
             MainTab.REGISTER -> {
                 isRegister = isRegister.not()
             }
-            MainTab.CHAT -> {} //TODO: 체팅 추가 예정
+            MainTab.CHAT -> navController.navigateToChatList()
             MainTab.MY_PAGE -> navController.navigateToMyPage(navOptions)
         }
     }

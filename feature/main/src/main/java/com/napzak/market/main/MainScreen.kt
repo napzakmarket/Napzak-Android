@@ -21,6 +21,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.napzak.market.chat.navigation.chatGraph
+import com.napzak.market.chat.navigation.navigateToChatRoom
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
@@ -305,6 +307,14 @@ private fun MainNavHost(
         wishlistGraph(
             navigateToUp = navigator::navigateUp,
             navigateToProductDetail = navigator.navController::navigateToProductDetail,
+            modifier = modifier,
+        )
+
+        chatGraph(
+            onChatRoomNavigate = navigator.navController::navigateToChatRoom,
+            onProductDetailNavigate = navigator.navController::navigateToProductDetail,
+            onStoreReportNavigate = navigator.navController::navigateToUserReport,
+            onNavigateUp = navigator::navigateUp,
             modifier = modifier,
         )
     }
