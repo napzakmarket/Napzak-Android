@@ -68,6 +68,24 @@ private fun Modifier.zoomable(
     parentLayoutSize: IntSize,
     scaleRange: ClosedFloatingPointRange<Float> = 1f..5f,
 ) = composed {
+    fun calculateConstrainedOffset(
+        currentOffset: Float,
+        offsetChange: Float,
+        scale: Float,
+        originalSize: Int,
+        parentSize: Int,
+        constraint: Float,
+    ): Float {
+        return when {
+            scale * originalSize < parentSize -> 0f
+            currentOffset + offsetChange !in -constraint..constraint -> {
+                currentOffset.coerceIn(-constraint, constraint)
+            }
+
+            else -> currentOffset + offsetChange * scale
+        }
+    }
+
     var scale by remember { mutableFloatStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
     var originalIntSize by remember { mutableStateOf(IntSize.Zero) }
@@ -79,30 +97,24 @@ private fun Modifier.zoomable(
             y = (originalIntSize.height * scale - parentLayoutSize.height) / 2f,
         )
 
-        val offsetX = when {
-            scale * originalIntSize.width < parentLayoutSize.width -> 0f
+        val offsetX = calculateConstrainedOffset(
+            currentOffset = offset.x,
+            offsetChange = offsetChange.x,
+            scale = scale,
+            originalSize = originalIntSize.width,
+            parentSize = parentLayoutSize.width,
+            constraint = offsetConstraints.x,
+        )
 
-            offset.x + offsetChange.x !in -offsetConstraints.x..offsetConstraints.x -> {
-                offset.x.coerceIn(
-                    minimumValue = -offsetConstraints.x,
-                    maximumValue = offsetConstraints.x,
-                )
-            }
+        val offsetY = calculateConstrainedOffset(
+            currentOffset = offset.y,
+            offsetChange = offsetChange.y,
+            scale = scale,
+            originalSize = originalIntSize.height,
+            parentSize = parentLayoutSize.height,
+            constraint = offsetConstraints.y,
+        )
 
-            else -> offset.x + offsetChange.x * scale
-        }
-        val offsetY = when {
-            scale * originalIntSize.height < parentLayoutSize.height -> 0f
-
-            offset.y + offsetChange.y !in -offsetConstraints.y..offsetConstraints.y -> {
-                offset.y.coerceIn(
-                    minimumValue = -offsetConstraints.y,
-                    maximumValue = offsetConstraints.y,
-                )
-            }
-
-            else -> offset.y + offsetChange.y * scale
-        }
         offset = Offset(x = offsetX, y = offsetY)
     }
 
