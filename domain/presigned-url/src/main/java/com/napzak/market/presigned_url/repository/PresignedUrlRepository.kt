@@ -7,5 +7,7 @@ interface PresignedUrlRepository {
 
     suspend fun getProfilePresignedUrls(imageTitles: List<String>): Result<List<PresignedUrl>>
 
+    suspend fun getChatPresignedUrls(imageTitles: List<String>): Result<List<PresignedUrl>>
+
     suspend fun putViaPresignedUrl(presignedUrl: String, imageUri: String): Result<Unit>
 }

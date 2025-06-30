@@ -18,6 +18,10 @@ class PresignedUrlDataSource @Inject constructor(
         imageTitles: List<String>,
     ) = presignedUrlService.getProfilePresignedUrl(imageTitles).data
 
+    suspend fun getChatPresignedUrl(
+        imageTitles: List<String>,
+    ) = presignedUrlService.getChatPresignedUrl(imageTitles).data
+
     suspend fun putViaPresignedUrl(
         presignedUrl: String,
         imageUri: String,
