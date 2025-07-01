@@ -29,7 +29,21 @@ class UploadImagesUseCase @Inject constructor(
 
     private suspend fun getPresignedUrls(images: List<UploadImage>): List<UploadImage> {
         val imageTitles = images.map { imageType -> imageType.title }
-        val presignedUrls = presignedUrlRepository.getProfilePresignedUrls(imageTitles).getOrThrow()
+
+        val presignedUrls = when (images.first().imageType) {
+            ImageType.COVER, ImageType.PROFILE -> {
+                presignedUrlRepository.getProfilePresignedUrls(imageTitles)
+            }
+
+            ImageType.PRODUCT -> {
+                presignedUrlRepository.getProductPresignedUrls(imageTitles)
+            }
+
+            ImageType.CHAT -> {
+                presignedUrlRepository.getChatPresignedUrls(imageTitles)
+            }
+        }.getOrThrow()
+
         return presignedUrls.zip(images).map { (presignedUrl, image) ->
             image.copy(presignedUrl = presignedUrl.url)
         }
