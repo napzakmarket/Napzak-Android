@@ -1,6 +1,7 @@
 package com.napzak.market.presigned_url.usecase
 
 import com.napzak.market.presigned_url.model.UploadImage
+import com.napzak.market.presigned_url.model.UploadImage.ImageType
 import com.napzak.market.presigned_url.repository.PresignedUrlRepository
 import com.napzak.market.util.android.suspendRunCatching
 import kotlinx.coroutines.async
@@ -11,11 +12,11 @@ import kotlinx.coroutines.sync.withPermit
 import javax.inject.Inject
 
 class UploadImagesUseCase @Inject constructor(
-    private val presignedUrlRepository: PresignedUrlRepository
+    private val presignedUrlRepository: PresignedUrlRepository,
 ) {
     suspend operator fun invoke(
-        images: List<UploadImage>
-    ): Result<Map<UploadImage.ImageType, String>> = suspendRunCatching {
+        images: List<UploadImage>,
+    ): Result<Map<ImageType, String>> = suspendRunCatching {
         val uploadImages = getPresignedUrls(images)
         putImageOnS3(uploadImages)
 
