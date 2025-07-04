@@ -3,5 +3,7 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.core.util)
     implementation(libs.javax.inject)
+    implementation(libs.coroutines.core)
 }

@@ -7,8 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.genre.usecase.GetGenreNamesUseCase
+import com.napzak.market.presigned_url.model.UploadImage
+import com.napzak.market.presigned_url.model.UploadImage.ImageType
 import com.napzak.market.presigned_url.type.PhotoType
-import com.napzak.market.presigned_url.usecase.UploadStorePhotoUseCase
+import com.napzak.market.presigned_url.usecase.UploadImagesUseCase
 import com.napzak.market.store.edit_store.state.EditStoreUiState
 import com.napzak.market.store.model.NicknameValidationResult
 import com.napzak.market.store.model.StoreEditGenre
@@ -33,10 +35,10 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class)
 @HiltViewModel
 internal class EditStoreViewModel @Inject constructor(
+    private val uploadImagesUseCase: UploadImagesUseCase,
     private val storeRepository: StoreRepository,
     private val validateNicknameUseCase: ValidateNicknameUseCase,
     private val checkNicknameDuplicationUseCase: CheckNicknameDuplicationUseCase,
-    private val uploadStorePhotoUseCase: UploadStorePhotoUseCase,
     private val getGenreNamesUseCase: GetGenreNamesUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(EditStoreUiState())
@@ -88,7 +90,7 @@ internal class EditStoreViewModel @Inject constructor(
 
     fun saveEditedProfile() = viewModelScope.launch {
         runCatching {
-            getProfilePreSignedUrl()
+            updateProfileImageUrl()
             storeRepository.updateEditProfile(_uiState.value.storeDetail).getOrThrow()
         }.onSuccess {
             _sideEffect.send(EditStoreSideEffect.OnEditComplete)
@@ -97,18 +99,18 @@ internal class EditStoreViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getProfilePreSignedUrl() = with(_uiState.value) {
-        if (isCoverUrlChanged || isPhotoUrlChanged) {
-            val presignedUrls = uploadStorePhotoUseCase(
-                coverPhoto = storeDetail.coverUrl.takeIf { isCoverUrlChanged },
-                profilePhoto = storeDetail.photoUrl.takeIf { isPhotoUrlChanged },
-            ).getOrThrow()
+    private suspend fun updateProfileImageUrl() = with(_uiState.value) {
+        val imageUrls = uploadImagesUseCase(
+            images = buildList {
+                if (isCoverUrlChanged) add(UploadImage(ImageType.COVER, storeDetail.coverUrl))
+                if (isPhotoUrlChanged) add(UploadImage(ImageType.PROFILE, storeDetail.photoUrl))
+            }
+        ).getOrThrow()
 
-            val coverUrl = presignedUrls[PhotoType.COVER] ?: originalStoreDetail.coverUrl
-            val profileUrl = presignedUrls[PhotoType.PROFILE] ?: originalStoreDetail.photoUrl
-
-            updateUiState(coverUrl = coverUrl, photoUrl = profileUrl)
-        }
+        updateUiState(
+            coverUrl = imageUrls[ImageType.COVER] ?: originalStoreDetail.coverUrl,
+            photoUrl = imageUrls[ImageType.PROFILE] ?: originalStoreDetail.photoUrl,
+        )
     }
 
     fun checkNicknameDuplication() = viewModelScope.launch {
