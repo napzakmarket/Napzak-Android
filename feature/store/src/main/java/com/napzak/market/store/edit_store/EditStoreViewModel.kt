@@ -90,27 +90,34 @@ internal class EditStoreViewModel @Inject constructor(
 
     fun saveEditedProfile() = viewModelScope.launch {
         runCatching {
+            updateUiState(isUploading = true)
             updateProfileImageUrl()
             storeRepository.updateEditProfile(_uiState.value.storeDetail).getOrThrow()
         }.onSuccess {
+            updateUiState(isUploading = false)
             _sideEffect.send(EditStoreSideEffect.OnEditComplete)
         }.onFailure {
+            updateUiState(isUploading = false)
             Timber.tag("EditStoreViewModel").e(it) // TODO: 실패했을 경우에 대한 처리 논의
         }
     }
 
     private suspend fun updateProfileImageUrl() = with(_uiState.value) {
-        val imageUrls = uploadImagesUseCase(
-            images = buildList {
-                if (isCoverUrlChanged) add(UploadImage(ImageType.COVER, storeDetail.coverUrl))
-                if (isPhotoUrlChanged) add(UploadImage(ImageType.PROFILE, storeDetail.photoUrl))
-            }
-        ).getOrThrow()
+        buildList {
+            if (isCoverUrlChanged) add(UploadImage(ImageType.COVER, storeDetail.coverUrl))
+            if (isPhotoUrlChanged) add(UploadImage(ImageType.PROFILE, storeDetail.photoUrl))
+        }.run {
+            if (this.isNotEmpty()) {
+                val imageUrls = uploadImagesUseCase(
+                    images = this
+                ).getOrThrow()
 
-        updateUiState(
-            coverUrl = imageUrls[ImageType.COVER] ?: originalStoreDetail.coverUrl,
-            photoUrl = imageUrls[ImageType.PROFILE] ?: originalStoreDetail.photoUrl,
-        )
+                updateUiState(
+                    coverUrl = imageUrls[ImageType.COVER] ?: originalStoreDetail.coverUrl,
+                    photoUrl = imageUrls[ImageType.PROFILE] ?: originalStoreDetail.photoUrl,
+                )
+            }
+        }
     }
 
     fun checkNicknameDuplication() = viewModelScope.launch {
@@ -155,6 +162,7 @@ internal class EditStoreViewModel @Inject constructor(
 
     fun updateUiState(
         loadState: UiState<Unit> = _uiState.value.loadState,
+        isUploading: Boolean = _uiState.value.isUploading,
         nickNameValidationState: NicknameValidationResult = _uiState.value.nickNameValidationState,
         nickNameDuplicationState: UiState<String> = _uiState.value.nickNameDuplicationState,
         searchedGenres: List<Genre> = _uiState.value.searchedGenres,
@@ -163,6 +171,7 @@ internal class EditStoreViewModel @Inject constructor(
     ) {
         updateUiState(
             loadState = loadState,
+            isUploading = isUploading,
             nickNameValidationState = nickNameValidationState,
             nickNameDuplicationState = nickNameDuplicationState,
             searchedGenres = searchedGenres,
@@ -177,6 +186,7 @@ internal class EditStoreViewModel @Inject constructor(
 
     fun updateUiState(
         loadState: UiState<Unit> = _uiState.value.loadState,
+        isUploading: Boolean = _uiState.value.isUploading,
         nickNameValidationState: NicknameValidationResult = _uiState.value.nickNameValidationState,
         nickNameDuplicationState: UiState<String> = _uiState.value.nickNameDuplicationState,
         searchedGenres: List<Genre> = _uiState.value.searchedGenres,
@@ -193,6 +203,7 @@ internal class EditStoreViewModel @Inject constructor(
         _uiState.update { currentState ->
             currentState.copy(
                 loadState = loadState,
+                isUploading = isUploading,
                 nickNameValidationState = nickNameValidationState,
                 nickNameDuplicationState = nickNameDuplicationState,
                 searchedGenres = searchedGenres,
