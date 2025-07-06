@@ -143,6 +143,7 @@ fun NavGraphBuilder.mypageGraph(
             }
 
             WithdrawConfirmScreen(
+                isWithdrawing = viewModel.isWithdrawing,
                 onConfirmClick = viewModel::withdrawStore,
                 onCancelClick = navController::popBackStackOnCompleteWithdraw,
                 onNavigateUpClick = navigateToUp,
