@@ -100,7 +100,9 @@ private fun EditStoreScreen(
 ) {
     val focusManager = LocalFocusManager.current
 
-    if (uiState.isUploading) NapzakLoadingOverlay()
+    if (uiState.isUploading || uiState.loadState is UiState.Loading) {
+        NapzakLoadingOverlay()
+    }
 
     Scaffold(
         topBar = {
@@ -172,8 +174,6 @@ private fun EditStoreScreen(
                     )
                 }
             }
-
-            is UiState.Loading -> NapzakLoadingOverlay()
 
             else -> {
                 // TODO: 다양한 UiState에 대한 화면 처리
