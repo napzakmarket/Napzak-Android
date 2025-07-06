@@ -22,7 +22,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_back_24
+import com.napzak.market.designsystem.R.drawable.ic_chevron_left_24
 import com.napzak.market.designsystem.R.string.top_bar_navigate_up
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
@@ -49,7 +49,7 @@ fun NavigateUpTopBar(
                 .padding(top = 34.dp, bottom = 18.dp),
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(ic_back_24),
+                imageVector = ImageVector.vectorResource(ic_chevron_left_24),
                 contentDescription = stringResource(top_bar_navigate_up),
                 tint = iconColor,
                 modifier = Modifier
