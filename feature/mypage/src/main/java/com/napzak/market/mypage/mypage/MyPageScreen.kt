@@ -16,6 +16,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.napzak.market.common.state.UiState
+import com.napzak.market.designsystem.component.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.topbar.NapzakLogoTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.mypage.mypage.component.MyPageMenuCard
@@ -72,6 +74,9 @@ private fun MyPageScreen(
     onHelpClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
+    if (uiState.loadState is UiState.Loading) NapzakLoadingOverlay()
+
     Column(
         modifier = modifier
             .fillMaxSize()
