@@ -135,6 +135,7 @@ androidx-multidex = { group = "androidx.multidex", name = "multidex", version.re
 ## firebase
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 
 [bundles]
 coroutine = [
