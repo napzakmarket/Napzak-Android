@@ -63,4 +63,5 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.messaging)
+    implementation(libs.firebase.messaging.lifecycle.ktx)
 }
