@@ -38,6 +38,14 @@
                 <data android:scheme="@string/kakao_key" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".config.messaging.NapzakFirebaseMessaging"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
