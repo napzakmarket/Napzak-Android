@@ -20,6 +20,7 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
         val intent = Intent(this, MainActivity::class.java).apply {
             putExtra("navigateTo", "chat")
+            putExtra("chatRoomId", 1.toLong()) // TODO: 알림에서 받은 id값으로 변경
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         val pendingIntent = PendingIntent.getActivity(

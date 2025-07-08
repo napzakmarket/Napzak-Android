@@ -18,9 +18,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val navigateTo = intent.getStringExtra(NAVIGATE_KEY)
+            val chatRoomId = intent.getLongExtra(CHAT_ROOD_ID_KEY, -1)
+            val shouldSkipSplash = navigateTo != null // FCM 클릭 시엔 Splash 건너뜀
+
             NapzakMarketTheme {
+                val navigator = rememberMainNavigator(shouldSkipSplash = shouldSkipSplash)
+
                 MainScreen(
-                    restartApplication = ::restartApplication
+                    restartApplication = ::restartApplication,
+                    navigateTo = navigateTo,
+                    chatRoomId = chatRoomId,
+                    navigator = navigator,
                 )
             }
         }
@@ -49,5 +58,10 @@ class MainActivity : ComponentActivity() {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(this)
         }
+    }
+
+    companion object {
+        const val NAVIGATE_KEY = "navigateTo"
+        const val CHAT_ROOD_ID_KEY = "chatRoomId"
     }
 }

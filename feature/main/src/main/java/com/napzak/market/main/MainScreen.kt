@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -69,6 +70,8 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun MainScreen(
     restartApplication: () -> Unit,
+    navigateTo: String? = null,
+    chatRoomId: Long = -1,
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
     val context = LocalContext.current
@@ -97,6 +100,17 @@ fun MainScreen(
     }
 
     val statusBarColor = NapzakMarketTheme.colors.white
+
+    LaunchedEffect(navigateTo, chatRoomId) {
+        if (navigateTo == "chat") {
+            if (chatRoomId != (-1).toLong()) {
+                navigator.navController.navigateToChatRoom(chatRoomId = chatRoomId)
+            } else {
+                //Todo: 추후 else 부분 제거
+                navigator.navController.navigateToChatRoom(chatRoomId = chatRoomId)
+            }
+        }
+    }
 
     SideEffect {
         systemUiController.setStatusBarColor(
