@@ -1,10 +1,14 @@
 package com.napzak.market.main
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,6 +21,21 @@ class MainActivity : ComponentActivity() {
             NapzakMarketTheme {
                 MainScreen(
                     restartApplication = ::restartApplication
+                )
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                )
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    1001
                 )
             }
         }
