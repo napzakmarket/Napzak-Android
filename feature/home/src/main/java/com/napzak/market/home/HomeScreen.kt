@@ -7,9 +7,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,6 +27,7 @@ import coil.request.ImageRequest
 import com.napzak.market.banner.Banner
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
+import com.napzak.market.designsystem.component.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
@@ -137,7 +137,7 @@ private fun HomeScreen(
             )
 
             is UiState.Failure -> {}
-            is UiState.Loading -> {}
+            is UiState.Loading -> NapzakLoadingOverlay()
             is UiState.Empty -> {}
         }
     }
@@ -157,96 +157,112 @@ private fun HomeSuccessScreen(
     onMostInterestedBuyNavigate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scrollState = rememberScrollState()
     val context = LocalContext.current
 
-    Column(modifier = modifier.verticalScroll(scrollState)) {
-        SearchTextField(
-            text = "",
-            hint = stringResource(home_search_text_field_hint),
-            onTextChange = {},
-            onSearchClick = {},
-            onResetClick = {},
-            enabled = false,
-            readOnly = true,
-            modifier = Modifier
-                .noRippleClickable(onSearchTextFieldClick)
-                .padding(horizontal = 20.dp),
-        )
+    LazyColumn(modifier = modifier) {
+        item {
+            SearchTextField(
+                text = "",
+                hint = stringResource(home_search_text_field_hint),
+                onTextChange = {},
+                onSearchClick = {},
+                onResetClick = {},
+                enabled = false,
+                readOnly = true,
+                modifier = Modifier
+                    .noRippleClickable(onSearchTextFieldClick)
+                    .padding(horizontal = 20.dp),
+            )
+        }
 
-        banners[HomeBannerType.TOP]?.let { topBanners ->
-            HorizontalAutoScrolledImages(
-                images = topBanners.map { it.imageUrl }.toImmutableList(),
-                onImageClick = { index ->
-                    runCatching {
-                        context.openUrl(topBanners[index].linkUrl)
-                    }
+        item {
+            banners[HomeBannerType.TOP]?.let { topBanners ->
+                HorizontalAutoScrolledImages(
+                    images = topBanners.map { it.imageUrl }.toImmutableList(),
+                    onImageClick = { index ->
+                        runCatching {
+                            context.openUrl(topBanners[index].linkUrl)
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(360 / 216f)
+                        .padding(top = 20.dp),
+                )
+            }
+        }
+
+        item {
+            HorizontalScrollableProducts(
+                products = productRecommends,
+                title = stringResource(home_list_customized_title, nickname),
+                subTitle = stringResource(home_list_customized_sub_title, nickname),
+                onProductClick = onProductClick,
+                onLikeClick = { productId, isInterest ->
+                    onLikeButtonClick(productId, isInterest, HomeProductType.RECOMMEND)
                 },
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 32.dp),
+            )
+        }
+
+        item {
+            banners[HomeBannerType.MIDDLE]?.let { banner ->
+                HomeSingleBanner(
+                    banner = banner.first(),
+                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 40.dp),
+                )
+            }
+        }
+
+        item {
+            VerticalGridProducts(
+                products = sellProducts,
+                title = stringResource(home_list_interested_sell_title),
+                subTitle = stringResource(home_list_interested_sell_sub_title),
+                onProductClick = onProductClick,
+                onLikeClick = { productId, isInterest ->
+                    onLikeButtonClick(productId, isInterest, HomeProductType.POPULAR_SELL)
+                },
+                onMoreClick = onMostInterestedSellNavigate,
+                modifier = Modifier
+                    .padding(top = 30.dp)
+                    .background(color = NapzakMarketTheme.colors.gray10)
+                    .padding(start = 20.dp, end = 20.dp, top = 32.dp, bottom = 20.dp),
+            )
+        }
+
+        item {
+            banners[HomeBannerType.BOTTOM]?.let { banner ->
+                HomeSingleBanner(
+                    banner = banner.first(),
+                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 40.dp),
+                )
+            }
+        }
+
+        item {
+            VerticalGridProducts(
+                products = buyProducts,
+                title = stringResource(home_list_interested_buy_title),
+                subTitle = stringResource(home_list_interested_buy_sub_title),
+                onProductClick = onProductClick,
+                onLikeClick = { productId, isInterest ->
+                    onLikeButtonClick(productId, isInterest, HomeProductType.POPULAR_BUY)
+                },
+                onMoreClick = onMostInterestedBuyNavigate,
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 40.dp),
+            )
+        }
+
+
+        item {
+            Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(360 / 216f)
-                    .padding(top = 20.dp),
+                    .height(165.dp)
+                    .background(NapzakMarketTheme.colors.gray10)
             )
         }
-
-        HorizontalScrollableProducts(
-            products = productRecommends,
-            title = stringResource(home_list_customized_title, nickname),
-            subTitle = stringResource(home_list_customized_sub_title, nickname),
-            onProductClick = onProductClick,
-            onLikeClick = { productId, isInterest ->
-                onLikeButtonClick(productId, isInterest, HomeProductType.RECOMMEND)
-            },
-            modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 32.dp),
-        )
-
-        banners[HomeBannerType.MIDDLE]?.let { banner ->
-            HomeSingleBanner(
-                banner = banner.first(),
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 40.dp),
-            )
-        }
-
-        VerticalGridProducts(
-            products = sellProducts,
-            title = stringResource(home_list_interested_sell_title),
-            subTitle = stringResource(home_list_interested_sell_sub_title),
-            onProductClick = onProductClick,
-            onLikeClick = { productId, isInterest ->
-                onLikeButtonClick(productId, isInterest, HomeProductType.POPULAR_SELL)
-            },
-            onMoreClick = onMostInterestedSellNavigate,
-            modifier = Modifier
-                .padding(top = 30.dp)
-                .background(color = NapzakMarketTheme.colors.gray10)
-                .padding(start = 20.dp, end = 20.dp, top = 32.dp, bottom = 20.dp),
-        )
-
-        banners[HomeBannerType.BOTTOM]?.let { banner ->
-            HomeSingleBanner(
-                banner = banner.first(),
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 40.dp),
-            )
-        }
-
-        VerticalGridProducts(
-            products = buyProducts,
-            title = stringResource(home_list_interested_buy_title),
-            subTitle = stringResource(home_list_interested_buy_sub_title),
-            onProductClick = onProductClick,
-            onLikeClick = { productId, isInterest ->
-                onLikeButtonClick(productId, isInterest, HomeProductType.POPULAR_BUY)
-            },
-            onMoreClick = onMostInterestedBuyNavigate,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 40.dp),
-        )
-
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(165.dp)
-                .background(NapzakMarketTheme.colors.gray10)
-        )
     }
 }
 

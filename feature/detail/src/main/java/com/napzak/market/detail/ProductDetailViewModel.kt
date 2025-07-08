@@ -35,7 +35,7 @@ internal class ProductDetailViewModel @Inject constructor(
     private val productId: Long? = savedStateHandle.get<Long>(PRODUCT_ID_KEY)
 
     private val _productDetail: MutableStateFlow<UiState<ProductDetail>> =
-        MutableStateFlow(UiState.Empty)
+        MutableStateFlow(UiState.Loading)
     val productDetail = _productDetail.asStateFlow()
 
     // NOTE: 뷰모델이 처음 생성될 때 좋아요 로직이 불리는 것을 방지하기 위해 initialLoading을 사용한다.
