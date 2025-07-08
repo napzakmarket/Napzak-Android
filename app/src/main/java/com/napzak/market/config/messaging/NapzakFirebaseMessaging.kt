@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.RemoteMessage
+import com.napzak.market.R.drawable.ic_app
 import com.napzak.market.main.MainActivity
 import com.skydoves.firebase.messaging.lifecycle.ktx.LifecycleAwareFirebaseMessagingService
 import timber.log.Timber
@@ -31,6 +32,7 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
             NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).setContentTitle(title)
                 .setContentText(body)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+                .setSmallIcon(ic_app)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
