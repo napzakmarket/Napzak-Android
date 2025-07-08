@@ -1,5 +1,7 @@
 package com.napzak.market.config.messaging
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import androidx.core.app.NotificationCompat
@@ -12,12 +14,9 @@ import timber.log.Timber
 class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        if (message.data.isEmpty()) return
 
-        val receivedData = message.data
-        val notificationId = receivedData["id"] ?: ""
-        val title = receivedData["title"] ?: ""
-        val body = receivedData["content"] ?: ""
+        val title = message.notification?.title ?: "납작 채팅 제목"
+        val body = message.notification?.body ?: "납작 채팅 내용"
 
         val intent = Intent(this, MainActivity::class.java).apply {
             putExtra("navigateTo", "chat")
@@ -27,16 +26,24 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
             this, 0, intent, PendingIntent.FLAG_IMMUTABLE
         )
 
+        val channel = NotificationChannel(
+            NOTIFICATION_CHANNEL_ID,
+            "납작 푸시 알림",
+            NotificationManager.IMPORTANCE_HIGH
+        )
         val notifyId = System.currentTimeMillis().toInt()
-        val notificationBuilder =
-            NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).setContentTitle(title)
-                .setContentText(body)
-                .setStyle(NotificationCompat.BigTextStyle().bigText(body))
-                .setSmallIcon(ic_app)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .build()
+        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+            .setSmallIcon(ic_app)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(notifyId, notification.build())
+        notificationManager.createNotificationChannel(channel)
     }
 
     override fun onNewToken(token: String) {
@@ -48,4 +55,3 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
         const val NOTIFICATION_CHANNEL_ID = "Napzak"
     }
 }
-
