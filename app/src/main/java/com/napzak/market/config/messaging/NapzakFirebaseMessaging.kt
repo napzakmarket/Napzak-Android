@@ -31,6 +31,10 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
             "납작 푸시 알림",
             NotificationManager.IMPORTANCE_HIGH
         )
+
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+
         val notifyId = System.currentTimeMillis().toInt()
         val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(ic_app)
@@ -41,9 +45,7 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
 
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(notifyId, notification.build())
-        notificationManager.createNotificationChannel(channel)
     }
 
     override fun onNewToken(token: String) {
