@@ -37,7 +37,7 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
         val notifyId = System.currentTimeMillis().toInt()
         val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(ic_app)
+            .setSmallIcon(ic_app) // TODO : Icon 이미지 변경
             .setContentTitle(title)
             .setContentText(body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
@@ -51,6 +51,7 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Timber.tag("FCM Token").d(token)
+        // TODO: 토큰 저장 API 연결
     }
 
     companion object {

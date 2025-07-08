@@ -37,6 +37,7 @@ class MainActivity : ComponentActivity() {
                     arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
                     1001
                 )
+                // TODO : 시스템 설정 값 API 연결
             }
         }
     }
