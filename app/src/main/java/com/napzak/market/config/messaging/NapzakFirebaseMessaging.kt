@@ -6,7 +6,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.RemoteMessage
-import com.napzak.market.R.drawable.ic_app
+import com.napzak.market.R.drawable.ic_push_notification
 import com.napzak.market.main.MainActivity
 import com.skydoves.firebase.messaging.lifecycle.ktx.LifecycleAwareFirebaseMessagingService
 import timber.log.Timber
@@ -38,7 +38,7 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
         val notifyId = System.currentTimeMillis().toInt()
         val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(ic_app) // TODO : Icon 이미지 변경
+            .setSmallIcon(ic_push_notification)
             .setContentTitle(title)
             .setContentText(body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
