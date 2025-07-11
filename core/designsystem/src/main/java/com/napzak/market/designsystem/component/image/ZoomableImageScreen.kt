@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
@@ -59,16 +60,21 @@ fun ZoomableImageScreen(
             .onGloballyPositioned { zoomState.parentLayoutSize = it.size },
         contentAlignment = Alignment.Center,
     ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_arrow_left),
-            contentDescription = null,
-            tint = NapzakMarketTheme.colors.white,
+        Box(
             modifier = Modifier
+                .padding(start = 15.dp, top = 26.dp)
+                .size(24.dp)
                 .align(Alignment.TopStart)
                 .zIndex(1f)
-                .padding(start = 20.dp, top = 34.dp)
                 .noRippleClickable(onClick = onBackClick),
-        )
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(ic_arrow_left),
+                contentDescription = null,
+                tint = NapzakMarketTheme.colors.white,
+            )
+        }
 
         HorizontalPager(
             state = pagerState,
