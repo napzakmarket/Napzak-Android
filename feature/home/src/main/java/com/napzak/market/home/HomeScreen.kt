@@ -73,10 +73,7 @@ internal fun HomeRoute(
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        with(viewModel) {
-            getBanners()
-            getHomeProducts()
-        }
+        viewModel.fetchHomeData()
     }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {

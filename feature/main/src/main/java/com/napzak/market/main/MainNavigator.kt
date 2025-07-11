@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.napzak.market.chat.navigation.navigateToChatList
 import com.napzak.market.explore.navigation.navigateToExplore
+import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.navigateToHome
 import com.napzak.market.mypage.navigation.navigateToMyPage
 import com.napzak.market.splash.navigation.Splash
@@ -42,7 +43,7 @@ class MainNavigator(
         if (tab != MainTab.REGISTER && isRegister) dismissRegisterDialog()
 
         val navOptions = navOptions {
-            navController.currentDestination?.route?.let {
+            navController.getBackStackEntry<Home>().destination.route?.let {
                 popUpTo(it) {
                     saveState = true
                 }
@@ -52,13 +53,13 @@ class MainNavigator(
         }
 
         when (tab) {
-            MainTab.HOME -> navController.navigateToHome(navOptions)
-            MainTab.EXPLORE -> navController.navigateToExplore()
+            MainTab.HOME -> navController.navigateToHome(navOptions = navOptions)
+            MainTab.EXPLORE -> navController.navigateToExplore(navOptions = navOptions)
             MainTab.REGISTER -> {
                 isRegister = isRegister.not()
             }
-            MainTab.CHAT -> navController.navigateToChatList()
-            MainTab.MY_PAGE -> navController.navigateToMyPage(navOptions)
+            MainTab.CHAT -> navController.navigateToChatList(navOptions = navOptions)
+            MainTab.MY_PAGE -> navController.navigateToMyPage(navOptions = navOptions)
         }
     }
 
