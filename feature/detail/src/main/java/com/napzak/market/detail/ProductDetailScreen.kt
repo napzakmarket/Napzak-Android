@@ -1,5 +1,6 @@
 package com.napzak.market.detail
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
@@ -218,6 +219,10 @@ private fun SuccessScreen(
     var selectedImageIndex: Int? by remember { mutableStateOf(null) }
     val imageUrls = remember(productPhotos) {
         productPhotos.map { it.photoUrl }.toImmutableList()
+    }
+
+    BackHandler(selectedImageIndex != null) {
+        selectedImageIndex = null
     }
 
     selectedImageIndex?.let {
