@@ -25,6 +25,7 @@ import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.component.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.component.dialog.NapzakDialogDefault
+import com.napzak.market.designsystem.component.image.ZoomableImageScreen
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -214,12 +215,27 @@ private fun SuccessScreen(
     onMarketClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var selectedImageIndex: Int? by remember { mutableStateOf(null) }
+    val imageUrls = remember(productPhotos) {
+        productPhotos.map { it.photoUrl }.toImmutableList()
+    }
+
+    selectedImageIndex?.let {
+        ZoomableImageScreen(
+            imageUrls = imageUrls,
+            initialPage = it,
+            contentDescription = productDetail.productName,
+            onBackClick = { selectedImageIndex = null },
+        )
+    }
+
     LazyColumn(modifier = modifier) {
         item {
             ProductImageGroup(
-                imageUrls = productPhotos.map { it.photoUrl }.toImmutableList(),
+                imageUrls = imageUrls,
                 contentDescription = productDetail.productName,
                 tradeStatusType = tradeStatus,
+                onClick = { selectedImageIndex = it },
             )
 
             with(productDetail) {
