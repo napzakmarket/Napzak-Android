@@ -47,6 +47,7 @@ fun SplashRoute(
         onDispose {
             localSystemBarsColor.setSystemBarColor(
                 systemBarsColor = originalColor,
+                navigationBarColor = originalColor
             )
         }
     }
