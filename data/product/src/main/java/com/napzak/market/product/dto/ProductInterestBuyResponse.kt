@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ProductInterestBuyResponse(
     @SerialName("interestedBuyProductList") val products: List<ProductResponse>,
-    @SerialName("nextCursor") val nextCursor: String?,
+    @SerialName("nextCursor") val nextCursor: String? = null,
 )
