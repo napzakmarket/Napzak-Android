@@ -1,3 +1,4 @@
+import com.napzak.market.buildlogic.dsl.implementation
 import com.napzak.market.buildlogic.dsl.setNameSpace
 
 plugins {
@@ -13,7 +14,8 @@ android {
 
 dependencies {
     implementation(projects.data.remote)
-    implementation(projects.domain.genre)
+    implementation(projects.domain.chat)
+    implementation(projects.core.util)
 
     implementation(libs.timber)
 
