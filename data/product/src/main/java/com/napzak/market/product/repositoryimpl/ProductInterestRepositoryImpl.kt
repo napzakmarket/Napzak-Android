@@ -19,7 +19,7 @@ class ProductInterestRepositoryImpl @Inject constructor(
 
     override suspend fun getInterestBuyProducts(cursor: String?): Result<Pair<List<Product>, String>> =
         runCatching {
-            val responseData = productInterestDataSource.getInterestSellProducts(cursor).data
+            val responseData = productInterestDataSource.getInterestBuyProducts(cursor).data
             val cursor = responseData.nextCursor
             val products = responseData.products.toProducts()
             (products to cursor) as Pair<List<Product>, String>
