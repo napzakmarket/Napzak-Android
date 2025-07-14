@@ -57,6 +57,7 @@ include(
     ":domain:report",
     ":domain:interest",
     ":domain:presigned-url",
+    ":domain:chat",
 )
 
 include(
