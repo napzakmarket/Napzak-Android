@@ -1,6 +1,8 @@
 package com.napzak.market.main
 
 import android.app.Activity
+import android.net.Uri
+import android.util.Log
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
@@ -70,8 +72,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun MainScreen(
     restartApplication: () -> Unit,
-    navigateTo: String? = null,
-    chatRoomId: Long = -1,
+    deepLinkUri: Uri?,
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
     val context = LocalContext.current
@@ -101,13 +102,14 @@ fun MainScreen(
 
     val statusBarColor = NapzakMarketTheme.colors.white
 
-    LaunchedEffect(navigateTo, chatRoomId) {
-        if (navigateTo == "chat") {
-            if (chatRoomId != (-1).toLong()) {
-                navigator.navController.navigateToChatRoom(chatRoomId = chatRoomId)
-            } else {
-                //Todo: 추후 else 부분 제거
-                navigator.navController.navigateToChatRoom(chatRoomId = chatRoomId)
+    LaunchedEffect(deepLinkUri) {
+        deepLinkUri?.let { uri ->
+            if (uri.scheme == "myapp" && uri.host == "chat") {
+                val chatRoomId = uri.lastPathSegment?.toLongOrNull()
+                Log.d("fcm", "MainScreen: id : $chatRoomId")
+                chatRoomId?.let {
+                    navigator.navController.navigateToChatRoom(chatRoomId = it)
+                }
             }
         }
     }

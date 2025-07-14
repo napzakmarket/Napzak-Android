@@ -18,6 +18,7 @@
         <activity
             android:name=".main.MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.NapzakMarket">
@@ -25,6 +26,17 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="myapp"
+                    android:host="chat"
+                    android:pathPattern="/[0-9]+" />
             </intent-filter>
         </activity>
 
@@ -47,6 +59,9 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <receiver
+            android:name=".config.messaging.DeepLinkReceiver"
+            android:exported="true" />
     </application>
 
 </manifest>
