@@ -45,6 +45,7 @@ include(
     ":data:report",
     ":data:interest",
     ":data:presigned-url",
+    ":data:chat",
 )
 
 include(
