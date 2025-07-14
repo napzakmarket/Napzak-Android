@@ -18,7 +18,10 @@ dependencies {
     implementation(projects.core.util)
 
     implementation(libs.timber)
+    implementation(libs.retrofit.gson.converter)
 
+    testImplementation(libs.okhttp.mockwebserver)
+    testImplementation(libs.coroutines.test)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
