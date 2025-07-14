@@ -30,13 +30,13 @@ class SystemBarsColorController @Inject constructor() {
     private var localSystemBarsColor by mutableStateOf(SystemBarsColor())
 
     fun setSystemBarColor(
-        systemBarsColor: Color,
+        statusBarColor: Color,
         navigationBarColor: Color = Color.White,
         isStatusDarkIcon: Boolean = true,
         isNavigationDarkIcon: Boolean = true,
     ) {
         localSystemBarsColor = localSystemBarsColor.copy(
-            statusBarColor = systemBarsColor,
+            statusBarColor = statusBarColor,
             navigationBarColor = navigationBarColor,
             isStatusDarkIcon = isStatusDarkIcon,
             isNavigationDarkIcon = isNavigationDarkIcon

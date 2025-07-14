@@ -38,7 +38,7 @@ fun SplashRoute(
 
     DisposableEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
-            systemBarsColor = splashColor,
+            statusBarColor = splashColor,
             navigationBarColor = splashColor,
             isStatusDarkIcon = false,
             isNavigationDarkIcon = false,
@@ -46,7 +46,7 @@ fun SplashRoute(
 
         onDispose {
             localSystemBarsColor.setSystemBarColor(
-                systemBarsColor = originalColor,
+                statusBarColor = originalColor,
                 navigationBarColor = originalColor
             )
         }

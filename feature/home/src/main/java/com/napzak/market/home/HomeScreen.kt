@@ -78,7 +78,7 @@ internal fun HomeRoute(
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
-            systemBarsColor = backgroundColor,
+            statusBarColor = backgroundColor,
             navigationBarColor = backgroundColor
         )
         viewModel.fetchHomeData()
