@@ -13,7 +13,9 @@ import javax.inject.Inject
 class ChatRoomRepositoryImpl @Inject constructor(
     private val chatRoomDataSource: ChatRoomDataSource,
 ) : ChatRoomRepository {
-    override suspend fun getChatRoomInformation(roomId: Long): Result<ChatRoomInformation> {
+    override suspend fun getChatRoomInformation(
+        roomId: Long,
+    ): Result<ChatRoomInformation> {
         return suspendRunCatching {
             val response = chatRoomDataSource.getChatRoomInformation(roomId)
             with(response.data) {
@@ -24,7 +26,10 @@ class ChatRoomRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createChatRoom(productId: Long, receiverId: Long): Result<Long> {
+    override suspend fun createChatRoom(
+        productId: Long,
+        receiverId: Long,
+    ): Result<Long> {
         return suspendRunCatching {
             val request = ChatRoomCreateRequest(productId, receiverId)
             val response = chatRoomDataSource.createChatRoom(request)
@@ -37,38 +42,43 @@ class ChatRoomRepositoryImpl @Inject constructor(
     ): Result<List<ChatItem<*>>> {
         return suspendRunCatching {
             val response = chatRoomDataSource.getChatRoomMessages(roomId)
-
-            response.data.messages.map { message ->
-                message.toDomain()
-            }
+            response.data.messages.map { it.toDomain() }
         }
     }
 
-    override suspend fun enterChatRoom(roomId: Long): Result<Long> {
+    override suspend fun enterChatRoom(
+        roomId: Long,
+    ): Result<Long> {
         return suspendRunCatching {
             val response = chatRoomDataSource.enterChatRoom(roomId)
             response.data.productId
         }
     }
 
-    override suspend fun leaveChatRoom(roomId: Long): Result<Unit> {
+    override suspend fun leaveChatRoom(
+        roomId: Long,
+    ): Result<Unit> {
         return suspendRunCatching {
             chatRoomDataSource.leaveChatRoom(roomId)
         }
     }
 
-    override suspend fun withdrawChatRoom(roomId: Long): Result<Unit> {
+    override suspend fun withdrawChatRoom(
+        roomId: Long,
+    ): Result<Unit> {
         return suspendRunCatching {
             chatRoomDataSource.withdrawChatRoom(roomId)
         }
     }
 
-    override suspend fun patchChatRoomProduct(roomId: Long, productId: Long): Result<Long> {
+    override suspend fun patchChatRoomProduct(
+        roomId: Long,
+        productId: Long,
+    ): Result<Long> {
         return suspendRunCatching {
             val request = ChatRoomPatchProductRequest(productId)
             val response = chatRoomDataSource.patchChatRoomProduct(roomId, request)
             response.data.updatedProductId
-
         }
     }
 }

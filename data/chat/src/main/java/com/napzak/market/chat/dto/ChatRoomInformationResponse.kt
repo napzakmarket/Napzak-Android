@@ -28,4 +28,3 @@ data class ChatRoomInformationResponse(
         @SerialName("storePhoto") val storePhoto: String,
     )
 }
-

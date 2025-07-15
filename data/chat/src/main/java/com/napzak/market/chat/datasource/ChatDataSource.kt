@@ -8,7 +8,9 @@ import javax.inject.Inject
 class ChatDataSource @Inject constructor(
     private val chatService: ChatService,
 ) {
-    suspend fun getChatRooms(deviceToken: String?): BaseResponse<ChatRoomListRequest> {
+    suspend fun getChatRooms(
+        deviceToken: String?,
+    ): BaseResponse<ChatRoomListRequest> {
         return chatService.getChatRooms(deviceToken)
     }
 }

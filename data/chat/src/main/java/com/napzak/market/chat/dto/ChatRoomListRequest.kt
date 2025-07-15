@@ -15,6 +15,6 @@ data class ChatRoomListRequest(
         @SerialName("lastMessage") val lastMessage: String,
         @SerialName("lastMessageAt") val lastMessageAt: String,
         @SerialName("unreadCount") val unreadCount: Int,
-        @SerialName("opponentStorePhoto") val opponentStorePhoto: String
+        @SerialName("opponentStorePhoto") val opponentStorePhoto: String,
     )
 }

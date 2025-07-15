@@ -15,11 +15,15 @@ import javax.inject.Inject
 class ChatRoomDataSource @Inject constructor(
     private val chatRoomService: ChatRoomService,
 ) {
-    suspend fun getChatRoomInformation(roomId: Long): BaseResponse<ChatRoomInformationResponse> {
+    suspend fun getChatRoomInformation(
+        roomId: Long,
+    ): BaseResponse<ChatRoomInformationResponse> {
         return chatRoomService.getProductChatInformation(roomId)
     }
 
-    suspend fun createChatRoom(request: ChatRoomCreateRequest): BaseResponse<ChatRoomCreateResponse> {
+    suspend fun createChatRoom(
+        request: ChatRoomCreateRequest,
+    ): BaseResponse<ChatRoomCreateResponse> {
         return chatRoomService.createChatRoom(request)
     }
 
@@ -31,21 +35,27 @@ class ChatRoomDataSource @Inject constructor(
         return chatRoomService.getChatRoomMessages(roomId, cursor, size)
     }
 
-    suspend fun enterChatRoom(roomId: Long): BaseResponse<ChatRoomEnterResponse> {
+    suspend fun enterChatRoom(
+        roomId: Long,
+    ): BaseResponse<ChatRoomEnterResponse> {
         return chatRoomService.enterChatRoom(roomId)
     }
 
-    suspend fun leaveChatRoom(roomId: Long): EmptyDataResponse {
+    suspend fun leaveChatRoom(
+        roomId: Long,
+    ): EmptyDataResponse {
         return chatRoomService.leaveChatRoom(roomId)
     }
 
-    suspend fun withdrawChatRoom(roomId: Long): EmptyDataResponse {
+    suspend fun withdrawChatRoom(
+        roomId: Long,
+    ): EmptyDataResponse {
         return chatRoomService.withdrawChatRoom(roomId)
     }
 
     suspend fun patchChatRoomProduct(
         roomId: Long,
-        request: ChatRoomPatchProductRequest
+        request: ChatRoomPatchProductRequest,
     ): BaseResponse<ChatRoomPatchProductResponse> {
         return chatRoomService.patchChatRoomProduct(roomId, request)
     }

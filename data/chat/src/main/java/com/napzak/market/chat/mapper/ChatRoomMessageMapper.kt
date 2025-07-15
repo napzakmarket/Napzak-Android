@@ -63,4 +63,3 @@ private fun MessageItem.toDate(metadata: MessageMetadata.Date): ChatItem.Date =
         date = metadata.content,
         timeStamp = "",
     )
-

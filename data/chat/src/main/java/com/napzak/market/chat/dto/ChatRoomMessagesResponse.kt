@@ -32,7 +32,7 @@ data class MessageItem(
     @SerialName("isMessageOwner")
     val isMessageOwner: Boolean?,
     @SerialName("isProfileNeeded")
-    val isProfileNeeded: Boolean?
+    val isProfileNeeded: Boolean?,
 )
 
 @OptIn(ExperimentalSerializationApi::class)
