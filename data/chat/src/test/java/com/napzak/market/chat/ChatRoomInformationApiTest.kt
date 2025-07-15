@@ -64,28 +64,28 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
     @Test
     fun `fetch ChatRoomInformationResponse From Repository`() = runTest {
         // given
-        enqueueResponse("/ChatRoomInformation.json")
+        enqueueResponse("ChatRoomInformation.json")
         val dataSource = ChatRoomDataSource(service)
 
         // when
-        val result =
-            ChatRoomRepositoryImpl(dataSource).getChatRoomInformation(roomId = 5).getOrNull()
+        val result = ChatRoomRepositoryImpl(dataSource)
+            .getChatRoomInformation(roomId = 5)
+            .getOrNull()
         mockWebServer.takeRequest()
 
 
         // then
-        assert(result != null) { "Repository 매핑 결과가 널 입니다." }
-        if (result != null) {
-            val roomId = result.first
-            val (productBrief, storeBrief) = result.second
+        assert(result?.roomId != null) { "Repository 매핑 결과가 널 입니다." }
+        if (result?.roomId != null) {
+            with(result) {
+                assertEquals(5L, roomId)
 
-            assertEquals(5, roomId)
+                assertEquals("BUY", productBrief.tradeType)
+                assertEquals("슈가슈가룬 쇼콜라 브라이스 인형", productBrief.title)
 
-            assertEquals("BUY", productBrief.tradeType)
-            assertEquals("슈가슈가룬 쇼콜라 브라이스 인형", productBrief.title)
-
-            assertEquals(2, storeBrief.storeId)
-            assertEquals("납자기", storeBrief.nickname)
+                assertEquals(2, storeBrief.storeId)
+                assertEquals("납자기", storeBrief.nickname)
+            }
         }
     }
 }
