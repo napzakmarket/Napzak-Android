@@ -1,10 +1,9 @@
 package com.napzak.market.chat.repository
 
-import com.napzak.market.chat.model.ProductBrief
-import com.napzak.market.chat.model.StoreBrief
+import com.napzak.market.chat.model.ChatRoomInformation
 
 interface ChatRoomRepository {
-    suspend fun getChatRoomInformation(roomId: Long): Result<Pair<Long?, Pair<ProductBrief, StoreBrief>>>
+    suspend fun getChatRoomInformation(roomId: Long): Result<ChatRoomInformation>
     suspend fun createChatRoom(productId: Long, receiverId: Long): Result<Long>
     suspend fun enterChatRoom(roomId: Long): Result<Long>
     suspend fun leaveChatRoom(roomId: Long): Result<Unit>
