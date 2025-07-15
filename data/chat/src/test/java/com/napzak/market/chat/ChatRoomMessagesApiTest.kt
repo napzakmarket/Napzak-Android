@@ -1,11 +1,15 @@
 package com.napzak.market.chat
 
+import com.napzak.market.chat.datasource.ChatRoomDataSource
 import com.napzak.market.chat.dto.MessageMetadata
+import com.napzak.market.chat.model.ChatItem
+import com.napzak.market.chat.repositoryimpl.ChatRoomRepositoryImpl
 import com.napzak.market.chat.service.ChatRoomService
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import kotlin.test.assertEquals
 
 class ChatRoomMessagesApiTest : ApiAbstract<ChatRoomService>() {
     private lateinit var service: ChatRoomService
@@ -36,5 +40,27 @@ class ChatRoomMessagesApiTest : ApiAbstract<ChatRoomService>() {
         assert(response.data.messages[2].metadata == null) // Text는 metadata가 null
         assert(response.data.messages[3].metadata == null) // Text는 metadata가 null
         assert(response.data.messages[4].metadata is MessageMetadata.Date)
+    }
+
+    @Test
+    fun `fetch chatItems from repository`() = runTest {
+        // given
+        enqueueResponse("ChatRoomMessages.json")
+        val datasource = ChatRoomDataSource(service)
+
+        // when
+        val result = ChatRoomRepositoryImpl(datasource)
+            .getChatRoomMessages(roomId = 5)
+            .getOrNull()
+        mockWebServer.takeRequest()
+
+        // then
+        if (result != null) {
+            assertEquals(ChatItem.Image::class, result[0]::class)
+            assertEquals(ChatItem.Product::class, result[1]::class)
+            assertEquals(ChatItem.Text::class, result[2]::class)
+            assertEquals(ChatItem.Text::class, result[3]::class)
+            assertEquals(ChatItem.Date::class, result[4]::class)
+        }
     }
 }
