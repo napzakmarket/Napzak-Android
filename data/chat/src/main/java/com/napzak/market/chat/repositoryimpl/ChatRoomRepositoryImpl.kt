@@ -28,7 +28,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun enterChatRoom(roomId: Long): Result<Unit> {
+    override suspend fun enterChatRoom(roomId: Long): Result<Long> {
         return suspendRunCatching {
             val response = chatRoomDataSource.enterChatRoom(roomId)
             response.data.productId
