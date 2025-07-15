@@ -27,7 +27,7 @@ private fun MessageItem.toText(): ChatItem.Text =
 private fun MessageItem.toImage(metadata: MessageMetadata.Image): ChatItem.Image =
     ChatItem.Image(
         messageId = messageId ?: throw IllegalArgumentException(),
-        imageUrl = metadata.imageUrls.first(),
+        imageUrl = metadata.imageUrls.firstOrNull() ?: "",
         timeStamp = createdAt ?: "",
         isRead = isRead ?: false,
         isMessageOwner = isMessageOwner ?: false,
@@ -42,7 +42,7 @@ private fun MessageItem.toProduct(metadata: MessageMetadata.Product): ChatItem.P
             tradeType = metadata.tradeType,
             title = metadata.title,
             price = metadata.price,
-            isPriceNegotiable = false,
+            isPriceNegotiable = false, // 미사용
             genreName = metadata.genreName,
         ),
         timeStamp = createdAt ?: "",
