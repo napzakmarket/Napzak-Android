@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ChatRoomListRequest(
+data class ChatRoomListResponse(
     @SerialName("chatRooms") val chatRooms: List<ChatRoom>,
 ) {
     @Serializable
