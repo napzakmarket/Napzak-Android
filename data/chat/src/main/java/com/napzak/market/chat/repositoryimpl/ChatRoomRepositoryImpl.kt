@@ -4,6 +4,7 @@ import com.napzak.market.chat.datasource.ChatRoomDataSource
 import com.napzak.market.chat.dto.ChatRoomCreateRequest
 import com.napzak.market.chat.dto.ChatRoomPatchProductRequest
 import com.napzak.market.chat.mapper.toDomain
+import com.napzak.market.chat.model.ChatItem
 import com.napzak.market.chat.model.ChatRoomInformation
 import com.napzak.market.chat.repository.ChatRoomRepository
 import com.napzak.market.util.android.suspendRunCatching
@@ -28,6 +29,18 @@ class ChatRoomRepositoryImpl @Inject constructor(
             val request = ChatRoomCreateRequest(productId, receiverId)
             val response = chatRoomDataSource.createChatRoom(request)
             response.data.roomId
+        }
+    }
+
+    override suspend fun getChatRoomMessages(
+        roomId: Long,
+    ): Result<List<ChatItem<*>>> {
+        return suspendRunCatching {
+            val response = chatRoomDataSource.getChatRoomMessages(roomId)
+
+            response.data.messages.map { message ->
+                message.toDomain()
+            }
         }
     }
 

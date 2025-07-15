@@ -24,7 +24,9 @@ class ChatRoomDataSource @Inject constructor(
     }
 
     suspend fun getChatRoomMessages(
-        roomId: Long, cursor: String?, size: Int?,
+        roomId: Long,
+        cursor: String? = null,
+        size: Int? = null,
     ): BaseResponse<ChatRoomMessagesResponse> {
         return chatRoomService.getChatRoomMessages(roomId, cursor, size)
     }
