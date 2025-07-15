@@ -1,6 +1,7 @@
 package com.napzak.market.chat.di
 
 import com.napzak.market.chat.service.ChatRoomService
+import com.napzak.market.chat.service.ChatService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,4 +17,8 @@ object ServiceModule {
     @Provides
     @Singleton
     fun provideChatRoomService(retrofit: Retrofit): ChatRoomService = retrofit.create()
+
+    @Provides
+    @Singleton
+    fun provideChatService(retrofit: Retrofit): ChatService = retrofit.create()
 }
