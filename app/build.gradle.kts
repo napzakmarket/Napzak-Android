@@ -47,6 +47,7 @@ dependencies {
     implementation(projects.data.registration)
     implementation(projects.data.report)
     implementation(projects.data.store)
+    implementation(projects.data.chat)
 
     implementation(libs.androidx.appcompat)
     implementation(libs.timber)
