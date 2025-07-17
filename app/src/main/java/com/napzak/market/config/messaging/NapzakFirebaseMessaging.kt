@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.net.Uri
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
 import com.napzak.market.R.drawable.ic_push_notification
 import com.skydoves.firebase.messaging.lifecycle.ktx.LifecycleAwareFirebaseMessagingService
@@ -15,14 +16,14 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
-        val title = message.notification?.title ?: "납작 채팅 제목"
-        val body = message.notification?.body ?: "납작 채팅 내용"
-        val chatRoomId = message.notification?.body
+        val title = message.notification?.title
+        val body = message.notification?.body
+        val messageData = message.data
+        val notifyType = messageData["type"] ?: ""
+        val chatRoomId = messageData["roomId"]
 
         if (chatRoomId != null) {
-            val uri = Uri.parse("myapp://chat/$chatRoomId")
-
-            Timber.tag("FCM").d("onMessageReceived: uri $uri\ntitle $title\nbody $body")
+            val uri = Uri.parse("myapp://$notifyType/$chatRoomId")
 
             val intent = Intent(this, DeepLinkReceiver::class.java).apply {
                 action = "com.napzak.OPEN_DEEP_LINK"
@@ -48,6 +49,7 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
                 .setContentTitle(title)
                 .setContentText(body)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+                .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
