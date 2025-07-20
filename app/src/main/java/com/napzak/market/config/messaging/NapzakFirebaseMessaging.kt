@@ -1,14 +1,15 @@
 package com.napzak.market.config.messaging
 
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
 import com.napzak.market.R.drawable.ic_push_notification
+import com.napzak.market.main.MainActivity
 import com.skydoves.firebase.messaging.lifecycle.ktx.LifecycleAwareFirebaseMessagingService
 import timber.log.Timber
 
@@ -22,43 +23,34 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
         val notifyType = messageData["type"] ?: ""
         val chatRoomId = messageData["roomId"]
 
-        if (chatRoomId != null) {
-            val uri = Uri.parse("myapp://$notifyType/$chatRoomId")
+        val uri = Uri.parse("napzak://$notifyType/$chatRoomId")
+        val notifyId = System.currentTimeMillis().toInt()
 
-            val intent = Intent(this, DeepLinkReceiver::class.java).apply {
-                action = "com.napzak.OPEN_DEEP_LINK"
-                putExtra("deep_link_uri", uri.toString())
-            }
-
-            val pendingIntent = PendingIntent.getActivity(
-                this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-            )
-
-            val channel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                "납작 푸시 알림",
-                NotificationManager.IMPORTANCE_HIGH
-            )
-
-            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-
-            val notifyId = System.currentTimeMillis().toInt()
-            val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(ic_push_notification)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setStyle(NotificationCompat.BigTextStyle().bigText(body))
-                .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .build()
-
-            notificationManager.notify(notifyId, notification)
-        } else {
-            Timber.tag("Napzak FCM").e("chatRoomId is missing from FCM data payload")
+        val intent = Intent(this, MainActivity::class.java).apply {
+            action = "com.napzak.OPEN_DEEP_LINK"
+            putExtra("deep_link_uri", uri.toString())
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
+
+        val pendingIntent = PendingIntent.getActivity(
+            this, notifyId, intent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            else
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+            .setSmallIcon(ic_push_notification)
+            .setContentTitle(title).setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+            .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(notifyId, notificationBuilder.build())
     }
 
     override fun onNewToken(token: String) {
@@ -68,6 +60,6 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
     }
 
     companion object {
-        const val NOTIFICATION_CHANNEL_ID = "Napzak"
+        const val NOTIFICATION_CHANNEL_ID = "NAPZAK"
     }
 }

@@ -2,7 +2,6 @@ package com.napzak.market.main
 
 import android.app.Activity
 import android.net.Uri
-import android.util.Log
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
@@ -104,9 +103,8 @@ fun MainScreen(
 
     LaunchedEffect(deepLinkUri) {
         deepLinkUri?.let { uri ->
-            if (uri.scheme == "myapp" && uri.host == "chat") {
+            if (uri.scheme == "napzak" && uri.host == "chat") {
                 val chatRoomId = uri.lastPathSegment?.toLongOrNull()
-                Log.d("fcm", "MainScreen: id : $chatRoomId")
                 chatRoomId?.let {
                     navigator.navController.navigateToChatRoom(chatRoomId = it)
                 }

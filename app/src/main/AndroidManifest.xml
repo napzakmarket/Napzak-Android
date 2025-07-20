@@ -34,7 +34,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="myapp"
+                    android:scheme="napzak"
                     android:host="chat"
                     android:pathPattern="/[0-9]+" />
             </intent-filter>
@@ -59,9 +59,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <receiver
-            android:name=".config.messaging.DeepLinkReceiver"
-            android:exported="true" />
     </application>
 
 </manifest>
