@@ -1,5 +1,6 @@
 package com.napzak.market.presigned_url.service
 
+import com.napzak.market.presigned_url.dto.ChatPresignedUrlResponse
 import com.napzak.market.presigned_url.dto.ProductPresignedUrlResponse
 import com.napzak.market.presigned_url.dto.ProfilePresignedUrlResponse
 import com.napzak.market.remote.model.BaseResponse
@@ -21,6 +22,11 @@ interface PresignedUrlService {
     suspend fun getProfilePresignedUrl(
         @Query("profileImages") imageTitles: List<String>,
     ): BaseResponse<ProfilePresignedUrlResponse>
+
+    @GET("presigned-url/chat")
+    suspend fun getChatPresignedUrl(
+        @Query("chatImages") imageTitles: List<String>,
+    ): BaseResponse<ChatPresignedUrlResponse>
 
     @PUT
     suspend fun putViaPresignedUrl(

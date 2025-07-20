@@ -22,6 +22,7 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.ProductConditionType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
+import com.napzak.market.designsystem.component.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.component.dialog.NapzakDialogDefault
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
@@ -197,9 +198,8 @@ private fun ProductDetailScreen(
                 )
             }
 
-            is UiState.Failure -> {}
-            is UiState.Empty -> {}
-            is UiState.Loading -> {}
+            is UiState.Loading -> NapzakLoadingOverlay()
+            else -> {} // TODO: Empty, Failure 처리
         }
     }
 }

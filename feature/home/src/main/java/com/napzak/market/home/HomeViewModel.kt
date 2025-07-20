@@ -91,7 +91,11 @@ internal class HomeViewModel @Inject constructor(
             .flatMapMerge { (_, flow) -> flow.debounce(DEBOUNCE_DELAY) }
             .collect { (productId, isInterested) ->
                 interestProductUseCase(productId, isInterested)
-                    .onSuccess { getHomeProducts() }
+                    .onSuccess {
+                        fetchRecommendedProducts()
+                        fetchPopularSellProducts()
+                        fetchPopularBuyProducts()
+                    }
                     .onFailure {
                         // TODO: 통신 실패에 대한 처리 (현재: 마지막 성공 상태로 복구)
                         Timber.e(it.message.toString())
@@ -108,19 +112,20 @@ internal class HomeViewModel @Inject constructor(
             }
     }
 
-    suspend fun getHomeProducts() {
-        getRecommendedProducts()
-        getPopularSellProducts()
-        getPopularBuyProducts()
+    fun fetchHomeData() {
+        fetchBanners()
+        fetchRecommendedProducts()
+        fetchPopularSellProducts()
+        fetchPopularBuyProducts()
     }
 
-    suspend fun getBanners() {
+    private fun fetchBanners() = viewModelScope.launch {
         bannerRepository.getHomeBanner()
             .onSuccess { _bannerLoadState.value = UiState.Success(it) }
             .onFailure { _bannerLoadState.value = UiState.Failure(it.message.toString()) }
     }
 
-    private suspend fun getRecommendedProducts() {
+    private fun fetchRecommendedProducts() = viewModelScope.launch {
         productRepository.getRecommendedProducts()
             .onSuccess {
                 nickname.value = it.first
@@ -130,7 +135,7 @@ internal class HomeViewModel @Inject constructor(
             .onFailure { _recommendProductLoadState.value = UiState.Failure(it.message.toString()) }
     }
 
-    private suspend fun getPopularSellProducts() {
+    private fun fetchPopularSellProducts() = viewModelScope.launch {
         productRepository.getPopularSellProducts()
             .onSuccess {
                 _popularSellLoadState.value = UiState.Success(it)
@@ -139,7 +144,7 @@ internal class HomeViewModel @Inject constructor(
             .onFailure { _popularSellLoadState.value = UiState.Failure(it.message.toString()) }
     }
 
-    private suspend fun getPopularBuyProducts() {
+    private fun fetchPopularBuyProducts() = viewModelScope.launch {
         productRepository.getPopularBuyProducts()
             .onSuccess {
                 _popularBuyLoadState.value = UiState.Success(it)
