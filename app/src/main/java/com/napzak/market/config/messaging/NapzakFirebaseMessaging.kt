@@ -1,19 +1,19 @@
 package com.napzak.market.config.messaging
 
+import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
 import com.napzak.market.R.drawable.ic_push_notification
-import com.napzak.market.main.MainActivity
 import com.skydoves.firebase.messaging.lifecycle.ktx.LifecycleAwareFirebaseMessagingService
 import timber.log.Timber
 
 class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
+    @SuppressLint("LaunchActivityFromNotification")
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
@@ -23,16 +23,16 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
         val notifyType = messageData["type"] ?: ""
         val chatRoomId = messageData["roomId"]
 
-        val uri = Uri.parse("napzak://$notifyType/$chatRoomId")
+        val uri = "napzak://$notifyType/$chatRoomId"
         val notifyId = System.currentTimeMillis().toInt()
 
-        val intent = Intent(this, MainActivity::class.java).apply {
-            action = "com.napzak.OPEN_DEEP_LINK"
-            putExtra("deep_link_uri", uri.toString())
+        val intent = Intent(this, NotificationClickReceiver::class.java).apply {
+            putExtra("deep_link", uri)
+            action = OPEN_DEEPLINK_ACTION
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
-        val pendingIntent = PendingIntent.getActivity(
+        val pendingIntent = PendingIntent.getBroadcast(
             this, notifyId, intent,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
@@ -61,5 +61,6 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
     companion object {
         const val NOTIFICATION_CHANNEL_ID = "NAPZAK"
+        const val OPEN_DEEPLINK_ACTION = "com.napzak.OPEN_DEEP_LINK"
     }
 }
