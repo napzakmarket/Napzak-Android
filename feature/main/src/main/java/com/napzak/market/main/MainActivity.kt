@@ -38,12 +38,9 @@ class MainActivity : ComponentActivity() {
             deepLinkUriState.value = deepLinkUri
 
             NapzakMarketTheme {
-                val navigator =
-                    rememberMainNavigator(shouldSkipSplash = deepLinkUriState.value != null)
                 MainScreen(
                     restartApplication = ::restartApplication,
                     deepLinkUri = deepLinkUriState.value,
-                    navigator = navigator,
                 )
             }
         }

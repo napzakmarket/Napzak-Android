@@ -11,7 +11,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.napzak.market.chat.navigation.ChatList
 import com.napzak.market.chat.navigation.navigateToChatList
 import com.napzak.market.explore.navigation.navigateToExplore
 import com.napzak.market.home.navigation.Home
@@ -22,13 +21,12 @@ import com.napzak.market.wishlist.navigation.Wishlist
 
 class MainNavigator(
     val navController: NavHostController,
-    val shouldSkipSplash: Boolean = false,
 ) {
     private val currentDestination: NavDestination?
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = if (shouldSkipSplash) ChatList else Splash
+    val startDestination = Splash
 
     var isRegister: Boolean by mutableStateOf(false)
         private set
@@ -90,7 +88,6 @@ class MainNavigator(
 @Composable
 fun rememberMainNavigator(
     navController: NavHostController = rememberNavController(),
-    shouldSkipSplash: Boolean = false,
-): MainNavigator = remember(navController, shouldSkipSplash) {
-    MainNavigator(navController, shouldSkipSplash)
+): MainNavigator = remember(navController) {
+    MainNavigator(navController)
 }
