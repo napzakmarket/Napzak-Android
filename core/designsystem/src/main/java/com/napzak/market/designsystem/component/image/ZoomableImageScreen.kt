@@ -7,13 +7,13 @@ import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -27,6 +27,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
@@ -48,16 +49,15 @@ fun ZoomableImageScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
     val pagerState = rememberPagerState(initialPage = initialPage) { imageUrls.size }
-    val zoomState = rememberZoomState()
+    var layoutSize by remember { mutableStateOf(IntSize.Zero) }
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(color = NapzakMarketTheme.colors.black)
             .zIndex(1f)
-            .onGloballyPositioned { zoomState.parentLayoutSize = it.size },
+            .onGloballyPositioned { layoutSize = it.size },
         contentAlignment = Alignment.Center,
     ) {
         Box(
@@ -81,18 +81,38 @@ fun ZoomableImageScreen(
             modifier = Modifier
                 .fillMaxSize(),
         ) { page ->
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(imageUrls[page])
-                    .crossfade(true)
-                    .build(),
+            ZoomableImage(
+                imageUrl = imageUrls[page],
                 contentDescription = contentDescription,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .zoomable(zoomState)
+                parentLayoutSize = layoutSize,
             )
         }
     }
+}
+
+@Composable
+private fun ZoomableImage(
+    imageUrl: String,
+    contentDescription: String?,
+    parentLayoutSize: IntSize,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+    val zoomState = rememberZoomState()
+
+    LaunchedEffect(parentLayoutSize) { zoomState.parentLayoutSize = parentLayoutSize }
+
+    AsyncImage(
+        model = ImageRequest.Builder(context)
+            .data(imageUrl)
+            .crossfade(true)
+            .build(),
+        contentDescription = contentDescription,
+        contentScale = ContentScale.Fit,
+        modifier = modifier
+            .fillMaxSize()
+            .zoomable(zoomState)
+    )
 }
 
 // TODO: 안정화되면 ui_util로 이동
