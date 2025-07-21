@@ -22,17 +22,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH
-            )
-            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
-
+        createChannel()
         setContent {
             val deepLinkUri = intent.getStringExtra("deep_link_uri")?.toUri()
             deepLinkUriState.value = deepLinkUri
@@ -61,6 +51,18 @@ class MainActivity : ComponentActivity() {
         val notifyType = intent.getStringExtra("type")
         val chatRoomId = intent.getStringExtra("roomId")
         deepLinkUriState.value = Uri.parse("napzak://$notifyType/$chatRoomId")
+    }
+
+    private fun createChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     companion object {

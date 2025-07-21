@@ -1,7 +1,9 @@
 package com.napzak.market.home
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -79,7 +81,6 @@ internal fun HomeRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val napzakToast = LocalNapzakToast.current
     val context = LocalContext.current
-    val permission = android.Manifest.permission.POST_NOTIFICATIONS
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -88,21 +89,8 @@ internal fun HomeRoute(
     }
 
     LaunchedEffect(Unit) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    context,
-                    permission
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                permissionLauncher.launch(permission)
-            } else {
-                Timber.tag("Notification Permission").d("Already granted")
-            }
-        }
-    }
-
-    LaunchedEffect(Unit) {
         viewModel.fetchHomeData()
+        checkNotificationPermission(context, permissionLauncher)
     }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
@@ -354,5 +342,25 @@ private fun HomeRoutePreview() {
             onMostInterestedSellNavigate = { },
             onMostInterestedBuyNavigate = { },
         )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+private fun checkNotificationPermission(
+    context: Context,
+    permissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
+) {
+    val permission = android.Manifest.permission.POST_NOTIFICATIONS
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                permission
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            permissionLauncher.launch(permission)
+        } else {
+            Timber.tag("Notification Permission").d("Already granted")
+        }
     }
 }
