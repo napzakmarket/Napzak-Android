@@ -26,6 +26,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.napzak.market.chat.navigation.ChatList
 import com.napzak.market.chat.navigation.chatGraph
 import com.napzak.market.chat.navigation.navigateToChatRoom
+import com.napzak.market.common.type.DeepLinkHostType
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
@@ -105,7 +106,7 @@ fun MainScreen(
 
     LaunchedEffect(deepLinkUri) {
         deepLinkUri?.let { uri ->
-            if (uri.host == "chat") {
+            if (uri.host == DeepLinkHostType.CHAT.label) {
                 navigator.navController.navigate(ChatList) { launchSingleTop = true }
                 val chatRoomId = uri.lastPathSegment?.toLongOrNull()
                 chatRoomId?.let {
