@@ -10,7 +10,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.net.toUri
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,9 +23,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         createChannel()
         setContent {
-            val deepLinkUri = intent.getStringExtra("deep_link_uri")?.toUri()
-            deepLinkUriState.value = deepLinkUri
-
             NapzakMarketTheme {
                 MainScreen(
                     restartApplication = ::restartApplication,
