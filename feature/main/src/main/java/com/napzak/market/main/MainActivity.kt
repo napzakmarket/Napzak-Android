@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
-                "납작 푸시 알림",
+                CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_HIGH
             )
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -65,5 +65,6 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val NOTIFICATION_CHANNEL_ID = "NAPZAK"
+        const val CHANNEL_NAME = "납작 푸시 알림 채널"
     }
 }
