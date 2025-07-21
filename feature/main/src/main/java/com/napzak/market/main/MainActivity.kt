@@ -3,20 +3,19 @@ package com.napzak.market.main
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.mutableStateOf
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    private val deepLinkUriState = mutableStateOf<Uri?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +25,6 @@ class MainActivity : ComponentActivity() {
             NapzakMarketTheme {
                 MainScreen(
                     restartApplication = ::restartApplication,
-                    deepLinkUri = deepLinkUriState.value,
                 )
             }
         }
@@ -46,7 +44,11 @@ class MainActivity : ComponentActivity() {
 
         val notifyType = intent.getStringExtra("type")
         val chatRoomId = intent.getStringExtra("roomId")
-        deepLinkUriState.value = Uri.parse("napzak://$notifyType/$chatRoomId")
+
+        CoroutineScope(Dispatchers.Main).launch {
+            if (notifyType == NOTIFY_CHAT && chatRoomId != null)
+                ChatDeepLinkEventBus.send(ChatDeepLinkEvent.ChatRoom(chatRoomId))
+        }
     }
 
     private fun createChannel() {
@@ -64,5 +66,6 @@ class MainActivity : ComponentActivity() {
     companion object {
         const val NOTIFICATION_CHANNEL_ID = "NAPZAK"
         const val CHANNEL_NAME = "납작 푸시 알림 채널"
+        const val NOTIFY_CHAT = "chat"
     }
 }

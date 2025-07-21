@@ -1,7 +1,6 @@
 package com.napzak.market.main
 
 import android.app.Activity
-import android.net.Uri
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
@@ -23,10 +22,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.napzak.market.chat.navigation.ChatList
 import com.napzak.market.chat.navigation.chatGraph
 import com.napzak.market.chat.navigation.navigateToChatRoom
-import com.napzak.market.common.type.DeepLinkHostType
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
@@ -69,12 +66,10 @@ import com.napzak.market.store.store.navigation.storeGraph
 import com.napzak.market.wishlist.navigation.navigateToWishlist
 import com.napzak.market.wishlist.navigation.wishlistGraph
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.delay
 
 @Composable
 fun MainScreen(
     restartApplication: () -> Unit,
-    deepLinkUri: Uri?,
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
     val context = LocalContext.current
@@ -104,30 +99,11 @@ fun MainScreen(
 
     val statusBarColor = NapzakMarketTheme.colors.white
 
-    LaunchedEffect(deepLinkUri) {
-        deepLinkUri?.let { uri ->
-            if (uri.host == DeepLinkHostType.CHAT.label) {
-                navigator.navController.navigate(ChatList) { launchSingleTop = true }
-                val chatRoomId = uri.lastPathSegment?.toLongOrNull()
-                chatRoomId?.let {
-                    repeat(20) {
-                        val dest = navigator.navController.currentDestination?.route
-                        if (dest != null && isNavGraphReady(dest)) {
-                            navigator.navController.navigateToChatRoom(chatRoomId)
-                            return@LaunchedEffect
-                        }
-                        delay(100)
-                    }
-                }
-            }
-        }
-    }
-
     LaunchedEffect(Unit) {
         ChatDeepLinkEventBus.events.collect { event ->
             when (event) {
                 is ChatDeepLinkEvent.ChatRoom -> {
-                    navigator.navController.navigate(ChatList)
+                    navigator.navigate(MainTab.CHAT)
                     val id = event.chatRoomId
                     id?.let { navigator.navController.navigateToChatRoom(id.toLong()) }
                 }
@@ -355,8 +331,4 @@ private fun MainNavHost(
             modifier = modifier,
         )
     }
-}
-
-private fun isNavGraphReady(destination: String): Boolean {
-    return destination.contains("Home") || destination.contains("ChatList")
 }
