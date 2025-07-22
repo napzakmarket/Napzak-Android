@@ -1,6 +1,7 @@
 package com.napzak.market.chat.model
 
 sealed class ChatItem<T>(
+    open val roomId: Long?,
     open val messageId: Long,
     open val message: T,
     open val timeStamp: String,
@@ -9,12 +10,14 @@ sealed class ChatItem<T>(
 ) {
     data class Text(
         val text: String,
+        override val roomId: Long?,
         override val messageId: Long,
         override val timeStamp: String,
         override val isRead: Boolean,
         override val isMessageOwner: Boolean,
     ) : ChatItem<String>(
         message = text,
+        roomId = roomId,
         messageId = messageId,
         timeStamp = timeStamp,
         isRead = isRead,
@@ -23,12 +26,14 @@ sealed class ChatItem<T>(
 
     data class Image(
         val imageUrl: String,
+        override val roomId: Long?,
         override val messageId: Long,
         override val timeStamp: String,
         override val isRead: Boolean,
         override val isMessageOwner: Boolean,
     ) : ChatItem<String>(
         message = imageUrl,
+        roomId = roomId,
         messageId = messageId,
         timeStamp = timeStamp,
         isRead = isRead,
@@ -37,12 +42,14 @@ sealed class ChatItem<T>(
 
     data class Product(
         val product: ProductBrief,
+        override val roomId: Long?,
         override val messageId: Long,
         override val timeStamp: String,
         override val isRead: Boolean,
         override val isMessageOwner: Boolean,
     ) : ChatItem<ProductBrief>(
         message = product,
+        roomId = roomId,
         messageId = messageId,
         timeStamp = timeStamp,
         isRead = isRead,
@@ -53,10 +60,12 @@ sealed class ChatItem<T>(
 
     data class Date(
         val date: String,
+        override val roomId: Long?,
         override val messageId: Long,
         override val timeStamp: String,
     ) : ChatItem<String>(
         message = date,
+        roomId = roomId,
         messageId = messageId,
         timeStamp = timeStamp,
         isRead = true,
@@ -65,10 +74,12 @@ sealed class ChatItem<T>(
 
     data class Notice(
         val notice: String,
+        override val roomId: Long?,
         override val messageId: Long,
         override val timeStamp: String,
     ) : ChatItem<String>(
         message = notice,
+        roomId = roomId,
         messageId = messageId,
         timeStamp = "",
         isRead = true,

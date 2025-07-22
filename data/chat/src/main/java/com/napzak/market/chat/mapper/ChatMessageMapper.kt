@@ -1,0 +1,70 @@
+package com.napzak.market.chat.mapper
+
+import com.napzak.market.chat.dto.ChatMessageMetadata
+import com.napzak.market.chat.dto.ChatMessageResponse
+import com.napzak.market.chat.model.ChatItem
+import com.napzak.market.chat.model.ProductBrief
+
+fun ChatMessageResponse.toDomain(): ChatItem<*> {
+    return when (metadata) {
+        null -> toText()
+        is ChatMessageMetadata.Image -> toImage(metadata)
+        is ChatMessageMetadata.Product -> toProduct(metadata)
+        is ChatMessageMetadata.System -> toNotice(metadata)
+        is ChatMessageMetadata.Date -> toDate(metadata)
+    }
+}
+
+private fun ChatMessageResponse.toText(): ChatItem.Text =
+    ChatItem.Text(
+        roomId = roomId,
+        messageId = messageId,
+        text = content ?: "",
+        timeStamp = createdAt,
+        isRead = isRead,
+        isMessageOwner = false,
+    )
+
+private fun ChatMessageResponse.toImage(metadata: ChatMessageMetadata.Image): ChatItem.Image =
+    ChatItem.Image(
+        roomId = roomId,
+        messageId = messageId,
+        imageUrl = metadata.imageUrls.firstOrNull() ?: "",
+        timeStamp = createdAt,
+        isRead = isRead,
+        isMessageOwner = false,
+    )
+
+private fun ChatMessageResponse.toProduct(metadata: ChatMessageMetadata.Product): ChatItem.Product =
+    ChatItem.Product(
+        roomId = roomId,
+        messageId = messageId,
+        product = ProductBrief(
+            productId = metadata.productId,
+            photo = "",
+            tradeType = metadata.tradeType,
+            title = metadata.title,
+            price = metadata.price,
+            isPriceNegotiable = false, // 미사용
+            genreName = metadata.genreName,
+        ),
+        timeStamp = createdAt,
+        isRead = isRead,
+        isMessageOwner = false,
+    )
+
+private fun ChatMessageResponse.toNotice(metadata: ChatMessageMetadata.System): ChatItem.Notice =
+    ChatItem.Notice(
+        roomId = roomId,
+        messageId = messageId,
+        notice = metadata.content,
+        timeStamp = "",
+    )
+
+private fun ChatMessageResponse.toDate(metadata: ChatMessageMetadata.Date): ChatItem.Date =
+    ChatItem.Date(
+        roomId = roomId,
+        messageId = messageId,
+        date = metadata.content,
+        timeStamp = "",
+    )
