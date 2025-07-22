@@ -10,6 +10,12 @@ import javax.inject.Inject
 class ChatRepositoryImpl @Inject constructor(
     private val chatDataSource: ChatDataSource,
 ) : ChatRepository {
+    override suspend fun getChatRoomIds(): Result<List<Long>> {
+        return suspendRunCatching {
+            chatDataSource.getChatRoomIds().data.chatRoomIds
+        }
+    }
+
     override suspend fun getChatRooms(): Result<List<ChatRoom>> {
         return suspendRunCatching {
             val deviceToken = null // TODO: FCM 구현하면 fcmToken 값으로 대체
