@@ -1,0 +1,22 @@
+{
+  "status": 200,
+  "message": "채팅 관련 상품 정보가 조회되었습니다.",
+  "data": {
+    "productInfo": {
+      "productId": 2,
+      "photo": "https://napzak-dev-bucket.s3.ap-northeast-2.amazonaws.com/product/2.jpg",
+      "tradeType": "BUY",
+      "title": "슈가슈가룬 쇼콜라 브라이스 인형",
+      "price": 450000,
+      "isPriceNegotiable": true,
+      "genreName": "브라이스"
+    },
+    "storeInfo": {
+      "storeId": 2,
+      "nickname": "납자기",
+      "storePhoto": "https://napzak-dev-bucket.s3.ap-northeast-2.amazonaws.com/store/img_profile_lg.png",
+      "isWithdrawn": false
+    },
+    "roomId": 5
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "status": 200,
+  "message": "메세지 리스트가 조회되었습니다.",
+  "data": {
+    "messages": [
+      {
+        "messageId": 29,
+        "senderId": 3,
+        "type": "IMAGE",
+        "content": "",
+        "metadata": {
+          "type": "IMAGE",
+          "imageUrls": [
+            "https://cdn.myapp.com/images/123.jpg",
+            "https://cdn.myapp.com/images/456.jpg"
+          ]
+        },
+        "createdAt": "오전 9:04",
+        "isRead": true,
+        "isMessageOwner": false,
+        "isProfileNeeded": true
+      },
+      {
+        "messageId": 28,
+        "senderId": 3,
+        "type": "PRODUCT",
+        "content": "",
+        "metadata": {
+          "type": "PRODUCT",
+          "price": 125000,
+          "title": "은혼 긴토키 히지카타 특업",
+          "genreName": "은혼",
+          "productId": 9876,
+          "tradeType": "BUY"
+        },
+        "createdAt": "오전 9:01",
+        "isRead": true,
+        "isMessageOwner": false,
+        "isProfileNeeded": false
+      },
+      {
+        "messageId": 27,
+        "senderId": 1,
+        "type": "TEXT",
+        "content": "얏호바뤼",
+        "metadata": null,
+        "createdAt": "오전 9:01",
+        "isRead": false,
+        "isMessageOwner": true,
+        "isProfileNeeded": false
+      },
+      {
+        "messageId": 26,
+        "senderId": 1,
+        "type": "TEXT",
+        "content": "제발",
+        "metadata": null,
+        "createdAt": "오전 9:00",
+        "isRead": false,
+        "isMessageOwner": true,
+        "isProfileNeeded": false
+      },
+      {
+        "messageId": 25,
+        "senderId": null,
+        "type": "DATE",
+        "content": null,
+        "metadata": {
+          "date": "2025년 7월 13일",
+          "type": "DATE"
+        },
+        "createdAt": "오전 9:00",
+        "isRead": true,
+        "isMessageOwner": false,
+        "isProfileNeeded": false
+      }
+    ],
+    "cursor": null
+  }
+}
