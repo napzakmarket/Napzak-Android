@@ -26,4 +26,8 @@ dependencies {
     implementation(projects.data.local)
     implementation(projects.core.util)
     implementation(libs.timber)
+
+    implementation(libs.krossbow.stomp.core)
+    implementation(libs.krossbow.websocket.okhttp)
+    implementation(libs.krossbow.stomp.kxserialization)
 }
