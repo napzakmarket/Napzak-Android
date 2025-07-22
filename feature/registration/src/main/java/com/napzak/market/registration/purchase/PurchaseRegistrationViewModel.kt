@@ -16,6 +16,8 @@ import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.model.ProductImage
 import com.napzak.market.registration.model.PurchaseRegistrationProduct
 import com.napzak.market.registration.purchase.state.PurchaseContract.PurchaseUiState
+import com.napzak.market.registration.usecase.ClearCacheUseCase
+import com.napzak.market.registration.usecase.CompressImageUseCase
 import com.napzak.market.registration.usecase.EditRegisteredProductUseCase
 import com.napzak.market.registration.usecase.GetRegisteredPurchaseProductUseCase
 import com.napzak.market.registration.usecase.RegisterProductUseCase
@@ -35,12 +37,16 @@ class PurchaseRegistrationViewModel @Inject constructor(
     getProductPresignedUrlUseCase: GetProductPresignedUrlUseCase,
     uploadImageUseCase: UploadImageUseCase,
     savedStateHandle: SavedStateHandle,
+    compressImageUseCase: CompressImageUseCase,
+    clearCacheUseCase: ClearCacheUseCase,
     private val registerProductUseCase: RegisterProductUseCase,
     private val getRegisteredPurchaseProductUseCase: GetRegisteredPurchaseProductUseCase,
     private val editRegisteredProductUseCase: EditRegisteredProductUseCase,
 ) : RegistrationViewModel(
     getProductPresignedUrlUseCase,
     uploadImageUseCase,
+    compressImageUseCase,
+    clearCacheUseCase,
 ) {
     private var productId: Long? = null
 
@@ -93,7 +99,7 @@ class PurchaseRegistrationViewModel @Inject constructor(
             price = registrationState.price.toInt(),
             isPriceNegotiable = purchaseState.isNegotiable,
         )
-        
+
         productId?.let { id ->
             editRegisteredProductUseCase(id, product).onSuccess {
                 updateLoadState(UiState.Success(Unit))
@@ -112,22 +118,22 @@ class PurchaseRegistrationViewModel @Inject constructor(
     }
 
     fun getRegisteredPurchaseProduct(productId: Long) = viewModelScope.launch {
-            updateLoadState(UiState.Loading)
+        updateLoadState(UiState.Loading)
 
-            getRegisteredPurchaseProductUseCase(productId).onSuccess { product ->
-                _uiState.update {
-                    it.copy(isNegotiable = product.isPriceNegotiable)
-                }
-
-                updatePhotos(product.imageUrls.map { Photo(it.imageUrl.toUri()) })
-                updateGenre(Genre(product.genreId, product.genreName))
-                updateTitle(product.title)
-                updateDescription(product.description)
-                updatePrice(product.price.toString())
-
-                updateLoadState(UiState.Success(Unit))
-            }.onFailure {
-                updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
+        getRegisteredPurchaseProductUseCase(productId).onSuccess { product ->
+            _uiState.update {
+                it.copy(isNegotiable = product.isPriceNegotiable)
             }
+
+            updatePhotos(product.imageUrls.map { Photo(it.imageUrl.toUri()) })
+            updateGenre(Genre(product.genreId, product.genreName))
+            updateTitle(product.title)
+            updateDescription(product.description)
+            updatePrice(product.price.toString())
+
+            updateLoadState(UiState.Success(Unit))
+        }.onFailure {
+            updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
+        }
     }
 }

@@ -18,6 +18,8 @@ import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.model.ProductImage
 import com.napzak.market.registration.model.SaleRegistrationProduct
 import com.napzak.market.registration.sale.state.SaleContract.SaleUiState
+import com.napzak.market.registration.usecase.ClearCacheUseCase
+import com.napzak.market.registration.usecase.CompressImageUseCase
 import com.napzak.market.registration.usecase.EditRegisteredProductUseCase
 import com.napzak.market.registration.usecase.GetRegisteredSaleProductUseCase
 import com.napzak.market.registration.usecase.RegisterProductUseCase
@@ -38,12 +40,16 @@ class SaleRegistrationViewModel @Inject constructor(
     getProductPresignedUrlUseCase: GetProductPresignedUrlUseCase,
     uploadImageUseCase: UploadImageUseCase,
     savedStateHandle: SavedStateHandle,
+    compressImageUseCase: CompressImageUseCase,
+    clearCacheUseCase: ClearCacheUseCase,
     private val registerProductUseCase: RegisterProductUseCase,
     private val getRegisteredSaleProductUseCase: GetRegisteredSaleProductUseCase,
     private val editRegisteredProductUseCase: EditRegisteredProductUseCase,
 ) : RegistrationViewModel(
     getProductPresignedUrlUseCase,
     uploadImageUseCase,
+    compressImageUseCase,
+    clearCacheUseCase,
 ) {
     private var productId: Long? = null
 
