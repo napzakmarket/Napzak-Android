@@ -1,5 +1,6 @@
 package com.napzak.market.registration
 
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
@@ -9,6 +10,9 @@ import com.napzak.market.presigned_url.usecase.GetProductPresignedUrlUseCase
 import com.napzak.market.presigned_url.usecase.UploadImageUseCase
 import com.napzak.market.registration.RegistrationContract.RegistrationUiState
 import com.napzak.market.registration.model.Photo
+import com.napzak.market.registration.model.Photo.PhotoStatus
+import com.napzak.market.registration.usecase.ClearCacheUseCase
+import com.napzak.market.registration.usecase.CompressImageUseCase
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -22,14 +26,40 @@ import kotlinx.coroutines.launch
 abstract class RegistrationViewModel(
     protected val getProductPresignedUrlUseCase: GetProductPresignedUrlUseCase,
     protected val uploadImageUseCase: UploadImageUseCase,
+    protected val compressImageUseCase: CompressImageUseCase,
+    protected val clearCacheUseCase: ClearCacheUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(RegistrationUiState())
     val registrationUiState = _uiState.asStateFlow()
 
-    fun updatePhotos(newImageUrlList: List<Photo>) = _uiState.update { currentState ->
-        currentState.copy(
-            imageUris = (currentState.imageUris + newImageUrlList).toImmutableList()
-        )
+    fun updatePhotos(newPhotos: List<Photo>) = viewModelScope.launch {
+        _uiState.update { currentState ->
+            currentState.copy(
+                imageUris = (currentState.imageUris + newPhotos).toImmutableList()
+            )
+        }
+
+        newPhotos.forEach { newPhoto ->
+            launch {
+                val result = compressImageUseCase(newPhoto.uri.toString())
+                val photoStatus = if (result.isSuccess) PhotoStatus.SUCCESS else PhotoStatus.ERROR
+                val compressedUri = result.getOrNull()?.toUri()
+
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        imageUris = currentState.imageUris.map { originalPhoto ->
+                            if (originalPhoto.uuid == newPhoto.uuid) {
+                                originalPhoto.copy(
+                                    compressedUri = compressedUri
+                                        ?: originalPhoto.uri, // TODO: 이미지 압축 or 쿼리 실패 시 어떻게 처리할 지?
+                                    status = photoStatus,
+                                )
+                            } else originalPhoto
+                        }.toImmutableList()
+                    )
+                }
+            }
+        }
     }
 
     fun deletePhoto(photoIndex: Int) = _uiState.update { currentState ->
@@ -135,6 +165,10 @@ abstract class RegistrationViewModel(
     }
 
     protected abstract fun uploadProduct(presignedUrls: List<PresignedUrl>): Job
+
+    fun clearCachedImage() = viewModelScope.launch {
+        clearCacheUseCase()
+    }
 
     companion object {
         private const val REMOTE_URL_KEY = "https://"
