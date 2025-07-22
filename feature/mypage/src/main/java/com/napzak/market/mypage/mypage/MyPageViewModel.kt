@@ -2,6 +2,7 @@ package com.napzak.market.mypage.mypage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.napzak.market.common.state.UiState
 import com.napzak.market.mypage.mypage.state.MyPageUiState
 import com.napzak.market.store.repository.StoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,10 +22,12 @@ internal class MyPageViewModel @Inject constructor(
     val uiState: StateFlow<MyPageUiState> = _uiState.asStateFlow()
 
     fun fetchStoreInfo() = viewModelScope.launch {
+        _uiState.update { it.copy(loadState = UiState.Loading) }
         storeRepository.fetchStoreInfo()
             .onSuccess { storeInfo ->
                 _uiState.update {
                     it.copy(
+                        loadState = UiState.Success(Unit),
                         storeId = storeInfo.storeId,
                         nickname = storeInfo.nickname,
                         profileImageUrl = storeInfo.photoUrl,
@@ -34,7 +37,8 @@ internal class MyPageViewModel @Inject constructor(
                     )
                 }
             }
-            .onFailure {
+            .onFailure { e ->
+                _uiState.update { it.copy(loadState = UiState.Failure(e.message.toString())) }
                 // TODO: 실패 시 사용자에게 메시지 표시 또는 로깅 처리
                 // 예: _uiState.value = _uiState.value.copy(error = throwable.message)
                 // Timber.e(throwable, "Store 정보 가져오기 실패")
