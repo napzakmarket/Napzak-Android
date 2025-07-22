@@ -17,6 +17,7 @@ android {
         debug {
             buildConfigField("String", "BASE_URL", properties.getProperty("base.url"))
             buildConfigField("String", "CHAT_URL", properties.getProperty("chat.url"))
+            buildConfigField("String", "WEBSOCKET_URL", properties.getProperty("websocket.url"))
             buildConfigField("String", "ACCESS_TOKEN", properties.getProperty("test.access.token"))
         }
     }
