@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +27,7 @@ import coil.request.ImageRequest
 import com.napzak.market.designsystem.R.drawable.ic_cancel_image_24
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.representative_tag
+import com.napzak.market.registration.model.Photo.PhotoStatus
 import com.napzak.market.ui_util.noRippleClickable
 import com.napzak.market.ui_util.noRippleCombineClickable
 
@@ -34,13 +36,15 @@ import com.napzak.market.ui_util.noRippleCombineClickable
  *
  * @param index: 이미지 index
  * @param imageUri: 이미지 uri
+ * @param status: 이미지(압축) 로드 상태
  * @param onDeleteClick: 삭제 버튼 클릭 시 등록한 이미지 삭제
  * @param onLongClick: 길게 눌러 대표 이미지 설정
  */
 @Composable
 internal fun PhotoContainer(
     index: Int,
-    imageUri: Uri,
+    imageUri: Uri?,
+    status: PhotoStatus,
     onDeleteClick: (Int) -> Unit,
     onLongClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -59,15 +63,34 @@ internal fun PhotoContainer(
                 .aspectRatio(1f)
                 .noRippleCombineClickable { onLongClick(index) },
         ) {
-            AsyncImage(
-                model = ImageRequest
-                    .Builder(context)
-                    .data(imageUri)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-            )
+            when (status) {
+                PhotoStatus.COMPRESSING -> CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.Center),
+                    color = NapzakMarketTheme.colors.purple500,
+                )
+
+                PhotoStatus.SUCCESS -> AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(imageUri)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                )
+
+                // TODO: 현재는 fallback -> 원본 이미지 url
+                PhotoStatus.ERROR -> AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(imageUri)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                )
+            }
+
             if (index == 0) RepresentativeImageTag()
         }
 
