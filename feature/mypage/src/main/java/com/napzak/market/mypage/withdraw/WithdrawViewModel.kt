@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,13 +22,18 @@ internal class WithdrawViewModel @Inject constructor(
 
     var withdrawReason by mutableStateOf("")
     var withdrawDescription by mutableStateOf("")
+    var isWithdrawing by mutableStateOf(false)
+        private set
 
     fun withdrawStore() {
         viewModelScope.launch {
+            isWithdrawing = true
             withdrawUseCase(withdrawReason, withdrawDescription)
                 .onSuccess {
                     _sideEffect.emit(WithdrawSideEffect.WithdrawComplete)
                 }
+                .onFailure(Timber::e)
+                .also { isWithdrawing = false }
         }
     }
 }

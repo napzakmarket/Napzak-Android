@@ -1,0 +1,26 @@
+{
+  "status": 200,
+  "message": "채팅방 리스트가 조회되었습니다.",
+  "data": {
+    "chatRooms": [
+      {
+        "roomId": 6,
+        "opponentNickname": "납작한 시나모롤",
+        "isOpponentWithdrawn": false,
+        "lastMessage": "(사진)",
+        "lastMessageAt": "오전 9:04",
+        "unreadCount": 1,
+        "opponentStorePhoto": "https://napzak-dev-bucket.s3.ap-northeast-2.amazonaws.com/store/img_profile_lg.png"
+      },
+      {
+        "roomId": 1,
+        "opponentNickname": "납자기",
+        "isOpponentWithdrawn": false,
+        "lastMessage": "엣헴",
+        "lastMessageAt": "오전 8:28",
+        "unreadCount": 0,
+        "opponentStorePhoto": "https://napzak-dev-bucket.s3.ap-northeast-2.amazonaws.com/store/img_profile_lg.png"
+      }
+    ]
+  }
+}

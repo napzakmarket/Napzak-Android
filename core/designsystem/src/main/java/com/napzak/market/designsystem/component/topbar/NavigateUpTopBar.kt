@@ -1,13 +1,11 @@
 package com.napzak.market.designsystem.component.topbar
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -24,7 +22,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_arrow_left
+import com.napzak.market.designsystem.R.drawable.ic_chevron_left_24
 import com.napzak.market.designsystem.R.string.top_bar_navigate_up
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
@@ -32,9 +30,9 @@ import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 fun NavigateUpTopBar(
-    title: String,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
+    title: String = "",
     titleColor: Color = NapzakMarketTheme.colors.gray400,
     iconColor: Color = NapzakMarketTheme.colors.gray200,
 ) {
@@ -47,23 +45,19 @@ fun NavigateUpTopBar(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
                 .fillMaxWidth()
-                .padding(horizontal = 13.dp, vertical = 18.dp),
+                .padding(horizontal = 13.dp)
+                .padding(top = 34.dp, bottom = 18.dp),
         ) {
-            Box(
-                contentAlignment = Alignment.Center,
+            Icon(
+                imageVector = ImageVector.vectorResource(ic_chevron_left_24),
+                contentDescription = stringResource(top_bar_navigate_up),
+                tint = iconColor,
                 modifier = Modifier
                     .semantics { role = Role.Button }
-                    .size(24.dp)
                     .noRippleClickable(
                         onClick = onNavigateUp,
                     ),
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(ic_arrow_left),
-                    contentDescription = stringResource(top_bar_navigate_up),
-                    tint = iconColor,
-                )
-            }
+            )
 
             Spacer(modifier = Modifier.width(2.dp))
 

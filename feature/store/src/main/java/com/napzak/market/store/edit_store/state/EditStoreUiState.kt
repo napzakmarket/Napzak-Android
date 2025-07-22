@@ -9,6 +9,7 @@ import com.napzak.market.store.model.StoreEditProfile
 @Stable
 internal data class EditStoreUiState(
     val loadState: UiState<Unit> = UiState.Loading,
+    val isUploading: Boolean = false,
     val nickNameValidationState: NicknameValidationResult = NicknameValidationResult.Uninitialized,
     val nickNameDuplicationState: UiState<String> = UiState.Empty,
     val searchedGenres: List<Genre> = emptyList(),

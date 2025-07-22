@@ -13,3 +13,7 @@ annotation class S3
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class NoAuth
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class Chat
