@@ -72,11 +72,11 @@ internal fun PhotoContainer(
         }
 
         Icon(
+            imageVector = ImageVector.vectorResource(ic_cancel_image_24),
+            contentDescription = null,
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .noRippleClickable { onDeleteClick(index) },
-            imageVector = ImageVector.vectorResource(ic_cancel_image_24),
-            contentDescription = null,
             tint = Color.Unspecified,
         )
     }
