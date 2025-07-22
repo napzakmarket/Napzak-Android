@@ -32,6 +32,7 @@ import com.napzak.market.feature.detail.R.drawable.ic_product_buy_complete_large
 import com.napzak.market.feature.detail.R.drawable.ic_product_reservation_large
 import com.napzak.market.feature.detail.R.drawable.ic_product_sell_complete_large
 import com.napzak.market.feature.detail.R.string.detail_product_image_indicator
+import com.napzak.market.ui_util.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -43,6 +44,7 @@ internal fun ProductImageGroup(
     contentDescription: String,
     tradeStatusType: TradeStatusType,
     modifier: Modifier = Modifier,
+    onClick: (Int) -> Unit,
 ) {
     val context = LocalContext.current
     val pagerState = rememberPagerState(
@@ -69,7 +71,9 @@ internal fun ProductImageGroup(
                     .build(),
                 contentDescription = contentDescription,
                 contentScale = ContentScale.FillBounds,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .noRippleClickable { onClick(currentPage) }
             )
         }
 
@@ -149,6 +153,7 @@ private fun ProductImageGroupPreview() {
             ).toImmutableList(),
             contentDescription = "",
             tradeStatusType = TradeStatusType.BEFORE_TRADE,
+            onClick = {},
         )
     }
 }
@@ -165,6 +170,7 @@ private fun ReservedProductImageGroup() {
             ).toImmutableList(),
             contentDescription = "",
             tradeStatusType = TradeStatusType.RESERVED,
+            onClick = {},
         )
     }
 }
