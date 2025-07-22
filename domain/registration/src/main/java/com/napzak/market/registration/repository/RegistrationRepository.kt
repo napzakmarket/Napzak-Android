@@ -29,4 +29,10 @@ interface RegistrationRepository {
         productId: Long,
         purchaseRegistrationProduct: PurchaseRegistrationProduct,
     ): Result<Unit>
+
+    suspend fun compressProductImage(
+        image: String,
+    ): Result<String>
+
+    suspend fun clearCachedImage(): Result<Unit>
 }
