@@ -1,4 +1,3 @@
-import com.napzak.market.buildlogic.dsl.implementation
 import com.napzak.market.buildlogic.dsl.setNameSpace
 
 plugins {
@@ -18,7 +17,6 @@ dependencies {
     implementation(projects.core.util)
 
     implementation(libs.timber)
-    implementation(libs.retrofit.gson.converter)
 
     testImplementation(libs.okhttp.mockwebserver)
     testImplementation(libs.coroutines.test)
