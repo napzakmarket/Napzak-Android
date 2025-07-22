@@ -42,7 +42,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
     ): Result<List<ChatItem<*>>> {
         return suspendRunCatching {
             val response = chatRoomDataSource.getChatRoomMessages(roomId)
-            response.data.messages.map { it.toDomain() }
+            response.data.messages.map { it.toDomain(roomId) }
         }
     }
 
