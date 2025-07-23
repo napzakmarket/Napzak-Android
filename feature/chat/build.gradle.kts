@@ -18,6 +18,8 @@ dependencies {
     implementation(projects.core.uiUtil)
     implementation(projects.domain.product)
 
+    implementation(projects.domain.chat)
+
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
     implementation(libs.timber)
