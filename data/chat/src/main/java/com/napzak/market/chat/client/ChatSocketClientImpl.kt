@@ -54,7 +54,7 @@ class ChatSocketClientImpl @Inject constructor(
                         "SUBSCRIBE",
                         "메시지 도착: ${it.roomId} - ${it.content}, ${it.metadata.toString()}"
                     )
-                    _messageFlow.tryEmit(it)
+                    _messageFlow.emit(it)
                 }
             }
 

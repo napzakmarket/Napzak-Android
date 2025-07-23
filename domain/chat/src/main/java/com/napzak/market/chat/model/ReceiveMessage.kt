@@ -1,6 +1,6 @@
 package com.napzak.market.chat.model
 
-sealed class ChatItem<T>(
+sealed class ReceiveMessage<T>(
     open val roomId: Long?,
     open val messageId: Long,
     open val message: T,
@@ -15,7 +15,7 @@ sealed class ChatItem<T>(
         override val timeStamp: String,
         override val isRead: Boolean,
         override val isMessageOwner: Boolean,
-    ) : ChatItem<String>(
+    ) : ReceiveMessage<String>(
         message = text,
         roomId = roomId,
         messageId = messageId,
@@ -31,7 +31,7 @@ sealed class ChatItem<T>(
         override val timeStamp: String,
         override val isRead: Boolean,
         override val isMessageOwner: Boolean,
-    ) : ChatItem<String>(
+    ) : ReceiveMessage<String>(
         message = imageUrl,
         roomId = roomId,
         messageId = messageId,
@@ -47,7 +47,7 @@ sealed class ChatItem<T>(
         override val timeStamp: String,
         override val isRead: Boolean,
         override val isMessageOwner: Boolean,
-    ) : ChatItem<ProductBrief>(
+    ) : ReceiveMessage<ProductBrief>(
         message = product,
         roomId = roomId,
         messageId = messageId,
@@ -63,7 +63,7 @@ sealed class ChatItem<T>(
         override val roomId: Long?,
         override val messageId: Long,
         override val timeStamp: String,
-    ) : ChatItem<String>(
+    ) : ReceiveMessage<String>(
         message = date,
         roomId = roomId,
         messageId = messageId,
@@ -77,7 +77,7 @@ sealed class ChatItem<T>(
         override val roomId: Long?,
         override val messageId: Long,
         override val timeStamp: String,
-    ) : ChatItem<String>(
+    ) : ReceiveMessage<String>(
         message = notice,
         roomId = roomId,
         messageId = messageId,

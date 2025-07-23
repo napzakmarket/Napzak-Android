@@ -2,10 +2,10 @@ package com.napzak.market.chat.mapper
 
 import com.napzak.market.chat.dto.ChatMessageMetadata
 import com.napzak.market.chat.dto.MessageItem
-import com.napzak.market.chat.model.ChatItem
 import com.napzak.market.chat.model.ProductBrief
+import com.napzak.market.chat.model.ReceiveMessage
 
-fun MessageItem.toDomain(roomId: Long): ChatItem<*> {
+fun MessageItem.toDomain(roomId: Long): ReceiveMessage<*> {
     return when (metadata) {
         null -> toText(roomId)
         is ChatMessageMetadata.Image -> toImage(roomId, metadata)
@@ -15,8 +15,8 @@ fun MessageItem.toDomain(roomId: Long): ChatItem<*> {
     }
 }
 
-private fun MessageItem.toText(roomId: Long): ChatItem.Text =
-    ChatItem.Text(
+private fun MessageItem.toText(roomId: Long): ReceiveMessage.Text =
+    ReceiveMessage.Text(
         roomId = roomId,
         messageId = messageId ?: throw IllegalArgumentException(),
         text = content ?: "",
@@ -25,8 +25,11 @@ private fun MessageItem.toText(roomId: Long): ChatItem.Text =
         isMessageOwner = isMessageOwner ?: false,
     )
 
-private fun MessageItem.toImage(roomId: Long, metadata: ChatMessageMetadata.Image): ChatItem.Image =
-    ChatItem.Image(
+private fun MessageItem.toImage(
+    roomId: Long,
+    metadata: ChatMessageMetadata.Image
+): ReceiveMessage.Image =
+    ReceiveMessage.Image(
         roomId = roomId,
         messageId = messageId ?: throw IllegalArgumentException(),
         imageUrl = metadata.imageUrls.firstOrNull() ?: "",
@@ -38,8 +41,8 @@ private fun MessageItem.toImage(roomId: Long, metadata: ChatMessageMetadata.Imag
 private fun MessageItem.toProduct(
     roomId: Long,
     metadata: ChatMessageMetadata.Product
-): ChatItem.Product =
-    ChatItem.Product(
+): ReceiveMessage.Product =
+    ReceiveMessage.Product(
         roomId = roomId,
         messageId = messageId ?: throw IllegalArgumentException(),
         product = ProductBrief(
@@ -59,16 +62,19 @@ private fun MessageItem.toProduct(
 private fun MessageItem.toNotice(
     roomId: Long,
     metadata: ChatMessageMetadata.System
-): ChatItem.Notice =
-    ChatItem.Notice(
+): ReceiveMessage.Notice =
+    ReceiveMessage.Notice(
         roomId = roomId,
         messageId = messageId ?: throw IllegalArgumentException(),
         notice = metadata.content,
         timeStamp = "",
     )
 
-private fun MessageItem.toDate(roomId: Long, metadata: ChatMessageMetadata.Date): ChatItem.Date =
-    ChatItem.Date(
+private fun MessageItem.toDate(
+    roomId: Long,
+    metadata: ChatMessageMetadata.Date
+): ReceiveMessage.Date =
+    ReceiveMessage.Date(
         roomId = roomId,
         messageId = messageId ?: throw IllegalArgumentException(),
         date = metadata.content,

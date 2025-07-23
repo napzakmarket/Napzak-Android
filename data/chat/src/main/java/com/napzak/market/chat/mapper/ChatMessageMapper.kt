@@ -2,10 +2,10 @@ package com.napzak.market.chat.mapper
 
 import com.napzak.market.chat.dto.ChatMessageMetadata
 import com.napzak.market.chat.dto.ChatMessageResponse
-import com.napzak.market.chat.model.ChatItem
 import com.napzak.market.chat.model.ProductBrief
+import com.napzak.market.chat.model.ReceiveMessage
 
-fun ChatMessageResponse.toDomain(): ChatItem<*> {
+fun ChatMessageResponse.toDomain(): ReceiveMessage<*> {
     return when (metadata) {
         null -> toText()
         is ChatMessageMetadata.Image -> toImage(metadata)
@@ -15,8 +15,8 @@ fun ChatMessageResponse.toDomain(): ChatItem<*> {
     }
 }
 
-private fun ChatMessageResponse.toText(): ChatItem.Text =
-    ChatItem.Text(
+private fun ChatMessageResponse.toText(): ReceiveMessage.Text =
+    ReceiveMessage.Text(
         roomId = roomId,
         messageId = messageId,
         text = content ?: "",
@@ -25,8 +25,8 @@ private fun ChatMessageResponse.toText(): ChatItem.Text =
         isMessageOwner = false,
     )
 
-private fun ChatMessageResponse.toImage(metadata: ChatMessageMetadata.Image): ChatItem.Image =
-    ChatItem.Image(
+private fun ChatMessageResponse.toImage(metadata: ChatMessageMetadata.Image): ReceiveMessage.Image =
+    ReceiveMessage.Image(
         roomId = roomId,
         messageId = messageId,
         imageUrl = metadata.imageUrls.firstOrNull() ?: "",
@@ -35,8 +35,8 @@ private fun ChatMessageResponse.toImage(metadata: ChatMessageMetadata.Image): Ch
         isMessageOwner = false,
     )
 
-private fun ChatMessageResponse.toProduct(metadata: ChatMessageMetadata.Product): ChatItem.Product =
-    ChatItem.Product(
+private fun ChatMessageResponse.toProduct(metadata: ChatMessageMetadata.Product): ReceiveMessage.Product =
+    ReceiveMessage.Product(
         roomId = roomId,
         messageId = messageId,
         product = ProductBrief(
@@ -53,16 +53,16 @@ private fun ChatMessageResponse.toProduct(metadata: ChatMessageMetadata.Product)
         isMessageOwner = false,
     )
 
-private fun ChatMessageResponse.toNotice(metadata: ChatMessageMetadata.System): ChatItem.Notice =
-    ChatItem.Notice(
+private fun ChatMessageResponse.toNotice(metadata: ChatMessageMetadata.System): ReceiveMessage.Notice =
+    ReceiveMessage.Notice(
         roomId = roomId,
         messageId = messageId,
         notice = metadata.content,
         timeStamp = "",
     )
 
-private fun ChatMessageResponse.toDate(metadata: ChatMessageMetadata.Date): ChatItem.Date =
-    ChatItem.Date(
+private fun ChatMessageResponse.toDate(metadata: ChatMessageMetadata.Date): ReceiveMessage.Date =
+    ReceiveMessage.Date(
         roomId = roomId,
         messageId = messageId,
         date = metadata.content,

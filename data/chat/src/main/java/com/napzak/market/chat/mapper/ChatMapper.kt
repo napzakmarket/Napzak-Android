@@ -2,17 +2,17 @@ package com.napzak.market.chat.mapper
 
 import com.napzak.market.chat.dto.ChatMessageMetadata
 import com.napzak.market.chat.dto.ChatMessageRequest
-import com.napzak.market.chat.model.Chat
+import com.napzak.market.chat.model.SendMessage
 
-fun Chat<*>.toRequest(): ChatMessageRequest {
+fun SendMessage<*>.toRequest(): ChatMessageRequest {
     return when (this) {
-        is Chat.Text -> toRequest()
-        is Chat.Image -> toRequest()
-        is Chat.Product -> toRequest()
+        is SendMessage.Text -> toRequest()
+        is SendMessage.Image -> toRequest()
+        is SendMessage.Product -> toRequest()
     }
 }
 
-private fun Chat.Text.toRequest() = ChatMessageRequest(
+private fun SendMessage.Text.toRequest() = ChatMessageRequest(
     roomId = roomId,
     type = "TEXT",
     content = content,
@@ -20,7 +20,7 @@ private fun Chat.Text.toRequest() = ChatMessageRequest(
 )
 
 
-private fun Chat.Image.toRequest() = ChatMessageRequest(
+private fun SendMessage.Image.toRequest() = ChatMessageRequest(
     roomId = roomId,
     type = "IMAGE",
     content = null,
@@ -29,7 +29,7 @@ private fun Chat.Image.toRequest() = ChatMessageRequest(
     ),
 )
 
-private fun Chat.Product.toRequest() = ChatMessageRequest(
+private fun SendMessage.Product.toRequest() = ChatMessageRequest(
     roomId = roomId,
     type = "PRODUCT",
     content = null,

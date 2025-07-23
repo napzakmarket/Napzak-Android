@@ -1,6 +1,6 @@
 package com.napzak.market.chat.model
 
-sealed class Chat<T>(
+sealed class SendMessage<T>(
     open val roomId: Long,
     open val content: String?,
     open val metadata: T?,
@@ -8,7 +8,7 @@ sealed class Chat<T>(
     data class Text(
         override val roomId: Long,
         override val content: String?,
-    ) : Chat<String>(
+    ) : SendMessage<String>(
         roomId = roomId,
         content = content,
         metadata = null,
@@ -18,7 +18,7 @@ sealed class Chat<T>(
         override val roomId: Long,
         override val content: String?,
         val imageUrls: List<String>,
-    ) : Chat<List<String>>(
+    ) : SendMessage<List<String>>(
         roomId = roomId,
         content = content,
         metadata = imageUrls,
@@ -28,7 +28,7 @@ sealed class Chat<T>(
         override val roomId: Long,
         override val content: String?,
         val product: ProductBrief,
-    ) : Chat<ProductBrief>(
+    ) : SendMessage<ProductBrief>(
         roomId = roomId,
         content = content,
         metadata = product,

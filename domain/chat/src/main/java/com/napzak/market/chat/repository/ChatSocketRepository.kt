@@ -1,14 +1,14 @@
 package com.napzak.market.chat.repository
 
-import com.napzak.market.chat.model.Chat
-import com.napzak.market.chat.model.ChatItem
+import com.napzak.market.chat.model.ReceiveMessage
+import com.napzak.market.chat.model.SendMessage
 import kotlinx.coroutines.flow.Flow
 
 interface ChatSocketRepository {
-    val messageFlow: Flow<ChatItem<*>>
+    val messageFlow: Flow<ReceiveMessage<*>>
     val errorFlow: Flow<Exception>
     suspend fun connect(): Result<Unit>
     suspend fun disconnect(): Result<Unit>
     suspend fun subscribeChatRoom(roomId: Long): Result<Unit>
-    suspend fun sendChat(chat: Chat<*>): Result<Unit>
+    suspend fun sendChat(chat: SendMessage<*>): Result<Unit>
 }
