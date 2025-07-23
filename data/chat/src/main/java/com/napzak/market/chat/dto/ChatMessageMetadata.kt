@@ -35,6 +35,6 @@ sealed class ChatMessageMetadata {
     @Serializable
     @SerialName("DATE")
     data class Date(
-        @SerialName("date") val content: String,
+        @SerialName("date") val date: String,
     ) : ChatMessageMetadata()
 }
