@@ -101,31 +101,13 @@ abstract class RegistrationViewModel(
 
     fun getPresignedUrl() = viewModelScope.launch {
         updateLoadState(UiState.Loading)
-        val imageUris = _uiState.value.imageUris
-        val localImages = imageUris.mapIndexedNotNull { index, photo ->
-            if (!photo.uri.toString().startsWith(REMOTE_URL_KEY)) {
-                index to photo.uri.toString()
-            } else null
-        }
 
-        if (localImages.isEmpty()) {
-            val remoteImages = imageUris.mapIndexed { index, photo ->
-                PresignedUrl(
-                    imageName = "${KEY_DELIMITER}${index + 1}",
-                    url = photo.uri.toString(),
-                )
+        getProductPresignedUrlUseCase(
+            registrationUiState.value.imageUris.mapIndexed { index, photo ->
+                photo.compressedUri.toString() to index
             }
-            uploadProduct(remoteImages)
-            return@launch
-        }
-
-        getProductPresignedUrlUseCase(localImages.map { it.second }).onSuccess { presignedUrls ->
-            val originalIndexedPresignedUrls = presignedUrls.zip(localImages) { presignedUrl, (originalIndex, _) ->
-                presignedUrl.copy(
-                    imageName = "${KEY_DELIMITER}${originalIndex + 1}"
-                )
-            }
-            uploadImageViaPresignedUrl(originalIndexedPresignedUrls)
+        ).onSuccess {
+            uploadImageViaPresignedUrl(it)
         }.onFailure {
             updateLoadState(UiState.Failure(RETRIEVING_URL_ERROR_MESSAGE))
         }
