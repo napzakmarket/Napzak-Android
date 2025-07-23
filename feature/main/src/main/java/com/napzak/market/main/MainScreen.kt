@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
@@ -20,7 +20,6 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.napzak.market.chat.navigation.chatGraph
 import com.napzak.market.chat.navigation.navigateToChatRoom
 import com.napzak.market.common.type.SortType
@@ -107,12 +106,6 @@ fun MainScreen(
                 }
             }
         }
-    }
-
-    SideEffect {
-        systemUiController.setStatusBarColor(
-            color = statusBarColor,
-        )
     }
 
     Scaffold(
