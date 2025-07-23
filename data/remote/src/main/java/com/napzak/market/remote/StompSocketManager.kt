@@ -211,7 +211,7 @@ class StompSocketManagerImpl @Inject constructor(
             val jitterMillis = (0..delay).random() * 1000
             serviceScope.launch {
                 delay(timeMillis = jitterMillis)
-                connect()
+                connect(BASE_HOST)
             }
         }
     }
@@ -219,6 +219,7 @@ class StompSocketManagerImpl @Inject constructor(
     companion object {
         private const val TAG = "StompSocketManager"
         private const val APPLICATION_JSON = "application/json"
+        private const val BASE_HOST = "/"
         private const val MAX_RETRY_COUNT = 5
     }
 }
