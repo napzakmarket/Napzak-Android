@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
+import com.napzak.market.designsystem.component.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastFontType
@@ -91,6 +92,7 @@ internal fun ReportRoute(
 
     ReportScreen(
         reportState = reportState,
+        isUploading = viewModel.isUploading,
         onSubmitButtonClick = {
             viewModel.sendReport(
                 reportType = reportState.reportType,
@@ -104,10 +106,10 @@ internal fun ReportRoute(
     )
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ReportScreen(
     reportState: ReportState,
+    isUploading: Boolean,
     onSubmitButtonClick: () -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
@@ -116,6 +118,8 @@ private fun ReportScreen(
     val focusManager = LocalFocusManager.current
     var dropdownEnabled by remember { mutableStateOf(false) }
     val disableDropDown = { dropdownEnabled = false }
+
+    if (isUploading) NapzakLoadingOverlay()
 
     FocusSideEffectsHandler(
         dropdownEnabled = dropdownEnabled,
@@ -285,6 +289,7 @@ private fun ReportScreenPreview() {
         ReportScreen(
             reportState = reportState,
             onSubmitButtonClick = { },
+            isUploading = false,
             onNavigateUp = { },
         )
     }

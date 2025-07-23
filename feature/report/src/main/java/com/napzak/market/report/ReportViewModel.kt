@@ -1,5 +1,8 @@
 package com.napzak.market.report
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,6 +24,9 @@ internal class ReportViewModel @Inject constructor(
     private val _sideEffect = Channel<ReportSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
 
+    var isUploading by mutableStateOf(false)
+        private set
+
     private val id = savedStateHandle.get<Long>(ID)
 
     fun sendReport(
@@ -30,6 +36,7 @@ internal class ReportViewModel @Inject constructor(
         contact: String,
     ) = viewModelScope.launch {
         runCatching {
+            isUploading = true
             val reportParameters = ReportParameters(
                 title = reason,
                 description = detail,
@@ -51,6 +58,9 @@ internal class ReportViewModel @Inject constructor(
             _sideEffect.send(ReportSideEffect.NavigateUp)
             _sideEffect.send(ReportSideEffect.ShowToast(REPORT_SNACK_BAR_MESSAGE))
         }.onFailure(Timber::e)
+            .also {
+                isUploading = false
+            }
     }
 
     private suspend fun sendProductReport(

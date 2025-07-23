@@ -17,12 +17,13 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 datastore = "1.1.2"
 
-kotlin = "2.0.0"
-kotlinxImmutable = "0.3.7"
-serialization = "1.6.3"
-kotlinParcelize = "1.8.20"
-kotlinCoroutine = "1.8.1"
-ksp = "2.0.0-1.0.24"
+
+kotlin = "2.1.21"
+kotlinxImmutable = "0.4.0"
+ksp = "2.1.21-2.0.2"
+serialization = "1.7.0"
+kotlinParcelize = "1.9.10"
+kotlinCoroutine = "1.10.2"
 
 activityCompose = "1.9.3"
 composeBom = "2025.02.00"
@@ -31,7 +32,7 @@ composeNavigation = "2.8.5"
 kotlinCompilerExtensionVersion = "1.5.2"
 androidxComposeMaterial3 = "1.3.1"
 
-hilt = "2.49"
+hilt = "2.56.2"
 hiltManager = "1.2.0"
 javax-inject = "1"
 
@@ -101,10 +102,12 @@ coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp" }
 okhttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okhttp" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+okhttp-mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "okhttp" }
 
 ## retrofit
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofitJsonConverter" }
+retrofit-gson-converter = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 
 ## hilt
 hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hilt" }

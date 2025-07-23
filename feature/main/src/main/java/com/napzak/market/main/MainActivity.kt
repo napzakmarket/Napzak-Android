@@ -10,6 +10,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,17 +18,28 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    @Inject
+    lateinit var systemBarsColorController: SystemBarsColorController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         createChannel()
         setContent {
             NapzakMarketTheme {
-                MainScreen(
-                    restartApplication = ::restartApplication,
-                )
+                SystemBarColorHandler()
+                CompositionLocalProvider(LocalSystemBarsColor provides systemBarsColorController) {
+                    MainScreen(
+                        restartApplication = ::restartApplication,
+                    )
+                }
             }
         }
+    }
+
+    @Composable
+    private fun SystemBarColorHandler() {
+        systemBarsColorController.Apply(activity = this)
     }
 
     private fun restartApplication() {
