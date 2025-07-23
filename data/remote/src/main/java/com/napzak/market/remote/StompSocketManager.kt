@@ -79,12 +79,13 @@ class StompSocketManagerImpl @Inject constructor(
                     json = json,
                 )
             logSuccess("CONNECT", "소켓이 연결되었습니다.")
+            retryCount.set(0)
             updateStompSocketState(StompSocketState.CONNECTED)
             subscribePong()
             sendPing()
         } catch (e: Exception) {
             logError("CONNECT", e)
-            if (retryCount.get() >= 5) throw e
+            if (retryCount.get() >= MAX_RETRY_COUNT) throw e
             else handleConnectionFailure()
 
         }
@@ -205,7 +206,7 @@ class StompSocketManagerImpl @Inject constructor(
     }
 
     private fun handleConnectionFailure() {
-        if ((retryCount.incrementAndGet()) <= 5) {
+        if ((retryCount.incrementAndGet()) <= MAX_RETRY_COUNT) {
             val delay = 2 * 2.0.pow((retryCount.get() - 1).toDouble()).toLong()
             val jitterMillis = (0..delay).random() * 1000
             serviceScope.launch {
@@ -218,5 +219,6 @@ class StompSocketManagerImpl @Inject constructor(
     companion object {
         private const val TAG = "StompSocketManager"
         private const val APPLICATION_JSON = "application/json"
+        private const val MAX_RETRY_COUNT = 5
     }
 }
