@@ -49,15 +49,12 @@ class WebSocketLifecycleObserver @Inject constructor(
     }
 
     private fun subscribeChatRooms(roomIds: List<Long>) {
-        runCatching {
-
-            activityScope.launch {
-                roomIds.map { roomId ->
-                    async {
-                        chatSocketRepository.subscribeChatRoom(roomId)
-                    }
-                }.awaitAll()
-            }
+        activityScope.launch {
+            roomIds.map { roomId ->
+                async {
+                    chatSocketRepository.subscribeChatRoom(roomId)
+                }
+            }.awaitAll()
         }
     }
 
