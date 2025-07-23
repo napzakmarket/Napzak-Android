@@ -25,9 +25,9 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.napzak.market.designsystem.R.drawable.ic_chevron_right
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.detail.R.drawable.ic_chevron_right
 import com.napzak.market.feature.detail.R.drawable.ic_heart_filled_large
 import com.napzak.market.feature.detail.R.drawable.ic_heart_unfilled_large
 import com.napzak.market.feature.detail.R.string.detail_product_button_chat

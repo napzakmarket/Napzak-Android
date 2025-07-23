@@ -16,9 +16,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.napzak.market.common.state.UiState
+import com.napzak.market.designsystem.component.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.topbar.NapzakLogoTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.mypage.mypage.component.MyMarketButton
 import com.napzak.market.mypage.mypage.component.MyPageMenuCard
 import com.napzak.market.mypage.mypage.component.MyPageProfileSection
 import com.napzak.market.mypage.mypage.state.MyPageUiState
@@ -46,7 +47,7 @@ internal fun MyPageRoute(
 
     MyPageScreen(
         uiState = uiState,
-        onMyMarketClick = { onMyMarketClick(uiState.storeId) },
+        onProfileClick = { onMyMarketClick(uiState.storeId) },
         onSalesClick = onSalesClick,
         onPurchaseClick = onPurchaseClick,
         onRecentClick = onRecentClick,
@@ -64,7 +65,7 @@ internal fun MyPageRoute(
 @Composable
 private fun MyPageScreen(
     uiState: MyPageUiState,
-    onMyMarketClick: () -> Unit,
+    onProfileClick: () -> Unit,
     onSalesClick: () -> Unit,
     onPurchaseClick: () -> Unit,
     onRecentClick: () -> Unit,
@@ -73,30 +74,35 @@ private fun MyPageScreen(
     onHelpClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
+    if (uiState.loadState is UiState.Loading) NapzakLoadingOverlay()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(NapzakMarketTheme.colors.gray10),
     ) {
+        NapzakLogoTopBar(
+            modifier = Modifier
+                .background(NapzakMarketTheme.colors.white)
+                .padding(vertical = 17.dp, horizontal = 20.dp),
+        )
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(NapzakMarketTheme.colors.white)
                 .padding(horizontal = 20.dp),
         ) {
-            NapzakLogoTopBar(modifier = Modifier.padding(vertical = 17.dp))
             Spacer(modifier = Modifier.height(30.dp))
             MyPageProfileSection(
                 nickname = uiState.nickname,
                 profileImageUrl = uiState.profileImageUrl,
                 salesCount = uiState.salesCount,
                 purchaseCount = uiState.purchaseCount,
+                onClick = onProfileClick
             )
-            Spacer(modifier = Modifier.height(20.dp))
-            MyMarketButton(
-                onClick = onMyMarketClick,
-            )
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(30.dp))
         }
 
         HorizontalDivider(
@@ -135,7 +141,7 @@ private fun MyPageScreenPreview() {
                 salesCount = 31,
                 purchaseCount = 15,
             ),
-            onMyMarketClick = { println("내 마켓 보기 클릭") },
+            onProfileClick = { println("내 마켓 보기 클릭") },
             onSalesClick = { println("판매 내역 클릭") },
             onPurchaseClick = { println("구매 내역 클릭") },
             onRecentClick = { println("최근 본 상품 클릭") },

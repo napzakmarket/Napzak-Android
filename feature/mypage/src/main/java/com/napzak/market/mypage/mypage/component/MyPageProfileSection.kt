@@ -1,6 +1,7 @@
 package com.napzak.market.mypage.mypage.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,18 +12,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.napzak.market.designsystem.R.drawable.ic_chevron_right
 import com.napzak.market.designsystem.R.drawable.ic_profile_60
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.mypage_buy_count
@@ -30,6 +35,7 @@ import com.napzak.market.feature.mypage.R.string.mypage_buy_label
 import com.napzak.market.feature.mypage.R.string.mypage_profile_image_description
 import com.napzak.market.feature.mypage.R.string.mypage_sell_count
 import com.napzak.market.feature.mypage.R.string.mypage_sell_label
+import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun MyPageProfileSection(
@@ -37,6 +43,7 @@ internal fun MyPageProfileSection(
     profileImageUrl: String,
     salesCount: Int,
     purchaseCount: Int,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -44,6 +51,7 @@ internal fun MyPageProfileSection(
             .fillMaxWidth()
             .clip(RoundedCornerShape(25.dp))
             .background(NapzakMarketTheme.colors.gray10)
+            .noRippleClickable(onClick = onClick)
             .padding(horizontal = 22.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -96,6 +104,19 @@ internal fun MyPageProfileSection(
                 )
             }
         }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Box(
+            modifier = Modifier.size(width = 22.dp, height = 30.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(ic_chevron_right),
+                contentDescription = null,
+                tint = NapzakMarketTheme.colors.gray300,
+            )
+        }
     }
 }
 
@@ -108,6 +129,7 @@ private fun MyPageProfileSectionPreview() {
             profileImageUrl = "",
             salesCount = 12,
             purchaseCount = 7,
+            onClick = {},
         )
     }
 }
