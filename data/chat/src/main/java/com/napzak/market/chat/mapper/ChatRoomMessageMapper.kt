@@ -77,6 +77,6 @@ private fun MessageItem.toDate(
     ReceiveMessage.Date(
         roomId = roomId,
         messageId = messageId ?: throw IllegalArgumentException(),
-        date = metadata.content,
+        date = metadata.date,
         timeStamp = "",
     )

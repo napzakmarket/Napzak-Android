@@ -65,6 +65,6 @@ private fun ChatMessageResponse.toDate(metadata: ChatMessageMetadata.Date): Rece
     ReceiveMessage.Date(
         roomId = roomId,
         messageId = messageId,
-        date = metadata.content,
+        date = metadata.date,
         timeStamp = "",
     )
