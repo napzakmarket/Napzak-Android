@@ -25,6 +25,8 @@ dependencies {
     implementation(projects.feature.chat)
     implementation(projects.feature.wishlist)
 
+    implementation(projects.domain.chat)
+
     implementation(projects.core.designsystem)
     implementation(projects.core.common)
     implementation(projects.core.util)

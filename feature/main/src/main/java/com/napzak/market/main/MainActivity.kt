@@ -15,19 +15,23 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     @Inject
     lateinit var systemBarsColorController: SystemBarsColorController
 
+    @Inject
+    lateinit var webSocketLifecycleObserver: WebSocketLifecycleObserver
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycle.addObserver(webSocketLifecycleObserver)
         enableEdgeToEdge()
         setContent {
             NapzakMarketTheme {
                 SystemBarColorHandler()
                 CompositionLocalProvider(LocalSystemBarsColor provides systemBarsColorController) {
                     MainScreen(
-                        restartApplication = ::restartApplication
+                        restartApplication = ::restartApplication,
+                        connectSocket = { webSocketLifecycleObserver.updateLoggedInState(true) },
                     )
                 }
             }
