@@ -10,16 +10,16 @@ class GetProductPresignedUrlUseCase @Inject constructor(
     private val presignedUrlRepository: PresignedUrlRepository,
 ) {
     suspend operator fun invoke(
-        images: List<Pair<String, Int>>,
+        images: List<Pair<Int, String>>,
     ): Result<List<PresignedUrl>> {
-        val (remoteImages, localImages) = images.partition { (uri, _) ->
+        val (remoteImages, localImages) = images.partition { (_, uri) ->
             uri.startsWith(REMOTE_URL_KEY)
         }
 
         val localPresignedResult = localImages
             .takeIf { it.isNotEmpty() }
             ?.let { images ->
-                val titles = images.map { (_, index) ->
+                val titles = images.map { (index, _) ->
                     index.toImageTitle()
                 }
 
@@ -31,10 +31,10 @@ class GetProductPresignedUrlUseCase @Inject constructor(
         val indexedLocalPresignedUrls = localImages
             .zip(localPresignedResult.getOrThrow())
             .map { (original, presigned) ->
-                presigned.copy(imageName = original.second.toImageTitle())
+                presigned.copy(imageName = original.first.toImageTitle())
             }
 
-        val remotePresignedUrls = remoteImages.map { (url, index) ->
+        val remotePresignedUrls = remoteImages.map { (index, url) ->
             PresignedUrl(imageName = index.toImageTitle(), url = url)
         }
 

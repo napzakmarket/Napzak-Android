@@ -101,7 +101,7 @@ abstract class RegistrationViewModel(
 
         getProductPresignedUrlUseCase(
             registrationUiState.value.imageUris.mapIndexed { index, photo ->
-                photo.compressedUri.toString() to index
+                index to photo.compressedUri.toString()
             }
         ).onSuccess { presignedUrls ->
             uploadImageViaPresignedUrl(presignedUrls)
