@@ -45,10 +45,11 @@ import com.napzak.market.chat.chatroom.component.chatitem.ChatProduct
 import com.napzak.market.chat.chatroom.component.chatitem.ChatText
 import com.napzak.market.chat.chatroom.component.chatitem.MyChatItemContainer
 import com.napzak.market.chat.chatroom.component.chatitem.OpponentChatItemContainer
-import com.napzak.market.chat.chatroom.model.ChatDirection
-import com.napzak.market.chat.chatroom.model.ChatItem
-import com.napzak.market.chat.chatroom.model.ChatRoom
 import com.napzak.market.chat.chatroom.preview.mockChats
+import com.napzak.market.chat.model.ChatRoomInformation
+import com.napzak.market.chat.model.ProductBrief
+import com.napzak.market.chat.model.ReceiveMessage
+import com.napzak.market.chat.model.StoreBrief
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.img_empty_chat_room
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -72,10 +73,7 @@ internal fun ChatRoomRoute(
     val chatItems by viewModel.chatItems.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        with(viewModel) {
-            fetchChatItems()
-            fetchChatRoomDetail()
-        }
+        viewModel.prepareChatRoom()
     }
 
     ChatRoomScreen(
@@ -96,8 +94,8 @@ internal fun ChatRoomRoute(
 @Composable
 internal fun ChatRoomScreen(
     chat: String,
-    chatItems: ImmutableList<ChatItem<*>>,
-    chatRoomState: UiState<ChatRoom>,
+    chatItems: ImmutableList<ReceiveMessage<*>>,
+    chatRoomState: UiState<ChatRoomInformation>,
     opponentImageUrl: String,
     onChatChange: (String) -> Unit,
     onProductDetailClick: (Long) -> Unit,
@@ -126,13 +124,13 @@ internal fun ChatRoomScreen(
                     .imePadding(),
             ) {
                 ChatRoomTopBar(
-                    storeName = chatRoom.storeName,
+                    storeName = chatRoom.storeBrief.nickname,
                     onBackClick = onNavigateUp,
                     onMenuClick = { isBottomSheetVisible = true },
                 )
                 ChatRoomProductSection(
-                    product = chatRoom.product,
-                    onClick = { onProductDetailClick(chatRoom.product.productId) },
+                    product = chatRoom.productBrief,
+                    onClick = { onProductDetailClick(chatRoom.productBrief.productId) },
                     modifier = Modifier.fillMaxWidth(),
                 )
                 if (chatItems.isEmpty()) {
@@ -165,7 +163,7 @@ internal fun ChatRoomScreen(
             if (isBottomSheetVisible) {
                 ChatRoomBottomSheet(
                     onReportClick = { onReportClick(1) }, //TODO: 스토어ID로 변경
-                    onExitClick = { onExitChatRoomClick(chatRoom.chatRoomId) },
+                    onExitClick = { chatRoom.roomId?.let { onExitChatRoomClick(it) } },
                     onDismissRequest = { isBottomSheetVisible = false },
                 )
             }
@@ -179,7 +177,7 @@ internal fun ChatRoomScreen(
 
 @Composable
 private fun ChatRoomRecordView(
-    chatItems: ImmutableList<ChatItem<*>>,
+    chatItems: ImmutableList<ReceiveMessage<*>>,
     opponentImageUrl: String,
     modifier: Modifier = Modifier,
 ) {
@@ -218,22 +216,22 @@ private fun ChatRoomRecordView(
 
 @Composable
 private fun ChatItemRenderer(
-    chatItem: ChatItem<*>,
+    chatItem: ReceiveMessage<*>,
     modifier: Modifier = Modifier,
-    nextChatItem: ChatItem<*>? = null,
-    previousChatItem: ChatItem<*>? = null,
+    nextChatItem: ReceiveMessage<*>? = null,
+    previousChatItem: ReceiveMessage<*>? = null,
     opponentImageRequest: ImageRequest,
 ) {
-    val isPreviousItemProduct = previousChatItem is ChatItem.Product
-    val isChatDirectionEqualsPrevious = chatItem.direction == previousChatItem?.direction
-    val isChatDirectionEqualsNext = chatItem.direction == nextChatItem?.direction
+    val isPreviousItemProduct = previousChatItem is ReceiveMessage.Product
+    val isChatDirectionEqualsPrevious = chatItem.isMessageOwner == previousChatItem?.isMessageOwner
+    val isChatDirectionEqualsNext = chatItem.isMessageOwner == nextChatItem?.isMessageOwner
     val isTimeStampEqualsNext = chatItem.timeStamp == nextChatItem?.timeStamp
     val timeStamp = chatItem.timeStamp.takeIf {
         !isTimeStampEqualsNext || !isChatDirectionEqualsNext
     }
-    val chatItemAlignment = when (chatItem.direction) {
-        ChatDirection.SENT -> Alignment.TopEnd
-        ChatDirection.RECEIVED -> Alignment.TopStart
+    val chatItemAlignment = when (chatItem.isMessageOwner) {
+        true -> Alignment.TopEnd
+        false -> Alignment.TopStart
         null -> Alignment.Center
     }
 
@@ -241,17 +239,17 @@ private fun ChatItemRenderer(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = chatItemAlignment,
     ) {
-        when (chatItem.direction) {
-            ChatDirection.SENT -> MyChatItemContainer(
+        when (chatItem.isMessageOwner) {
+            true -> MyChatItemContainer(
                 timeStamp = timeStamp,
                 isRead = chatItem.isRead,
                 content = { ChatItemView(chatItem = chatItem) },
             )
 
-            ChatDirection.RECEIVED -> OpponentChatItemContainer(
+            false -> OpponentChatItemContainer(
                 imageRequest = opponentImageRequest,
                 isProfileImageVisible = !isChatDirectionEqualsPrevious || isPreviousItemProduct,
-                isProduct = chatItem is ChatItem.Product,
+                isProduct = chatItem is ReceiveMessage.Product,
                 timeStamp = timeStamp,
                 isRead = chatItem.isRead,
                 content = { ChatItemView(chatItem = chatItem) },
@@ -263,42 +261,42 @@ private fun ChatItemRenderer(
 }
 
 @Composable
-private fun ChatItemView(chatItem: ChatItem<*>) {
+private fun ChatItemView(chatItem: ReceiveMessage<*>) {
     when (chatItem) {
-        is ChatItem.Text -> {
+        is ReceiveMessage.Text -> {
             ChatText(
                 text = chatItem.text,
-                chatDirection = chatItem.direction,
+                isMessageOwner = chatItem.isMessageOwner,
             )
         }
 
-        is ChatItem.Image -> {
+        is ReceiveMessage.Image -> {
             ChatImageItem(
                 imageUrl = chatItem.imageUrl,
                 onClick = {},
             )
         }
 
-        is ChatItem.Product -> {
+        is ReceiveMessage.Product -> {
             with(chatItem) {
                 ChatProduct(
-                    direction = direction,
                     tradeType = product.tradeType,
                     genre = product.genreName,
-                    name = product.productName,
+                    name = product.title,
                     price = product.price.toString(),
+                    isMessageOwner = isMessageOwner,
                     onNavigateClick = {},
                 )
             }
         }
 
-        is ChatItem.Date -> {
+        is ReceiveMessage.Date -> {
             ChatDate(
                 date = chatItem.date,
             )
         }
 
-        is ChatItem.Notice -> {
+        is ReceiveMessage.Notice -> {
             ChatNotice(
                 notice = chatItem.notice,
                 modifier = Modifier
@@ -310,12 +308,12 @@ private fun ChatItemView(chatItem: ChatItem<*>) {
 
 @Composable
 private fun ChatItemSpacer(
-    currentChatItem: ChatItem<*>? = null,
-    previousChatItem: ChatItem<*>? = null,
+    currentChatItem: ReceiveMessage<*>? = null,
+    previousChatItem: ReceiveMessage<*>? = null,
 ) {
     val height: Dp = when {
-        currentChatItem is ChatItem.Date || previousChatItem is ChatItem.Date -> 20.dp
-        currentChatItem is ChatItem.Notice || previousChatItem is ChatItem.Notice -> 30.dp
+        currentChatItem is ReceiveMessage.Date || previousChatItem is ReceiveMessage.Date -> 20.dp
+        currentChatItem is ReceiveMessage.Notice || previousChatItem is ReceiveMessage.Notice -> 30.dp
         else -> 8.dp
     }
     Spacer(modifier = Modifier.height(height))
@@ -350,6 +348,25 @@ private fun EmptyChatScreen(
     }
 }
 
+private val mockChatRoom = ChatRoomInformation(
+    roomId = 1,
+    productBrief = ProductBrief(
+        productId = 1,
+        photo = "",
+        tradeType = "",
+        title = "",
+        price = 10000,
+        genreName = "",
+        isPriceNegotiable = true,
+    ),
+    storeBrief = StoreBrief(
+        storeId = 1,
+        nickname = "",
+        storePhoto = "",
+        isWithdrawn = false
+    )
+)
+
 @ScreenPreview
 @Composable
 private fun ChatRoomScreenPreview() {
@@ -364,7 +381,7 @@ private fun ChatRoomScreenPreview() {
             onReportClick = {},
             onExitChatRoomClick = {},
             onNavigateUp = {},
-            chatRoomState = UiState.Success(ChatRoom.mock),
+            chatRoomState = UiState.Success(mockChatRoom),
         )
     }
 }
@@ -375,7 +392,7 @@ private fun ChatRoomScreenEmptyPreview() {
     NapzakMarketTheme {
         ChatRoomScreen(
             chat = "",
-            chatItems = emptyList<ChatItem<*>>().toImmutableList(),
+            chatItems = emptyList<ReceiveMessage<*>>().toImmutableList(),
             opponentImageUrl = "",
             onChatChange = {},
             onSendChatClick = {},
@@ -383,7 +400,7 @@ private fun ChatRoomScreenEmptyPreview() {
             onReportClick = {},
             onExitChatRoomClick = {},
             onNavigateUp = {},
-            chatRoomState = UiState.Success(ChatRoom.mock),
+            chatRoomState = UiState.Success(mockChatRoom),
         )
     }
 }

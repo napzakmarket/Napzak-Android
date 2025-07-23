@@ -3,11 +3,12 @@ package com.napzak.market.chat.chatroom
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.napzak.market.chat.chatroom.model.ChatItem
-import com.napzak.market.chat.chatroom.model.ChatRoom
-import com.napzak.market.chat.chatroom.preview.mockChats
+import com.napzak.market.chat.model.ChatRoomInformation
+import com.napzak.market.chat.model.ReceiveMessage
+import com.napzak.market.chat.repository.ChatRoomRepository
 import com.napzak.market.common.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,24 +20,46 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-internal class ChatRoomViewModel @Inject constructor() : ViewModel() {
-    private val _chatItems = MutableStateFlow<List<ChatItem<*>>>(emptyList())
-    val chatItems: StateFlow<List<ChatItem<*>>> = _chatItems.asStateFlow()
+internal class ChatRoomViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
+    private val chatRepository: ChatRoomRepository,
+) : ViewModel() {
+    private val _chatItems = MutableStateFlow<List<ReceiveMessage<*>>>(emptyList())
+    val chatItems: StateFlow<List<ReceiveMessage<*>>> = _chatItems.asStateFlow()
 
-    private val _chatRoom = MutableStateFlow<UiState<ChatRoom>>(UiState.Loading)
-    val chatRoom: StateFlow<UiState<ChatRoom>> = _chatRoom.asStateFlow()
+    private val _chatRoom = MutableStateFlow<UiState<ChatRoomInformation>>(UiState.Loading)
+    val chatRoom: StateFlow<UiState<ChatRoomInformation>> = _chatRoom.asStateFlow()
 
     var chat by mutableStateOf("")
 
-    suspend fun fetchChatItems() {
-        // TODO: 채팅 내역을 가져오는 로직 구현
-        _chatItems.update { mockChats }
+    fun prepareChatRoom() = viewModelScope.launch {
+        val productId = savedStateHandle.get<Long>(PRODUCT_ID_KEY)
+        if (productId == null) {
+            _chatRoom.update { UiState.Failure("productId가 없습니다.") }
+            return@launch
+        }
+        fetchChatRoomDetail(productId)
     }
 
-    suspend fun fetchChatRoomDetail() {
-        _chatRoom.update {
-            UiState.Success(ChatRoom.mock)
-        }
+    private suspend fun fetchChatRoomDetail(productId: Long) {
+        chatRepository.getChatRoomInformation(productId)
+            .onSuccess { response ->
+                _chatRoom.update { UiState.Success(response) }
+            }
+    }
+
+    private suspend fun fetchChatItems(roomId: Long) {
+        chatRepository.getChatRoomMessages(roomId)
+            .onSuccess { messages ->
+                _chatItems.update { messages }
+            }
+    }
+
+    private suspend fun createNewRoom(productId: Long, receiverId: Long) {
+        chatRepository.createChatRoom(productId, receiverId)
+            .onSuccess { roomId ->
+                Timber.d("roomId: $roomId")
+            }
     }
 
     fun sendChat(chat: String) = viewModelScope.launch {
@@ -46,5 +69,10 @@ internal class ChatRoomViewModel @Inject constructor() : ViewModel() {
 
     fun exitChatRoom(chatRoomId: Long) = viewModelScope.launch {
         Timber.d("try to exit chatroom: $chatRoomId")
+    }
+
+    companion object {
+        private const val ROOM_ID_KEY = "chatRoomId"
+        private const val PRODUCT_ID_KEY = "productId"
     }
 }

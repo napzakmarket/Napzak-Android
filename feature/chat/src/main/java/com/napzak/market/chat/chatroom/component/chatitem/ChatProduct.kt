@@ -24,7 +24,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.chat.chatroom.model.ChatDirection
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_room_product_button
@@ -34,23 +33,23 @@ import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun ChatProduct(
-    direction: ChatDirection,
     tradeType: String,
     genre: String,
     name: String,
     price: String,
+    isMessageOwner: Boolean,
     onNavigateClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val containerColor = NapzakMarketTheme.colors.gray50
-    val shape = when (direction) {
-        ChatDirection.SENT -> RoundedCornerShape(
+    val shape = if (isMessageOwner) {
+        RoundedCornerShape(
             topStart = 12.dp,
             topEnd = 12.dp,
             bottomStart = 12.dp,
         )
-
-        ChatDirection.RECEIVED -> RoundedCornerShape(
+    } else {
+        RoundedCornerShape(
             topStart = 12.dp,
             topEnd = 12.dp,
             bottomEnd = 12.dp,
@@ -183,12 +182,12 @@ private fun ChatProductPreview() {
     NapzakMarketTheme {
         Column(modifier = Modifier.fillMaxWidth()) {
             ChatProduct(
-                direction = ChatDirection.SENT,
                 tradeType = "SELL",
                 genre = "식품",
                 name = "김치",
                 price = "1000원",
                 onNavigateClick = {},
+                isMessageOwner = true
             )
         }
     }
