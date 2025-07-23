@@ -80,7 +80,7 @@ class ChatSocketClientImpl @Inject constructor(
             )
         } catch (e: Exception) {
             logError("SEND", e)
-            disconnect()
+            _errorFlow.emit(e)
         }
     }
 
