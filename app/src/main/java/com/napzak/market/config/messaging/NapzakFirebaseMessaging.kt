@@ -1,6 +1,7 @@
 package com.napzak.market.config.messaging
 
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
@@ -16,6 +17,8 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
     @SuppressLint("LaunchActivityFromNotification")
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+
+        ensureNotificationChannel()
 
         val title = message.notification?.title
         val body = message.notification?.body
@@ -59,8 +62,21 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
         // TODO: 토큰 저장 API 연결
     }
 
+    private fun ensureNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
     companion object {
         const val NOTIFICATION_CHANNEL_ID = "NAPZAK"
+        const val CHANNEL_NAME = "납작 푸시 알림 채널"
         const val OPEN_DEEPLINK_ACTION = "com.napzak.OPEN_DEEP_LINK"
     }
 }

@@ -1,9 +1,6 @@
 package com.napzak.market.main
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,7 +25,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        createChannel()
         setContent {
             NapzakMarketTheme {
                 SystemBarColorHandler()
@@ -67,21 +63,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun createChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH
-            )
-            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
-
     companion object {
-        const val NOTIFICATION_CHANNEL_ID = "NAPZAK"
-        const val CHANNEL_NAME = "납작 푸시 알림 채널"
         const val NOTIFY_CHAT = "chat"
     }
 }
