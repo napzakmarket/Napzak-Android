@@ -94,8 +94,6 @@ fun MainScreen(
         }
     }
 
-    val statusBarColor = NapzakMarketTheme.colors.white
-
     LaunchedEffect(Unit) {
         ChatDeepLinkEventBus.events.collect { event ->
             when (event) {
