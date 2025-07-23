@@ -11,6 +11,9 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.LocalSystemBarsColor
 import com.napzak.market.ui_util.SystemBarsColorController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -27,7 +30,7 @@ class MainActivity : ComponentActivity() {
                 SystemBarColorHandler()
                 CompositionLocalProvider(LocalSystemBarsColor provides systemBarsColorController) {
                     MainScreen(
-                        restartApplication = ::restartApplication
+                        restartApplication = ::restartApplication,
                     )
                 }
             }
@@ -45,5 +48,22 @@ class MainActivity : ComponentActivity() {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(this)
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+
+        val notifyType = intent.getStringExtra("type")
+        val chatRoomId = intent.getStringExtra("roomId")
+
+        CoroutineScope(Dispatchers.Main).launch {
+            if (notifyType == NOTIFY_CHAT && chatRoomId != null)
+                ChatDeepLinkEventBus.send(ChatDeepLinkEvent.ChatRoom(chatRoomId))
+        }
+    }
+
+    companion object {
+        const val NOTIFY_CHAT = "chat"
     }
 }

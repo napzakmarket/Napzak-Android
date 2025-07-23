@@ -1,5 +1,12 @@
 package com.napzak.market.home
 
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -56,9 +64,11 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
+import timber.log.Timber
 
 private const val NICKNAME_MAX_LENGTH = 10
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 internal fun HomeRoute(
     onSearchNavigate: () -> Unit,
@@ -76,12 +86,19 @@ internal fun HomeRoute(
     val localSystemBarsColor = LocalSystemBarsColor.current
     val backgroundColor = NapzakMarketTheme.colors.white
 
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        // TODO: 시스템 설정 값 API 연결
+    }
+
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
             statusBarColor = backgroundColor,
             navigationBarColor = backgroundColor
         )
         viewModel.fetchHomeData()
+        checkNotificationPermission(context, permissionLauncher)
     }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
@@ -331,5 +348,25 @@ private fun HomeRoutePreview() {
             onMostInterestedSellNavigate = { },
             onMostInterestedBuyNavigate = { },
         )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+private fun checkNotificationPermission(
+    context: Context,
+    permissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
+) {
+    val permission = android.Manifest.permission.POST_NOTIFICATIONS
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                permission
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            permissionLauncher.launch(permission)
+        } else {
+            Timber.tag("Notification Permission").d("Already granted")
+        }
     }
 }
