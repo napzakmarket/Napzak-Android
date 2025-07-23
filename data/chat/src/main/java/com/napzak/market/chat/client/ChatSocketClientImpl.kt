@@ -10,6 +10,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -49,13 +50,9 @@ class ChatSocketClientImpl @Inject constructor(
             )
 
             val job = clientScope.launch {
-                flow.collect {
-                    logSuccess(
-                        "SUBSCRIBE",
-                        "메시지 도착: ${it.roomId} - ${it.content}, ${it.metadata.toString()}"
-                    )
-                    _messageFlow.emit(it)
-                }
+                flow
+                    .catch { logError("SUBSCRIBE", it) }
+                    .collect { _messageFlow.emit(it) }
             }
 
             logSuccess("SUBSCRIBE", "소켓 채널이 구독되었습니다. $roomId")
@@ -63,9 +60,15 @@ class ChatSocketClientImpl @Inject constructor(
             flowMap[roomId] = flow
         } catch (e: Exception) {
             logError("SUBSCRIBE", e)
-            stompSocketManager.disconnect()
+            unsubscribeChatRoom(roomId)
             throw e
         }
+    }
+
+    override suspend fun unsubscribeChatRoom(roomId: Long) {
+        jobMap.remove(roomId)
+        flowMap.remove(roomId)
+        logSuccess("SUBSCRIBE", "소켓 채널이 구독이 해제되었습니다. $roomId")
     }
 
     override suspend fun sendMessage(request: ChatMessageRequest) {
