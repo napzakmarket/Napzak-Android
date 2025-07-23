@@ -58,7 +58,7 @@ private fun ChatMessageResponse.toNotice(metadata: ChatMessageMetadata.System): 
         roomId = roomId,
         messageId = messageId,
         notice = metadata.content,
-        timeStamp = "",
+        timeStamp = createdAt,
     )
 
 private fun ChatMessageResponse.toDate(metadata: ChatMessageMetadata.Date): ReceiveMessage.Date =
@@ -66,5 +66,5 @@ private fun ChatMessageResponse.toDate(metadata: ChatMessageMetadata.Date): Rece
         roomId = roomId,
         messageId = messageId,
         date = metadata.date,
-        timeStamp = "",
+        timeStamp = createdAt,
     )
