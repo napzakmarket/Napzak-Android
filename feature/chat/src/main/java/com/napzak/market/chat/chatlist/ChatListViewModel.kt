@@ -43,7 +43,7 @@ class ChatListViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 chatSocketRepository.messageFlow.collect { message -> updateChatRoom(message) }
-            } catch (e: IllegalStateException) {
+            } catch (e: Exception) {
                 Timber.e(e)
             }
         }
@@ -54,10 +54,11 @@ class ChatListViewModel @Inject constructor(
             try {
                 if (currentState is UiState.Success) {
                     val chatRooms = currentState.data.toMutableMap()
-                    val roomId = message.roomId ?: throw Exception()
-                    val targetRoom = currentState.data[roomId] ?: throw Exception()
+                    val roomId = message.roomId ?: throw IllegalStateException("메시지에 roomId가 없습니다")
+                    val targetRoom = currentState.data[roomId]
+                        ?: throw IllegalStateException("존재하지 않는 채팅방: $roomId")
                     chatRooms[roomId] = targetRoom.copy(
-                        lastMessage = message.message.toString(),
+                        lastMessage = getLastMessage(message),
                         lastMessageAt = message.timeStamp,
                         unreadMessageCount = targetRoom.unreadMessageCount + 1
                     )
@@ -69,6 +70,14 @@ class ChatListViewModel @Inject constructor(
                 Timber.e(e)
                 currentState
             }
+        }
+    }
+
+    private fun getLastMessage(message: ReceiveMessage<*>): String {
+        return when (message) {
+            is ReceiveMessage.Text -> message.text
+            is ReceiveMessage.Image -> "사진"
+            else -> ""
         }
     }
 }
