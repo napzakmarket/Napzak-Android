@@ -2,6 +2,8 @@ package com.napzak.market.presigned_url.usecase
 
 import com.napzak.market.presigned_url.model.PresignedUrl
 import com.napzak.market.presigned_url.repository.PresignedUrlRepository
+import com.napzak.market.presigned_url.usecase.UploadImageUseCase.Companion.IMAGE_TITLE_PREFIX
+import com.napzak.market.presigned_url.usecase.UploadImageUseCase.Companion.REMOTE_URL_KEY
 import javax.inject.Inject
 
 class GetProductPresignedUrlUseCase @Inject constructor(
@@ -40,9 +42,4 @@ class GetProductPresignedUrlUseCase @Inject constructor(
     }
 
     private fun Int.toImageTitle(): String = "$IMAGE_TITLE_PREFIX${this + 1}"
-
-    companion object {
-        private const val IMAGE_TITLE_PREFIX = "image_"
-        private const val REMOTE_URL_KEY = "https://"
-    }
 }
