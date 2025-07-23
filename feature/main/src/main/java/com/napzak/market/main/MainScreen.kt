@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
@@ -89,6 +90,18 @@ fun MainScreen(
                     )
                 }
                 backPressedTime = System.currentTimeMillis()
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        ChatDeepLinkEventBus.events.collect { event ->
+            when (event) {
+                is ChatDeepLinkEvent.ChatRoom -> {
+                    navigator.navigate(MainTab.CHAT)
+                    val id = event.chatRoomId
+                    id?.let { navigator.navController.navigateToChatRoom(id.toLong()) }
+                }
             }
         }
     }
