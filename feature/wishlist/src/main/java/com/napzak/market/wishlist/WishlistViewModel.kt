@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.TradeType
+import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.product.model.Product
+import com.napzak.market.product.repository.ProductInterestRepository
 import com.napzak.market.ui_util.groupBy
 import com.napzak.market.wishlist.state.WishListProducts
 import com.napzak.market.wishlist.state.WishlistUiState
@@ -20,11 +22,13 @@ import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 internal class WishlistViewModel @Inject constructor(
-    // TODO : Repository 추가
+    private val productInterestRepository: ProductInterestRepository,
+    private val setInterestProductUseCase: SetInterestProductUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(WishlistUiState())
     val uiState = _uiState.asStateFlow()
@@ -32,7 +36,8 @@ internal class WishlistViewModel @Inject constructor(
     private val _sideEffect = Channel<WishlistSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
 
-    private var lastSuccessfulLoadedProducts = emptyList<Product>()
+    private var lastSuccessfulLoadedProducts: Pair<List<Product>, String?> =
+        emptyList<Product>() to null
     private val interestDebounceFlow = MutableSharedFlow<Pair<Long, Boolean>>()
 
     init {
@@ -40,60 +45,25 @@ internal class WishlistViewModel @Inject constructor(
     }
 
     fun updateWishlistInformation() = viewModelScope.launch {
-        //TODO : API 연결
-        updateLoadState(
-            UiState.Success(
-                WishListProducts(
-                    interestProducts = listOf(
-                        Product(
-                            productId = 201,
-                            genreName = "짱구",
-                            productName = "피규어",
-                            photo = "http=//example.com/photo3.jpg",
-                            price = 120000,
-                            uploadTime = "3일",
-                            tradeType = TradeType.SELL.toString(),
-                            tradeStatus = "BEFORE_TRADE",
-                            isPriceNegotiable = false,
-                            isOwnedByCurrentUser = false,
-                            isInterested = true,
-                            interestCount = 4,
-                            chatCount = 34,
-                        ),
-                        Product(
-                            productId = 201,
-                            genreName = "짱구",
-                            productName = "피규어",
-                            photo = "http=//example.com/photo3.jpg",
-                            price = 120000,
-                            uploadTime = "3일",
-                            tradeType = TradeType.SELL.toString(),
-                            tradeStatus = "BEFORE_TRADE",
-                            isPriceNegotiable = false,
-                            isOwnedByCurrentUser = false,
-                            isInterested = true,
-                            interestCount = 4,
-                            chatCount = 34,
-                        ),
-                        Product(
-                            productId = 201,
-                            genreName = "짱구",
-                            productName = "피규어",
-                            photo = "http=//example.com/photo3.jpg",
-                            price = 120000,
-                            uploadTime = "3일",
-                            tradeType = TradeType.SELL.toString(),
-                            tradeStatus = "BEFORE_TRADE",
-                            isPriceNegotiable = false,
-                            isOwnedByCurrentUser = false,
-                            isInterested = true,
-                            interestCount = 4,
-                            chatCount = 34,
-                        ),
-                    )
-                )
-            )
-        )
+        when (_uiState.value.selectedTab) {
+            TradeType.SELL -> {
+                productInterestRepository.getInterestSellProducts(null)
+                    .onSuccess {
+                        updateLoadState(UiState.Success(WishListProducts(it.first, it.second)))
+                        lastSuccessfulLoadedProducts = it
+                    }
+                    .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
+            }
+
+            TradeType.BUY -> {
+                productInterestRepository.getInterestBuyProducts(null)
+                    .onSuccess {
+                        updateLoadState(UiState.Success(WishListProducts(it.first, it.second)))
+                        lastSuccessfulLoadedProducts = it
+                    }
+                    .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
+            }
+        }
     }
 
     fun updateTradeType(newTradeType: TradeType) {
@@ -117,13 +87,25 @@ internal class WishlistViewModel @Inject constructor(
             .groupBy { it.first }
             .flatMapMerge { (_, flow) -> flow.debounce(DEBOUNCE_DELAY) }
             .collect { (productId, finalState) ->
-                val originalState = lastSuccessfulLoadedProducts
+                val originalState = lastSuccessfulLoadedProducts.first
                     .firstOrNull { it.productId == productId }
                     ?.isInterested
 
                 if (originalState != finalState) return@collect //원래 값과 동일한 값이 되면 api 호출 생략
 
-                // TODO: 좋아요 APi 연결
+                setInterestProductUseCase(productId, finalState)
+                    .onSuccess { updateWishlistInformation() }
+                    .onFailure {
+                        Timber.e(it.message.toString())
+                        updateLoadState(
+                            UiState.Success(
+                                WishListProducts(
+                                    interestProducts = lastSuccessfulLoadedProducts.first,
+                                    nextCursor = lastSuccessfulLoadedProducts.second,
+                                )
+                            )
+                        )
+                    }
             }
     }
 
