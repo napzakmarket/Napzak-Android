@@ -15,9 +15,6 @@ import com.napzak.market.registration.usecase.ClearCacheUseCase
 import com.napzak.market.registration.usecase.CompressImageUseCase
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -106,44 +103,27 @@ abstract class RegistrationViewModel(
             registrationUiState.value.imageUris.mapIndexed { index, photo ->
                 photo.compressedUri.toString() to index
             }
-        ).onSuccess {
-            uploadImageViaPresignedUrl(it)
+        ).onSuccess { presignedUrls ->
+            uploadImageViaPresignedUrl(presignedUrls)
         }.onFailure {
-            updateLoadState(UiState.Failure(RETRIEVING_URL_ERROR_MESSAGE))
+            updateLoadState(UiState.Failure(it.message ?: UNKNOWN_ERROR))
         }
     }
 
-    private fun uploadImageViaPresignedUrl(presignedUrls: List<PresignedUrl>) = viewModelScope.launch {
-        val imageUris = _uiState.value.imageUris
-
-        val (remoteImages, localImages) = imageUris.mapIndexed { index, photo ->
+    private suspend fun uploadImageViaPresignedUrl(
+        presignedUrls: List<PresignedUrl>,
+    ) {
+        val imageUris = registrationUiState.value.imageUris
+        val indexedImages = imageUris.mapIndexed { index, photo ->
             index to photo.uri.toString()
-        }.partition { (_, uri) -> uri.startsWith(REMOTE_URL_KEY) }
-
-        val localPresignedUrls = presignedUrls.zip(localImages) { presignedUrl, (_, uri) ->
-            presignedUrl to uri
         }
 
-        val remotePresignedUrls = remoteImages.map { (index, uri) ->
-            PresignedUrl(
-                imageName = "${KEY_DELIMITER}${index + 1}",
-                url = uri
-            )
-        }
-
-        runCatching {
-            coroutineScope {
-                val uploadResults = localPresignedUrls.map { (presignedUrl, photoUri) ->
-                    async { uploadImageUseCase(presignedUrl.url, photoUri) }
-                }.awaitAll()
-
-                if (uploadResults.all { results -> results.isSuccess }) {
-                    uploadProduct(presignedUrls + remotePresignedUrls)
-                } else {
-                    updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
-                }
+        uploadImageUseCase(presignedUrls, indexedImages)
+            .onSuccess { newPresignedUrls ->
+                uploadProduct(newPresignedUrls)
+            }.onFailure {
+                updateLoadState(UiState.Failure(it.message ?: UNKNOWN_ERROR))
             }
-        }
     }
 
     protected abstract fun uploadProduct(presignedUrls: List<PresignedUrl>): Job
@@ -153,11 +133,10 @@ abstract class RegistrationViewModel(
     }
 
     companion object {
-        private const val REMOTE_URL_KEY = "https://"
         internal const val PRODUCT_ID_KEY = "productId"
         internal const val KEY_DELIMITER = "image_"
         internal const val VALUE_DELIMITER = "?"
         internal const val UPLOADING_PRODUCT_ERROR_MESSAGE = "failed to register product."
-        private const val RETRIEVING_URL_ERROR_MESSAGE = "failed to retrieve URL."
+        internal const val UNKNOWN_ERROR = "unknown error."
     }
 }
