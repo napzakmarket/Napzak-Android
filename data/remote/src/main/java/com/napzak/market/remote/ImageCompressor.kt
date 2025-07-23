@@ -1,6 +1,5 @@
 package com.napzak.market.remote
 
-import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -18,11 +17,10 @@ import javax.inject.Inject
 
 class ImageCompressor @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val contentResolver: ContentResolver,
 ) {
     suspend fun compressImage(uri: Uri): Uri = withContext(Dispatchers.IO) {
         val (fileName, fileSize) = getImageMetaData(uri)
-        val source = ImageDecoder.createSource(contentResolver, uri)
+        val source = ImageDecoder.createSource(context.contentResolver, uri)
         val bitmap = ImageDecoder.decodeBitmap(source) { decoder, info, _ ->
             decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
             decoder.isMutableRequired = true
@@ -50,7 +48,7 @@ class ImageCompressor @Inject constructor(
         var fileName = "unknown.jpg"
         var size = -1L
 
-        contentResolver.query(
+        context.contentResolver.query(
             uri,
             arrayOf(DISPLAY_NAME, SIZE),
             null,
