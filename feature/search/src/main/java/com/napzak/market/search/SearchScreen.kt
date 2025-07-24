@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.common.state.UiState
+import com.napzak.market.designsystem.component.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.search.R.drawable.ic_left_chevron
@@ -100,8 +101,7 @@ private fun SearchScreen(
 ) {
 
     when (uiState.loadState) {
-        is UiState.Loading -> {
-        }
+        is UiState.Loading -> NapzakLoadingOverlay()
 
         is UiState.Empty -> {
         }

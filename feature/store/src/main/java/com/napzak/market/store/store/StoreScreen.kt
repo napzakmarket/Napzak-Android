@@ -57,6 +57,7 @@ import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.GenreFilterChip
+import com.napzak.market.designsystem.component.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.component.tabbar.MarketTabBar
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
@@ -190,7 +191,7 @@ private fun StoreScreen(
     modifier: Modifier = Modifier,
 ) {
     when (uiState.isLoaded) {
-        is UiState.Loading -> {}
+        is UiState.Loading -> NapzakLoadingOverlay()
 
         is UiState.Empty -> {}
 
