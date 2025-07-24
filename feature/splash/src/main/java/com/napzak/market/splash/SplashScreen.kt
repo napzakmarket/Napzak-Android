@@ -18,9 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.napzak.market.designsystem.R.drawable.ic_logo
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.ui_util.LocalSystemBarsColor
 import kotlinx.coroutines.delay
 
 @Composable
@@ -30,19 +30,24 @@ fun SplashRoute(
     viewModel: SplashViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
 ) {
-    val systemUiController = rememberSystemUiController()
+    val localSystemBarsColor = LocalSystemBarsColor.current
     val splashColor = NapzakMarketTheme.colors.purple500
     val originalColor = NapzakMarketTheme.colors.white
-    val originalDarkIcons = true
 
     var isSuccess by remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
-        systemUiController.setSystemBarsColor(color = splashColor, darkIcons = false)
+        localSystemBarsColor.setSystemBarColor(
+            statusBarColor = splashColor,
+            navigationBarColor = splashColor,
+            isStatusDarkIcon = false,
+            isNavigationDarkIcon = false,
+        )
+
         onDispose {
-            systemUiController.setSystemBarsColor(
-                color = originalColor,
-                darkIcons = originalDarkIcons,
+            localSystemBarsColor.setSystemBarColor(
+                statusBarColor = originalColor,
+                navigationBarColor = originalColor
             )
         }
     }

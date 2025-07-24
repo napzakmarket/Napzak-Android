@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
@@ -20,7 +20,6 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.napzak.market.chat.navigation.chatGraph
 import com.napzak.market.chat.navigation.navigateToChatRoom
 import com.napzak.market.common.type.SortType
@@ -73,7 +72,6 @@ fun MainScreen(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val systemUiController = rememberSystemUiController()
 
     val napzakToast = remember { NapzakToast(context, lifecycleOwner) }
     var backPressedTime by remember { mutableLongStateOf(0) }
@@ -96,12 +94,16 @@ fun MainScreen(
         }
     }
 
-    val statusBarColor = NapzakMarketTheme.colors.white
-
-    SideEffect {
-        systemUiController.setStatusBarColor(
-            color = statusBarColor,
-        )
+    LaunchedEffect(Unit) {
+        ChatDeepLinkEventBus.events.collect { event ->
+            when (event) {
+                is ChatDeepLinkEvent.ChatRoom -> {
+                    navigator.navigate(MainTab.CHAT)
+                    val id = event.chatRoomId
+                    id?.let { navigator.navController.navigateToChatRoom(id.toLong()) }
+                }
+            }
+        }
     }
 
     Scaffold(

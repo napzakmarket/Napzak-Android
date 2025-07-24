@@ -31,6 +31,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.common.state.UiState
+import com.napzak.market.designsystem.component.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.bottomsheet.GenreSearchBottomSheet
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.topbar.NavigateUpTopBar
@@ -98,6 +99,10 @@ private fun EditStoreScreen(
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
+
+    if (uiState.isUploading || uiState.loadState is UiState.Loading) {
+        NapzakLoadingOverlay()
+    }
 
     Scaffold(
         topBar = {

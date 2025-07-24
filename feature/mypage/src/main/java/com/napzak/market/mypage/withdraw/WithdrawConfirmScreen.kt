@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.napzak.market.designsystem.component.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.component.topbar.NavigateUpTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -40,6 +41,7 @@ import com.napzak.market.ui_util.ScreenPreview
 
 @Composable
 internal fun WithdrawConfirmScreen(
+    isWithdrawing: Boolean,
     onCancelClick: () -> Unit,
     onConfirmClick: () -> Unit,
     onNavigateUpClick: () -> Unit,
@@ -53,6 +55,8 @@ internal fun WithdrawConfirmScreen(
             withdrawDialogVisible = false
         }
     }
+
+    if (isWithdrawing) NapzakLoadingOverlay()
 
     Scaffold(
         topBar = {
@@ -100,7 +104,10 @@ internal fun WithdrawConfirmScreen(
     ) {
         NapzakDialog(
             title = stringResource(sign_out_dialog_title),
-            onConfirmClick = onConfirmClick,
+            onConfirmClick = {
+                withdrawDialogVisible = false
+                onConfirmClick()
+            },
             onDismissClick = { withdrawDialogVisible = false },
         )
     }
@@ -161,6 +168,7 @@ private fun WithdrawConfirmBottomBar(
 private fun WithdrawConfirmScreenPreview() {
     NapzakMarketTheme {
         WithdrawConfirmScreen(
+            isWithdrawing = false,
             onCancelClick = {},
             onConfirmClick = {},
             onNavigateUpClick = {},
