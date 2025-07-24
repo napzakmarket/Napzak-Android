@@ -1,5 +1,6 @@
 package com.napzak.market.chat.chatroom
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -50,6 +51,7 @@ import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.chat.model.StoreBrief
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.img_empty_chat_room
+import com.napzak.market.designsystem.component.image.ZoomableImageScreen
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_room_empty_guide_1
 import com.napzak.market.feature.chat.R.string.chat_room_empty_guide_2
@@ -110,6 +112,8 @@ internal fun ChatRoomScreen(
     onPhotoSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
+
     when (chatRoomState) {
         is UiState.Loading -> {
             /*TODO: 로딩화면 구현*/
@@ -118,6 +122,13 @@ internal fun ChatRoomScreen(
         is UiState.Success -> {
             val chatRoom = chatRoomState.data
             var isBottomSheetVisible by remember { mutableStateOf(false) }
+            var selectedImageUrl: String? by remember { mutableStateOf(null) }
+
+            ChatImageZoomScreen(
+                selectedImageUrl = selectedImageUrl,
+                onBackClick = { selectedImageUrl = null },
+                modifier = modifier
+            )
 
             Column(
                 modifier = modifier
@@ -150,6 +161,11 @@ internal fun ChatRoomScreen(
                     ChatRoomRecordView(
                         chatItems = chatItems,
                         opponentImageUrl = opponentImageUrl,
+                        onImageItemClick = { message ->
+                            if (message is ReceiveMessage.Image) {
+                                selectedImageUrl = message.imageUrl
+                            }
+                        },
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -178,7 +194,6 @@ internal fun ChatRoomScreen(
         else -> {
             /*TODO: 채팅방 정보를 불러오지 못하는 경우에 대한 화면 구현*/
             Timber.tag("ChatRoom").d("none ChatRoomScreen called")
-
         }
     }
 }
@@ -187,6 +202,7 @@ internal fun ChatRoomScreen(
 private fun ChatRoomRecordView(
     chatItems: ImmutableList<ReceiveMessage<*>>,
     opponentImageUrl: String,
+    onImageItemClick: (ReceiveMessage<*>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -217,6 +233,7 @@ private fun ChatRoomRecordView(
                 chatItem = chatItem,
                 nextChatItem = nextChatItem,
                 previousChatItem = previousChatItem,
+                onImageItemClick = { onImageItemClick(chatItem) }
             )
         }
     }
@@ -229,6 +246,7 @@ private fun ChatItemRenderer(
     nextChatItem: ReceiveMessage<*>? = null,
     previousChatItem: ReceiveMessage<*>? = null,
     opponentImageRequest: ImageRequest,
+    onImageItemClick: () -> Unit,
 ) {
     val isPreviousItemProduct = previousChatItem is ReceiveMessage.Product
     val isChatDirectionEqualsPrevious = chatItem.isMessageOwner == previousChatItem?.isMessageOwner
@@ -251,7 +269,12 @@ private fun ChatItemRenderer(
             true -> MyChatItemContainer(
                 timeStamp = timeStamp,
                 isRead = chatItem.isRead,
-                content = { ChatItemView(chatItem = chatItem) },
+                content = {
+                    ChatItemView(
+                        chatItem = chatItem,
+                        onImageItemClick = onImageItemClick
+                    )
+                },
             )
 
             false -> OpponentChatItemContainer(
@@ -260,7 +283,12 @@ private fun ChatItemRenderer(
                 isProduct = chatItem is ReceiveMessage.Product,
                 timeStamp = timeStamp,
                 isRead = chatItem.isRead,
-                content = { ChatItemView(chatItem = chatItem) },
+                content = {
+                    ChatItemView(
+                        chatItem = chatItem,
+                        onImageItemClick = onImageItemClick
+                    )
+                },
             )
 
             null -> ChatItemView(chatItem = chatItem) // ChatDate()가 표시된다.
@@ -269,7 +297,10 @@ private fun ChatItemRenderer(
 }
 
 @Composable
-private fun ChatItemView(chatItem: ReceiveMessage<*>) {
+private fun ChatItemView(
+    chatItem: ReceiveMessage<*>,
+    onImageItemClick: () -> Unit = {},
+) {
     when (chatItem) {
         is ReceiveMessage.Text -> {
             ChatText(
@@ -281,7 +312,7 @@ private fun ChatItemView(chatItem: ReceiveMessage<*>) {
         is ReceiveMessage.Image -> {
             ChatImageItem(
                 imageUrl = chatItem.imageUrl,
-                onClick = {},
+                onClick = onImageItemClick,
             )
         }
 
@@ -353,6 +384,29 @@ private fun EmptyChatScreen(
             color = NapzakMarketTheme.colors.gray200,
         )
         Spacer(modifier = Modifier.height(50.dp))
+    }
+}
+
+@Composable
+private fun ChatImageZoomScreen(
+    selectedImageUrl: String?,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    BackHandler(selectedImageUrl != null) {
+        onBackClick()
+    }
+
+    selectedImageUrl?.let {
+        ZoomableImageScreen(
+            imageUrls = listOf(it).toImmutableList(),
+            initialPage = 0,
+            contentDescription = null,
+            onBackClick = onBackClick,
+            modifier = modifier
+                .systemBarsPadding()
+                .fillMaxSize(),
+        )
     }
 }
 
