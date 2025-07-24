@@ -68,7 +68,7 @@ internal fun ChatRoomRoute(
     modifier: Modifier = Modifier,
     viewModel: ChatRoomViewModel = hiltViewModel(),
 ) {
-    val chatRoomState by viewModel.chatRoom.collectAsStateWithLifecycle()
+    val chatRoomState by viewModel.chatRoomState.collectAsStateWithLifecycle()
     val chatItems by viewModel.chatItems.collectAsStateWithLifecycle()
 
     LifecycleResumeEffect(Unit) {
@@ -89,7 +89,7 @@ internal fun ChatRoomRoute(
         onReportClick = onStoreReportNavigate,
         onExitChatRoomClick = {},  //TODO: 채팅방 탈퇴 API 연결
         onNavigateUp = onNavigateUp,
-        onSendChatClick = viewModel::sendChat,
+        onSendChatClick = viewModel::sendTextMessage,
         modifier = modifier,
     )
 }
