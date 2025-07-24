@@ -9,7 +9,7 @@ data class ChatMessageResponse(
     @SerialName("roomId") val roomId: Long,
     @SerialName("senderId") val senderId: Long,
     @SerialName("type") val type: String,
-    @SerialName("content") val content: String?,
+    @SerialName("content") val content: String? = null,
     @SerialName("metadata") val metadata: ChatMessageMetadata? = null,
     @SerialName("createdAt") val createdAt: String,
     @SerialName("isRead") val isRead: Boolean,
