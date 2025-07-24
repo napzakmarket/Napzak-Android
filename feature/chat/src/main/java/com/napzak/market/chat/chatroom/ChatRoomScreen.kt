@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,12 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.request.ImageRequest
 import com.napzak.market.chat.chatroom.component.ChatRoomBottomSheet
@@ -46,7 +45,6 @@ import com.napzak.market.chat.chatroom.component.chatitem.ChatText
 import com.napzak.market.chat.chatroom.component.chatitem.MyChatItemContainer
 import com.napzak.market.chat.chatroom.component.chatitem.OpponentChatItemContainer
 import com.napzak.market.chat.chatroom.preview.mockChats
-import com.napzak.market.chat.model.ChatRoomInformation
 import com.napzak.market.chat.model.ProductBrief
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.chat.model.StoreBrief
@@ -59,6 +57,7 @@ import com.napzak.market.feature.chat.R.string.chat_room_input_field_hint
 import com.napzak.market.ui_util.ScreenPreview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import timber.log.Timber
 
 
 @Composable
@@ -72,8 +71,12 @@ internal fun ChatRoomRoute(
     val chatRoomState by viewModel.chatRoom.collectAsStateWithLifecycle()
     val chatItems by viewModel.chatItems.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
+    LifecycleResumeEffect(Unit) {
         viewModel.prepareChatRoom()
+
+        onPauseOrDispose {
+            viewModel.leaveChatRoom()
+        }
     }
 
     ChatRoomScreen(
@@ -84,7 +87,7 @@ internal fun ChatRoomRoute(
         onChatChange = { viewModel.chat = it },
         onProductDetailClick = onProductDetailNavigate,
         onReportClick = onStoreReportNavigate,
-        onExitChatRoomClick = viewModel::exitChatRoom,
+        onExitChatRoomClick = {},  //TODO: 채팅방 탈퇴 API 연결
         onNavigateUp = onNavigateUp,
         onSendChatClick = viewModel::sendChat,
         modifier = modifier,
@@ -95,18 +98,16 @@ internal fun ChatRoomRoute(
 internal fun ChatRoomScreen(
     chat: String,
     chatItems: ImmutableList<ReceiveMessage<*>>,
-    chatRoomState: UiState<ChatRoomInformation>,
+    chatRoomState: UiState<ChatRoomUiState>,
     opponentImageUrl: String,
     onChatChange: (String) -> Unit,
     onProductDetailClick: (Long) -> Unit,
     onReportClick: (Long) -> Unit,
-    onExitChatRoomClick: (Long) -> Unit,
+    onExitChatRoomClick: () -> Unit,
     onNavigateUp: () -> Unit,
     onSendChatClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val focusManager = LocalFocusManager.current
-
     when (chatRoomState) {
         is UiState.Loading -> {
             /*TODO: 로딩화면 구현*/
@@ -124,15 +125,18 @@ internal fun ChatRoomScreen(
                     .imePadding(),
             ) {
                 ChatRoomTopBar(
-                    storeName = chatRoom.storeBrief.nickname,
+                    storeName = chatRoom.storeBrief?.nickname ?: "",
                     onBackClick = onNavigateUp,
                     onMenuClick = { isBottomSheetVisible = true },
                 )
-                ChatRoomProductSection(
-                    product = chatRoom.productBrief,
-                    onClick = { onProductDetailClick(chatRoom.productBrief.productId) },
-                    modifier = Modifier.fillMaxWidth(),
-                )
+
+                chatRoom.productBrief?.let { product ->
+                    ChatRoomProductSection(
+                        product = product,
+                        onClick = { onProductDetailClick(product.productId) },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
                 if (chatItems.isEmpty()) {
                     EmptyChatScreen(
                         modifier = Modifier
@@ -163,7 +167,7 @@ internal fun ChatRoomScreen(
             if (isBottomSheetVisible) {
                 ChatRoomBottomSheet(
                     onReportClick = { onReportClick(1) }, //TODO: 스토어ID로 변경
-                    onExitClick = { chatRoom.roomId?.let { onExitChatRoomClick(it) } },
+                    onExitClick = onExitChatRoomClick,
                     onDismissRequest = { isBottomSheetVisible = false },
                 )
             }
@@ -171,6 +175,8 @@ internal fun ChatRoomScreen(
 
         else -> {
             /*TODO: 채팅방 정보를 불러오지 못하는 경우에 대한 화면 구현*/
+            Timber.tag("ChatRoom").d("none ChatRoomScreen called")
+
         }
     }
 }
@@ -348,7 +354,7 @@ private fun EmptyChatScreen(
     }
 }
 
-private val mockChatRoom = ChatRoomInformation(
+private val mockChatRoom = ChatRoomUiState(
     roomId = 1,
     productBrief = ProductBrief(
         productId = 1,
