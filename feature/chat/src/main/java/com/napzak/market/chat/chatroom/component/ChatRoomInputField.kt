@@ -1,5 +1,8 @@
 package com.napzak.market.chat.chatroom.component
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -34,9 +37,19 @@ internal fun ChatRoomInputField(
     hint: String,
     onTextChange: (String) -> Unit,
     onSendClick: (String) -> Unit,
-    onGalleryClick: () -> Unit,
+    onPhotoSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri -> uri?.let { onPhotoSelect(it.toString()) } }
+
+    val onGalleryClick = {
+        photoPickerLauncher.launch(
+            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        )
+    }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -142,7 +155,7 @@ private fun ChatRoomInputFieldPreview() {
             onTextChange = {},
             hint = "메시지를 입력해주세요",
             onSendClick = {},
-            onGalleryClick = {},
+            onPhotoSelect = {},
         )
     }
 }

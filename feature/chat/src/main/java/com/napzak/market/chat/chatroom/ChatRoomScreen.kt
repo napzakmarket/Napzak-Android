@@ -90,6 +90,7 @@ internal fun ChatRoomRoute(
         onExitChatRoomClick = {},  //TODO: 채팅방 탈퇴 API 연결
         onNavigateUp = onNavigateUp,
         onSendChatClick = viewModel::sendTextMessage,
+        onPhotoSelect = viewModel::sendImageMessage,
         modifier = modifier,
     )
 }
@@ -106,6 +107,7 @@ internal fun ChatRoomScreen(
     onExitChatRoomClick: () -> Unit,
     onNavigateUp: () -> Unit,
     onSendChatClick: (String) -> Unit,
+    onPhotoSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (chatRoomState) {
@@ -160,7 +162,7 @@ internal fun ChatRoomScreen(
                     hint = stringResource(chat_room_input_field_hint),
                     onSendClick = onSendChatClick,
                     onTextChange = onChatChange,
-                    onGalleryClick = {},
+                    onPhotoSelect = onPhotoSelect,
                 )
             }
 
@@ -387,6 +389,7 @@ private fun ChatRoomScreenPreview() {
             onReportClick = {},
             onExitChatRoomClick = {},
             onNavigateUp = {},
+            onPhotoSelect = {},
             chatRoomState = UiState.Success(mockChatRoom),
         )
     }
@@ -406,6 +409,7 @@ private fun ChatRoomScreenEmptyPreview() {
             onReportClick = {},
             onExitChatRoomClick = {},
             onNavigateUp = {},
+            onPhotoSelect = {},
             chatRoomState = UiState.Success(mockChatRoom),
         )
     }

@@ -3,6 +3,7 @@ package com.napzak.market.chat.chatroom
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +13,10 @@ import com.napzak.market.chat.model.SendMessage
 import com.napzak.market.chat.repository.ChatRoomRepository
 import com.napzak.market.chat.repository.ChatSocketRepository
 import com.napzak.market.common.state.UiState
+import com.napzak.market.presigned_url.model.UploadImage
+import com.napzak.market.presigned_url.usecase.UploadImagesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +30,7 @@ internal class ChatRoomViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val chatRepository: ChatRoomRepository,
     private val chatSocketRepository: ChatSocketRepository,
+    private val uploadImagesUseCase: UploadImagesUseCase
 ) : ViewModel() {
     private val _chatItems = MutableStateFlow<List<ReceiveMessage<*>>>(emptyList())
     val chatItems: StateFlow<List<ReceiveMessage<*>>> = _chatItems.asStateFlow()
@@ -34,6 +39,7 @@ internal class ChatRoomViewModel @Inject constructor(
     val chatRoomState: StateFlow<UiState<ChatRoomUiState>> = _chatRoomState.asStateFlow()
 
     private val chatCondition = mutableStateOf(ChatCondition.PRODUCT_NOT_CHANGED)
+    private var messageFlow: Flow<ReceiveMessage<*>>? = null
 
     var chat by mutableStateOf("")
 
@@ -108,9 +114,10 @@ internal class ChatRoomViewModel @Inject constructor(
     private suspend fun fetchMessages(roomId: Long) {
         chatRepository.getChatRoomMessages(roomId)
             .onSuccess { messages ->
-                _chatItems.update {
-                    it.toMutableList().apply { addAll(messages) }
+                val processedMessages = messages.map { message ->
+                    preprocessMessage(message)
                 }
+                _chatItems.update { processedMessages }
             }
             .getOrThrow()
     }
@@ -122,15 +129,19 @@ internal class ChatRoomViewModel @Inject constructor(
         try {
             val storeId = requireNotNull(chatRoomStateAsSuccess.storeBrief?.storeId)
 
-            chatSocketRepository.getMessageFlow(storeId).collect { message ->
-                if (message.roomId == roomId) {
-                    Timber.tag("ChatRoom").d("구독 중인 메시지: $message")
+            if (messageFlow == null) {
+                messageFlow = chatSocketRepository.getMessageFlow(storeId)
+                messageFlow?.collect { message ->
+                    if (message.roomId == roomId) {
+                        val processedMessage = preprocessMessage(message)
+                        Timber.tag("ChatRoom").d("구독 중인 메시지: $processedMessage")
 
-                    // TODO: 채팅 기록 저장 방식 수정 (Collection 교체 혹은 저장 방향 수정)
-                    val newList = _chatItems.value.toMutableList()
-                        .apply { this.add(0, message) }
-                        .toList()
-                    _chatItems.update { newList }
+                        // TODO: 채팅 기록 저장 방식 수정 (Collection 교체 혹은 저장 방향 수정)
+                        val newList = _chatItems.value.toMutableList()
+                            .apply { this.add(0, processedMessage) }
+                            .toList()
+                        _chatItems.update { newList }
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -161,16 +172,25 @@ internal class ChatRoomViewModel @Inject constructor(
      * 채팅 소켓 채널을 통해 이미지 URL을 전송합니다.
      * 이미지를 전송할 떄마다 첫 채팅인지 혹은 물품 정보가 변경되었는지 확인합니다.
      */
-    fun sendImageMessage(imageUrls: List<String>) {
+    fun sendImageMessage(uri: String) {
         viewModelScope.launch {
             try {
                 onProductChanged()
                 /*TODO: PresignedURL 로직 삽입*/
-
-                val chatRoomState = (_chatRoomState.value as UiState.Success).data
-                val roomId = chatRoomState.roomId ?: return@launch
-                chatSocketRepository.sendChat(SendMessage.Image(roomId, null, imageUrls))
-
+                uploadImagesUseCase(
+                    listOf(
+                        UploadImage(
+                            imageType = UploadImage.ImageType.CHAT,
+                            uri = uri,
+                        )
+                    )
+                ).onSuccess { response ->
+                    val imageUrls = response.map {
+                        with(it.value.toUri()) { "$scheme://$authority$path" }
+                    }
+                    val roomId = requireNotNull(chatRoomStateAsSuccess.roomId)
+                    chatSocketRepository.sendChat(SendMessage.Image(roomId, null, imageUrls))
+                }.getOrThrow()
             } catch (e: Exception) {
                 Timber.tag(TAG).e(e)
             }
@@ -209,6 +229,19 @@ internal class ChatRoomViewModel @Inject constructor(
             ChatCondition.PRODUCT_NOT_CHANGED -> {} //no work to do
         }
         chatCondition.value = ChatCondition.PRODUCT_NOT_CHANGED
+    }
+
+    /**
+     * 인식할 수 없는 이미지 링크에 대해서 전처리를 수행합니다.
+     * 쿼리 파라미터를 없앱니다.
+     */
+    private fun preprocessMessage(message: ReceiveMessage<*>): ReceiveMessage<*> {
+        return if (message is ReceiveMessage.Image) {
+            val uri = message.imageUrl.toUri()
+            message.copy(imageUrl = with(uri) { "$scheme://$authority$path" })
+        } else {
+            message
+        }
     }
 
     /**
@@ -253,6 +286,7 @@ internal class ChatRoomViewModel @Inject constructor(
      */
     private suspend fun enterChatRoom(roomId: Long): Long =
         chatRepository.enterChatRoom(roomId).onSuccess {
+            Timber.tag(TAG).d("채팅방 입장 및 구독 시작함")
             collectMessages(roomId)
         }.getOrThrow()
 
