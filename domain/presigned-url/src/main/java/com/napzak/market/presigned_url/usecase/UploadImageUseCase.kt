@@ -14,31 +14,36 @@ class UploadImageUseCase @Inject constructor(
         presignedUrls: List<PresignedUrl>,
         images: List<Pair<Int, String>>,
     ): Result<List<PresignedUrl>> = coroutineScope {
-        val (remoteImages, localImages) = images.partition { (_, uri) ->
+        val (_, localImages) = images.partition { (_, uri) ->
             uri.startsWith(REMOTE_URL_KEY)
         }
 
-        val localPresignedUrls = presignedUrls.zip(localImages) { presignedUrl, (_, uri) ->
-            presignedUrl to uri
-        }
+        val presignedMap = presignedUrls.associateBy { it.imageName }
 
-        val uploadResults = localPresignedUrls.map { (presignedUrl, photoUri) ->
+        val localUploadResults = localImages.map { (index, uri) ->
+            val imageTitle = index.toImageTitle()
+            val presignedUrl = presignedMap[imageTitle]
+                ?: return@coroutineScope Result.failure(IllegalArgumentException("$MISSING_URL: $imageTitle"))
+
             async {
-                presignedUrlRepository.putViaPresignedUrl(presignedUrl.url, photoUri)
+                presignedUrlRepository.putViaPresignedUrl(presignedUrl.url, uri)
             }
         }.awaitAll()
 
-        if (uploadResults.all { it.isSuccess }) {
-            val remotePresigned = remoteImages.map { (index, uri) ->
-                PresignedUrl(imageName = index.toImageTitle(), url = uri)
-            }
-
-            Result.success(presignedUrls + remotePresigned)
-        } else {
-            val failureResult = uploadResults.first { it.isFailure }
-
-            Result.failure(failureResult.exceptionOrNull() ?: Exception(UNKNOWN_ERROR))
+        localUploadResults.firstOrNull { it.isFailure }?.exceptionOrNull()?.let { e ->
+            return@coroutineScope Result.failure(e)
         }
+
+        val resultList = images.map { (index, uri) ->
+            val imageTitle = index.toImageTitle()
+
+            if (uri.startsWith(REMOTE_URL_KEY))
+                PresignedUrl(imageName = imageTitle, url = uri)
+            else presignedMap[imageTitle]
+                ?: throw IllegalStateException("$MISSING_URL: $imageTitle")
+        }
+
+        Result.success(resultList)
     }
 
     private fun Int.toImageTitle(): String = "$IMAGE_TITLE_PREFIX${this + 1}"
@@ -46,6 +51,6 @@ class UploadImageUseCase @Inject constructor(
     companion object {
         internal const val IMAGE_TITLE_PREFIX = "image_"
         internal const val REMOTE_URL_KEY = "https://"
-        internal const val UNKNOWN_ERROR = "unknown error."
+        internal const val MISSING_URL = "missing presigned URL"
     }
 }
