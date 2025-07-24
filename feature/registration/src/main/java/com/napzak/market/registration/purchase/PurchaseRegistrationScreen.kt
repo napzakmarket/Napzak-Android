@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -68,12 +66,6 @@ fun PurchaseRegistrationRoute(
             }
     }
 
-    DisposableEffect(Unit) {
-        onDispose {
-            viewModel.clearCachedImage()
-        }
-    }
-
     PurchaseRegistrationScreen(
         registrationUiState = registrationUiState,
         purchaseUiState = purchaseUiState,
@@ -111,15 +103,6 @@ fun PurchaseRegistrationScreen(
     modifier: Modifier = Modifier,
 ) {
     val paddedModifier = Modifier.padding(horizontal = 20.dp)
-    val isButtonEnabled = remember(
-        registrationUiState.imageUris,
-        registrationUiState.genre,
-        registrationUiState.title,
-        registrationUiState.description,
-        registrationUiState.price,
-        purchaseUiState.isNegotiable,
-    ) { checkButtonEnabled() }
-
     val focusManager = LocalFocusManager.current
     val state = rememberLazyListState()
 
@@ -210,7 +193,7 @@ fun PurchaseRegistrationScreen(
             NapzakButton(
                 text = stringResource(register),
                 onClick = onRegisterClick,
-                enabled = isButtonEnabled,
+                enabled = checkButtonEnabled(),
             )
         }
     }
