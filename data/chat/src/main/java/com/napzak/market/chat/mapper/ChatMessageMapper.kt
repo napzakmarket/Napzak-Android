@@ -5,37 +5,43 @@ import com.napzak.market.chat.dto.ChatMessageResponse
 import com.napzak.market.chat.model.ProductBrief
 import com.napzak.market.chat.model.ReceiveMessage
 
-fun ChatMessageResponse.toDomain(): ReceiveMessage<*> {
+fun ChatMessageResponse.toDomain(receiverId: Long = 0): ReceiveMessage<*> {
     return when (metadata) {
-        null -> toText()
-        is ChatMessageMetadata.Image -> toImage(metadata)
-        is ChatMessageMetadata.Product -> toProduct(metadata)
+        null -> toText(receiverId)
+        is ChatMessageMetadata.Image -> toImage(receiverId, metadata)
+        is ChatMessageMetadata.Product -> toProduct(receiverId, metadata)
         is ChatMessageMetadata.System -> toNotice(metadata)
         is ChatMessageMetadata.Date -> toDate(metadata)
     }
 }
 
-private fun ChatMessageResponse.toText(): ReceiveMessage.Text =
+private fun ChatMessageResponse.toText(receiverId: Long): ReceiveMessage.Text =
     ReceiveMessage.Text(
         roomId = roomId,
         messageId = messageId,
         text = content ?: "",
         timeStamp = createdAt,
         isRead = isRead,
-        isMessageOwner = false,
+        isMessageOwner = senderId != receiverId,
     )
 
-private fun ChatMessageResponse.toImage(metadata: ChatMessageMetadata.Image): ReceiveMessage.Image =
+private fun ChatMessageResponse.toImage(
+    receiverId: Long,
+    metadata: ChatMessageMetadata.Image,
+): ReceiveMessage.Image =
     ReceiveMessage.Image(
         roomId = roomId,
         messageId = messageId,
         imageUrl = metadata.imageUrls.firstOrNull() ?: "",
         timeStamp = createdAt,
         isRead = isRead,
-        isMessageOwner = false,
+        isMessageOwner = senderId != receiverId,
     )
 
-private fun ChatMessageResponse.toProduct(metadata: ChatMessageMetadata.Product): ReceiveMessage.Product =
+private fun ChatMessageResponse.toProduct(
+    receiverId: Long,
+    metadata: ChatMessageMetadata.Product,
+): ReceiveMessage.Product =
     ReceiveMessage.Product(
         roomId = roomId,
         messageId = messageId,
@@ -50,7 +56,7 @@ private fun ChatMessageResponse.toProduct(metadata: ChatMessageMetadata.Product)
         ),
         timeStamp = createdAt,
         isRead = isRead,
-        isMessageOwner = false,
+        isMessageOwner = senderId != receiverId,
     )
 
 private fun ChatMessageResponse.toNotice(metadata: ChatMessageMetadata.System): ReceiveMessage.Notice =
