@@ -40,7 +40,7 @@ class UploadImageUseCase @Inject constructor(
             if (uri.startsWith(REMOTE_URL_KEY))
                 PresignedUrl(imageName = imageTitle, url = uri)
             else presignedMap[imageTitle]
-                ?: throw IllegalStateException("$MISSING_URL: $imageTitle")
+                ?: return@coroutineScope Result.failure(IllegalStateException("$MISSING_URL: $imageTitle"))
         }
 
         Result.success(resultList)
