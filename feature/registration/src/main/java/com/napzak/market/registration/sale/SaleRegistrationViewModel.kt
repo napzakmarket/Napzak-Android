@@ -113,7 +113,7 @@ class SaleRegistrationViewModel @Inject constructor(
                 || (saleState.isNormalShippingChecked && saleState.normalShippingFee.priceToNumericTransformation() < 100) || (saleState.isHalfShippingChecked && saleState.halfShippingFee.isEmpty()))
     }
 
-    override fun uploadProduct(presignedUrls: List<PresignedUrl>) = viewModelScope.launch {
+    override suspend fun uploadProduct(presignedUrls: List<PresignedUrl>) {
         val saleState = _uiState.value
         val registrationState = registrationUiState.value
         val product = SaleRegistrationProduct(

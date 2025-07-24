@@ -82,14 +82,15 @@ class PurchaseRegistrationViewModel @Inject constructor(
                 || price.isEmpty() || price.toIntOrNull()?.rem(1000) != 0)
     }
 
-    override fun uploadProduct(presignedUrls: List<PresignedUrl>) = viewModelScope.launch {
+    override suspend fun uploadProduct(presignedUrls: List<PresignedUrl>) {
         val purchaseState = _uiState.value
         val registrationState = registrationUiState.value
         val product = PurchaseRegistrationProduct(
-            imageUrls = presignedUrls.map {
+            imageUrls = presignedUrls.mapIndexed { index, presignedUrl ->
                 ProductImage(
-                    imageUrl = it.url.substringBefore(VALUE_DELIMITER),
-                    sequence = it.imageName.substringAfter(KEY_DELIMITER).toInt(),
+                    photoId = registrationState.imageUris[index].photoId,
+                    imageUrl = presignedUrl.url.substringBefore(VALUE_DELIMITER),
+                    sequence = presignedUrl.imageName.substringAfter(KEY_DELIMITER).toInt(),
                 )
             },
             genreId = registrationState.genre?.genreId ?: 0L,

@@ -14,7 +14,6 @@ import com.napzak.market.registration.model.Photo.PhotoStatus
 import com.napzak.market.registration.usecase.ClearCacheUseCase
 import com.napzak.market.registration.usecase.CompressImageUseCase
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -43,17 +42,17 @@ abstract class RegistrationViewModel(
                 val compressedUri = result.getOrNull()?.toUri()
 
                 _uiState.update { currentState ->
-                    currentState.copy(
-                        imageUris = currentState.imageUris.map { originalPhoto ->
-                            if (originalPhoto.uuid == newPhoto.uuid) {
-                                originalPhoto.copy(
-                                    compressedUri = compressedUri
-                                        ?: originalPhoto.uri, // TODO: 이미지 압축 or 쿼리 실패 시 어떻게 처리할 지?
-                                    status = photoStatus,
-                                )
-                            } else originalPhoto
-                        }.toImmutableList()
-                    )
+                    val updatedImages = currentState.imageUris.map { originPhoto ->
+                        if (originPhoto.uuid != newPhoto.uuid) return@map originPhoto
+
+                        originPhoto.copy(
+                            compressedUri = compressedUri
+                                ?: originPhoto.uri, // TODO: 이미지 압축 or 쿼리 실패 시 어떻게 처리할 지?
+                            status = photoStatus,
+                        )
+                    }.toImmutableList()
+
+                    currentState.copy(imageUris = updatedImages)
                 }
             }
         }
@@ -100,9 +99,7 @@ abstract class RegistrationViewModel(
         updateLoadState(UiState.Loading)
 
         getProductPresignedUrlUseCase(
-            registrationUiState.value.imageUris.mapIndexed { index, photo ->
-                index to photo.compressedUri.toString()
-            }
+            registrationUiState.value.imageUris.toIndexedImageList()
         ).onSuccess { presignedUrls ->
             uploadImageViaPresignedUrl(presignedUrls)
         }.onFailure {
@@ -113,10 +110,7 @@ abstract class RegistrationViewModel(
     private suspend fun uploadImageViaPresignedUrl(
         presignedUrls: List<PresignedUrl>,
     ) {
-        val imageUris = registrationUiState.value.imageUris
-        val indexedImages = imageUris.mapIndexed { index, photo ->
-            index to photo.uri.toString()
-        }
+        val indexedImages = registrationUiState.value.imageUris.toIndexedImageList()
 
         uploadImageUseCase(presignedUrls, indexedImages)
             .onSuccess { newPresignedUrls ->
@@ -126,10 +120,19 @@ abstract class RegistrationViewModel(
             }
     }
 
-    protected abstract fun uploadProduct(presignedUrls: List<PresignedUrl>): Job
+    private fun List<Photo>.toIndexedImageList(): List<Pair<Int, String>> =
+        mapIndexed { index, photo ->
+            val uri = photo.compressedUri?.toString() ?: photo.uri.toString()
+            index to uri
+        }
 
-    fun clearCachedImage() = viewModelScope.launch {
-        clearCacheUseCase()
+    protected abstract suspend fun uploadProduct(presignedUrls: List<PresignedUrl>)
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.launch {
+            clearCacheUseCase()
+        }
     }
 
     companion object {
