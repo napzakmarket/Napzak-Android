@@ -46,6 +46,7 @@ include(
     ":data:interest",
     ":data:presigned-url",
     ":data:chat",
+    ":data:notification",
 )
 
 include(
