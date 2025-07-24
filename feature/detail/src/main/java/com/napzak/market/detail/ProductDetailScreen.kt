@@ -52,7 +52,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 internal fun ProductDetailRoute(
     onMarketNavigate: (userId: Long) -> Unit,
-    onChatNavigate: (productId: Long) -> Unit,
+    onChatNavigate: (productId: Long, storeId: Long) -> Unit,
     onModifyNavigate: (productId: Long, tradeType: TradeType) -> Unit,
     onReportNavigate: (productId: Long) -> Unit,
     onNavigateUp: () -> Unit,
@@ -123,7 +123,7 @@ private fun ProductDetailScreen(
     uiState: UiState<ProductDetail>,
     isInterested: Boolean,
     onMarketClick: (userId: Long) -> Unit,
-    onChatButtonClick: (productId: Long) -> Unit,
+    onChatButtonClick: (productId: Long, storeId: Long) -> Unit,
     onLikeButtonClick: (productId: Long) -> Unit,
     onBackButtonClick: () -> Unit,
     onModifyProductClick: (productId: Long, tradeType: TradeType) -> Unit,
@@ -145,9 +145,10 @@ private fun ProductDetailScreen(
         bottomBar = {
             if (uiState is UiState.Success && !uiState.data.isOwnedByCurrentUser) {
                 val productId = uiState.data.productId
+                val storeId = uiState.data.storeInfo.userId
                 ProductDetailBottomBar(
                     isLiked = isInterested,
-                    onChatButtonClick = { onChatButtonClick(productId) },
+                    onChatButtonClick = { onChatButtonClick(productId, storeId) },
                     onLikeButtonClick = { onLikeButtonClick(productId) },
                 )
             }

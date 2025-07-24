@@ -19,11 +19,12 @@ fun NavHostController.navigateToChatList(
 )
 
 fun NavHostController.navigateToChatRoom(
-    chatRoomId: Long,
+    chatRoomId: Long? = null,
     productId: Long? = null,
+    storeId: Long? = null,
     navOptions: NavOptions? = null,
 ) = this.navigate(
-    route = ChatRoom(chatRoomId, productId),
+    route = ChatRoom(chatRoomId, productId, storeId),
     navOptions = navOptions,
 )
 
@@ -56,6 +57,7 @@ data object ChatList : MainTabRoute
 
 @Serializable
 data class ChatRoom(
-    val chatRoomId: Long,
+    val chatRoomId: Long?,
     val productId: Long?, //채팅목록창에서 접근하는 경우 productId를 null로 설정한다.
+    val storeId: Long?,
 ) : Route

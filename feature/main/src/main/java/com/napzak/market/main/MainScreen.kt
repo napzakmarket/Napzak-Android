@@ -257,7 +257,11 @@ private fun MainNavHost(
 
         productDetailGraph(
             onMarketNavigate = navigator.navController::navigateToStore,
-            onChatNavigate = {}, //TODO: 채팅 화면으로 이동
+            onChatNavigate = { productId, storeId ->
+                navigator.navController.navigateToChatRoom(
+                    productId = productId, storeId = storeId,
+                )
+            }, //TODO: 채팅 화면으로 이동
             onModifyNavigate = { productId, tradeType ->
                 when (tradeType) {
                     TradeType.SELL -> navigator.navController.navigateToSaleRegistration(productId = productId)
