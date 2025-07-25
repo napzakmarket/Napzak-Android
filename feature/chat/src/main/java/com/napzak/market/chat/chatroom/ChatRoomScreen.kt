@@ -55,6 +55,7 @@ import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.chat.model.StoreBrief
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.img_empty_chat_room
+import com.napzak.market.designsystem.component.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.image.ZoomableImageScreen
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_room_empty_guide_1
@@ -129,7 +130,7 @@ internal fun ChatRoomScreen(
 ) {
     when (chatRoomState) {
         is UiState.Loading -> {
-            /*TODO: 로딩화면 구현*/
+            NapzakLoadingOverlay()
         }
 
         is UiState.Success -> {

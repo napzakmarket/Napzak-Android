@@ -34,6 +34,9 @@ internal class ChatRoomViewModel @Inject constructor(
     private val chatSocketRepository: ChatSocketRepository,
     private val uploadImagesUseCase: UploadImagesUseCase
 ) : ViewModel() {
+    private val chatMessageIdSet = mutableSetOf<Long>()
+    private val chatMessageList = mutableListOf<ReceiveMessage<*>>()
+
     private val _chatItems = MutableStateFlow<List<ReceiveMessage<*>>>(emptyList())
     val chatItems: StateFlow<List<ReceiveMessage<*>>> = _chatItems.asStateFlow()
 
@@ -119,10 +122,7 @@ internal class ChatRoomViewModel @Inject constructor(
     private suspend fun fetchMessages(roomId: Long) {
         chatRepository.getChatRoomMessages(roomId)
             .onSuccess { messages ->
-                val processedMessages = messages.map { message ->
-                    preprocessMessage(message)
-                }
-                _chatItems.update { processedMessages }
+                addMessages(messages)
             }
             .getOrThrow()
     }
@@ -138,19 +138,35 @@ internal class ChatRoomViewModel @Inject constructor(
                 messageFlow = chatSocketRepository.getMessageFlow(storeId)
                 messageFlow?.collect { message ->
                     if (message.roomId == roomId) {
-                        val processedMessage = preprocessMessage(message)
-                        Timber.tag("ChatRoom").d("구독 중인 메시지: $processedMessage")
-
-                        // TODO: 채팅 기록 저장 방식 수정 (Collection 교체 혹은 저장 방향 수정)
-                        val newList = _chatItems.value.toMutableList()
-                            .apply { this.add(0, processedMessage) }
-                            .toList()
-                        _chatItems.update { newList }
+                        Timber.tag("ChatRoom").d("구독 중인 메시지: $message")
+                        addMessages(listOf(message))
                     }
                 }
             }
         } catch (e: Exception) {
             Timber.tag(TAG).e(e)
+        }
+    }
+
+    /**
+     * 수신한 메시지를 화면에 출력할 메시지 리스트에 넣습니다. 다음과 같은 전처리 과정을 거칩니다.
+     *
+     * - 넣고자하는 메시지의 id가 이미 존재한다면 메시지 리스트에 추가하지 않습니다.
+     * - 메시지가 이미지인 경우, 이미지 url의 쿼리를 제거합니다.
+     * - 메시지 리스트가 변경되었다면 메시지 플로우를 갱신합니다.
+     */
+    private fun addMessages(newMessages: List<ReceiveMessage<*>>) {
+        var added = false
+        newMessages.forEach { message ->
+            if (chatMessageIdSet.add(message.messageId)) {
+                chatMessageList.add(preprocessMessage(message))
+                added = true
+            }
+        }
+
+        if (added) {
+            chatMessageList.sortBy { it.messageId }
+            _chatItems.update { chatMessageList.reversed().toList() }
         }
     }
 
