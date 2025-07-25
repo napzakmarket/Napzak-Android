@@ -16,10 +16,12 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.presigned_url.model.UploadImage
 import com.napzak.market.presigned_url.usecase.UploadImagesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -37,6 +39,9 @@ internal class ChatRoomViewModel @Inject constructor(
 
     private val _chatRoomState = MutableStateFlow<UiState<ChatRoomUiState>>(UiState.Loading)
     val chatRoomState: StateFlow<UiState<ChatRoomUiState>> = _chatRoomState.asStateFlow()
+
+    private val _sideEffect = Channel<ChatRoomSideEffect>()
+    val sideEffect = _sideEffect.receiveAsFlow()
 
     private val chatCondition = mutableStateOf(ChatCondition.PRODUCT_NOT_CHANGED)
     private var messageFlow: Flow<ReceiveMessage<*>>? = null
@@ -299,6 +304,22 @@ internal class ChatRoomViewModel @Inject constructor(
                 val roomId = chatRoomStateAsSuccess.roomId
                     ?: throw NullPointerException("채팅방 ID가 없습니다.")
                 chatRepository.leaveChatRoom(roomId).getOrThrow()
+            } catch (e: Exception) {
+                Timber.tag(TAG).e(e)
+            }
+        }
+    }
+
+    /**
+     * 채팅방에서 나가기 위해 호출합니다.
+     */
+    fun withdrawChatRoom() {
+        viewModelScope.launch {
+            try {
+                val roomId = requireNotNull(chatRoomStateAsSuccess.roomId)
+                chatRepository.withdrawChatRoom(roomId).onSuccess {
+                    _sideEffect.trySend(ChatRoomSideEffect.OnWithDrawChatRoom)
+                }
             } catch (e: Exception) {
                 Timber.tag(TAG).e(e)
             }

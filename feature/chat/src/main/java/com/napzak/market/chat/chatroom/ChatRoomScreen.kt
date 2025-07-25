@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,12 +33,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import coil.request.ImageRequest
 import com.napzak.market.chat.chatroom.component.ChatRoomBottomSheet
 import com.napzak.market.chat.chatroom.component.ChatRoomInputField
 import com.napzak.market.chat.chatroom.component.ChatRoomProductSection
 import com.napzak.market.chat.chatroom.component.ChatRoomTopBar
+import com.napzak.market.chat.chatroom.component.NapzakWithdrawDialog
 import com.napzak.market.chat.chatroom.component.chatitem.ChatDate
 import com.napzak.market.chat.chatroom.component.chatitem.ChatImageItem
 import com.napzak.market.chat.chatroom.component.chatitem.ChatNotice
@@ -70,6 +74,8 @@ internal fun ChatRoomRoute(
     modifier: Modifier = Modifier,
     viewModel: ChatRoomViewModel = hiltViewModel(),
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     val chatRoomState by viewModel.chatRoomState.collectAsStateWithLifecycle()
     val chatItems by viewModel.chatItems.collectAsStateWithLifecycle()
 
@@ -81,6 +87,15 @@ internal fun ChatRoomRoute(
         }
     }
 
+    LaunchedEffect(viewModel.sideEffect) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle)
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    is ChatRoomSideEffect.OnWithDrawChatRoom -> onNavigateUp()
+                }
+            }
+    }
+
     ChatRoomScreen(
         chat = viewModel.chat,
         chatItems = chatItems.toImmutableList(),
@@ -89,7 +104,7 @@ internal fun ChatRoomRoute(
         onChatChange = { viewModel.chat = it },
         onProductDetailClick = onProductDetailNavigate,
         onReportClick = onStoreReportNavigate,
-        onExitChatRoomClick = {},  //TODO: 채팅방 탈퇴 API 연결
+        onExitChatRoomClick = viewModel::withdrawChatRoom,
         onNavigateUp = onNavigateUp,
         onSendChatClick = viewModel::sendTextMessage,
         onPhotoSelect = viewModel::sendImageMessage,
@@ -112,8 +127,6 @@ internal fun ChatRoomScreen(
     onPhotoSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
-
     when (chatRoomState) {
         is UiState.Loading -> {
             /*TODO: 로딩화면 구현*/
@@ -122,6 +135,7 @@ internal fun ChatRoomScreen(
         is UiState.Success -> {
             val chatRoom = chatRoomState.data
             var isBottomSheetVisible by remember { mutableStateOf(false) }
+            var isWithdrawDialogVisible by remember { mutableStateOf(false) }
             var selectedImageUrl: String? by remember { mutableStateOf(null) }
 
             ChatImageZoomScreen(
@@ -129,6 +143,13 @@ internal fun ChatRoomScreen(
                 onBackClick = { selectedImageUrl = null },
                 modifier = modifier
             )
+
+            if (isWithdrawDialogVisible) {
+                NapzakWithdrawDialog(
+                    onConfirmClick = { onExitChatRoomClick() },
+                    onDismissClick = { isWithdrawDialogVisible = false },
+                )
+            }
 
             Column(
                 modifier = modifier
@@ -185,7 +206,7 @@ internal fun ChatRoomScreen(
             if (isBottomSheetVisible) {
                 ChatRoomBottomSheet(
                     onReportClick = { onReportClick(1) }, //TODO: 스토어ID로 변경
-                    onExitClick = onExitChatRoomClick,
+                    onExitClick = { isWithdrawDialogVisible = true },
                     onDismissRequest = { isBottomSheetVisible = false },
                 )
             }
