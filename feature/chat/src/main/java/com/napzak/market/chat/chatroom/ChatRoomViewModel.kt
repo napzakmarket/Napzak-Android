@@ -51,48 +51,63 @@ internal class ChatRoomViewModel @Inject constructor(
 
     var chat by mutableStateOf("")
 
-    // TODO: FCM 관리 방식에 따라 유지/삭제 결정
-    /*private val roomId
-        get() = requireNotNull(savedStateHandle.get<Long>(ROOM_ID_KEY))*/
+    private val _roomId
+        get() = requireNotNull(savedStateHandle.get<Long>(ROOM_ID_KEY))
 
-    private val productId
+    private val _productId
         get() = requireNotNull(savedStateHandle.get<Long>(PRODUCT_ID_KEY))
 
-    private val chatRoomStateAsSuccess
+    private val _chatRoomStateAsSuccess
         get() = (_chatRoomState.value as UiState.Success).data
 
     /**
-     * 채팅방 진입했을 때, 상대방과 사용자의 관계에 알맞게 채팅방을 구성합니다.
+     * [SavedStateHandle]에 저장된 값들을 활용하여 채팅방 정보들을 준비합니다.
+     */
+    fun prepareChatRoom() = viewModelScope.launch {
+        runCatching { prepareChatRoomWithRoomId(_roomId) }
+            .recoverCatching { prepareChatRoomWithProductId(_productId) }
+            .onFailure { e ->
+                _chatRoomState.update { UiState.Failure(e.message.toString()) }
+                Timber.e(e)
+            }
+    }
+
+    /**
+     * [_roomId] 깂을 활용하여 상대방과 사용자의 관계에 알맞게 채팅방을 구성합니다.
+     */
+    private suspend fun prepareChatRoomWithRoomId(roomId: Long) {
+        val productId = enterChatRoom(roomId)
+        fetchMessages(roomId)
+        fetchChatRoomDetail(productId)
+    }
+
+    /**
+     * [_productId] 깂을 활용하여 상대방과 사용자의 관계에 알맞게 채팅방을 구성합니다.
      *
      * 각 상황마다 채팅 조건 [chatCondition]을 수정합니다. 이 값은 채팅방 입장 후 처음 메시지를 보낼 때 조건을 따지기 위해 사용됩니다.
      *
      * - 채팅을 처음하는 경우, 채팅 조건만 수정합니다.
      * - 채팅 기록이 있다면, 채팅방의 상태를 수정하고 채팅 기록을 불러옵니다.
-     *    - 물품도 변경되었다면, 채팅 조건도 수정합니다.
+     * - 물품도 변경되었다면, 채팅 조건도 수정합니다.
      */
-    fun prepareChatRoom() = viewModelScope.launch {
-        try {
-            fetchChatRoomDetail(productId)
+    private suspend fun prepareChatRoomWithProductId(productId: Long) {
+        fetchChatRoomDetail(productId)
 
-            // 채팅방이 없는 경우
-            if (chatRoomStateAsSuccess.roomId == null) {
-                chatCondition.value = ChatCondition.NEW_CHAT_ROOM
-                return@launch
-            }
-
-            // 채팅방이 있는 경우
-            chatRoomStateAsSuccess.roomId?.let { roomId ->
-                val currentChatRoomProductId = enterChatRoom(roomId)
-                fetchMessages(roomId)
-
-                if (currentChatRoomProductId != productId) {
-                    chatCondition.value = ChatCondition.PRODUCT_CHANGED
-                }
-            }
-        } catch (e: Exception) {
-            _chatRoomState.update { UiState.Failure(e.message.toString()) }
-            Timber.e(e)
+        // 채팅방이 없는 경우
+        if (_chatRoomStateAsSuccess.roomId == null) {
+            chatCondition.value = ChatCondition.NEW_CHAT_ROOM
+            return
         }
+        // 채팅방이 있는 경우
+        _chatRoomStateAsSuccess.roomId?.let { roomId ->
+            val currentChatRoomProductId = enterChatRoom(roomId)
+            fetchMessages(roomId)
+
+            if (currentChatRoomProductId != productId) {
+                chatCondition.value = ChatCondition.PRODUCT_CHANGED
+            }
+        }
+
     }
 
     /**
@@ -132,7 +147,7 @@ internal class ChatRoomViewModel @Inject constructor(
      */
     private fun collectMessages(roomId: Long) = viewModelScope.launch {
         try {
-            val storeId = requireNotNull(chatRoomStateAsSuccess.storeBrief?.storeId)
+            val storeId = requireNotNull(_chatRoomStateAsSuccess.storeBrief?.storeId)
 
             if (messageFlow == null) {
                 messageFlow = chatSocketRepository.getMessageFlow(storeId)
@@ -209,7 +224,7 @@ internal class ChatRoomViewModel @Inject constructor(
                     val imageUrls = response.map {
                         with(it.value.toUri()) { "$scheme://$authority$path" }
                     }
-                    val roomId = requireNotNull(chatRoomStateAsSuccess.roomId)
+                    val roomId = requireNotNull(_chatRoomStateAsSuccess.roomId)
                     sendMessage(SendMessage.Image(roomId, null, imageUrls))
                 }.getOrThrow()
             } catch (e: Exception) {
@@ -224,8 +239,8 @@ internal class ChatRoomViewModel @Inject constructor(
     fun sendProductMessage() {
         viewModelScope.launch {
             try {
-                val productBrief = requireNotNull(chatRoomStateAsSuccess.productBrief)
-                val roomId = requireNotNull(chatRoomStateAsSuccess.roomId)
+                val productBrief = requireNotNull(_chatRoomStateAsSuccess.productBrief)
+                val roomId = requireNotNull(_chatRoomStateAsSuccess.roomId)
 
                 sendMessage(SendMessage.Product(roomId, null, productBrief))
             } catch (e: Exception) {
@@ -248,10 +263,10 @@ internal class ChatRoomViewModel @Inject constructor(
      */
     private suspend fun onProductChanged() {
         when (chatCondition.value) {
-            ChatCondition.NEW_CHAT_ROOM -> createNewRoom(productId)
+            ChatCondition.NEW_CHAT_ROOM -> createNewRoom(_productId)
 
             ChatCondition.PRODUCT_CHANGED -> {
-                chatRoomStateAsSuccess.roomId?.let { patchProduct(it, productId) }
+                _chatRoomStateAsSuccess.roomId?.let { patchProduct(it, _productId) }
             }
 
             ChatCondition.PRODUCT_NOT_CHANGED -> {} //no work to do
@@ -291,7 +306,7 @@ internal class ChatRoomViewModel @Inject constructor(
      * 4. 채팅방 채널을 통해 제품 정보를 전송합니다.
      */
     private suspend fun createNewRoom(productId: Long) {
-        val storeId = requireNotNull(chatRoomStateAsSuccess.storeBrief?.storeId)
+        val storeId = requireNotNull(_chatRoomStateAsSuccess.storeBrief?.storeId)
         val roomId = chatRepository.createChatRoom(productId, storeId).getOrThrow()
         enterChatRoom(roomId)
         _chatRoomState.update { currentState ->
@@ -332,8 +347,7 @@ internal class ChatRoomViewModel @Inject constructor(
     fun leaveChatRoom() {
         viewModelScope.launch {
             try {
-                val roomId = chatRoomStateAsSuccess.roomId
-                    ?: throw NullPointerException("채팅방 ID가 없습니다.")
+                val roomId = requireNotNull(_chatRoomStateAsSuccess.roomId)
                 chatRepository.leaveChatRoom(roomId).getOrThrow()
             } catch (e: Exception) {
                 Timber.tag(TAG).e(e)
@@ -347,7 +361,7 @@ internal class ChatRoomViewModel @Inject constructor(
     fun withdrawChatRoom() {
         viewModelScope.launch {
             try {
-                val roomId = requireNotNull(chatRoomStateAsSuccess.roomId)
+                val roomId = requireNotNull(_chatRoomStateAsSuccess.roomId)
                 chatRepository.withdrawChatRoom(roomId).onSuccess {
                     _sideEffect.trySend(ChatRoomSideEffect.OnWithDrawChatRoom)
                 }
