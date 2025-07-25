@@ -264,11 +264,19 @@ internal class ChatRoomViewModel @Inject constructor(
      * 쿼리 파라미터를 없앱니다.
      */
     private fun preprocessMessage(message: ReceiveMessage<*>): ReceiveMessage<*> {
-        return if (message is ReceiveMessage.Image) {
-            val uri = message.imageUrl.toUri()
-            message.copy(imageUrl = with(uri) { "$scheme://$authority$path" })
-        } else {
-            message
+
+        return when (message) {
+            is ReceiveMessage.Text -> message.copy(isRead = !message.isMessageOwner)
+            is ReceiveMessage.Product -> message.copy(isRead = !message.isMessageOwner)
+            is ReceiveMessage.Image -> {
+                val uri = message.imageUrl.toUri()
+                message.copy(
+                    imageUrl = with(uri) { "$scheme://$authority$path" },
+                    isRead = !message.isMessageOwner
+                )
+            }
+
+            else -> message
         }
     }
 
