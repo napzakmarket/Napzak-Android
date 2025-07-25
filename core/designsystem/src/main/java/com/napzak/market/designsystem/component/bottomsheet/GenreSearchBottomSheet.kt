@@ -100,10 +100,6 @@ fun GenreSearchBottomSheet(
 
     val scope = rememberCoroutineScope()
 
-//    LaunchedEffect(Unit) {
-//        sheetState.expand()
-//    }
-
     LaunchedEffect(sheetState.currentValue) {
         if (sheetState.currentValue == SheetValue.Expanded) {
             delay(500)
