@@ -79,6 +79,7 @@ internal class ChatRoomViewModel @Inject constructor(
         val productId = enterChatRoom(roomId)
         fetchMessages(roomId)
         fetchChatRoomDetail(productId)
+        collectMessages(roomId)
     }
 
     /**
@@ -102,6 +103,7 @@ internal class ChatRoomViewModel @Inject constructor(
         _chatRoomStateAsSuccess.roomId?.let { roomId ->
             val currentChatRoomProductId = enterChatRoom(roomId)
             fetchMessages(roomId)
+            collectMessages(roomId)
 
             if (currentChatRoomProductId != productId) {
                 chatCondition.value = ChatCondition.PRODUCT_CHANGED
@@ -309,6 +311,7 @@ internal class ChatRoomViewModel @Inject constructor(
         val storeId = requireNotNull(_chatRoomStateAsSuccess.storeBrief?.storeId)
         val roomId = chatRepository.createChatRoom(productId, storeId).getOrThrow()
         enterChatRoom(roomId)
+        collectMessages(roomId)
         _chatRoomState.update { currentState ->
             UiState.Success((currentState as UiState.Success).data.copy(roomId = roomId))
         }
@@ -338,7 +341,6 @@ internal class ChatRoomViewModel @Inject constructor(
     private suspend fun enterChatRoom(roomId: Long): Long =
         chatRepository.enterChatRoom(roomId).onSuccess {
             Timber.tag(TAG).d("채팅방 입장 및 구독 시작함")
-            collectMessages(roomId)
         }.getOrThrow()
 
     /**
