@@ -309,14 +309,20 @@ internal class ChatRoomViewModel @Inject constructor(
     private suspend fun createNewRoom(productId: Long) {
         val storeId = requireNotNull(_chatRoomStateAsSuccess.storeBrief?.storeId)
         val roomId = chatRepository.createChatRoom(productId, storeId).getOrThrow()
-        enterChatRoom(roomId)
-        collectMessages(roomId)
-        _chatRoomState.update { currentState ->
-            UiState.Success((currentState as UiState.Success).data.copy(roomId = roomId))
-        }
-        with(chatSocketRepository) {
-            subscribeChatRoom(roomId)
-            sendProductMessage()
+
+        try {
+            enterChatRoom(roomId)
+            collectMessages(roomId)
+            _chatRoomState.update { currentState ->
+                UiState.Success((currentState as UiState.Success).data.copy(roomId = roomId))
+            }
+            with(chatSocketRepository) {
+                subscribeChatRoom(roomId)
+                sendProductMessage()
+            }
+        } catch (e: Exception) {
+            Timber.tag(TAG).e(e, "채팅방 생성에 실패했습니다.")
+            throw e
         }
     }
 
