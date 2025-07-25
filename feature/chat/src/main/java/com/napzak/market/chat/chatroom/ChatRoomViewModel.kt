@@ -224,7 +224,7 @@ internal class ChatRoomViewModel @Inject constructor(
                     )
                 ).onSuccess { response ->
                     val imageUrls = response.map {
-                        with(it.value.toUri()) { "$scheme://$authority$path" }
+                        it.value.toUri().toString().substringBefore("?")
                     }
                     val roomId = requireNotNull(_chatRoomStateAsSuccess.roomId)
                     sendMessage(SendMessage.Image(roomId, null, imageUrls))
@@ -286,9 +286,8 @@ internal class ChatRoomViewModel @Inject constructor(
             is ReceiveMessage.Text -> message.copy(isRead = !message.isMessageOwner)
             is ReceiveMessage.Product -> message.copy(isRead = !message.isMessageOwner)
             is ReceiveMessage.Image -> {
-                val uri = message.imageUrl.toUri()
                 message.copy(
-                    imageUrl = with(uri) { "$scheme://$authority$path" },
+                    imageUrl = message.imageUrl.toUri().toString().substringBefore("?"),
                     isRead = !message.isMessageOwner
                 )
             }
