@@ -130,9 +130,7 @@ abstract class RegistrationViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        viewModelScope.launch {
-            clearCacheUseCase()
-        }
+        clearCacheUseCase()
     }
 
     companion object {

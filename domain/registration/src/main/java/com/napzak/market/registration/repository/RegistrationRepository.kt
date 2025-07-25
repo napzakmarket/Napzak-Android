@@ -34,5 +34,5 @@ interface RegistrationRepository {
         image: String,
     ): Result<String>
 
-    suspend fun clearCachedImage(): Result<Unit>
+    fun clearCachedImage(): Result<Unit>
 }

@@ -66,7 +66,7 @@ class RegistrationRepositoryImpl @Inject constructor(
         uri.toString()
     }
 
-    override suspend fun clearCachedImage(): Result<Unit> = runCatching {
+    override fun clearCachedImage(): Result<Unit> = runCatching {
         imageCompressor.clearCachedImage()
     }
 }
