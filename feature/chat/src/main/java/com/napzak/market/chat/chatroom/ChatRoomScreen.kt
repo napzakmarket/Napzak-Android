@@ -60,9 +60,9 @@ import com.napzak.market.designsystem.R.drawable.img_empty_chat_room
 import com.napzak.market.designsystem.component.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.image.ZoomableImageScreen
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.feature.chat.R.drawable.img_user_blocked_popup
 import com.napzak.market.feature.chat.R.string.chat_room_empty_guide_1
 import com.napzak.market.feature.chat.R.string.chat_room_empty_guide_2
-import com.napzak.market.feature.chat.R.string.chat_room_input_field_hint
 import com.napzak.market.ui_util.ScreenPreview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -178,35 +178,25 @@ internal fun ChatRoomScreen(
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
-                if (chatItems.isEmpty()) {
-                    EmptyChatScreen(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                    )
-                } else {
-                    ChatRoomRecordView(
-                        listState = chatListState,
-                        chatItems = chatItems,
-                        opponentImageUrl = opponentImageUrl,
-                        onItemClick = { message ->
-                            when (message) {
-                                is ReceiveMessage.Product -> onProductDetailClick(message.product.productId)
-                                is ReceiveMessage.Image -> selectedImageUrl = message.imageUrl
-                                else -> {}
-                            }
-                        },
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                    )
-                }
+
+                ChatRoomRecordView(
+                    listState = chatListState,
+                    chatItems = chatItems,
+                    opponentImageUrl = opponentImageUrl,
+                    isOpponentWithdrawn = chatRoom.storeBrief?.isWithdrawn == true,
+                    onItemClick = { message ->
+                        when (message) {
+                            is ReceiveMessage.Product -> onProductDetailClick(message.product.productId)
+                            is ReceiveMessage.Image -> selectedImageUrl = message.imageUrl
+                            else -> {}
+                        }
+                    },
+                    modifier = Modifier.weight(1f)
+                )
 
                 ChatRoomInputField(
                     text = chat,
-                    hint = stringResource(chat_room_input_field_hint),
+                    isWithdrawn = chatRoom.storeBrief?.isWithdrawn == true,
                     onSendClick = onSendChatClick,
                     onTextChange = onChatChange,
                     onPhotoSelect = onPhotoSelect,
@@ -234,6 +224,7 @@ private fun ChatRoomRecordView(
     listState: LazyListState,
     chatItems: ImmutableList<ReceiveMessage<*>>,
     opponentImageUrl: String,
+    isOpponentWithdrawn: Boolean,
     onItemClick: (ReceiveMessage<*>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -245,28 +236,50 @@ private fun ChatRoomRecordView(
             .build()
     }
 
-    LazyColumn(
-        state = listState,
-        reverseLayout = true,
-        contentPadding = PaddingValues(vertical = 30.dp),
-        modifier = modifier,
-    ) {
-        itemsIndexed(chatItems) { index, chatItem ->
-            val nextChatItem =
-                if (index > 0) chatItems[index - 1] else null
-            val previousChatItem =
-                if (index < chatItems.lastIndex) chatItems[index + 1] else null
-
-            ChatItemSpacer(
-                currentChatItem = chatItem,
-                previousChatItem = previousChatItem,
+    Box(modifier) {
+        if (chatItems.isEmpty()) {
+            EmptyChatScreen(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp),
             )
-            ChatItemRenderer(
-                opponentImageRequest = opponentProfileImageRequest,
-                chatItem = chatItem,
-                nextChatItem = nextChatItem,
-                previousChatItem = previousChatItem,
-                onItemClick = { onItemClick(chatItem) },
+        } else {
+            LazyColumn(
+                state = listState,
+                reverseLayout = true,
+                contentPadding = PaddingValues(vertical = 30.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp),
+            ) {
+                itemsIndexed(chatItems) { index, chatItem ->
+                    val nextChatItem =
+                        if (index > 0) chatItems[index - 1] else null
+                    val previousChatItem =
+                        if (index < chatItems.lastIndex) chatItems[index + 1] else null
+
+                    ChatItemSpacer(
+                        currentChatItem = chatItem,
+                        previousChatItem = previousChatItem,
+                    )
+                    ChatItemRenderer(
+                        opponentImageRequest = opponentProfileImageRequest,
+                        chatItem = chatItem,
+                        nextChatItem = nextChatItem,
+                        previousChatItem = previousChatItem,
+                        onItemClick = { onItemClick(chatItem) },
+                    )
+                }
+            }
+        }
+
+        if (isOpponentWithdrawn) {
+            Image(
+                imageVector = ImageVector.vectorResource(img_user_blocked_popup),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 23.dp),
             )
         }
     }
@@ -458,7 +471,7 @@ private val mockChatRoom = ChatRoomUiState(
         storeId = 1,
         nickname = "",
         storePhoto = "",
-        isWithdrawn = false
+        isWithdrawn = true
     )
 )
 
