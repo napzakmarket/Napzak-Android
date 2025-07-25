@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -76,6 +78,7 @@ internal fun ChatRoomRoute(
     viewModel: ChatRoomViewModel = hiltViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
+    val chatListState = rememberLazyListState()
 
     val chatRoomState by viewModel.chatRoomState.collectAsStateWithLifecycle()
     val chatItems by viewModel.chatItems.collectAsStateWithLifecycle()
@@ -92,6 +95,7 @@ internal fun ChatRoomRoute(
         viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
+                    is ChatRoomSideEffect.OnSendChatMessage -> chatListState.scrollToItem(0)
                     is ChatRoomSideEffect.OnWithDrawChatRoom -> onNavigateUp()
                 }
             }
@@ -101,6 +105,7 @@ internal fun ChatRoomRoute(
         chat = viewModel.chat,
         chatItems = chatItems.toImmutableList(),
         chatRoomState = chatRoomState,
+        chatListState = chatListState,
         opponentImageUrl = "",
         onChatChange = { viewModel.chat = it },
         onProductDetailClick = onProductDetailNavigate,
@@ -118,6 +123,7 @@ internal fun ChatRoomScreen(
     chat: String,
     chatItems: ImmutableList<ReceiveMessage<*>>,
     chatRoomState: UiState<ChatRoomUiState>,
+    chatListState: LazyListState,
     opponentImageUrl: String,
     onChatChange: (String) -> Unit,
     onProductDetailClick: (Long) -> Unit,
@@ -181,6 +187,7 @@ internal fun ChatRoomScreen(
                     )
                 } else {
                     ChatRoomRecordView(
+                        listState = chatListState,
                         chatItems = chatItems,
                         opponentImageUrl = opponentImageUrl,
                         onItemClick = { message ->
@@ -224,6 +231,7 @@ internal fun ChatRoomScreen(
 
 @Composable
 private fun ChatRoomRecordView(
+    listState: LazyListState,
     chatItems: ImmutableList<ReceiveMessage<*>>,
     opponentImageUrl: String,
     onItemClick: (ReceiveMessage<*>) -> Unit,
@@ -238,6 +246,7 @@ private fun ChatRoomRecordView(
     }
 
     LazyColumn(
+        state = listState,
         reverseLayout = true,
         contentPadding = PaddingValues(vertical = 30.dp),
         modifier = modifier,
@@ -469,6 +478,7 @@ private fun ChatRoomScreenPreview() {
             onNavigateUp = {},
             onPhotoSelect = {},
             chatRoomState = UiState.Success(mockChatRoom),
+            chatListState = rememberLazyListState(),
         )
     }
 }
@@ -489,6 +499,7 @@ private fun ChatRoomScreenEmptyPreview() {
             onNavigateUp = {},
             onPhotoSelect = {},
             chatRoomState = UiState.Success(mockChatRoom),
+            chatListState = rememberLazyListState(),
         )
     }
 }

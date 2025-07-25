@@ -181,7 +181,7 @@ internal class ChatRoomViewModel @Inject constructor(
                 onProductChanged()
                 val chatRoomState = (_chatRoomState.value as UiState.Success).data
                 val roomId = chatRoomState.roomId ?: return@launch
-                chatSocketRepository.sendChat(SendMessage.Text(roomId, text))
+                sendMessage(SendMessage.Text(roomId, text))
                 chat = ""
             } catch (e: Exception) {
                 Timber.tag(TAG).e(e)
@@ -210,7 +210,7 @@ internal class ChatRoomViewModel @Inject constructor(
                         with(it.value.toUri()) { "$scheme://$authority$path" }
                     }
                     val roomId = requireNotNull(chatRoomStateAsSuccess.roomId)
-                    chatSocketRepository.sendChat(SendMessage.Image(roomId, null, imageUrls))
+                    sendMessage(SendMessage.Image(roomId, null, imageUrls))
                 }.getOrThrow()
             } catch (e: Exception) {
                 Timber.tag(TAG).e(e)
@@ -227,13 +227,20 @@ internal class ChatRoomViewModel @Inject constructor(
                 val productBrief = requireNotNull(chatRoomStateAsSuccess.productBrief)
                 val roomId = requireNotNull(chatRoomStateAsSuccess.roomId)
 
-                chatSocketRepository.sendChat(
-                    SendMessage.Product(roomId, null, productBrief)
-                )
+                sendMessage(SendMessage.Product(roomId, null, productBrief))
             } catch (e: Exception) {
                 Timber.tag(TAG).e(e)
             }
         }
+    }
+
+    /**
+     * 채팅 소켓 채널을 통해 메시지를 전송합니다.
+     * 성공적으로 전송하면 [ChatRoomSideEffect.OnSendChatMessage]를 발생시킵니다.
+     */
+    private suspend fun sendMessage(message: SendMessage<*>) {
+        chatSocketRepository.sendChat(message)
+        _sideEffect.trySend(ChatRoomSideEffect.OnSendChatMessage)
     }
 
     /**
