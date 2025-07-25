@@ -183,9 +183,11 @@ internal fun ChatRoomScreen(
                     ChatRoomRecordView(
                         chatItems = chatItems,
                         opponentImageUrl = opponentImageUrl,
-                        onImageItemClick = { message ->
-                            if (message is ReceiveMessage.Image) {
-                                selectedImageUrl = message.imageUrl
+                        onItemClick = { message ->
+                            when (message) {
+                                is ReceiveMessage.Product -> onProductDetailClick(message.product.productId)
+                                is ReceiveMessage.Image -> selectedImageUrl = message.imageUrl
+                                else -> {}
                             }
                         },
                         modifier = Modifier
@@ -224,7 +226,7 @@ internal fun ChatRoomScreen(
 private fun ChatRoomRecordView(
     chatItems: ImmutableList<ReceiveMessage<*>>,
     opponentImageUrl: String,
-    onImageItemClick: (ReceiveMessage<*>) -> Unit,
+    onItemClick: (ReceiveMessage<*>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -255,7 +257,7 @@ private fun ChatRoomRecordView(
                 chatItem = chatItem,
                 nextChatItem = nextChatItem,
                 previousChatItem = previousChatItem,
-                onImageItemClick = { onImageItemClick(chatItem) }
+                onItemClick = { onItemClick(chatItem) },
             )
         }
     }
@@ -268,7 +270,7 @@ private fun ChatItemRenderer(
     nextChatItem: ReceiveMessage<*>? = null,
     previousChatItem: ReceiveMessage<*>? = null,
     opponentImageRequest: ImageRequest,
-    onImageItemClick: () -> Unit,
+    onItemClick: () -> Unit,
 ) {
     val isPreviousItemProduct = previousChatItem is ReceiveMessage.Product
     val isChatDirectionEqualsPrevious = chatItem.isMessageOwner == previousChatItem?.isMessageOwner
@@ -294,7 +296,7 @@ private fun ChatItemRenderer(
                 content = {
                     ChatItemView(
                         chatItem = chatItem,
-                        onImageItemClick = onImageItemClick
+                        onItemClick = onItemClick
                     )
                 },
             )
@@ -308,7 +310,7 @@ private fun ChatItemRenderer(
                 content = {
                     ChatItemView(
                         chatItem = chatItem,
-                        onImageItemClick = onImageItemClick
+                        onItemClick = onItemClick
                     )
                 },
             )
@@ -321,7 +323,7 @@ private fun ChatItemRenderer(
 @Composable
 private fun ChatItemView(
     chatItem: ReceiveMessage<*>,
-    onImageItemClick: () -> Unit = {},
+    onItemClick: () -> Unit = {},
 ) {
     when (chatItem) {
         is ReceiveMessage.Text -> {
@@ -334,7 +336,7 @@ private fun ChatItemView(
         is ReceiveMessage.Image -> {
             ChatImageItem(
                 imageUrl = chatItem.imageUrl,
-                onClick = onImageItemClick,
+                onClick = onItemClick,
             )
         }
 
@@ -346,7 +348,7 @@ private fun ChatItemView(
                     name = product.title,
                     price = product.price.toString(),
                     isMessageOwner = isMessageOwner,
-                    onNavigateClick = {},
+                    onNavigateClick = onItemClick,
                 )
             }
         }
