@@ -22,7 +22,7 @@ private fun ChatMessageResponse.toText(receiverId: Long): ReceiveMessage.Text =
         text = content ?: "",
         timeStamp = createdAt,
         isRead = isRead,
-        isMessageOwner = senderId != receiverId,
+        isMessageOwner = senderId.isMessageOwner(receiverId)
     )
 
 private fun ChatMessageResponse.toImage(
@@ -35,7 +35,7 @@ private fun ChatMessageResponse.toImage(
         imageUrl = metadata.imageUrls.firstOrNull() ?: "",
         timeStamp = createdAt,
         isRead = isRead,
-        isMessageOwner = senderId != receiverId,
+        isMessageOwner = senderId.isMessageOwner(receiverId)
     )
 
 private fun ChatMessageResponse.toProduct(
@@ -56,7 +56,7 @@ private fun ChatMessageResponse.toProduct(
         ),
         timeStamp = createdAt,
         isRead = isRead,
-        isMessageOwner = senderId != receiverId,
+        isMessageOwner = senderId.isMessageOwner(receiverId)
     )
 
 private fun ChatMessageResponse.toNotice(metadata: ChatMessageMetadata.System): ReceiveMessage.Notice =
@@ -74,3 +74,7 @@ private fun ChatMessageResponse.toDate(metadata: ChatMessageMetadata.Date): Rece
         date = metadata.date,
         timeStamp = createdAt,
     )
+
+private fun Long?.isMessageOwner(other: Long): Boolean {
+    return this?.let { it != other } ?: false
+}
