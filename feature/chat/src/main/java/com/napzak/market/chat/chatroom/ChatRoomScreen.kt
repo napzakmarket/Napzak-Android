@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
@@ -258,10 +259,7 @@ private fun ChatRoomRecordView(
                     val previousChatItem =
                         if (index < chatItems.lastIndex) chatItems[index + 1] else null
 
-                    ChatItemSpacer(
-                        currentChatItem = chatItem,
-                        previousChatItem = previousChatItem,
-                    )
+
                     ChatItemRenderer(
                         opponentImageRequest = opponentProfileImageRequest,
                         chatItem = chatItem,
@@ -269,13 +267,18 @@ private fun ChatRoomRecordView(
                         previousChatItem = previousChatItem,
                         onItemClick = { onItemClick(chatItem) },
                     )
+
+                    ChatItemSpacer(
+                        currentChatItem = chatItem,
+                        previousChatItem = previousChatItem,
+                    )
                 }
             }
         }
 
         if (isOpponentWithdrawn) {
             Image(
-                imageVector = ImageVector.vectorResource(img_user_blocked_popup),
+                painter = painterResource(img_user_blocked_popup),
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
