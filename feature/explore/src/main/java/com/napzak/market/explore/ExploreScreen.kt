@@ -44,7 +44,7 @@ import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.ic_down_chevron
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.GenreFilterChip
-import com.napzak.market.designsystem.component.NapzakLoadingOverlay
+import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
 import com.napzak.market.designsystem.component.textfield.SearchTextField

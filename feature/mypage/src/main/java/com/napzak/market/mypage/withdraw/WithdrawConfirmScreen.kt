@@ -27,8 +27,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.component.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
+import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.topbar.NavigateUpTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.sign_out_confirm_button_confirm
