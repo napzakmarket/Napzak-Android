@@ -13,6 +13,7 @@ android {
 
 dependencies {
     implementation(projects.data.remote)
+    implementation(projects.domain.notification)
 
     implementation(libs.timber)
 }
