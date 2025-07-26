@@ -1,7 +1,7 @@
 package com.napzak.market.notification.datasource
 
+import com.napzak.market.notification.dto.NotificationSettingsRequest
 import com.napzak.market.notification.dto.UpdatePushTokenRequest
-import com.napzak.market.notification.mapper.toData
 import com.napzak.market.notification.service.NotificationService
 import javax.inject.Inject
 
@@ -19,10 +19,10 @@ class NotificationDataSource @Inject constructor(
 
     suspend fun patchNotificationSettings(
         deviceToken: String,
-        request: Boolean,
+        request: NotificationSettingsRequest,
     ) =
         notificationService.patchNotificationSettings(
             deviceToken = deviceToken,
-            request = request.toData(),
+            request = request,
         )
 }

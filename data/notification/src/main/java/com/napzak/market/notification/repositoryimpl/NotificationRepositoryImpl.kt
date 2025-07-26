@@ -29,7 +29,7 @@ class NotificationRepositoryImpl @Inject constructor(
 
     override suspend fun patchNotificationSettings(
         pushToken: String,
-        allowMessage: NotificationSettings,
+        allowMessage: Boolean,
     ): Result<Unit> =
         runCatching {
             notificationDataSource.patchNotificationSettings(pushToken, allowMessage.toData())
