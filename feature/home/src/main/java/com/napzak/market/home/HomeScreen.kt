@@ -35,7 +35,7 @@ import coil.request.ImageRequest
 import com.napzak.market.banner.Banner
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
-import com.napzak.market.designsystem.component.NapzakLoadingOverlay
+import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
