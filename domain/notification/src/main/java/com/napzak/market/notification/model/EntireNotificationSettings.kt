@@ -1,6 +1,6 @@
 package com.napzak.market.notification.model
 
-data class PushTokenSettings(
+data class EntireNotificationSettings(
     val deviceToken: String,
     val platform: String = "ANDROID",
     val isEnabled: Boolean,
