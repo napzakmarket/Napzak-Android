@@ -1,5 +1,6 @@
 package com.napzak.market.notification.repositoryimpl
 
+import com.napzak.market.local.datastore.TokenDataStore
 import com.napzak.market.notification.datasource.NotificationDataSource
 import com.napzak.market.notification.mapper.toData
 import com.napzak.market.notification.mapper.toDomain
@@ -9,6 +10,7 @@ import com.napzak.market.notification.repository.NotificationRepository
 import javax.inject.Inject
 
 class NotificationRepositoryImpl @Inject constructor(
+    private val tokenDataStore: TokenDataStore,
     private val notificationDataSource: NotificationDataSource,
 ) : NotificationRepository {
     override suspend fun updatePushToken(pushToken: EntireNotificationSettings): Result<Unit> =
@@ -34,4 +36,9 @@ class NotificationRepositoryImpl @Inject constructor(
         runCatching {
             notificationDataSource.patchNotificationSettings(pushToken, allowMessage.toData())
         }
+
+    override suspend fun getPushToken(): String? = tokenDataStore.getPushToken()
+
+    override suspend fun setNotificationPermission(allowMessage: Boolean) =
+        tokenDataStore.setNotificationPermission(allowMessage)
 }

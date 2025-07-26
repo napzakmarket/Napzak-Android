@@ -8,4 +8,7 @@ interface NotificationRepository {
     suspend fun deletePushToken(pushToken: String): Result<Unit>
     suspend fun getNotificationSettings(pushToken: String): Result<NotificationSettings>
     suspend fun patchNotificationSettings(pushToken: String, allowMessage: Boolean): Result<Unit>
+
+    suspend fun getPushToken(): String?
+    suspend fun setNotificationPermission(allowed: Boolean)
 }

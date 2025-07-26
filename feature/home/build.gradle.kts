@@ -1,3 +1,4 @@
+import com.napzak.market.buildlogic.dsl.implementation
 import com.napzak.market.buildlogic.dsl.setNameSpace
 
 plugins {
@@ -18,6 +19,7 @@ dependencies {
     implementation(projects.domain.product)
     implementation(projects.domain.banner)
     implementation(projects.domain.interest)
+    implementation(projects.domain.notification)
 
 
     implementation(libs.androidx.navigation.compose)

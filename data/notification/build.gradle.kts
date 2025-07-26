@@ -12,6 +12,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.data.local)
     implementation(projects.data.remote)
     implementation(projects.domain.notification)
 

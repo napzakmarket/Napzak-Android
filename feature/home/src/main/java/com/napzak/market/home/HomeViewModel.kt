@@ -7,6 +7,8 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.home.state.HomeUiState
 import com.napzak.market.home.type.HomeProductType
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
+import com.napzak.market.notification.repository.NotificationRepository
+import com.napzak.market.notification.usecase.PatchNotificationSettingsUseCase
 import com.napzak.market.product.model.Product
 import com.napzak.market.product.repository.ProductRecommendationRepository
 import com.napzak.market.repository.BannerRepository
@@ -35,6 +37,8 @@ internal class HomeViewModel @Inject constructor(
     private val productRepository: ProductRecommendationRepository,
     private val bannerRepository: BannerRepository,
     private val interestProductUseCase: SetInterestProductUseCase,
+    private val notificationRepository: NotificationRepository,
+    private val patchNotificationSettingsUseCase: PatchNotificationSettingsUseCase,
 ) : ViewModel() {
     private val nickname = MutableStateFlow("")
     private val _bannerLoadState =
@@ -182,6 +186,13 @@ internal class HomeViewModel @Inject constructor(
             true -> _sideEffect.send(HomeSideEffect.CancelInterestToast)
             false -> _sideEffect.send(HomeSideEffect.ShowInterestToast)
         }
+    }
+
+    fun updateNotificationSettings(allowMessage: Boolean) = viewModelScope.launch {
+        val pushToken = notificationRepository.getPushToken()
+        if (pushToken != null) patchNotificationSettingsUseCase.invoke(pushToken, allowMessage)
+            .onSuccess { notificationRepository.setNotificationPermission(allowMessage) }
+            .onFailure { Timber.e(it) }
     }
 
     companion object {

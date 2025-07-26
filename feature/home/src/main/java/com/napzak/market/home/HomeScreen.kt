@@ -89,7 +89,7 @@ internal fun HomeRoute(
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        // TODO: 시스템 설정 값 API 연결
+        viewModel.updateNotificationSettings(isGranted)
     }
 
     LaunchedEffect(Unit) {
