@@ -1,16 +1,15 @@
 package com.napzak.market.notification.datasource
 
-import com.napzak.market.notification.dto.NotificationSettingsRequest
+import com.napzak.market.notification.dto.UpdatePushTokenRequest
 import com.napzak.market.notification.mapper.toData
-import com.napzak.market.notification.model.EntireNotificationSettings
 import com.napzak.market.notification.service.NotificationService
 import javax.inject.Inject
 
 class NotificationDataSource @Inject constructor(
     private val notificationService: NotificationService,
 ) {
-    suspend fun updatePushToken(request: EntireNotificationSettings) =
-        notificationService.updatePushToken(request = request.toData())
+    suspend fun updatePushToken(request: UpdatePushTokenRequest) =
+        notificationService.updatePushToken(request = request)
 
     suspend fun deletePushToken(request: String) =
         notificationService.deletePushToken(deviceToken = request)
@@ -24,6 +23,6 @@ class NotificationDataSource @Inject constructor(
     ) =
         notificationService.patchNotificationSettings(
             deviceToken = deviceToken,
-            request = NotificationSettingsRequest(request)
+            request = request.toData(),
         )
 }
