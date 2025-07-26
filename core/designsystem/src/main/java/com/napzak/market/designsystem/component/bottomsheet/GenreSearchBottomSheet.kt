@@ -41,15 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieClipSpec
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.napzak.market.designsystem.R.drawable.ic_x_button_24
-import com.napzak.market.designsystem.R.raw.lottie_spinner
 import com.napzak.market.designsystem.R.string.genre_apply_button
 import com.napzak.market.designsystem.R.string.genre_search_genre_limit_notice
 import com.napzak.market.designsystem.R.string.genre_search_hint
@@ -58,6 +50,7 @@ import com.napzak.market.designsystem.R.string.warning_snackbar_genre_limit_mess
 import com.napzak.market.designsystem.component.GenreChipButtonGroup
 import com.napzak.market.designsystem.component.GenreListItem
 import com.napzak.market.designsystem.component.button.NapzakButton
+import com.napzak.market.designsystem.component.loading.NapzakLoadingSpinnerOverlay
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.component.toast.WarningSnackBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -184,7 +177,7 @@ fun GenreSearchBottomSheet(
                 }
 
                 if (isLoadingOn) {
-                    NapzakLoadingSpinnerOverlay()
+                    NapzakLoadingSpinnerOverlay(Modifier.background(NapzakMarketTheme.colors.gray50))
                 } else {
                     Column(
                         modifier = Modifier
@@ -327,32 +320,6 @@ private fun ButtonSection(
         )
 
         Spacer(Modifier.height(64.dp))
-    }
-}
-
-@Composable
-fun NapzakLoadingSpinnerOverlay(
-    modifier: Modifier = Modifier,
-) {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottie_spinner))
-    val progress by animateLottieCompositionAsState(
-        composition = composition,
-        iterations = LottieConstants.IterateForever,
-        clipSpec = LottieClipSpec.Progress(0f, 0.9f)
-    )
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(NapzakMarketTheme.colors.gray50)
-            .padding(bottom = 80.dp)
-            .zIndex(1f),
-        contentAlignment = Alignment.Center,
-    ) {
-        LottieAnimation(
-            composition = composition,
-            progress = { progress },
-        )
     }
 }
 
