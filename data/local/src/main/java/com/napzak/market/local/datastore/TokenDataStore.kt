@@ -19,10 +19,30 @@ class TokenDataStore @Inject constructor(
         .map { it[preferencesRefreshTokenKey] }
         .firstOrNull()
 
+    suspend fun getPushToken(): String? = preferenceDataStore.data
+        .map { it[preferencesPushTokenKey] }
+        .firstOrNull()
+
+    suspend fun getNotificationPermission(): String? = preferenceDataStore.data
+        .map { it[preferencesNotificationPermission] }
+        .firstOrNull()
+
     suspend fun setTokens(accessToken: String, refreshToken: String) {
         preferenceDataStore.edit { preferences ->
             preferences[preferencesAccessTokenKey] = accessToken
             preferences[preferencesRefreshTokenKey] = refreshToken
+        }
+    }
+
+    suspend fun setPushToken(pushToken: String) {
+        preferenceDataStore.edit { preferences ->
+            preferences[preferencesPushTokenKey] = pushToken
+        }
+    }
+
+    suspend fun setNotificationPermission(permission: Boolean) {
+        preferenceDataStore.edit { preferences ->
+            preferences[preferencesNotificationPermission] = permission.toString()
         }
     }
 
@@ -52,8 +72,12 @@ class TokenDataStore @Inject constructor(
     companion object {
         private const val ACCESS_TOKEN_KEY = "access_token"
         private const val REFRESH_TOKEN_KEY = "refresh_token"
+        private const val PUSH_TOKEN_KEY = "push_token"
+        private const val NOTIFICATION_PERMISSION_KEY = "notification_permission"
 
         val preferencesAccessTokenKey = stringPreferencesKey(ACCESS_TOKEN_KEY)
         val preferencesRefreshTokenKey = stringPreferencesKey(REFRESH_TOKEN_KEY)
+        val preferencesPushTokenKey = stringPreferencesKey(PUSH_TOKEN_KEY)
+        val preferencesNotificationPermission = stringPreferencesKey(NOTIFICATION_PERMISSION_KEY)
     }
 }
