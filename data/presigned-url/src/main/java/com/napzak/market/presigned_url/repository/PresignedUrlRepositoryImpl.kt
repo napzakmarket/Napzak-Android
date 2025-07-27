@@ -1,5 +1,7 @@
 package com.napzak.market.presigned_url.repository
 
+import androidx.core.net.toUri
+import com.napzak.market.presigned_url.ImageCompressor
 import com.napzak.market.presigned_url.datasource.PresignedUrlDataSource
 import com.napzak.market.presigned_url.mapper.toDomain
 import com.napzak.market.presigned_url.model.PresignedUrl
@@ -8,6 +10,7 @@ import javax.inject.Inject
 
 class PresignedUrlRepositoryImpl @Inject constructor(
     private val presignedUrlDataSource: PresignedUrlDataSource,
+    private val imageCompressor: ImageCompressor,
 ) : PresignedUrlRepository {
     override suspend fun getProductPresignedUrls(
         imageTitles: List<String>,
@@ -32,5 +35,17 @@ class PresignedUrlRepositoryImpl @Inject constructor(
         imageUri: String,
     ): Result<Unit> = runCatching {
         presignedUrlDataSource.putViaPresignedUrl(presignedUrl, imageUri)
+    }
+
+    override suspend fun compressProductImage(
+        imageUri: String,
+    ): Result<String> = runCatching {
+        imageCompressor.compressImage(imageUri.toUri())
+    }.mapCatching { uri ->
+        uri.toString()
+    }
+
+    override fun clearCachedImage(): Result<Unit> = runCatching {
+        imageCompressor.clearCachedImage()
     }
 }

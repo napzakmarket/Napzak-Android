@@ -18,6 +18,8 @@ import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.model.ProductImage
 import com.napzak.market.registration.model.SaleRegistrationProduct
 import com.napzak.market.registration.sale.state.SaleContract.SaleUiState
+import com.napzak.market.presigned_url.usecase.ClearCacheUseCase
+import com.napzak.market.presigned_url.usecase.CompressImageUseCase
 import com.napzak.market.registration.usecase.EditRegisteredProductUseCase
 import com.napzak.market.registration.usecase.GetRegisteredSaleProductUseCase
 import com.napzak.market.registration.usecase.RegisterProductUseCase
@@ -38,12 +40,16 @@ class SaleRegistrationViewModel @Inject constructor(
     getProductPresignedUrlUseCase: GetProductPresignedUrlUseCase,
     uploadImageUseCase: UploadImageUseCase,
     savedStateHandle: SavedStateHandle,
+    compressImageUseCase: CompressImageUseCase,
+    clearCacheUseCase: ClearCacheUseCase,
     private val registerProductUseCase: RegisterProductUseCase,
     private val getRegisteredSaleProductUseCase: GetRegisteredSaleProductUseCase,
     private val editRegisteredProductUseCase: EditRegisteredProductUseCase,
 ) : RegistrationViewModel(
     getProductPresignedUrlUseCase,
     uploadImageUseCase,
+    compressImageUseCase,
+    clearCacheUseCase,
 ) {
     private var productId: Long? = null
 
@@ -107,7 +113,7 @@ class SaleRegistrationViewModel @Inject constructor(
                 || (saleState.isNormalShippingChecked && saleState.normalShippingFee.priceToNumericTransformation() < 100) || (saleState.isHalfShippingChecked && saleState.halfShippingFee.isEmpty()))
     }
 
-    override fun uploadProduct(presignedUrls: List<PresignedUrl>) = viewModelScope.launch {
+    override suspend fun uploadProduct(presignedUrls: List<PresignedUrl>) {
         val saleState = _uiState.value
         val registrationState = registrationUiState.value
         val product = SaleRegistrationProduct(
