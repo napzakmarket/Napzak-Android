@@ -63,7 +63,7 @@ internal fun ChatListRoute(
 
 @Composable
 private fun ChatListScreen(
-    chatRoomsState: UiState<Map<Long, ChatRoom>>,
+    chatRoomsState: UiState<List<ChatRoom>>,
     onChatRoomClick: (ChatRoom) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -80,7 +80,7 @@ private fun ChatListScreen(
             }
 
             is UiState.Success -> {
-                val chatRooms = chatRoomsState.data.values.sortedByDescending { it.lastMessageAt }
+                val chatRooms = chatRoomsState.data
 
                 ChatListColumn(
                     chatRooms = chatRooms.toImmutableList(),
@@ -196,14 +196,14 @@ private fun EmptyChatListScreen(
 @Composable
 private fun ChatListScreenPreview() {
     val chatRoomsState = UiState.Success(
-        buildMap {
+        buildList {
             repeat(20) { index ->
                 val randomHour = (0..12).random().toString()
                 val randomMinute = (0..60).random().toString().padStart(2, '0')
                 val randomCount = (0..1000).random()
 
-                put(
-                    index.toLong(), ChatRoom(
+                add(
+                    ChatRoom(
                         roomId = index.toLong(),
                         storeNickname = "납자기$index",
                         storePhoto = "",
