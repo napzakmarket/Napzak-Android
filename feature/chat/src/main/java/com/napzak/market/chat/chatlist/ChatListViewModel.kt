@@ -1,6 +1,10 @@
 package com.napzak.market.chat.chatlist
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +18,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
+
 
 @HiltViewModel
 class ChatListViewModel @Inject constructor(
@@ -55,5 +61,33 @@ class ChatListViewModel @Inject constructor(
 
     fun fetchChatRooms() {
         _chatRoomsState.update { UiState.Success(ChatRoomDetail.mockList) }
+    }
+
+    fun openAppNotificationSettings(context: Context) {
+        val intent = when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
+                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                }
+            }
+
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
+                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                    putExtra("app_package", context.packageName)
+                    putExtra("app_uid", context.applicationInfo.uid)
+                }
+            }
+
+            else -> {
+                // fallback: 전체 앱 설정 화면
+                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.parse("package:${context.packageName}")
+                }
+            }
+        }
+        Timber.tag("chrin").d("openAppNotificationSettings: $intent")
+
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(intent)
     }
 }

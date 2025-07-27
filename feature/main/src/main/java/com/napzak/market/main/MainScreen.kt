@@ -43,6 +43,7 @@ import com.napzak.market.main.R.string.main_snack_bar_finish
 import com.napzak.market.main.component.MainBottomBar
 import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.mypage.navigation.mypageGraph
+import com.napzak.market.mypage.navigation.navigateToSettings
 import com.napzak.market.onboarding.navigation.Terms
 import com.napzak.market.onboarding.navigation.onboardingGraph
 import com.napzak.market.registration.navigation.navigateToGenreSearch
@@ -316,6 +317,7 @@ private fun MainNavHost(
             onChatRoomNavigate = navigator.navController::navigateToChatRoom,
             onProductDetailNavigate = navigator.navController::navigateToProductDetail,
             onStoreReportNavigate = navigator.navController::navigateToUserReport,
+            onSettingsNavigate = navigator.navController::navigateToSettings,
             onNavigateUp = navigator::navigateUp,
             modifier = modifier,
         )

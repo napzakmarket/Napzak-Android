@@ -50,6 +50,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 internal fun ChatListRoute(
     onChatRoomNavigate: (Long) -> Unit,
+    onSettingsNavigate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChatListViewModel = hiltViewModel(),
 ) {
@@ -74,6 +75,8 @@ internal fun ChatListRoute(
         isAppPermissionGranted = isAppPermissionGranted,
         onChatRoomClick = { chatRoom -> onChatRoomNavigate(chatRoom.chatRoomId) },
         onDismissRequest = viewModel::updateNotificationModelOpenState,
+        onSystemSettingNavigate = { viewModel.openAppNotificationSettings(context) },
+        onSettingsNavigate = onSettingsNavigate,
         modifier = modifier,
     )
 }
@@ -86,6 +89,8 @@ private fun ChatListScreen(
     isAppPermissionGranted: Boolean,
     onChatRoomClick: (ChatRoomDetail) -> Unit,
     onDismissRequest: () -> Unit,
+    onSystemSettingNavigate: () -> Unit,
+    onSettingsNavigate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val (titleRes, contentRes) = when {
@@ -144,7 +149,10 @@ private fun ChatListScreen(
                 title = stringResource(titleRes),
                 content = stringResource(contentRes),
                 onDismissRequest = onDismissRequest,
-                onButtonClick = {},
+                onButtonClick = {
+                    if (!isSystemPermissionGranted) onSystemSettingNavigate
+                    else if (!isAppPermissionGranted) onSettingsNavigate
+                },
             )
         }
     }
@@ -247,6 +255,8 @@ private fun ChatListScreenPreview() {
             isAppPermissionGranted = false,
             onChatRoomClick = {},
             onDismissRequest = {},
+            onSettingsNavigate = {},
+            onSystemSettingNavigate = {},
         )
     }
 }
@@ -262,6 +272,8 @@ private fun ChatListEmptyScreenPreview() {
             isAppPermissionGranted = false,
             onChatRoomClick = {},
             onDismissRequest = {},
+            onSettingsNavigate = {},
+            onSystemSettingNavigate = {},
         )
     }
 }
