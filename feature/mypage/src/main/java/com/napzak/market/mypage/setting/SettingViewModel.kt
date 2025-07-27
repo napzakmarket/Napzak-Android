@@ -2,6 +2,8 @@ package com.napzak.market.mypage.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.napzak.market.notification.repository.NotificationRepository
+import com.napzak.market.notification.usecase.DeletePushTokenUseCase
 import com.napzak.market.store.model.SettingInfo
 import com.napzak.market.store.repository.SettingRepository
 import com.napzak.market.store.usecase.LogoutUseCase
@@ -19,6 +21,8 @@ import javax.inject.Inject
 internal class SettingViewModel @Inject constructor(
     private val settingRepository: SettingRepository,
     private val logoutUseCase: LogoutUseCase,
+    private val deletePushTokenUseCase: DeletePushTokenUseCase,
+    private val notificationRepository: NotificationRepository,
 ) : ViewModel() {
 
     private val _settingInfo = MutableStateFlow(SettingInfo("", "", "", ""))
@@ -41,9 +45,12 @@ internal class SettingViewModel @Inject constructor(
 
     fun signOutUser() = viewModelScope.launch {
         logoutUseCase()
-            .onSuccess {
-                _sideEffect.send(SettingSideEffect.OnSignOutComplete)
-            }
+            .onSuccess { _sideEffect.send(SettingSideEffect.OnSignOutComplete) }
             .onFailure(Timber::e)
+
+        val pushToken = notificationRepository.getPushToken()
+        if (pushToken != null) deletePushTokenUseCase(pushToken)
+            .onSuccess { notificationRepository.cleanPushToken() }
+            .onFailure { Timber.e(it) }
     }
 }

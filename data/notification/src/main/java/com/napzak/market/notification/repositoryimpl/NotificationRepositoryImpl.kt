@@ -41,4 +41,8 @@ class NotificationRepositoryImpl @Inject constructor(
 
     override suspend fun setNotificationPermission(allowMessage: Boolean) =
         tokenDataStore.setNotificationPermission(allowMessage)
+
+    override suspend fun cleanPushToken() {
+        tokenDataStore.clearPushToken()
+    }
 }

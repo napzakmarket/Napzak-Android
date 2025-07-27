@@ -53,6 +53,12 @@ class TokenDataStore @Inject constructor(
         }
     }
 
+    suspend fun clearPushToken() {
+        preferenceDataStore.edit { preferences ->
+            preferences.remove(preferencesPushTokenKey)
+        }
+    }
+
     suspend fun updateAccessToken(token: String?) {
         preferenceDataStore.edit { preferences ->
             token?.let {

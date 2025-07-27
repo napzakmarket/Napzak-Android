@@ -11,4 +11,5 @@ interface NotificationRepository {
 
     suspend fun getPushToken(): String?
     suspend fun setNotificationPermission(allowed: Boolean)
+    suspend fun cleanPushToken()
 }
