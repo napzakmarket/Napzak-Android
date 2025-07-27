@@ -41,8 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
-import com.napzak.market.designsystem.component.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.button.NapzakButton
+import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastFontType
 import com.napzak.market.designsystem.component.toast.ToastType

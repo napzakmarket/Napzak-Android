@@ -2,6 +2,7 @@ package com.napzak.market.product.di
 
 import com.napzak.market.product.service.ProductDetailService
 import com.napzak.market.product.service.ProductExploreService
+import com.napzak.market.product.service.ProductInterestService
 import com.napzak.market.product.service.ProductRecommendationService
 import com.napzak.market.product.service.ProductStoreService
 import dagger.Module
@@ -33,5 +34,10 @@ object ServiceModule {
     @Provides
     @Singleton
     fun provideProductDetailService(retrofit: Retrofit): ProductDetailService =
+        retrofit.create()
+
+    @Provides
+    @Singleton
+    fun provideProductInterestService(retrofit: Retrofit): ProductInterestService =
         retrofit.create()
 }

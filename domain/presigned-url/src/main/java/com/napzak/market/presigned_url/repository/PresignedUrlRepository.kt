@@ -10,4 +10,10 @@ interface PresignedUrlRepository {
     suspend fun getChatPresignedUrls(imageTitles: List<String>): Result<List<PresignedUrl>>
 
     suspend fun putViaPresignedUrl(presignedUrl: String, imageUri: String): Result<Unit>
+
+    suspend fun compressProductImage(
+        image: String,
+    ): Result<String>
+
+    fun clearCachedImage(): Result<Unit>
 }

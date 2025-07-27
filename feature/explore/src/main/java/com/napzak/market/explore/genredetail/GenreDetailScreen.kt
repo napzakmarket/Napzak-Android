@@ -52,6 +52,7 @@ import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.ic_down_chevron
 import com.napzak.market.designsystem.component.bottomsheet.SortBottomSheet
+import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -131,8 +132,7 @@ private fun GenreDetailScreen(
     modifier: Modifier = Modifier,
 ) {
     when (uiState.loadState) {
-        is UiState.Loading -> {
-        }
+        is UiState.Loading -> NapzakLoadingOverlay()
 
         is UiState.Empty -> {
         }
