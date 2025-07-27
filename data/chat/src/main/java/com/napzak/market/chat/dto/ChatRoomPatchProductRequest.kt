@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ChatRoomPatchProductRequest(
-    @SerialName("productId")
+    @SerialName("newProductId")
     val productId: Long,
 )

@@ -48,7 +48,7 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
         enqueueResponse("ChatRoomInformation.json")
 
         // when
-        val response = ChatRoomDataSource(service).getChatRoomInformation(roomId = 5)
+        val response = ChatRoomDataSource(service).getChatRoomInformation(productId = 5)
         mockWebServer.takeRequest()
 
         // then
@@ -69,7 +69,7 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
 
         // when
         val result = ChatRoomRepositoryImpl(dataSource)
-            .getChatRoomInformation(roomId = 5)
+            .getChatRoomInformation(productId = 5)
             .getOrNull()
         mockWebServer.takeRequest()
 

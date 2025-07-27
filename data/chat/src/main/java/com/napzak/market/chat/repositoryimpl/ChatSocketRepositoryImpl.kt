@@ -34,4 +34,10 @@ class ChatSocketRepositoryImpl @Inject constructor(
     override suspend fun sendChat(chat: SendMessage<*>) = runCatching {
         chatSocketDataSource.sendMessage(chat.toRequest())
     }
+
+    override suspend fun getMessageFlow(receiverId: Long): Flow<ReceiveMessage<*>> {
+        return chatSocketDataSource.messageFlow.map {
+            it.toDomain(receiverId)
+        }
+    }
 }

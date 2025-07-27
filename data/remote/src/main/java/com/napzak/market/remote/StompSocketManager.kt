@@ -133,7 +133,7 @@ class StompSocketManagerImpl @Inject constructor(
     ): Flow<T> {
         val flow =
             stompSession?.subscribe(StompSubscribeHeaders(destination), deserializer)?.catch {
-                logError("SUBSCRIBE", it)
+                logError("SUBSCRIBE_CHANNEL", it)
             } ?: throw IllegalStateException("소켓이 연결되지 않았습니다.")
 
         logSuccess("SUBSCRIBE", "소켓 채널이 구독되었습니다. $destination")

@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class ChatRoomInformationResponse(
     @SerialName("productInfo") val productInfo: ProductInfo,
     @SerialName("storeInfo") val storeInfo: StoreInfo,
-    @SerialName("roomId") val roomId: Long,
+    @SerialName("roomId") val roomId: Long?,
 ) {
     @Serializable
     data class ProductInfo(

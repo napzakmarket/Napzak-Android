@@ -16,9 +16,9 @@ class ChatRoomDataSource @Inject constructor(
     private val chatRoomService: ChatRoomService,
 ) {
     suspend fun getChatRoomInformation(
-        roomId: Long,
+        productId: Long,
     ): BaseResponse<ChatRoomInformationResponse> {
-        return chatRoomService.getProductChatInformation(roomId)
+        return chatRoomService.getProductChatInformation(productId)
     }
 
     suspend fun createChatRoom(
