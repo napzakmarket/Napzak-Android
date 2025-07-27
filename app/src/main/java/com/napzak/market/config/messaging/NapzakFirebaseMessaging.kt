@@ -8,22 +8,32 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.lifecycle.lifecycleScope
 import com.google.firebase.messaging.RemoteMessage
 import com.napzak.market.R.drawable.ic_push_notification
+import com.napzak.market.local.datastore.FirebaseServiceEntryPoint
 import com.napzak.market.local.datastore.TokenDataStore
 import com.napzak.market.notification.usecase.UpdatePushTokenUseCase
 import com.skydoves.firebase.messaging.lifecycle.ktx.LifecycleAwareFirebaseMessagingService
+import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
-    @Inject
-    lateinit var dataStore: TokenDataStore
 
-    @Inject
+    lateinit var dataStore: TokenDataStore
     lateinit var updatePushTokenUseCase: UpdatePushTokenUseCase
+
+    override fun onCreate() {
+        super.onCreate()
+        val entryPoint = EntryPointAccessors.fromApplication(
+            applicationContext,
+            FirebaseServiceEntryPoint::class.java
+        )
+        dataStore = entryPoint.dataStore()
+        updatePushTokenUseCase = entryPoint.updatePushTokenUseCase()
+    }
 
     @SuppressLint("LaunchActivityFromNotification")
     override fun onMessageReceived(message: RemoteMessage) {
@@ -69,12 +79,19 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        lifecycleScope.launch {
-            val appPermission = dataStore.getNotificationPermission() == "true"
-            val systemPermission = isNotificationPermissionGranted() && isNotificationEnabled()
-            Timber.tag("FCM Token").d("${token}\napp: $appPermission\nsystem: $systemPermission")
-            dataStore.setPushToken(token)
-            updatePushTokenUseCase.invoke(token, systemPermission, appPermission)
+        Timber.tag("FCM Token").d(token)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val appPermission = dataStore.getNotificationPermission() == "true"
+                val systemPermission = isNotificationPermissionGranted() && isNotificationEnabled()
+                Timber.tag("FCM Token")
+                    .d("Permission 상태: app=$appPermission, system=$systemPermission")
+
+                dataStore.setPushToken(token)
+                updatePushTokenUseCase.invoke(token, systemPermission, appPermission)
+            } catch (e: Exception) {
+                Timber.e(e, "fcm - 푸시 토큰 저장 오류")
+            }
         }
     }
 
