@@ -58,7 +58,7 @@ import kotlinx.collections.immutable.toPersistentList
 fun SaleRegistrationRoute(
     navigateToUp: () -> Unit,
     navigateToDetail: (Long) -> Unit,
-    navigateToGenreSearch: (Long?) -> Unit,
+    navigateToGenreSearch: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SaleRegistrationViewModel = hiltViewModel(),
 ) {
@@ -89,7 +89,7 @@ fun SaleRegistrationRoute(
         onImageSelect = viewModel::updatePhotos,
         onPhotoPress = viewModel::updateRepresentPhoto,
         onDeleteClick = viewModel::deletePhoto,
-        onGenreClick = { navigateToGenreSearch(registrationUiState.genre?.genreId) },
+        onGenreClick = navigateToGenreSearch,
         onProductNameChange = viewModel::updateTitle,
         onProductDescriptionChange = viewModel::updateDescription,
         onProductConditionSelect = viewModel::updateCondition,

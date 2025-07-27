@@ -26,26 +26,28 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.genre.model.Genre
-import com.napzak.market.registration.event.GenreEventBus
+import com.napzak.market.registration.RegistrationViewModel
 import com.napzak.market.registration.genre.component.GenreSearchEmptyView
 import com.napzak.market.registration.genre.component.GenreSearchHeader
 import com.napzak.market.registration.genre.state.GenreContract.GenreSearchUiState
-import com.napzak.market.ui_util.throttledNoRippleClickable
 import com.napzak.market.ui_util.openUrl
+import com.napzak.market.ui_util.throttledNoRippleClickable
 
 private const val GENRE_REQUEST_URL = "https://form.typeform.com/to/C0E09Ymd"
 
 @Composable
 fun GenreSearchRoute(
     navigateToUp: () -> Unit,
+    parentViewModel: RegistrationViewModel,
     modifier: Modifier = Modifier,
     viewModel: GenreSearchViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val registrationUiState by parentViewModel.registrationUiState.collectAsStateWithLifecycle()
     val searchTerm by viewModel.searchTerm.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.updateSelectedGenre()
+        viewModel.updateSelectedGenre(registrationUiState.genre?.genreId)
     }
 
     GenreSearchScreen(
@@ -54,7 +56,7 @@ fun GenreSearchRoute(
         searchTerm = searchTerm,
         onSearchTermChange = viewModel::updateSearchTerm,
         onGenreSelect = { genre ->
-            GenreEventBus.selectGenre(genre)
+            parentViewModel.updateGenre(genre)
             navigateToUp()
         },
         modifier = modifier,
