@@ -18,8 +18,8 @@ import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.model.ProductImage
 import com.napzak.market.registration.model.SaleRegistrationProduct
 import com.napzak.market.registration.sale.state.SaleContract.SaleUiState
-import com.napzak.market.registration.usecase.ClearCacheUseCase
-import com.napzak.market.registration.usecase.CompressImageUseCase
+import com.napzak.market.presigned_url.usecase.ClearCacheUseCase
+import com.napzak.market.presigned_url.usecase.CompressImageUseCase
 import com.napzak.market.registration.usecase.EditRegisteredProductUseCase
 import com.napzak.market.registration.usecase.GetRegisteredSaleProductUseCase
 import com.napzak.market.registration.usecase.RegisterProductUseCase

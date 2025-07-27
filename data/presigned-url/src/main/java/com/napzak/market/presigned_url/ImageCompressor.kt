@@ -1,11 +1,10 @@
-package com.napzak.market.remote
+package com.napzak.market.presigned_url
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
-import android.provider.MediaStore.MediaColumns.DISPLAY_NAME
-import android.provider.MediaStore.MediaColumns.SIZE
+import android.provider.MediaStore
 import android.util.Size
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -50,14 +49,16 @@ class ImageCompressor @Inject constructor(
 
         context.contentResolver.query(
             uri,
-            arrayOf(DISPLAY_NAME, SIZE),
+            arrayOf(MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.SIZE),
             null,
             null,
             null
         )?.use { cursor ->
             if (cursor.moveToFirst()) {
-                fileName = cursor.getString(cursor.getColumnIndexOrThrow(DISPLAY_NAME)) ?: fileName
-                size = cursor.getLong(cursor.getColumnIndexOrThrow(SIZE))
+                fileName =
+                    cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME))
+                        ?: fileName
+                size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE))
             }
         }
 

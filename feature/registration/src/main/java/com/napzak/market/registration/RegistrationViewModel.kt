@@ -11,8 +11,8 @@ import com.napzak.market.presigned_url.usecase.UploadImageUseCase
 import com.napzak.market.registration.RegistrationContract.RegistrationUiState
 import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.model.Photo.PhotoStatus
-import com.napzak.market.registration.usecase.ClearCacheUseCase
-import com.napzak.market.registration.usecase.CompressImageUseCase
+import com.napzak.market.presigned_url.usecase.ClearCacheUseCase
+import com.napzak.market.presigned_url.usecase.CompressImageUseCase
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
