@@ -97,7 +97,7 @@ internal fun ChatRoomRoute(
             .collect { sideEffect ->
                 when (sideEffect) {
                     is ChatRoomSideEffect.OnSendChatMessage -> chatListState.scrollToItem(0)
-                    is ChatRoomSideEffect.OnWithDrawChatRoom -> onNavigateUp()
+                    is ChatRoomSideEffect.OnWithdrawChatRoom -> onNavigateUp()
                 }
             }
     }
