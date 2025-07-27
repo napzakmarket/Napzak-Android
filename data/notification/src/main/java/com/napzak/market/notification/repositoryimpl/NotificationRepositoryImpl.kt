@@ -45,4 +45,15 @@ class NotificationRepositoryImpl @Inject constructor(
     override suspend fun cleanPushToken() {
         tokenDataStore.clearPushToken()
     }
+
+    override suspend fun getNotificationModalShown(): Boolean? =
+        tokenDataStore.getNotificationModalShown()
+
+    override suspend fun setNotificationModalShow() {
+        tokenDataStore.setNotificationModalShow()
+    }
+
+    override suspend fun updateNotificationModalShown() {
+        tokenDataStore.updateNotificationModalShown()
+    }
 }

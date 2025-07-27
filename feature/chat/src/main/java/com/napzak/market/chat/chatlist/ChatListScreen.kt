@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -27,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.chat.chatlist.component.ChatRoomItem
+import com.napzak.market.chat.chatlist.component.NotificationPermissionModal
 import com.napzak.market.chat.chatlist.model.ChatRoomDetail
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.img_empty_chat_list
@@ -34,6 +36,11 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_list_empty_guide_1
 import com.napzak.market.feature.chat.R.string.chat_list_empty_guide_2
 import com.napzak.market.feature.chat.R.string.chat_list_top_bar
+import com.napzak.market.feature.chat.R.string.permission_modal_app_setting_off_title
+import com.napzak.market.feature.chat.R.string.permission_modal_both_setting_off_content
+import com.napzak.market.feature.chat.R.string.permission_modal_setting_off_content
+import com.napzak.market.feature.chat.R.string.permission_modal_system_app_setting_off_title
+import com.napzak.market.feature.chat.R.string.permission_modal_system_setting_off_title
 import com.napzak.market.ui_util.ScreenPreview
 import com.napzak.market.ui_util.ShadowDirection
 import com.napzak.market.ui_util.napzakGradientShadow
@@ -46,11 +53,15 @@ internal fun ChatListRoute(
     modifier: Modifier = Modifier,
     viewModel: ChatListViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     val chatRoomsState by viewModel.chatRoomsState.collectAsStateWithLifecycle()
+    val isNotificationModalOpen by viewModel.isNotificationModalOpen.collectAsStateWithLifecycle()
+    val isSystemPermissionGranted by viewModel.isSystemPermissionGranted.collectAsStateWithLifecycle()
+    val isAppPermissionGranted by viewModel.isAppPermissionGranted.collectAsStateWithLifecycle()
 
     LifecycleResumeEffect(Unit) {
         viewModel.fetchChatRooms()
-
+        viewModel.checkAndSetNotificationModal(context)
         onPauseOrDispose {
             // no resource to be cleared
         }
@@ -58,7 +69,11 @@ internal fun ChatListRoute(
 
     ChatListScreen(
         chatRoomsState = chatRoomsState,
+        isNotificationModalOpen = isNotificationModalOpen,
+        isSystemPermissionGranted = isSystemPermissionGranted,
+        isAppPermissionGranted = isAppPermissionGranted,
         onChatRoomClick = { chatRoom -> onChatRoomNavigate(chatRoom.chatRoomId) },
+        onDismissRequest = viewModel::updateNotificationModelOpenState,
         modifier = modifier,
     )
 }
@@ -66,9 +81,26 @@ internal fun ChatListRoute(
 @Composable
 private fun ChatListScreen(
     chatRoomsState: UiState<List<ChatRoomDetail>>,
+    isNotificationModalOpen: Boolean,
+    isSystemPermissionGranted: Boolean,
+    isAppPermissionGranted: Boolean,
     onChatRoomClick: (ChatRoomDetail) -> Unit,
+    onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val (titleRes, contentRes) = when {
+        !isAppPermissionGranted && isSystemPermissionGranted ->
+            permission_modal_app_setting_off_title to permission_modal_setting_off_content
+
+        isAppPermissionGranted && !isSystemPermissionGranted ->
+            permission_modal_system_setting_off_title to permission_modal_setting_off_content
+
+        !isAppPermissionGranted && !isSystemPermissionGranted ->
+            permission_modal_system_app_setting_off_title to permission_modal_both_setting_off_content
+
+        else -> null to null
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -104,6 +136,17 @@ private fun ChatListScreen(
             }
         }
 
+    }
+
+    if (isNotificationModalOpen) {
+        if (titleRes != null && contentRes != null) {
+            NotificationPermissionModal(
+                title = stringResource(titleRes),
+                content = stringResource(contentRes),
+                onDismissRequest = onDismissRequest,
+                onButtonClick = {},
+            )
+        }
     }
 }
 
@@ -199,7 +242,11 @@ private fun ChatListScreenPreview() {
     NapzakMarketTheme {
         ChatListScreen(
             chatRoomsState = chatRoomsState,
+            isNotificationModalOpen = true,
+            isSystemPermissionGranted = false,
+            isAppPermissionGranted = false,
             onChatRoomClick = {},
+            onDismissRequest = {},
         )
     }
 }
@@ -210,7 +257,11 @@ private fun ChatListEmptyScreenPreview() {
     NapzakMarketTheme {
         ChatListScreen(
             chatRoomsState = UiState.Empty,
+            isNotificationModalOpen = true,
+            isSystemPermissionGranted = false,
+            isAppPermissionGranted = false,
             onChatRoomClick = {},
+            onDismissRequest = {},
         )
     }
 }
