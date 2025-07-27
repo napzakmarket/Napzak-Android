@@ -21,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -49,6 +50,7 @@ import com.napzak.market.designsystem.R.string.warning_snackbar_genre_limit_mess
 import com.napzak.market.designsystem.component.GenreChipButtonGroup
 import com.napzak.market.designsystem.component.GenreListItem
 import com.napzak.market.designsystem.component.button.NapzakButton
+import com.napzak.market.designsystem.component.loading.NapzakLoadingSpinnerOverlay
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.component.toast.WarningSnackBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -87,9 +89,17 @@ fun GenreSearchBottomSheet(
         )
     }
     var isShownSnackBar by remember { mutableStateOf(false) }
+    var isLoadingOn by remember { mutableStateOf(true) }
+
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) { sheetState.expand() }
+    LaunchedEffect(sheetState.currentValue) {
+        if (sheetState.currentValue == SheetValue.Expanded) {
+            delay(500)
+            isLoadingOn = false
+        }
+    }
+
     LaunchedEffect(searchText) { onTextChange(searchText) }
 
     ModalBottomSheet(
@@ -166,32 +176,36 @@ fun GenreSearchBottomSheet(
                     }
                 }
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(color = NapzakMarketTheme.colors.gray50)
-                        .padding(horizontal = 20.dp),
-                ) {
-                    GenreList(
-                        genreItems = genreItems,
-                        selectedGenreList = selectedGenreList,
-                        onGenreItemClick = { genreItem, isSelected ->
-                            if (isSelected) {
-                                selectedGenreList =
-                                    selectedGenreList.filterNot { it.genreName == genreItem.genreName }
-                            } else {
-                                if (selectedGenreList.size < 7) {
-                                    selectedGenreList += genreItem
+                if (isLoadingOn) {
+                    NapzakLoadingSpinnerOverlay(Modifier.background(NapzakMarketTheme.colors.gray50))
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(color = NapzakMarketTheme.colors.gray50)
+                            .padding(horizontal = 20.dp),
+                    ) {
+                        GenreList(
+                            genreItems = genreItems,
+                            selectedGenreList = selectedGenreList,
+                            onGenreItemClick = { genreItem, isSelected ->
+                                if (isSelected) {
+                                    selectedGenreList =
+                                        selectedGenreList.filterNot { it.genreName == genreItem.genreName }
                                 } else {
-                                    isShownSnackBar = true
-                                    scope.launch {
-                                        delay(2000)
-                                        isShownSnackBar = false
+                                    if (selectedGenreList.size < 7) {
+                                        selectedGenreList += genreItem
+                                    } else {
+                                        isShownSnackBar = true
+                                        scope.launch {
+                                            delay(2000)
+                                            isShownSnackBar = false
+                                        }
                                     }
                                 }
-                            }
-                        },
-                    )
+                            },
+                        )
+                    }
                 }
             }
 

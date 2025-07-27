@@ -1,4 +1,4 @@
-package com.napzak.market.designsystem.component
+package com.napzak.market.designsystem.component.loading
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
