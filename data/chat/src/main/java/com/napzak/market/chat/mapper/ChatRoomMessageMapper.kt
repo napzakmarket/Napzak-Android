@@ -10,7 +10,9 @@ fun MessageItem.toDomain(roomId: Long): ReceiveMessage<*> {
         null -> toText(roomId)
         is ChatMessageMetadata.Image -> toImage(roomId, metadata)
         is ChatMessageMetadata.Product -> toProduct(roomId, metadata)
-        is ChatMessageMetadata.System -> toNotice(roomId, metadata)
+        is ChatMessageMetadata.EXIT -> toNotice(roomId, metadata.content)
+        is ChatMessageMetadata.REPORTED -> toNotice(roomId, metadata.content)
+        is ChatMessageMetadata.WITHDRAWN -> toNotice(roomId, metadata.content)
         is ChatMessageMetadata.Date -> toDate(roomId, metadata)
     }
 }
@@ -61,12 +63,12 @@ private fun MessageItem.toProduct(
 
 private fun MessageItem.toNotice(
     roomId: Long,
-    metadata: ChatMessageMetadata.System
+    content: String,
 ): ReceiveMessage.Notice =
     ReceiveMessage.Notice(
         roomId = roomId,
         messageId = messageId ?: throw IllegalArgumentException(),
-        notice = metadata.content,
+        notice = content,
         timeStamp = "",
     )
 
