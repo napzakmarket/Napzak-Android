@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.napzak.market.common.state.UiState
+import com.napzak.market.designsystem.component.loading.NapzakLoadingSpinnerOverlay
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.onboarding.genre.model.GenreUiModel
 
@@ -27,6 +29,7 @@ import com.napzak.market.onboarding.genre.model.GenreUiModel
 fun GenreGridList(
     genres: List<GenreUiModel>,
     onGenreClick: (GenreUiModel) -> Unit,
+    isLoading: UiState<List<GenreUiModel>>,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -63,6 +66,12 @@ fun GenreGridList(
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Spacer(modifier = Modifier.height(100.dp))
             }
+        }
+
+        if (isLoading is UiState.Loading) {
+            NapzakLoadingSpinnerOverlay(
+                modifier = Modifier.align(Alignment.Center)
+            )
         }
 
         Box(
