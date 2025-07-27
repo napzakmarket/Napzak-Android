@@ -1,5 +1,7 @@
 package com.napzak.market.registration.sale
 
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -24,9 +26,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.ProductConditionType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.component.button.NapzakButton
+import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.product_condition
 import com.napzak.market.feature.registration.R.string.register
@@ -61,6 +65,7 @@ fun SaleRegistrationRoute(
     val registrationUiState by viewModel.registrationUiState.collectAsStateWithLifecycle()
     val saleUiState by viewModel.saleUiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val onBackPressedDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
@@ -70,6 +75,12 @@ fun SaleRegistrationRoute(
                 }
             }
     }
+
+    BackHandler(registrationUiState.loadState !is UiState.Loading) {
+        onBackPressedDispatcherOwner?.onBackPressedDispatcher?.onBackPressed()
+    }
+
+    if (registrationUiState.loadState is UiState.Loading) NapzakLoadingOverlay()
 
     SaleRegistrationScreen(
         registrationUiState = registrationUiState,
