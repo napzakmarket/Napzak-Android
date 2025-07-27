@@ -33,7 +33,7 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
         mockWebServer.takeRequest()
 
         // then
-        assertEquals(5, response.data.roomId)
+        assertEquals(5L, response.data.roomId)
 
         assertEquals("BUY", response.data.productInfo.tradeType)
         assertEquals("슈가슈가룬 쇼콜라 브라이스 인형", response.data.productInfo.title)
@@ -52,7 +52,7 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
         mockWebServer.takeRequest()
 
         // then
-        assertEquals(5, response.data.roomId)
+        assertEquals(5L, response.data.roomId)
 
         assertEquals("BUY", response.data.productInfo.tradeType)
         assertEquals("슈가슈가룬 쇼콜라 브라이스 인형", response.data.productInfo.title)
