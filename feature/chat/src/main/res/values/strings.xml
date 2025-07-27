@@ -19,4 +19,11 @@
     <string name="chat_list_message_overflow">999+</string>
     <string name="chat_list_empty_guide_1">아직 시작된 대화가 없어요</string>
     <string name="chat_list_empty_guide_2">관심 있는 아이템이 있다면 대화를 시작해보세요</string>
+
+    <string name="permission_modal_system_setting_off_title">기기 알림이 꺼져있어요!</string>
+    <string name="permission_modal_app_setting_off_title">앱 내 알림이 꺼져있어요!</string>
+    <string name="permission_modal_system_app_setting_off_title">앱과 기기 알림이 모두 꺼져있어요!</string>
+    <string name="permission_modal_setting_off_content">실시간 거래 알림을 받으려면\n설정을 변경해주세요.</string>
+    <string name="permission_modal_both_setting_off_content">중요한 거래 소식을 놓치지 않도록\n설정을 변경해 주세요.</string>
+    <string name="permission_modal_button_name">알림 켜기</string>
 </resources>
