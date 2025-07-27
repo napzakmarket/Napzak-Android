@@ -1,15 +1,17 @@
 package com.napzak.market.registration.genre.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -19,6 +21,8 @@ import com.napzak.market.designsystem.R
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.genre_search_title
+import com.napzak.market.ui_util.ShadowDirection
+import com.napzak.market.ui_util.napzakGradientShadow
 import com.napzak.market.ui_util.noRippleClickable
 
 private const val BLANK = ""
@@ -32,12 +36,7 @@ fun GenreSearchHeader(
 ) {
     Column(
         modifier = modifier
-            .shadow(
-                elevation = 4.dp,
-                spotColor = NapzakMarketTheme.colors.transBlack,
-                ambientColor = NapzakMarketTheme.colors.transBlack,
-            )
-            .background(color = NapzakMarketTheme.colors.white)
+            .background(color = NapzakMarketTheme.colors.white),
     ) {
         val paddedModifier = Modifier.padding(horizontal = 28.dp)
 
@@ -75,6 +74,18 @@ fun GenreSearchHeader(
         )
 
         Spacer(modifier = Modifier.height(24.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(2.dp)
+                .napzakGradientShadow(
+                    height = 4.dp,
+                    startColor = Color(0x0D000000),
+                    endColor = Color.Transparent,
+                    direction = ShadowDirection.Bottom,
+                )
+        )
     }
 }
 
