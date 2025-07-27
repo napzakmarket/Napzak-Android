@@ -102,7 +102,8 @@ internal fun PhotoPicker(
 
             PhotoContainer(
                 index = index,
-                imageUri = photo.uri,
+                imageUri = photo.compressedUri,
+                status = photo.status,
                 onDeleteClick = onDeleteClick,
                 onLongClick = { onLongClick(index) },
                 modifier = Modifier

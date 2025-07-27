@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -130,20 +129,6 @@ fun SaleRegistrationScreen(
     modifier: Modifier = Modifier,
 ) {
     val paddedModifier = Modifier.padding(horizontal = 20.dp)
-    val isButtonEnabled = remember(
-        registrationUiState.imageUris,
-        registrationUiState.genre,
-        registrationUiState.title,
-        registrationUiState.description,
-        registrationUiState.price,
-        saleUiState.condition,
-        saleUiState.isShippingFeeIncluded,
-        saleUiState.isNormalShippingChecked,
-        saleUiState.normalShippingFee,
-        saleUiState.isHalfShippingChecked,
-        saleUiState.halfShippingFee,
-    ) { checkButtonEnabled() }
-
     val focusManager = LocalFocusManager.current
     val scrollState = rememberLazyListState()
 
@@ -276,7 +261,7 @@ fun SaleRegistrationScreen(
             NapzakButton(
                 text = stringResource(register),
                 onClick = onRegisterClick,
-                enabled = isButtonEnabled,
+                enabled = checkButtonEnabled(),
             )
         }
     }
