@@ -2,7 +2,6 @@ package com.napzak.market.registration.purchase
 
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -46,6 +45,7 @@ import com.napzak.market.registration.purchase.component.PriceNegotiationGroup
 import com.napzak.market.registration.purchase.state.PurchaseContract.PurchaseUiState
 import com.napzak.market.ui_util.ShadowDirection
 import com.napzak.market.ui_util.napzakGradientShadow
+import com.napzak.market.ui_util.nonClickableStickyHeader
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
@@ -95,7 +95,6 @@ fun PurchaseRegistrationRoute(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PurchaseRegistrationScreen(
     registrationUiState: RegistrationUiState,
@@ -130,12 +129,13 @@ fun PurchaseRegistrationScreen(
         LazyColumn(
             state = state,
         ) {
-            stickyHeader {
+            nonClickableStickyHeader {
                 RegistrationTopBar(
                     title = stringResource(title, stringResource(purchase)),
                     onCloseClick = onCloseClick,
                     modifier = Modifier.fillMaxWidth(),
                 )
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
