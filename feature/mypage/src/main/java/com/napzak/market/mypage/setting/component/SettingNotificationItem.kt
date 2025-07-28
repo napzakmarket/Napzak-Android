@@ -21,11 +21,11 @@ fun SettingNotificationItem(
     modifier: Modifier = Modifier,
 ) {
     val text =
-        if (isAppNotificationOn) stringResource(settings_section_app_notification_title) else stringResource(
-            settings_section_app_notification_off_title
-        )
+        if (isAppNotificationOn) stringResource(settings_section_app_notification_title)
+        else stringResource(settings_section_app_notification_off_title)
     val textColor =
-        if (isAppNotificationOn) NapzakMarketTheme.colors.black else NapzakMarketTheme.colors.red
+        if (isAppNotificationOn) NapzakMarketTheme.colors.black
+        else NapzakMarketTheme.colors.red
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -35,7 +35,6 @@ fun SettingNotificationItem(
         Text(
             text = text,
             style = NapzakMarketTheme.typography.body16b.copy(textColor),
-            color = NapzakMarketTheme.colors.gray400,
         )
 
         NapzakToggleButton(
@@ -50,7 +49,7 @@ fun SettingNotificationItem(
 @Composable
 fun SettingNotificationItemPreview(modifier: Modifier = Modifier) {
     SettingNotificationItem(
-        isAppNotificationOn = true,
+        isAppNotificationOn = false,
         onToggleClick = {},
         modifier = modifier,
     )
