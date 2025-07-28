@@ -1,6 +1,6 @@
 package com.napzak.market.registration.genre
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,7 +15,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,14 +26,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.common.state.UiState
+import com.napzak.market.designsystem.component.loading.NapzakLoadingSpinnerOverlay
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.registration.RegistrationViewModel
 import com.napzak.market.registration.genre.component.GenreSearchEmptyView
 import com.napzak.market.registration.genre.component.GenreSearchHeader
 import com.napzak.market.registration.genre.state.GenreContract.GenreSearchUiState
+import com.napzak.market.ui_util.nonClickableStickyHeader
 import com.napzak.market.ui_util.openUrl
 import com.napzak.market.ui_util.throttledNoRippleClickable
+import kotlinx.coroutines.CoroutineScope
 
 private const val GENRE_REQUEST_URL = "https://form.typeform.com/to/C0E09Ymd"
 
@@ -63,7 +68,6 @@ fun GenreSearchRoute(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GenreSearchScreen(
     onBackClick: () -> Unit,
@@ -75,6 +79,9 @@ fun GenreSearchScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+//    val isSearchResultEmpty by remember {
+//        derivedStateOf { uiState.loadState is UiState.Success && uiState.loadState.data.isEmpty() }
+//    }
 
     Column(
         modifier = Modifier
@@ -85,61 +92,77 @@ fun GenreSearchScreen(
             modifier = modifier.background(NapzakMarketTheme.colors.gray10),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            stickyHeader {
+            nonClickableStickyHeader {
                 GenreSearchHeader(
                     onBackClick = onBackClick,
                     searchTerm = searchTerm,
                     onSearchTermChange = onSearchTermChange,
                 )
             }
+
             when {
-                uiState.genres.isEmpty() && uiState.loadState != UiState.Loading -> {
-                    item {
-                        GenreSearchEmptyView(
-                            onRequestClick = { context.openUrl(GENRE_REQUEST_URL) },
-                        )
-                    }
+                uiState.loadState is UiState.Empty || uiState.loadState is UiState.Failure -> item {
+                    GenreSearchEmptyView(
+                        onRequestClick = { context.openUrl(GENRE_REQUEST_URL) },
+                    )
                 }
 
-                uiState.genres.isNotEmpty() -> {
+                uiState.loadState is UiState.Success -> {
                     itemsIndexed(
-                        items = uiState.genres,
+                        items = uiState.loadState.data,
                         key = { _, genre -> genre.genreId },
                     ) { index, genre ->
                         Row(
-                            modifier = Modifier.padding(horizontal = 18.dp, vertical = 4.dp),
+                            modifier = Modifier
+                                .padding(horizontal = 18.dp, vertical = 4.dp),
                         ) {
-                            val textStyle =
-                                if (uiState.selectedGenreId == genre.genreId) NapzakMarketTheme.typography.body14sb.copy(
-                                    color = NapzakMarketTheme.colors.purple500,
-                                )
-                                else NapzakMarketTheme.typography.body14r.copy(
-                                    color = NapzakMarketTheme.colors.gray400,
-                                )
-
-                            Text(
-                                text = genre.genreName,
-                                style = textStyle,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp)
-                                    .throttledNoRippleClickable(
-                                        coroutineScope = coroutineScope,
-                                        onClick = { onGenreSelect(genre) },
-                                    ),
+                            GenreSearchItem(
+                                selectedGenreId = uiState.selectedGenreId,
+                                genre = genre,
+                                onGenreSelect = onGenreSelect,
+                                coroutineScope = coroutineScope,
                             )
                         }
                     }
                 }
 
-                else -> {
-                    item {
-                        Spacer(modifier = Modifier.fillMaxHeight())
-                    }
+                else -> item {
+                    NapzakLoadingSpinnerOverlay(
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
             }
         }
     }
+}
+
+@Composable
+private fun GenreSearchItem(
+    selectedGenreId: Long?,
+    genre: Genre,
+    onGenreSelect: (Genre) -> Unit,
+    coroutineScope: CoroutineScope,
+    modifier: Modifier = Modifier,
+) {
+    val textStyle =
+        if (selectedGenreId == genre.genreId) NapzakMarketTheme.typography.body14sb.copy(
+            color = NapzakMarketTheme.colors.purple500,
+        )
+        else NapzakMarketTheme.typography.body14r.copy(
+            color = NapzakMarketTheme.colors.gray400,
+        )
+
+    Text(
+        text = genre.genreName,
+        style = textStyle,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .throttledNoRippleClickable(
+                coroutineScope = coroutineScope,
+                onClick = { onGenreSelect(genre) },
+            ),
+    )
 }
 
 @Preview
