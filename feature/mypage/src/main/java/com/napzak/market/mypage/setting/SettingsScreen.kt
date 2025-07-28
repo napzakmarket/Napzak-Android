@@ -50,7 +50,7 @@ internal fun SettingsRoute(
     onBackClick: () -> Unit,
     onLogoutConfirm: () -> Unit,
     onWithdrawClick: () -> Unit,
-    viewModel: SettingViewModel = hiltViewModel()
+    viewModel: SettingViewModel = hiltViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -107,7 +107,7 @@ private fun SettingsScreen(
                 .background(NapzakMarketTheme.colors.white),
         ) {
             Column(
-                modifier = Modifier.padding(horizontal = 20.dp)
+                modifier = Modifier.padding(horizontal = 20.dp),
             ) {
                 Spacer(modifier = Modifier.height(28.dp))
 
@@ -127,8 +127,7 @@ private fun SettingsScreen(
                 Spacer(modifier = Modifier.height(28.dp))
 
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     HorizontalDivider(
                         color = NapzakMarketTheme.colors.gray10,
