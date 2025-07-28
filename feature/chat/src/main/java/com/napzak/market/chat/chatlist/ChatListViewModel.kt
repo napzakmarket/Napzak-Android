@@ -1,8 +1,6 @@
 package com.napzak.market.chat.chatlist
 
 import android.content.Context
-import android.content.Intent
-import android.provider.Settings
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -69,15 +67,5 @@ class ChatListViewModel @Inject constructor(
 
     fun fetchChatRooms() {
         _chatRoomsState.update { UiState.Success(ChatRoomDetail.mockList) }
-    }
-
-    fun openSystemNotificationSettings(context: Context) {
-        val intent = Intent().apply {
-            action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
-            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-            putExtra("app_package", context.packageName)
-            putExtra("app_uid", context.applicationInfo.uid)
-        }
-        context.startActivity(intent)
     }
 }

@@ -44,6 +44,7 @@ import com.napzak.market.feature.chat.R.string.permission_modal_system_setting_o
 import com.napzak.market.ui_util.ScreenPreview
 import com.napzak.market.ui_util.ShadowDirection
 import com.napzak.market.ui_util.napzakGradientShadow
+import com.napzak.market.ui_util.openSystemNotificationSettings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -75,7 +76,7 @@ internal fun ChatListRoute(
         isAppPermissionGranted = isAppPermissionGranted,
         onChatRoomClick = { chatRoom -> onChatRoomNavigate(chatRoom.chatRoomId) },
         onDismissRequest = viewModel::updateNotificationModelOpenState,
-        onSystemSettingNavigate = { viewModel.openSystemNotificationSettings(context) },
+        onSystemSettingNavigate = context::openSystemNotificationSettings,
         onSettingsNavigate = onSettingsNavigate,
         modifier = modifier,
     )
