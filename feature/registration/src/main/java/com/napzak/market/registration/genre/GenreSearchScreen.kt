@@ -1,12 +1,9 @@
 package com.napzak.market.registration.genre
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,9 +12,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -79,9 +74,6 @@ fun GenreSearchScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-//    val isSearchResultEmpty by remember {
-//        derivedStateOf { uiState.loadState is UiState.Success && uiState.loadState.data.isEmpty() }
-//    }
 
     Column(
         modifier = Modifier
@@ -100,14 +92,14 @@ fun GenreSearchScreen(
                 )
             }
 
-            when {
-                uiState.loadState is UiState.Empty || uiState.loadState is UiState.Failure -> item {
+            when (uiState.loadState) {
+                is UiState.Empty, is UiState.Failure -> item {
                     GenreSearchEmptyView(
                         onRequestClick = { context.openUrl(GENRE_REQUEST_URL) },
                     )
                 }
 
-                uiState.loadState is UiState.Success -> {
+                is UiState.Success -> {
                     itemsIndexed(
                         items = uiState.loadState.data,
                         key = { _, genre -> genre.genreId },
