@@ -361,15 +361,29 @@ private fun checkNotificationPermission(
 ) {
     val permission = android.Manifest.permission.POST_NOTIFICATIONS
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        if (ContextCompat.checkSelfPermission(
-                context,
-                permission
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            permissionLauncher.launch(permission)
-        } else {
-            Timber.tag("Notification Permission").d("Already granted")
-        }
+    if (hasRequestedNotificationPermission(context)) {
+        Timber.tag("Notification Permission").d("Already granted")
+        return
     }
+
+    if (ContextCompat.checkSelfPermission(
+            context,
+            permission
+        ) != PackageManager.PERMISSION_GRANTED
+    ) {
+        permissionLauncher.launch(permission)
+        setRequestedNotificationPermission(context)
+    } else {
+        setRequestedNotificationPermission(context)
+    }
+}
+
+private fun hasRequestedNotificationPermission(context: Context): Boolean {
+    val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    return prefs.getBoolean("notification_permission_requested", false)
+}
+
+private fun setRequestedNotificationPermission(context: Context) {
+    val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    prefs.edit().putBoolean("notification_permission_requested", true).apply()
 }
