@@ -66,13 +66,15 @@ internal class SettingViewModel @Inject constructor(
     }
 
     fun signOutUser() = viewModelScope.launch {
+        val pushToken = notificationRepository.getPushToken()
+        if (pushToken != null) {
+            deletePushTokenUseCase(pushToken)
+                .onSuccess { notificationRepository.cleanPushToken() }
+                .onFailure { Timber.e(it) }
+        }
+
         logoutUseCase()
             .onSuccess { _sideEffect.send(SettingSideEffect.OnSignOutComplete) }
             .onFailure(Timber::e)
-
-        val pushToken = notificationRepository.getPushToken()
-        if (pushToken != null) deletePushTokenUseCase(pushToken)
-            .onSuccess { notificationRepository.cleanPushToken() }
-            .onFailure { Timber.e(it) }
     }
 }
