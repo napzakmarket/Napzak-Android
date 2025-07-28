@@ -2,8 +2,6 @@ package com.napzak.market.chat.chatlist
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.provider.Settings
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
@@ -37,22 +35,32 @@ class ChatListViewModel @Inject constructor(
     private val _isSystemPermissionGranted = MutableStateFlow(false)
     val isSystemPermissionGranted: StateFlow<Boolean> = _isSystemPermissionGranted.asStateFlow()
 
+    private fun checkSystemPermission(context: Context) {
+        val systemPermission = NotificationManagerCompat.from(context).areNotificationsEnabled()
+        _isSystemPermissionGranted.value = systemPermission
+    }
+
+    private suspend fun checkAppPermission() {
+        val pushToken = notificationRepository.getPushToken()
+
+        if (pushToken != null) getNotificationSettingsUseCase(pushToken)
+            .onSuccess { _isAppPermissionGranted.value = it.allowMessage }
+            .onFailure { Timber.e(it) }
+        else Timber.tag("FCM_TOKEN")
+            .d("ChatList-checkAndSetNotificationModal() : pushToken == null")
+    }
+
     fun checkAndSetNotificationModal(context: Context) = viewModelScope.launch {
         val hasShown = notificationRepository.getNotificationModalShown()
         if (hasShown == true) return@launch
 
-        val isSystemPermissionGranted =
-            NotificationManagerCompat.from(context).areNotificationsEnabled()
-        val pushToken = notificationRepository.getPushToken()
-        val isAppPermissionGranted = pushToken?.let {
-            getNotificationSettingsUseCase(it).getOrNull()?.allowMessage != false
-        } != false
-
-        if (!isSystemPermissionGranted || !isAppPermissionGranted) {
+        checkSystemPermission(context)
+        checkAppPermission()
+        if (!_isSystemPermissionGranted.value || !_isAppPermissionGranted.value) {
             _isNotificationModalOpen.value = true
         }
 
-        notificationRepository.setNotificationModalShow()
+        notificationRepository.updateNotificationModalShown()
     }
 
     fun updateNotificationModelOpenState() {
@@ -63,31 +71,13 @@ class ChatListViewModel @Inject constructor(
         _chatRoomsState.update { UiState.Success(ChatRoomDetail.mockList) }
     }
 
-    fun openAppNotificationSettings(context: Context) {
-        val intent = when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
-                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                }
-            }
-
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
-                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                    putExtra("app_package", context.packageName)
-                    putExtra("app_uid", context.applicationInfo.uid)
-                }
-            }
-
-            else -> {
-                // fallback: 전체 앱 설정 화면
-                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = Uri.parse("package:${context.packageName}")
-                }
-            }
+    fun openSystemNotificationSettings(context: Context) {
+        val intent = Intent().apply {
+            action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+            putExtra("app_package", context.packageName)
+            putExtra("app_uid", context.applicationInfo.uid)
         }
-        Timber.tag("chrin").d("openAppNotificationSettings: $intent")
-
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(intent)
     }
 }

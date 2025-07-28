@@ -75,7 +75,7 @@ internal fun ChatListRoute(
         isAppPermissionGranted = isAppPermissionGranted,
         onChatRoomClick = { chatRoom -> onChatRoomNavigate(chatRoom.chatRoomId) },
         onDismissRequest = viewModel::updateNotificationModelOpenState,
-        onSystemSettingNavigate = { viewModel.openAppNotificationSettings(context) },
+        onSystemSettingNavigate = { viewModel.openSystemNotificationSettings(context) },
         onSettingsNavigate = onSettingsNavigate,
         modifier = modifier,
     )
@@ -150,8 +150,9 @@ private fun ChatListScreen(
                 content = stringResource(contentRes),
                 onDismissRequest = onDismissRequest,
                 onButtonClick = {
-                    if (!isSystemPermissionGranted) onSystemSettingNavigate
-                    else if (!isAppPermissionGranted) onSettingsNavigate
+                    if (!isSystemPermissionGranted) onSystemSettingNavigate()
+                    else if (!isAppPermissionGranted) onSettingsNavigate()
+                    onDismissRequest()
                 },
             )
         }
