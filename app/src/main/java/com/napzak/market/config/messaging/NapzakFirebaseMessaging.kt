@@ -20,6 +20,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+private const val TAG = "FCM - okhttp"
+
 class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
     lateinit var dataStore: TokenDataStore
@@ -79,16 +81,16 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Timber.tag("FCM Token").d(token)
+        Timber.tag(TAG).d(token)
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val appPermission = dataStore.getNotificationPermission() == "true"
+                val appPermission = dataStore.getNotificationPermission() == true
                 val systemPermission = isNotificationPermissionGranted() && isNotificationEnabled()
-                Timber.tag("FCM Token")
+                Timber.tag(TAG)
                     .d("Permission 상태: app=$appPermission, system=$systemPermission")
 
                 dataStore.setPushToken(token)
-                updatePushTokenUseCase.invoke(token, systemPermission, appPermission)
+                updatePushTokenUseCase(token, systemPermission, appPermission)
             } catch (e: Exception) {
                 Timber.e(e, "fcm - 푸시 토큰 저장 오류")
             }
