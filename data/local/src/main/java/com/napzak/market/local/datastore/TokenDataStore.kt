@@ -51,12 +51,6 @@ class TokenDataStore @Inject constructor(
         }
     }
 
-    suspend fun setNotificationModalShow() {
-        preferenceDataStore.edit { preferences ->
-            preferences[preferencesNotificationModalShown] = true
-        }
-    }
-
     suspend fun clearTokens() {
         preferenceDataStore.edit { preferences ->
             preferences.remove(preferencesAccessTokenKey)
