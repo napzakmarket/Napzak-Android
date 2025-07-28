@@ -194,6 +194,7 @@ fun GenreScreen(
                 GenreGridList(
                     genres = uiState.genres,
                     onGenreClick = onGenreClick,
+                    isLoading = uiState.isLoading,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 20.dp),
