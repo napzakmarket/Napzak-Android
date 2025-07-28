@@ -25,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -89,7 +90,7 @@ internal fun HomeRoute(
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        viewModel.setNotificationSettings(context, isGranted)
+        viewModel.setNotificationSettings(isGranted)
     }
 
     LaunchedEffect(Unit) {
@@ -99,7 +100,8 @@ internal fun HomeRoute(
         )
         viewModel.fetchHomeData()
         checkNotificationPermission(context, permissionLauncher)
-        viewModel.setNotificationSettings(context)
+        val isEnable = NotificationManagerCompat.from(context).areNotificationsEnabled()
+        viewModel.setNotificationSettings(isEnable)
     }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {

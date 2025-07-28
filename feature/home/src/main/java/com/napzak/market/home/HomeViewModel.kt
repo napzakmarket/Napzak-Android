@@ -1,7 +1,5 @@
 package com.napzak.market.home
 
-import android.content.Context
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.banner.Banner
@@ -193,12 +191,12 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    fun setNotificationSettings(context: Context, isEnabled: Boolean? = null) =
+    fun setNotificationSettings(isEnabled: Boolean) =
         viewModelScope.launch {
             val pushToken = notificationRepository.getPushToken()
             if (pushToken != null) {
                 getNotificationSettings(pushToken)
-                updateNotificationSettings(context, pushToken, isEnabled)
+                updateNotificationSettings(pushToken, isEnabled)
             } else Timber.tag("FCM_TOKEN")
                 .d("Home-updateNotificationSettings() : pushToken == null")
         }
@@ -213,15 +211,12 @@ internal class HomeViewModel @Inject constructor(
     }
 
     private suspend fun updateNotificationSettings(
-        context: Context,
         pushToken: String,
-        isEnabled: Boolean?,
+        isEnabled: Boolean,
     ) {
-        val isSystemPermissionGranted =
-            isEnabled ?: NotificationManagerCompat.from(context).areNotificationsEnabled()
         updatePushTokenUseCase(
             pushToken = pushToken,
-            isEnabled = isSystemPermissionGranted,
+            isEnabled = isEnabled,
             allowMessage = allowMessage,
         )
     }
