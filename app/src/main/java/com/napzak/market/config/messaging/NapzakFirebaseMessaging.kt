@@ -20,8 +20,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-private const val TAG = "FCM - okhttp"
-
 class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
     lateinit var dataStore: TokenDataStore
@@ -86,9 +84,6 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
             try {
                 val appPermission = dataStore.getNotificationPermission() == true
                 val systemPermission = isNotificationPermissionGranted() && isNotificationEnabled()
-                Timber.tag(TAG)
-                    .d("Permission 상태: app=$appPermission, system=$systemPermission")
-
                 dataStore.setPushToken(token)
                 updatePushTokenUseCase(
                     pushToken = token,
@@ -96,7 +91,7 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
                     allowMessage = appPermission,
                 )
             } catch (e: Exception) {
-                Timber.e(e, "fcm - 푸시 토큰 저장 오류")
+                Timber.tag(TAG).e(e, "푸시 토큰 저장 오류")
             }
         }
     }
@@ -126,6 +121,7 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
     }
 
     companion object {
+        private const val TAG = "FCM - okhttp"
         const val NOTIFICATION_CHANNEL_ID = "NAPZAK"
         const val CHANNEL_NAME = "납작 푸시 알림 채널"
         const val OPEN_DEEPLINK_ACTION = "com.napzak.OPEN_DEEP_LINK"
