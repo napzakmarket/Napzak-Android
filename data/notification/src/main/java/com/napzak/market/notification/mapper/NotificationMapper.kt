@@ -8,7 +8,7 @@ import com.napzak.market.notification.model.NotificationSettings
 
 fun EntireNotificationSettings.toData(): UpdatePushTokenRequest =
     UpdatePushTokenRequest(
-        deviceToken = deviceToken,
+        pushToken = pushToken,
         platform = "ANDROID",
         isEnabled = isEnabled,
         allowMessage = allowMessage,

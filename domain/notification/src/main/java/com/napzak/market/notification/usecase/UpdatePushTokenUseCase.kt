@@ -13,7 +13,7 @@ class UpdatePushTokenUseCase @Inject constructor(
         isEnabled: Boolean,
     ): Result<Unit> {
         val request = EntireNotificationSettings(
-            deviceToken = pushToken,
+            pushToken = pushToken,
             isEnabled = isEnabled,
             allowMessage = allowMessage
         )

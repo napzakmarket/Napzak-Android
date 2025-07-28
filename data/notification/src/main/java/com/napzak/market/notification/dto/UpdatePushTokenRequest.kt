@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UpdatePushTokenRequest(
-    @SerialName("deviceToken") val deviceToken: String,
+    @SerialName("deviceToken") val pushToken: String,
     @SerialName("platform") val platform: String = "ANDROID",
     @SerialName("isEnabled") val isEnabled: Boolean,
     @SerialName("allowMessage") val allowMessage: Boolean,
