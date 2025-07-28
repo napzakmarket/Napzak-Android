@@ -9,7 +9,7 @@ import kotlinx.collections.immutable.persistentListOf
 class GenreContract {
     @Immutable
     data class GenreSearchUiState(
-        val loadState: UiState<ImmutableList<Genre>> = UiState.Empty,
+        val loadState: UiState<ImmutableList<Genre>> = UiState.Loading,
         val selectedGenreId: Long? = null,
     )
 }

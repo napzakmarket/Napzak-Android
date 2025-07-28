@@ -30,8 +30,6 @@ class GenreSearchViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            updateUiState(UiState.Loading)
-
             searchTerm.debounce(DEBOUNCE_DELAY).collect {
                 updateGenreSearchResult()
             }
@@ -44,7 +42,7 @@ class GenreSearchViewModel @Inject constructor(
 
     fun updateSearchTerm(searchTerm: String) = _searchTerm.update { searchTerm }
 
-    fun updateUiState(loadState: UiState<ImmutableList<Genre>>) = _uiState.update { currentState ->
+    private fun updateUiState(loadState: UiState<ImmutableList<Genre>>) = _uiState.update { currentState ->
         currentState.copy(loadState = loadState)
     }
 
