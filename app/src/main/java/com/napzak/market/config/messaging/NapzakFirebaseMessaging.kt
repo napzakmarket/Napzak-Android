@@ -1,11 +1,16 @@
 package com.napzak.market.config.messaging
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.O
+import android.os.Build.VERSION_CODES.TIRAMISU
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
@@ -97,7 +102,7 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
     }
 
     private fun ensureNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (SDK_INT >= O) {
             val channel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
                 CHANNEL_NAME,
@@ -109,8 +114,8 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
     }
 
     private fun isNotificationPermissionGranted(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        return if (SDK_INT >= TIRAMISU) {
+            checkSelfPermission(POST_NOTIFICATIONS) == PERMISSION_GRANTED
         } else {
             true // 33 미만은 기본적으로 권한 있음
         }
