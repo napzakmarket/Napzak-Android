@@ -39,18 +39,17 @@ class NotificationRepositoryImpl @Inject constructor(
 
     override suspend fun getPushToken(): String? = tokenDataStore.getPushToken()
 
+    override suspend fun getNotificationPermission(): Boolean? =
+        tokenDataStore.getNotificationPermission()
+
+    override suspend fun getNotificationModalShown(): Boolean? =
+        tokenDataStore.getNotificationModalShown()
+
     override suspend fun setNotificationPermission(allowMessage: Boolean) =
         tokenDataStore.setNotificationPermission(allowMessage)
 
     override suspend fun cleanPushToken() {
         tokenDataStore.clearPushToken()
-    }
-
-    override suspend fun getNotificationModalShown(): Boolean? =
-        tokenDataStore.getNotificationModalShown()
-
-    override suspend fun setNotificationModalShow() {
-        tokenDataStore.setNotificationModalShow()
     }
 
     override suspend fun updateNotificationModalShown() {

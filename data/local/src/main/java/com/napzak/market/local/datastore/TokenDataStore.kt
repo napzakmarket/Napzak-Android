@@ -24,7 +24,7 @@ class TokenDataStore @Inject constructor(
         .map { it[preferencesPushTokenKey] }
         .firstOrNull()
 
-    suspend fun getNotificationPermission(): String? = preferenceDataStore.data
+    suspend fun getNotificationPermission(): Boolean? = preferenceDataStore.data
         .map { it[preferencesNotificationPermission] }
         .firstOrNull()
 
@@ -47,7 +47,7 @@ class TokenDataStore @Inject constructor(
 
     suspend fun setNotificationPermission(permission: Boolean) {
         preferenceDataStore.edit { preferences ->
-            preferences[preferencesNotificationPermission] = permission.toString()
+            preferences[preferencesNotificationPermission] = permission
         }
     }
 
@@ -103,7 +103,7 @@ class TokenDataStore @Inject constructor(
         val preferencesAccessTokenKey = stringPreferencesKey(ACCESS_TOKEN_KEY)
         val preferencesRefreshTokenKey = stringPreferencesKey(REFRESH_TOKEN_KEY)
         val preferencesPushTokenKey = stringPreferencesKey(PUSH_TOKEN_KEY)
-        val preferencesNotificationPermission = stringPreferencesKey(NOTIFICATION_PERMISSION_KEY)
+        val preferencesNotificationPermission = booleanPreferencesKey(NOTIFICATION_PERMISSION_KEY)
         val preferencesNotificationModalShown = booleanPreferencesKey(NOTIFICATION_MODAL_SHOWN_KEY)
     }
 }

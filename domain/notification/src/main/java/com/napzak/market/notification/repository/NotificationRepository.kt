@@ -10,9 +10,9 @@ interface NotificationRepository {
     suspend fun patchNotificationSettings(pushToken: String, allowMessage: Boolean): Result<Unit>
 
     suspend fun getPushToken(): String?
+    suspend fun getNotificationPermission(): Boolean?
     suspend fun setNotificationPermission(allowed: Boolean)
     suspend fun cleanPushToken()
     suspend fun getNotificationModalShown(): Boolean?
-    suspend fun setNotificationModalShow()
     suspend fun updateNotificationModalShown()
 }

@@ -1,5 +1,7 @@
 package com.napzak.market.home
 
+import android.content.Context
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.banner.Banner
@@ -8,7 +10,8 @@ import com.napzak.market.home.state.HomeUiState
 import com.napzak.market.home.type.HomeProductType
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.notification.repository.NotificationRepository
-import com.napzak.market.notification.usecase.PatchNotificationSettingsUseCase
+import com.napzak.market.notification.usecase.GetNotificationSettingsUseCase
+import com.napzak.market.notification.usecase.UpdatePushTokenUseCase
 import com.napzak.market.product.model.Product
 import com.napzak.market.product.repository.ProductRecommendationRepository
 import com.napzak.market.repository.BannerRepository
@@ -38,9 +41,11 @@ internal class HomeViewModel @Inject constructor(
     private val bannerRepository: BannerRepository,
     private val interestProductUseCase: SetInterestProductUseCase,
     private val notificationRepository: NotificationRepository,
-    private val patchNotificationSettingsUseCase: PatchNotificationSettingsUseCase,
+    private val getNotificationSettingsUseCase: GetNotificationSettingsUseCase,
+    private val updatePushTokenUseCase: UpdatePushTokenUseCase,
 ) : ViewModel() {
     private val nickname = MutableStateFlow("")
+    private var allowMessage = false
     private val _bannerLoadState =
         MutableStateFlow<UiState<Map<HomeBannerType, List<Banner>>>>(UiState.Loading)
     private val _recommendProductLoadState =
@@ -160,7 +165,7 @@ internal class HomeViewModel @Inject constructor(
     fun setInterest(
         productId: Long,
         isInterested: Boolean,
-        productType: HomeProductType = HomeProductType.RECOMMEND
+        productType: HomeProductType = HomeProductType.RECOMMEND,
     ) = viewModelScope.launch {
         val flow = when (productType) {
             HomeProductType.RECOMMEND -> _recommendProductLoadState
@@ -188,12 +193,32 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    fun updateNotificationSettings(allowMessage: Boolean) = viewModelScope.launch {
-        val pushToken = notificationRepository.getPushToken()
-        if (pushToken != null) patchNotificationSettingsUseCase.invoke(pushToken, allowMessage)
-            .onSuccess { notificationRepository.setNotificationPermission(allowMessage) }
+    fun setNotificationSettings(context: Context, isEnabled: Boolean? = null) =
+        viewModelScope.launch {
+            val pushToken = notificationRepository.getPushToken()
+            if (pushToken != null) {
+                getNotificationSettings(pushToken)
+                updateNotificationSettings(context, pushToken, isEnabled)
+            } else Timber.tag("FCM_TOKEN")
+                .d("Home-updateNotificationSettings() : pushToken == null")
+        }
+
+    private suspend fun getNotificationSettings(pushToken: String) {
+        getNotificationSettingsUseCase(pushToken)
+            .onSuccess { allowMessage = it.allowMessage }
             .onFailure { Timber.e(it) }
     }
+
+    private fun updateNotificationSettings(
+        context: Context,
+        pushToken: String,
+        isEnabled: Boolean?,
+    ) =
+        viewModelScope.launch {
+            val isSystemPermissionGranted =
+                isEnabled ?: NotificationManagerCompat.from(context).areNotificationsEnabled()
+            updatePushTokenUseCase(pushToken, allowMessage, isSystemPermissionGranted)
+        }
 
     companion object {
         private const val DEBOUNCE_DELAY = 300L

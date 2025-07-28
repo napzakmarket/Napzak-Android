@@ -52,9 +52,10 @@ internal class SettingViewModel @Inject constructor(
 
     fun fetchAppNotificationSetting() = viewModelScope.launch {
         val pushToken = notificationRepository.getPushToken()
-        _isAppNotificationOn.value = pushToken?.let {
-            getNotificationSettingsUseCase(it).getOrNull()?.allowMessage != false
-        } != false
+        if (pushToken != null) getNotificationSettingsUseCase(pushToken)
+            .onSuccess { _isAppNotificationOn.value = it.allowMessage }
+            .onFailure { Timber.e(it) }
+        else Timber.tag("FCM_TOKEN").d("Setting-fetchAppNotificationSetting() : pushToken == null")
     }
 
     fun updateAppNotificationSetting(allowMessage: Boolean) = viewModelScope.launch {
