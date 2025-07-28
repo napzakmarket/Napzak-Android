@@ -90,7 +90,11 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
                     .d("Permission 상태: app=$appPermission, system=$systemPermission")
 
                 dataStore.setPushToken(token)
-                updatePushTokenUseCase(token, systemPermission, appPermission)
+                updatePushTokenUseCase(
+                    pushToken = token,
+                    isEnabled = systemPermission,
+                    allowMessage = appPermission,
+                )
             } catch (e: Exception) {
                 Timber.e(e, "fcm - 푸시 토큰 저장 오류")
             }

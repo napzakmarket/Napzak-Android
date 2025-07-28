@@ -205,20 +205,26 @@ internal class HomeViewModel @Inject constructor(
 
     private suspend fun getNotificationSettings(pushToken: String) {
         getNotificationSettingsUseCase(pushToken)
-            .onSuccess { allowMessage = it.allowMessage }
+            .onSuccess {
+                allowMessage = it.allowMessage
+                notificationRepository.setNotificationPermission(it.allowMessage)
+            }
             .onFailure { Timber.e(it) }
     }
 
-    private fun updateNotificationSettings(
+    private suspend fun updateNotificationSettings(
         context: Context,
         pushToken: String,
         isEnabled: Boolean?,
-    ) =
-        viewModelScope.launch {
-            val isSystemPermissionGranted =
-                isEnabled ?: NotificationManagerCompat.from(context).areNotificationsEnabled()
-            updatePushTokenUseCase(pushToken, allowMessage, isSystemPermissionGranted)
-        }
+    ) {
+        val isSystemPermissionGranted =
+            isEnabled ?: NotificationManagerCompat.from(context).areNotificationsEnabled()
+        updatePushTokenUseCase(
+            pushToken = pushToken,
+            isEnabled = isSystemPermissionGranted,
+            allowMessage = allowMessage,
+        )
+    }
 
     companion object {
         private const val DEBOUNCE_DELAY = 300L
