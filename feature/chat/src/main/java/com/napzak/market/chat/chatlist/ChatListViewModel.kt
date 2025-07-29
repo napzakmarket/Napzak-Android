@@ -1,7 +1,5 @@
 package com.napzak.market.chat.chatlist
 
-import android.content.Context
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.chat.chatlist.model.ChatRoomDetail
@@ -17,7 +15,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-
 @HiltViewModel
 class ChatListViewModel @Inject constructor(
     private val notificationRepository: NotificationRepository,
@@ -30,13 +27,6 @@ class ChatListViewModel @Inject constructor(
     val isNotificationModalOpen: StateFlow<Boolean> = _isNotificationModalOpen.asStateFlow()
     private val _isAppPermissionGranted = MutableStateFlow(false)
     val isAppPermissionGranted: StateFlow<Boolean> = _isAppPermissionGranted.asStateFlow()
-    private val _isSystemPermissionGranted = MutableStateFlow(false)
-    val isSystemPermissionGranted: StateFlow<Boolean> = _isSystemPermissionGranted.asStateFlow()
-
-    private fun checkSystemPermission(context: Context) {
-        val systemPermission = NotificationManagerCompat.from(context).areNotificationsEnabled()
-        _isSystemPermissionGranted.value = systemPermission
-    }
 
     private suspend fun checkAppPermission() {
         val pushToken = notificationRepository.getPushToken()
@@ -48,13 +38,12 @@ class ChatListViewModel @Inject constructor(
             .d("ChatList-checkAndSetNotificationModal() : pushToken == null")
     }
 
-    fun checkAndSetNotificationModal(context: Context) = viewModelScope.launch {
+    fun checkAndSetNotificationModal(isSystemPermissionGranted: Boolean) = viewModelScope.launch {
         val hasShown = notificationRepository.getNotificationModalShown()
         if (hasShown == true) return@launch
 
-        checkSystemPermission(context)
         checkAppPermission()
-        if (!_isSystemPermissionGranted.value || !_isAppPermissionGranted.value) {
+        if (!isSystemPermissionGranted || !_isAppPermissionGranted.value) {
             _isNotificationModalOpen.value = true
         }
 

@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,12 +59,13 @@ internal fun ChatListRoute(
     val context = LocalContext.current
     val chatRoomsState by viewModel.chatRoomsState.collectAsStateWithLifecycle()
     val isNotificationModalOpen by viewModel.isNotificationModalOpen.collectAsStateWithLifecycle()
-    val isSystemPermissionGranted by viewModel.isSystemPermissionGranted.collectAsStateWithLifecycle()
     val isAppPermissionGranted by viewModel.isAppPermissionGranted.collectAsStateWithLifecycle()
+    val isSystemPermissionGranted =
+        NotificationManagerCompat.from(context).areNotificationsEnabled()
 
     LifecycleResumeEffect(Unit) {
         viewModel.fetchChatRooms()
-        viewModel.checkAndSetNotificationModal(context)
+        viewModel.checkAndSetNotificationModal(isSystemPermissionGranted)
         onPauseOrDispose {
             // no resource to be cleared
         }
