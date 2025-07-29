@@ -1,6 +1,7 @@
 package com.napzak.market.store.edit_store
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -56,6 +57,8 @@ internal fun EditStoreRoute(
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    BackHandler(uiState.isUploading) { /* no back press allowed*/ }
 
     LaunchedEffect(Unit) {
         viewModel.getEditProfile()
