@@ -1,17 +1,14 @@
 package com.napzak.market.registration.genre.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -36,7 +33,14 @@ fun GenreSearchHeader(
 ) {
     Column(
         modifier = modifier
-            .background(color = NapzakMarketTheme.colors.white),
+            .napzakGradientShadow(
+                height = 4.dp,
+                startColor = NapzakMarketTheme.colors.shadowBlack,
+                endColor = NapzakMarketTheme.colors.transWhite,
+                direction = ShadowDirection.Bottom,
+            )
+            .background(color = NapzakMarketTheme.colors.white)
+            .padding(bottom = 24.dp),
     ) {
         val paddedModifier = Modifier.padding(horizontal = 28.dp)
 
@@ -71,20 +75,6 @@ fun GenreSearchHeader(
             onResetClick = { onSearchTermChange(BLANK) },
             onSearchClick = {},
             modifier = paddedModifier,
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(2.dp)
-                .napzakGradientShadow(
-                    height = 4.dp,
-                    startColor = Color(0x0D000000),
-                    endColor = Color.Transparent,
-                    direction = ShadowDirection.Bottom,
-                )
         )
     }
 }

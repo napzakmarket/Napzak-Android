@@ -5,7 +5,6 @@ import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,7 +15,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -148,19 +146,6 @@ fun SaleRegistrationScreen(
                 RegistrationTopBar(
                     title = stringResource(title, stringResource(sale)),
                     onCloseClick = onCloseClick,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(2.dp)
-                        .napzakGradientShadow(
-                            height = 2.dp,
-                            startColor = Color(0x0D000000),
-                            endColor = Color.Transparent,
-                            direction = ShadowDirection.Bottom,
-                        ),
                 )
             }
 
@@ -245,13 +230,14 @@ fun SaleRegistrationScreen(
                 Spacer(modifier = Modifier.height(spacerHeight))
             }
         }
+
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .napzakGradientShadow(
-                    height = 2.dp,
-                    startColor = Color(0x0D000000),
-                    endColor = Color.Transparent,
+                    height = 4.dp,
+                    startColor = NapzakMarketTheme.colors.transWhite,
+                    endColor = NapzakMarketTheme.colors.shadowBlack,
                     direction = ShadowDirection.Top,
                 )
                 .background(NapzakMarketTheme.colors.white)
