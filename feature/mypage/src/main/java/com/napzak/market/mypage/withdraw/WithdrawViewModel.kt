@@ -32,8 +32,10 @@ internal class WithdrawViewModel @Inject constructor(
                 .onSuccess {
                     _sideEffect.emit(WithdrawSideEffect.WithdrawComplete)
                 }
-                .onFailure(Timber::e)
-                .also { isWithdrawing = false }
+                .onFailure {
+                    Timber.e("Withdraw failed: $it")
+                    isWithdrawing = false
+                }
         }
     }
 }
