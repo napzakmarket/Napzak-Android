@@ -35,7 +35,6 @@ import com.napzak.market.report.state.rememberReportState
 import com.napzak.market.report.type.ReportType
 import com.napzak.market.ui_util.bringIntoView
 
-private val MinHeight = 180.dp
 private const val DETAIL_LENGTH_MAX = 200
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -45,6 +44,8 @@ internal fun ReportDetailSection(
     onTextFieldFocus: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val minHeight = 180.dp
+
     val coroutineScope = rememberCoroutineScope()
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     var focusState: FocusState? by remember { mutableStateOf(null) }
@@ -82,7 +83,7 @@ internal fun ReportDetailSection(
                     bringIntoViewRequester.bringIntoView(coroutineScope, it)
                     focusState = it
                 }
-                .defaultMinSize(minHeight = MinHeight),
+                .defaultMinSize(minHeight = minHeight),
         )
 
         Spacer(Modifier.height(9.dp))
@@ -91,7 +92,7 @@ internal fun ReportDetailSection(
             text = stringResource(
                 report_input_letter_num_detail,
                 reportState.detail.length,
-                DETAIL_LENGTH_MAX
+                DETAIL_LENGTH_MAX,
             ),
             style = NapzakMarketTheme.typography.caption10sb.copy(
                 color = NapzakMarketTheme.colors.gray300,
