@@ -96,7 +96,7 @@ internal fun HomeFooter(
             color = colors.gray300,
         )
 
-        Spacer(modifier = Modifier.height(23.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         DividerTexts(
             leftStringId = home_footer_leader,
