@@ -27,8 +27,7 @@ class ChatListViewModel @Inject constructor(
     private val _chatRoomsState = MutableStateFlow<UiState<List<ChatRoom>>>(UiState.Loading)
     val chatRoomsState = _chatRoomsState.asStateFlow()
 
-    private var chatRoomMap by mutableStateOf(mapOf<Long, ChatRoom>())
-    private var chatRoomList by mutableStateOf(listOf<ChatRoom>())
+    private var _chatRoomPair by mutableStateOf(mapOf<Long, ChatRoom>() to listOf<ChatRoom>())
 
     private var _messageFlow: Flow<ReceiveMessage<*>>? = null
 
@@ -45,8 +44,7 @@ class ChatListViewModel @Inject constructor(
                     }
                 }
 
-                chatRoomMap = map
-                chatRoomList = list
+                _chatRoomPair = map to list
                 _chatRoomsState.update { UiState.Success(list) }
             }
             .onFailure { error ->
@@ -72,6 +70,9 @@ class ChatListViewModel @Inject constructor(
             val roomId = message.roomId
                 ?: throw IllegalStateException("메시지에 roomId가 없습니다")
 
+            val chatRoomMap = _chatRoomPair.first
+            val chatRoomList = _chatRoomPair.second
+
             if (chatRoomMap[roomId] == null) {
                 fetchChatRooms()
                 return
@@ -89,8 +90,7 @@ class ChatListViewModel @Inject constructor(
                 list.add(0, room)
                 map[roomId] = room
 
-                chatRoomList = list
-                chatRoomMap = map
+                _chatRoomPair = map to list
                 _chatRoomsState.value = UiState.Success(list)
             }
         } catch (e: Exception) {
