@@ -2,8 +2,10 @@ package com.napzak.market.registration.navigation
 
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -81,10 +83,15 @@ fun NavGraphBuilder.registrationGraph(
             RegistrationType.PURCHASE -> navController.getBackStackEntry<PurchaseRegistration>()
         }
         val parentViewModel = navController.sharedRegistrationViewModel(from, parentEntry)
+        val registrationUiState by parentViewModel.registrationUiState.collectAsStateWithLifecycle()
 
         GenreSearchRoute(
             navigateToUp = navigateToUp,
-            parentViewModel = parentViewModel,
+            onGenreSelect = { genre ->
+                parentViewModel.updateGenre(genre)
+                navigateToUp()
+            },
+            selectedGenreId = registrationUiState.genre?.genreId,
             modifier = modifier.systemBarsPadding(),
         )
     }
