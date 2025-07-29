@@ -15,30 +15,24 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
 import com.napzak.market.R.drawable.ic_push_notification
-import com.napzak.market.local.datastore.FirebaseServiceEntryPoint
 import com.napzak.market.local.datastore.TokenDataStore
 import com.napzak.market.notification.usecase.UpdatePushTokenUseCase
 import com.skydoves.firebase.messaging.lifecycle.ktx.LifecycleAwareFirebaseMessagingService
-import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
+    @Inject
     lateinit var dataStore: TokenDataStore
-    lateinit var updatePushTokenUseCase: UpdatePushTokenUseCase
 
-    override fun onCreate() {
-        super.onCreate()
-        val entryPoint = EntryPointAccessors.fromApplication(
-            applicationContext,
-            FirebaseServiceEntryPoint::class.java
-        )
-        dataStore = entryPoint.dataStore()
-        updatePushTokenUseCase = entryPoint.updatePushTokenUseCase()
-    }
+    @Inject
+    lateinit var updatePushTokenUseCase: UpdatePushTokenUseCase
 
     @SuppressLint("LaunchActivityFromNotification")
     override fun onMessageReceived(message: RemoteMessage) {
