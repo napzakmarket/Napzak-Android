@@ -156,7 +156,8 @@ private fun IconText(
 ) {
     Row(
         modifier.noRippleClickable(onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(drawableId),
