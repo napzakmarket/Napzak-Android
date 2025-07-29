@@ -1,5 +1,6 @@
 package com.napzak.market.store.edit_store.component
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,11 +8,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,10 +40,12 @@ import com.napzak.market.store.model.NicknameValidationResult.Error.ONLY_CONSONA
 import com.napzak.market.store.model.NicknameValidationResult.Error.ONLY_NUMBERS
 import com.napzak.market.store.model.NicknameValidationResult.Error.SPECIAL_CHAR
 import com.napzak.market.store.model.NicknameValidationResult.Error.WHITESPACE
+import com.napzak.market.ui_util.bringIntoView
 import com.napzak.market.ui_util.noRippleClickable
 
 private const val NICKNAME_MAX_LENGTH = 20
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun EditStoreNickNameSection(
     marketName: String,
@@ -47,12 +55,17 @@ internal fun EditStoreNickNameSection(
     nickNameDuplicationState: UiState<String>,
     onNameValidityCheckClick: () -> Unit,
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+
     EditStoreProfileContainer(
         title = stringResource(store_edit_title_name),
         subtitle = stringResource(store_edit_sub_title_name),
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 20.dp),
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .bringIntoViewRequester(bringIntoViewRequester),
         ) {
             NapzakDefaultTextField(
                 text = marketName,
@@ -61,6 +74,7 @@ internal fun EditStoreNickNameSection(
                 textStyle = NapzakMarketTheme.typography.caption12sb,
                 hintTextStyle = NapzakMarketTheme.typography.caption12m,
                 modifier = Modifier
+                    .onFocusEvent { bringIntoViewRequester.bringIntoView(coroutineScope, it) }
                     .fillMaxWidth()
                     .background(
                         color = NapzakMarketTheme.colors.gray50,
