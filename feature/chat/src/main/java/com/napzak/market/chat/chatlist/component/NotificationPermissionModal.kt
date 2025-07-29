@@ -29,19 +29,37 @@ import androidx.compose.ui.window.Dialog
 import com.napzak.market.designsystem.R.drawable.ic_close_24
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.drawable.img_notification_permission
+import com.napzak.market.feature.chat.R.string.permission_modal_app_setting_off_title
+import com.napzak.market.feature.chat.R.string.permission_modal_both_setting_off_content
 import com.napzak.market.feature.chat.R.string.permission_modal_button_name
+import com.napzak.market.feature.chat.R.string.permission_modal_empty
+import com.napzak.market.feature.chat.R.string.permission_modal_setting_off_content
+import com.napzak.market.feature.chat.R.string.permission_modal_system_app_setting_off_title
+import com.napzak.market.feature.chat.R.string.permission_modal_system_setting_off_title
 import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 fun NotificationPermissionModal(
-    title: String,
-    content: String,
+    isAppPermissionGranted: Boolean,
+    isSystemPermissionGranted: Boolean,
     onDismissRequest: () -> Unit,
     onButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val backgroundColor = NapzakMarketTheme.colors.purple500
     val contentColor = NapzakMarketTheme.colors.white
+    val (title, content) = when {
+        !isAppPermissionGranted && isSystemPermissionGranted ->
+            permission_modal_app_setting_off_title to permission_modal_setting_off_content
+
+        isAppPermissionGranted && !isSystemPermissionGranted ->
+            permission_modal_system_setting_off_title to permission_modal_setting_off_content
+
+        !isAppPermissionGranted && !isSystemPermissionGranted ->
+            permission_modal_system_app_setting_off_title to permission_modal_both_setting_off_content
+
+        else -> permission_modal_empty to permission_modal_empty
+    }
 
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -76,7 +94,7 @@ fun NotificationPermissionModal(
                 Spacer(Modifier.height(18.dp))
 
                 Text(
-                    text = title,
+                    text = stringResource(title),
                     style = NapzakMarketTheme.typography.body16b.copy(
                         NapzakMarketTheme.colors.black
                     )
@@ -85,7 +103,7 @@ fun NotificationPermissionModal(
                 Spacer(Modifier.height(10.dp))
 
                 Text(
-                    text = content,
+                    text = stringResource(content),
                     style = NapzakMarketTheme.typography.caption12sb.copy(
                         NapzakMarketTheme.colors.gray200
                     ),
@@ -125,8 +143,8 @@ fun NotificationPermissionModal(
 private fun NotificationPermissionModalPreview(modifier: Modifier = Modifier) {
     NapzakMarketTheme {
         NotificationPermissionModal(
-            title = "앱과 기기 알림이 모두 꺼져있어요!",
-            content = "중요한 거래 소식을 놓치지 않도록\n설정을 변경해 주세요.",
+            isAppPermissionGranted = false,
+            isSystemPermissionGranted = false,
             onDismissRequest = {},
             onButtonClick = {},
             modifier = modifier,

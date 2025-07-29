@@ -37,11 +37,6 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_list_empty_guide_1
 import com.napzak.market.feature.chat.R.string.chat_list_empty_guide_2
 import com.napzak.market.feature.chat.R.string.chat_list_top_bar
-import com.napzak.market.feature.chat.R.string.permission_modal_app_setting_off_title
-import com.napzak.market.feature.chat.R.string.permission_modal_both_setting_off_content
-import com.napzak.market.feature.chat.R.string.permission_modal_setting_off_content
-import com.napzak.market.feature.chat.R.string.permission_modal_system_app_setting_off_title
-import com.napzak.market.feature.chat.R.string.permission_modal_system_setting_off_title
 import com.napzak.market.ui_util.ScreenPreview
 import com.napzak.market.ui_util.ShadowDirection
 import com.napzak.market.ui_util.napzakGradientShadow
@@ -96,19 +91,6 @@ private fun ChatListScreen(
     onSettingsNavigate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val (titleRes, contentRes) = when {
-        !isAppPermissionGranted && isSystemPermissionGranted ->
-            permission_modal_app_setting_off_title to permission_modal_setting_off_content
-
-        isAppPermissionGranted && !isSystemPermissionGranted ->
-            permission_modal_system_setting_off_title to permission_modal_setting_off_content
-
-        !isAppPermissionGranted && !isSystemPermissionGranted ->
-            permission_modal_system_app_setting_off_title to permission_modal_both_setting_off_content
-
-        else -> null to null
-    }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -143,22 +125,19 @@ private fun ChatListScreen(
                 // 실패 시 빈 화면
             }
         }
-
     }
 
     if (isNotificationModalOpen) {
-        if (titleRes != null && contentRes != null) {
-            NotificationPermissionModal(
-                title = stringResource(titleRes),
-                content = stringResource(contentRes),
-                onDismissRequest = onDismissRequest,
-                onButtonClick = {
-                    if (!isSystemPermissionGranted) onSystemSettingNavigate()
-                    else if (!isAppPermissionGranted) onSettingsNavigate()
-                    onDismissRequest()
-                },
-            )
-        }
+        NotificationPermissionModal(
+            isAppPermissionGranted = isAppPermissionGranted,
+            isSystemPermissionGranted = isSystemPermissionGranted,
+            onDismissRequest = onDismissRequest,
+            onButtonClick = {
+                if (!isSystemPermissionGranted) onSystemSettingNavigate()
+                else if (!isAppPermissionGranted) onSettingsNavigate()
+                onDismissRequest()
+            },
+        )
     }
 }
 

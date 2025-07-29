@@ -26,4 +26,5 @@
     <string name="permission_modal_setting_off_content">실시간 거래 알림을 받으려면\n설정을 변경해주세요.</string>
     <string name="permission_modal_both_setting_off_content">중요한 거래 소식을 놓치지 않도록\n설정을 변경해 주세요.</string>
     <string name="permission_modal_button_name">알림 켜기</string>
+    <string name="permission_modal_empty" />
 </resources>
