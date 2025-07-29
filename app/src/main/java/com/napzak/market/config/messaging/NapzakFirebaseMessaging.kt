@@ -15,7 +15,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
 import com.napzak.market.R.drawable.ic_push_notification
-import com.napzak.market.local.datastore.TokenDataStore
+import com.napzak.market.local.datastore.NotificationDataStore
 import com.napzak.market.notification.usecase.UpdatePushTokenUseCase
 import com.skydoves.firebase.messaging.lifecycle.ktx.LifecycleAwareFirebaseMessagingService
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,7 +29,7 @@ import javax.inject.Inject
 class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
     @Inject
-    lateinit var dataStore: TokenDataStore
+    lateinit var dataStore: NotificationDataStore
 
     @Inject
     lateinit var updatePushTokenUseCase: UpdatePushTokenUseCase

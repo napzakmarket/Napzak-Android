@@ -1,6 +1,6 @@
 package com.napzak.market.notification.repositoryimpl
 
-import com.napzak.market.local.datastore.TokenDataStore
+import com.napzak.market.local.datastore.NotificationDataStore
 import com.napzak.market.notification.datasource.NotificationDataSource
 import com.napzak.market.notification.mapper.toData
 import com.napzak.market.notification.mapper.toDomain
@@ -10,7 +10,7 @@ import com.napzak.market.notification.repository.NotificationRepository
 import javax.inject.Inject
 
 class NotificationRepositoryImpl @Inject constructor(
-    private val tokenDataStore: TokenDataStore,
+    private val notificationDataStore: NotificationDataStore,
     private val notificationDataSource: NotificationDataSource,
 ) : NotificationRepository {
     override suspend fun updatePushToken(pushToken: EntireNotificationSettings): Result<Unit> =
@@ -37,22 +37,22 @@ class NotificationRepositoryImpl @Inject constructor(
             notificationDataSource.patchNotificationSettings(pushToken, allowMessage.toData())
         }
 
-    override suspend fun getPushToken(): String? = tokenDataStore.getPushToken()
+    override suspend fun getPushToken(): String? = notificationDataStore.getPushToken()
 
     override suspend fun getNotificationPermission(): Boolean? =
-        tokenDataStore.getNotificationPermission()
+        notificationDataStore.getNotificationPermission()
 
     override suspend fun getNotificationModalShown(): Boolean? =
-        tokenDataStore.getNotificationModalShown()
+        notificationDataStore.getNotificationModalShown()
 
     override suspend fun setNotificationPermission(allowMessage: Boolean) =
-        tokenDataStore.setNotificationPermission(allowMessage)
+        notificationDataStore.setNotificationPermission(allowMessage)
 
     override suspend fun cleanPushToken() {
-        tokenDataStore.clearPushToken()
+        notificationDataStore.clearPushToken()
     }
 
     override suspend fun updateNotificationModalShown() {
-        tokenDataStore.updateNotificationModalShown()
+        notificationDataStore.updateNotificationModalShown()
     }
 }
