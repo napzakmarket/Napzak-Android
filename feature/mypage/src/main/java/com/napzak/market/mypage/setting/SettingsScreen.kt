@@ -113,13 +113,7 @@ private fun SettingsScreen(
 
                 Spacer(modifier = Modifier.height(28.dp))
 
-                SettingVersionItem(
-                    modifier = Modifier.fillMaxWidth(),
-                )
-
                 SettingsMenu.entries.forEachIndexed { _, menu ->
-                    Spacer(modifier = Modifier.height(20.dp))
-
                     SettingItem(
                         title = stringResource(id = menu.titleResId),
                         onClick = when (menu) {
@@ -128,7 +122,12 @@ private fun SettingsScreen(
                             SettingsMenu.PRIVACY_POLICY -> onPrivacyClick
                         }
                     )
+                    Spacer(modifier = Modifier.height(20.dp))
                 }
+
+                SettingVersionItem(
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
 
             Spacer(modifier = Modifier.height(28.dp))
