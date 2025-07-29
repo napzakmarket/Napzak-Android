@@ -1,7 +1,6 @@
 package com.napzak.market.registration.sale
 
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -63,7 +62,6 @@ fun SaleRegistrationRoute(
     val registrationUiState by viewModel.registrationUiState.collectAsStateWithLifecycle()
     val saleUiState by viewModel.saleUiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
-    val onBackPressedDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
@@ -74,9 +72,7 @@ fun SaleRegistrationRoute(
             }
     }
 
-    BackHandler(registrationUiState.loadState !is UiState.Loading) {
-        onBackPressedDispatcherOwner?.onBackPressedDispatcher?.onBackPressed()
-    }
+    BackHandler(registrationUiState.loadState is UiState.Loading) { /* no back press allowed*/ }
 
     if (registrationUiState.loadState is UiState.Loading) NapzakLoadingOverlay()
 
