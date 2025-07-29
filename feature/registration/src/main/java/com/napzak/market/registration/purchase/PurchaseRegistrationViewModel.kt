@@ -6,18 +6,17 @@ import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.presigned_url.model.PresignedUrl
+import com.napzak.market.presigned_url.usecase.ClearCacheUseCase
+import com.napzak.market.presigned_url.usecase.CompressImageUseCase
 import com.napzak.market.presigned_url.usecase.GetProductPresignedUrlUseCase
 import com.napzak.market.presigned_url.usecase.UploadImageUseCase
 import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect
 import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect.NavigateToDetail
 import com.napzak.market.registration.RegistrationViewModel
-import com.napzak.market.registration.event.GenreEventBus
 import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.model.ProductImage
 import com.napzak.market.registration.model.PurchaseRegistrationProduct
 import com.napzak.market.registration.purchase.state.PurchaseContract.PurchaseUiState
-import com.napzak.market.presigned_url.usecase.ClearCacheUseCase
-import com.napzak.market.presigned_url.usecase.CompressImageUseCase
 import com.napzak.market.registration.usecase.EditRegisteredProductUseCase
 import com.napzak.market.registration.usecase.GetRegisteredPurchaseProductUseCase
 import com.napzak.market.registration.usecase.RegisterProductUseCase
@@ -65,11 +64,6 @@ class PurchaseRegistrationViewModel @Inject constructor(
                     productId = id
                     getRegisteredPurchaseProduct(id)
                 }
-        }
-        viewModelScope.launch {
-            GenreEventBus.genreSelected.collect { genre ->
-                updateGenre(genre)
-            }
         }
     }
 
