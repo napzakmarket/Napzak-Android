@@ -58,7 +58,6 @@ internal fun PriceSettingGroup(
     modifier: Modifier = Modifier,
 ) {
     var priceFieldValue by remember { mutableStateOf(TextFieldValue(price)) }
-    val emptyTextToolbar = remember { EmptyTextToolbar() }
 
     LaunchedEffect(price) {
         if (price != priceFieldValue.text) {
@@ -70,7 +69,8 @@ internal fun PriceSettingGroup(
     }
 
     val transformedPrice = price.priceToNumericTransformation()
-    val purchaseError = tradeType == TradeType.BUY && transformedPrice != 0 && transformedPrice % THOUSAND != 0
+    val purchaseError = tradeType == TradeType.BUY && transformedPrice != 0
+            && transformedPrice % THOUSAND != 0
     val napzakColors = NapzakMarketTheme.colors
     val textColor = if (purchaseError) napzakColors.red else napzakColors.gray400
     val borderColor = if (purchaseError) napzakColors.red else napzakColors.gray100
@@ -103,7 +103,9 @@ internal fun PriceSettingGroup(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        CompositionLocalProvider(LocalTextToolbar provides emptyTextToolbar) {
+        CompositionLocalProvider(
+            LocalTextToolbar provides EmptyTextToolbar()
+        ) {
             InputTextField(
                 text = priceFieldValue,
                 onTextChange = {
@@ -128,7 +130,7 @@ internal fun PriceSettingGroup(
                             color = hintColor,
                         ),
                     )
-                }
+                },
             )
         }
 
@@ -154,6 +156,7 @@ internal fun PriceSettingGroup(
                             contentDescription = null,
                             tint = NapzakMarketTheme.colors.red,
                         )
+
                         Text(
                             text = stringResource(purchase_price_error),
                             style = NapzakMarketTheme.typography.caption10sb.copy(
