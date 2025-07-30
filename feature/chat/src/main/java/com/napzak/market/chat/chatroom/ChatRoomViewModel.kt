@@ -15,6 +15,7 @@ import com.napzak.market.chat.repository.ChatSocketRepository
 import com.napzak.market.common.state.UiState
 import com.napzak.market.presigned_url.model.UploadImage
 import com.napzak.market.presigned_url.usecase.UploadImagesUseCase
+import com.napzak.market.store.repository.StoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +33,7 @@ internal class ChatRoomViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val chatRepository: ChatRoomRepository,
     private val chatSocketRepository: ChatSocketRepository,
+    private val storeRepository: StoreRepository,
     private val uploadImagesUseCase: UploadImagesUseCase
 ) : ViewModel() {
     private val chatMessageIdSet = mutableSetOf<Long>()
@@ -48,6 +50,7 @@ internal class ChatRoomViewModel @Inject constructor(
 
     private val chatCondition = mutableStateOf(ChatCondition.PRODUCT_NOT_CHANGED)
     private var messageFlow: Flow<ReceiveMessage<*>>? = null
+    private var _storeId: Long? = null
 
     var chat by mutableStateOf("")
 
@@ -64,12 +67,22 @@ internal class ChatRoomViewModel @Inject constructor(
      * [SavedStateHandle]에 저장된 값들을 활용하여 채팅방 정보들을 준비합니다.
      */
     fun prepareChatRoom() = viewModelScope.launch {
+        fetchStoreId()
         runCatching { prepareChatRoomWithRoomId(_roomId) }
             .recoverCatching { prepareChatRoomWithProductId(_productId) }
             .onFailure { e ->
                 _chatRoomState.update { UiState.Failure(e.message.toString()) }
                 Timber.e(e)
             }
+    }
+
+    /**
+     * [StoreRepository]를 통해 내 상점 ID를 불러옵니다.
+     *
+     * 불러온 상점 ID는 메시지의 방향을 설정하기 위해 사용합니다.
+     */
+    private fun fetchStoreId() = viewModelScope.launch {
+        _storeId = storeRepository.fetchStoreInfo().getOrNull()?.storeId
     }
 
     /**
@@ -149,7 +162,7 @@ internal class ChatRoomViewModel @Inject constructor(
      */
     private fun collectMessages(roomId: Long) = viewModelScope.launch {
         try {
-            val storeId = requireNotNull(_chatRoomStateAsSuccess.storeBrief?.storeId)
+            val storeId = requireNotNull(_storeId)
 
             if (messageFlow == null) {
                 messageFlow = chatSocketRepository.getMessageFlow(storeId)
