@@ -51,7 +51,7 @@ fun NapzakButton(
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor,
