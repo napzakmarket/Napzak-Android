@@ -221,6 +221,13 @@ internal class HomeViewModel @Inject constructor(
         )
     }
 
+    suspend fun getNotificationPermissionRequested(): Boolean =
+        notificationRepository.getNotificationPermissionRequested() == true
+
+    fun updateNotificationPermissionRequested() = viewModelScope.launch {
+        notificationRepository.updateNotificationPermissionRequested()
+    }
+
     companion object {
         private const val DEBOUNCE_DELAY = 300L
     }

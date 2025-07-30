@@ -24,6 +24,10 @@ class NotificationDataStore @Inject constructor(
         .map { it[preferencesNotificationModalShown] }
         .firstOrNull()
 
+    suspend fun getNotificationPermissionRequested(): Boolean? = preferenceDataStore.data
+        .map { it[preferencesNotificationPermissionRequested] }
+        .firstOrNull()
+
     suspend fun setPushToken(pushToken: String) {
         preferenceDataStore.edit { preferences ->
             preferences[preferencesPushTokenKey] = pushToken
@@ -48,13 +52,23 @@ class NotificationDataStore @Inject constructor(
         }
     }
 
+    suspend fun updateNotificationPermissionRequested() {
+        preferenceDataStore.edit { preferences ->
+            preferences[preferencesNotificationPermissionRequested] = true
+        }
+    }
+
     companion object {
         private const val PUSH_TOKEN_KEY = "push_token"
         private const val NOTIFICATION_PERMISSION_KEY = "notification_permission"
         private const val NOTIFICATION_MODAL_SHOWN_KEY = "notification_modal_shown"
+        private const val NOTIFICATION_PERMISSION_REQUESTED_KEY =
+            "notification_permission_requested"
 
         val preferencesPushTokenKey = stringPreferencesKey(PUSH_TOKEN_KEY)
         val preferencesNotificationPermission = booleanPreferencesKey(NOTIFICATION_PERMISSION_KEY)
         val preferencesNotificationModalShown = booleanPreferencesKey(NOTIFICATION_MODAL_SHOWN_KEY)
+        val preferencesNotificationPermissionRequested =
+            booleanPreferencesKey(NOTIFICATION_PERMISSION_REQUESTED_KEY)
     }
 }

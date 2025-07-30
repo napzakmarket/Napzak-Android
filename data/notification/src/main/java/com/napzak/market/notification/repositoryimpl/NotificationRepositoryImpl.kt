@@ -42,6 +42,9 @@ class NotificationRepositoryImpl @Inject constructor(
     override suspend fun getNotificationPermission(): Boolean? =
         notificationDataStore.getNotificationPermission()
 
+    override suspend fun getNotificationPermissionRequested(): Boolean? =
+        notificationDataStore.getNotificationPermissionRequested()
+
     override suspend fun getNotificationModalShown(): Boolean? =
         notificationDataStore.getNotificationModalShown()
 
@@ -55,4 +58,9 @@ class NotificationRepositoryImpl @Inject constructor(
     override suspend fun updateNotificationModalShown() {
         notificationDataStore.updateNotificationModalShown()
     }
+
+    override suspend fun updateNotificationPermissionRequested() {
+        notificationDataStore.updateNotificationPermissionRequested()
+    }
+
 }

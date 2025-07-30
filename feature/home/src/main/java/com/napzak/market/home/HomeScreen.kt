@@ -99,7 +99,15 @@ internal fun HomeRoute(
             navigationBarColor = backgroundColor
         )
         viewModel.fetchHomeData()
-        checkNotificationPermission(context, permissionLauncher)
+
+        val isRequested = viewModel.getNotificationPermissionRequested()
+        checkNotificationPermission(
+            context = context,
+            isRequested = isRequested,
+            permissionLauncher = permissionLauncher,
+            onRequested = viewModel::updateNotificationPermissionRequested,
+        )
+
         val isEnable = NotificationManagerCompat.from(context).areNotificationsEnabled()
         viewModel.setNotificationSettings(isEnable)
     }
@@ -357,11 +365,13 @@ private fun HomeRoutePreview() {
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 private fun checkNotificationPermission(
     context: Context,
+    isRequested: Boolean,
+    onRequested: () -> Unit,
     permissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
 ) {
     val permission = android.Manifest.permission.POST_NOTIFICATIONS
 
-    if (hasRequestedNotificationPermission(context)) {
+    if (isRequested) {
         Timber.tag("Notification Permission").d("Already granted")
         return
     }
@@ -372,18 +382,8 @@ private fun checkNotificationPermission(
         ) != PackageManager.PERMISSION_GRANTED
     ) {
         permissionLauncher.launch(permission)
-        setRequestedNotificationPermission(context)
+        onRequested()
     } else {
-        setRequestedNotificationPermission(context)
+        onRequested()
     }
-}
-
-private fun hasRequestedNotificationPermission(context: Context): Boolean {
-    val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-    return prefs.getBoolean("notification_permission_requested", false)
-}
-
-private fun setRequestedNotificationPermission(context: Context) {
-    val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-    prefs.edit().putBoolean("notification_permission_requested", true).apply()
 }
