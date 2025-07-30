@@ -31,7 +31,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.TradeType
+import com.napzak.market.designsystem.R.drawable.ic_check_snackbar_18
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
+import com.napzak.market.designsystem.component.toast.LocalNapzakToast
+import com.napzak.market.designsystem.component.toast.ToastFontType
+import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.purchase
 import com.napzak.market.feature.registration.R.string.purchase_price
@@ -39,6 +43,7 @@ import com.napzak.market.feature.registration.R.string.purchase_price_descriptio
 import com.napzak.market.feature.registration.R.string.purchase_price_tag
 import com.napzak.market.feature.registration.R.string.title
 import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect.NavigateToDetail
+import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect.ShowToast
 import com.napzak.market.registration.RegistrationContract.RegistrationUiState
 import com.napzak.market.registration.component.PriceSettingGroup
 import com.napzak.market.registration.component.RegistrationButton
@@ -62,12 +67,19 @@ fun PurchaseRegistrationRoute(
     val registrationUiState by viewModel.registrationUiState.collectAsStateWithLifecycle()
     val purchaseUiState by viewModel.purchaseUiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val toast = LocalNapzakToast.current
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
                     is NavigateToDetail -> navigateToDetail(sideEffect.productId)
+                    is ShowToast -> toast.makeText(
+                        toastType = ToastType.COMMON,
+                        message = sideEffect.message,
+                        icon = ic_check_snackbar_18,
+                        fontType = ToastFontType.LARGE,
+                    )
                 }
             }
     }

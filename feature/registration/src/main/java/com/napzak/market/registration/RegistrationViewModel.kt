@@ -139,5 +139,6 @@ abstract class RegistrationViewModel(
         internal const val VALUE_DELIMITER = "?"
         internal const val UPLOADING_PRODUCT_ERROR_MESSAGE = "failed to register product."
         internal const val UNKNOWN_ERROR = "unknown error."
+        internal const val EDIT_SUCCESS = "수정이 완료되었습니다."
     }
 }
