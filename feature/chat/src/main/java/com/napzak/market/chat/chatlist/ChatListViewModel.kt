@@ -34,6 +34,11 @@ class ChatListViewModel @Inject constructor(
     fun fetchChatRooms() = viewModelScope.launch {
         chatRepository.getChatRooms()
             .onSuccess { chatRooms ->
+                if (chatRooms.isEmpty()) {
+                    _chatRoomsState.update { UiState.Empty }
+                    return@launch
+                }
+
                 val map = mutableMapOf<Long, ChatRoom>()
                 val list = mutableListOf<ChatRoom>()
 
