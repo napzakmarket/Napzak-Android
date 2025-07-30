@@ -55,6 +55,8 @@ private fun MessageItem.toProduct(
             price = metadata.price,
             isPriceNegotiable = false, // 미사용
             genreName = metadata.genreName,
+            productOwnerId = senderId ?: 0,
+            isMyProduct = false, // 미사용
         ),
         timeStamp = createdAt ?: "",
         isRead = isRead ?: false,

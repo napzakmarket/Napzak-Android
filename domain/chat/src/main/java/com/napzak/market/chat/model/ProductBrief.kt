@@ -8,4 +8,6 @@ data class ProductBrief(
     val price: Int,
     val isPriceNegotiable: Boolean,
     val genreName: String,
+    val productOwnerId: Long,
+    val isMyProduct: Boolean,
 )

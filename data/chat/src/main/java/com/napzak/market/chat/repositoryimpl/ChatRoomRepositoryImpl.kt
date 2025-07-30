@@ -18,12 +18,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
         roomId: Long?,
     ): Result<ChatRoomInformation> {
         return suspendRunCatching {
-            val response = chatRoomDataSource.getChatRoomInformation(productId, roomId)
-            with(response.data) {
-                val productBrief = productInfo.toDomain()
-                val storeBrief = storeInfo.toDomain()
-                ChatRoomInformation(roomId, productBrief, storeBrief)
-            }
+            chatRoomDataSource.getChatRoomInformation(productId, roomId).data.toDomain()
         }
     }
 

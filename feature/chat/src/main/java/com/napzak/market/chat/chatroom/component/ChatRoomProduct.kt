@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.napzak.market.chat.chatroom.preview.mockProductBrief
 import com.napzak.market.chat.model.ProductBrief
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -135,15 +136,7 @@ private fun ProductText(
 private fun ChatRoomProductPreview() {
     NapzakMarketTheme {
         ChatRoomProductSection(
-            product = ProductBrief(
-                productId = 1,
-                genreName = "은혼",
-                title = "은혼 긴토키 히지카타 룩업",
-                photo = "",
-                price = 129000,
-                tradeType = "SELL",
-                isPriceNegotiable = false,
-            ),
+            product = mockProductBrief,
             onClick = {},
             modifier = Modifier.fillMaxWidth(),
         )

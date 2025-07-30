@@ -52,10 +52,9 @@ import com.napzak.market.chat.chatroom.component.chatitem.ChatProduct
 import com.napzak.market.chat.chatroom.component.chatitem.ChatText
 import com.napzak.market.chat.chatroom.component.chatitem.MyChatItemContainer
 import com.napzak.market.chat.chatroom.component.chatitem.OpponentChatItemContainer
+import com.napzak.market.chat.chatroom.preview.mockChatRoom
 import com.napzak.market.chat.chatroom.preview.mockChats
-import com.napzak.market.chat.model.ProductBrief
 import com.napzak.market.chat.model.ReceiveMessage
-import com.napzak.market.chat.model.StoreBrief
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.img_empty_chat_room
 import com.napzak.market.designsystem.component.image.ZoomableImageScreen
@@ -458,25 +457,6 @@ private fun ChatImageZoomScreen(
         )
     }
 }
-
-private val mockChatRoom = ChatRoomUiState(
-    roomId = 1,
-    productBrief = ProductBrief(
-        productId = 1,
-        photo = "",
-        tradeType = "",
-        title = "",
-        price = 10000,
-        genreName = "",
-        isPriceNegotiable = true,
-    ),
-    storeBrief = StoreBrief(
-        storeId = 1,
-        nickname = "",
-        storePhoto = "",
-        isWithdrawn = true
-    )
-)
 
 @ScreenPreview
 @Composable
