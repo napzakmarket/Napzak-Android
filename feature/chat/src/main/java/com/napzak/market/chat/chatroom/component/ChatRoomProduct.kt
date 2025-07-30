@@ -24,17 +24,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.napzak.market.chat.chatroom.preview.mockProduct
+import com.napzak.market.chat.model.ProductBrief
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.product.model.Product
 import com.napzak.market.ui_util.ShadowDirection
 import com.napzak.market.ui_util.napzakGradientShadow
 import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun ChatRoomProductSection(
-    product: Product,
+    product: ProductBrief,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -58,7 +57,7 @@ internal fun ChatRoomProductSection(
             ProductTradeTypeChip(tradeType = product.tradeType)
             Spacer(modifier = Modifier.height(5.dp))
             ProductText(
-                text = product.productName,
+                text = product.title,
                 style = NapzakMarketTheme.typography.body14sb,
             )
             ProductText(
@@ -136,7 +135,15 @@ private fun ProductText(
 private fun ChatRoomProductPreview() {
     NapzakMarketTheme {
         ChatRoomProductSection(
-            product = mockProduct,
+            product = ProductBrief(
+                productId = 1,
+                genreName = "은혼",
+                title = "은혼 긴토키 히지카타 룩업",
+                photo = "",
+                price = 129000,
+                tradeType = "SELL",
+                isPriceNegotiable = false,
+            ),
             onClick = {},
             modifier = Modifier.fillMaxWidth(),
         )

@@ -4,7 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ChatRoomPatchProductRequest(
-    @SerialName("newProductId")
-    val productId: Long,
+data class ChatRoomIdsResponse(
+    @SerialName("chatRoomIds") val chatRoomIds: List<Long>,
 )

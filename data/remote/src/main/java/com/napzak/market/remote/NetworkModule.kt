@@ -19,6 +19,7 @@ import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.hildan.krossbow.websocket.okhttp.OkHttpWebSocketClient
 import org.json.JSONObject
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -112,6 +113,12 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideWebSocketClient(
+        @JWT client: OkHttpClient,
+    ): OkHttpWebSocketClient = OkHttpWebSocketClient(client)
+
+    @Provides
+    @Singleton
     fun provideRetrofit(
         @JWT client: OkHttpClient,
         factory: Converter.Factory
@@ -156,4 +163,11 @@ object NetworkModule {
         .client(client)
         .addConverterFactory(factory)
         .build()
+
+    @Provides
+    @Singleton
+    fun provideSocketManager(
+        webSocketClient: OkHttpWebSocketClient,
+        json: Json
+    ): StompSocketManager = StompSocketManagerImpl(webSocketClient, json)
 }

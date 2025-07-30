@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,12 +25,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.chat.chatlist.component.ChatRoomItem
-import com.napzak.market.chat.chatlist.model.ChatRoomDetail
+import com.napzak.market.chat.model.ChatRoom
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.img_empty_chat_list
+import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_list_empty_guide_1
 import com.napzak.market.feature.chat.R.string.chat_list_empty_guide_2
@@ -48,25 +49,22 @@ internal fun ChatListRoute(
 ) {
     val chatRoomsState by viewModel.chatRoomsState.collectAsStateWithLifecycle()
 
-    LifecycleResumeEffect(Unit) {
+    LaunchedEffect(Unit) {
         viewModel.fetchChatRooms()
-
-        onPauseOrDispose {
-            // no resource to be cleared
-        }
+        viewModel.collectChatMessages()
     }
 
     ChatListScreen(
         chatRoomsState = chatRoomsState,
-        onChatRoomClick = { chatRoom -> onChatRoomNavigate(chatRoom.chatRoomId) },
+        onChatRoomClick = { chatRoom -> onChatRoomNavigate(chatRoom.roomId) },
         modifier = modifier,
     )
 }
 
 @Composable
 private fun ChatListScreen(
-    chatRoomsState: UiState<List<ChatRoomDetail>>,
-    onChatRoomClick: (ChatRoomDetail) -> Unit,
+    chatRoomsState: UiState<List<ChatRoom>>,
+    onChatRoomClick: (ChatRoom) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -78,12 +76,14 @@ private fun ChatListScreen(
 
         when (chatRoomsState) {
             is UiState.Loading -> {
-                /*TODO: 로딩화면 구현*/
+                NapzakLoadingOverlay()
             }
 
             is UiState.Success -> {
+                val chatRooms = chatRoomsState.data
+
                 ChatListColumn(
-                    chatRooms = chatRoomsState.data.toImmutableList(),
+                    chatRooms = chatRooms.toImmutableList(),
                     onChatRoomClick = onChatRoomClick,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -132,8 +132,8 @@ internal fun ChatListTopBar(
 
 @Composable
 private fun ChatListColumn(
-    chatRooms: ImmutableList<ChatRoomDetail>,
-    onChatRoomClick: (ChatRoomDetail) -> Unit,
+    chatRooms: ImmutableList<ChatRoom>,
+    onChatRoomClick: (ChatRoom) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     @Composable
@@ -149,11 +149,11 @@ private fun ChatListColumn(
             ChatDivider()
             with(chatRoom) {
                 ChatRoomItem(
-                    nickname = storeName,
+                    nickname = storeNickname,
                     lastMessage = lastMessage,
-                    profileImageUrl = storeImage,
-                    unReadMessageCount = unReadMessageCount,
-                    timeStamp = timeStamp,
+                    profileImageUrl = storePhoto,
+                    unReadMessageCount = unreadMessageCount,
+                    timeStamp = lastMessageAt,
                     onClick = { onChatRoomClick(chatRoom) },
                 )
             }
@@ -195,7 +195,26 @@ private fun EmptyChatListScreen(
 @ScreenPreview
 @Composable
 private fun ChatListScreenPreview() {
-    val chatRoomsState = UiState.Success(ChatRoomDetail.mockList)
+    val chatRoomsState = UiState.Success(
+        buildList {
+            repeat(20) { index ->
+                val randomHour = (0..12).random().toString()
+                val randomMinute = (0..60).random().toString().padStart(2, '0')
+                val randomCount = (0..1000).random()
+
+                add(
+                    ChatRoom(
+                        roomId = index.toLong(),
+                        storeNickname = "납자기$index",
+                        storePhoto = "",
+                        lastMessage = "${index}번째로 메세지를 보냄 ",
+                        unreadMessageCount = randomCount,
+                        lastMessageAt = "오후 $randomHour:$randomMinute",
+                    )
+                )
+            }
+        }
+    )
     NapzakMarketTheme {
         ChatListScreen(
             chatRoomsState = chatRoomsState,
