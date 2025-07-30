@@ -107,7 +107,11 @@ internal fun ShippingFeeSelector(
                 AnimatedVisibility(
                     visible = isShippingIncluded == false,
                 ) {
-                    Column {
+                    Column(
+                        modifier = Modifier
+                            .padding(20.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
                         ExpandedShippingFee(
                             title = stringResource(normal_shipping),
                             isChecked = isNormalShippingChecked,
@@ -159,6 +163,7 @@ private fun SelectorButton(
             contentDescription = null,
             tint = Color.Unspecified,
         )
+
         Text(
             text = title,
             style = NapzakMarketTheme.typography.body14b.copy(
@@ -169,7 +174,7 @@ private fun SelectorButton(
 }
 
 @Composable
-fun ExpandedShippingFee(
+private fun ExpandedShippingFee(
     title: String,
     isChecked: Boolean,
     onCheckChange: (Boolean) -> Unit,
@@ -183,13 +188,11 @@ fun ExpandedShippingFee(
 
     Row(
         modifier = modifier
-            .padding(20.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
-
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -202,6 +205,7 @@ fun ExpandedShippingFee(
                     if (isChecked) onShippingFeeChange(EMPTY_STRING)
                 },
             )
+
             Text(
                 text = title,
                 style = NapzakMarketTheme.typography.body14r.copy(
@@ -209,6 +213,7 @@ fun ExpandedShippingFee(
                 ),
             )
         }
+
         ShippingFeeTextField(
             price = shippingFee,
             onPriceChange = onShippingFeeChange,
