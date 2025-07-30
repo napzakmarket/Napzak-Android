@@ -30,7 +30,7 @@ import com.napzak.market.chat.chatlist.component.ChatRoomItem
 import com.napzak.market.chat.model.ChatRoom
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.img_empty_chat_list
-import com.napzak.market.designsystem.component.NapzakLoadingOverlay
+import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_list_empty_guide_1
 import com.napzak.market.feature.chat.R.string.chat_list_empty_guide_2
