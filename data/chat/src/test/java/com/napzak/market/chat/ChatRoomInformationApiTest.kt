@@ -70,7 +70,7 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
 
         // when
         val result = ChatRoomRepositoryImpl(dataSource)
-            .getChatRoomInformation(productId = 5)
+            .getChatRoomInformation(productId = 5, roomId = 5L)
             .getOrNull()
         mockWebServer.takeRequest()
 
