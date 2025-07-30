@@ -50,8 +50,7 @@ internal fun ChatListRoute(
     val chatRoomsState by viewModel.chatRoomsState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.fetchChatRooms()
-        viewModel.collectChatMessages()
+        viewModel.prepareChatRooms()
     }
 
     ChatListScreen(
