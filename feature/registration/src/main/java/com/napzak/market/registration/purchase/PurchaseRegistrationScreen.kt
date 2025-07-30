@@ -1,5 +1,7 @@
 package com.napzak.market.registration.purchase
 
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -12,7 +14,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,8 +25,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.component.button.NapzakButton
+import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.purchase
 import com.napzak.market.feature.registration.R.string.purchase_price
@@ -57,6 +60,7 @@ fun PurchaseRegistrationRoute(
     val registrationUiState by viewModel.registrationUiState.collectAsStateWithLifecycle()
     val purchaseUiState by viewModel.purchaseUiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val onBackPressedDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
@@ -66,6 +70,12 @@ fun PurchaseRegistrationRoute(
                 }
             }
     }
+
+    BackHandler(registrationUiState.loadState !is UiState.Loading) {
+        onBackPressedDispatcherOwner?.onBackPressedDispatcher?.onBackPressed()
+    }
+
+    if (registrationUiState.loadState is UiState.Loading) NapzakLoadingOverlay()
 
     PurchaseRegistrationScreen(
         registrationUiState = registrationUiState,
@@ -104,15 +114,6 @@ fun PurchaseRegistrationScreen(
     modifier: Modifier = Modifier,
 ) {
     val paddedModifier = Modifier.padding(horizontal = 20.dp)
-    val isButtonEnabled = remember(
-        registrationUiState.imageUris,
-        registrationUiState.genre,
-        registrationUiState.title,
-        registrationUiState.description,
-        registrationUiState.price,
-        purchaseUiState.isNegotiable,
-    ) { checkButtonEnabled() }
-
     val focusManager = LocalFocusManager.current
     val state = rememberLazyListState()
 
@@ -203,7 +204,7 @@ fun PurchaseRegistrationScreen(
             NapzakButton(
                 text = stringResource(register),
                 onClick = onRegisterClick,
-                enabled = isButtonEnabled,
+                enabled = checkButtonEnabled(),
             )
         }
     }

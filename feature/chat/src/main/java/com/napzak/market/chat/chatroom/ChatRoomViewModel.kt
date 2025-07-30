@@ -370,7 +370,7 @@ internal class ChatRoomViewModel @Inject constructor(
             try {
                 val roomId = requireNotNull(_chatRoomStateAsSuccess.roomId)
                 chatRepository.withdrawChatRoom(roomId).onSuccess {
-                    _sideEffect.trySend(ChatRoomSideEffect.OnWithDrawChatRoom)
+                    _sideEffect.trySend(ChatRoomSideEffect.OnWithdrawChatRoom)
                 }
             } catch (e: Exception) {
                 Timber.tag(TAG).e(e)
