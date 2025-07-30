@@ -196,7 +196,7 @@ internal fun ChatRoomScreen(
 
                 ChatRoomInputField(
                     text = chat,
-                    isWithdrawn = chatRoomState.isChatDisabled,
+                    enabled = chatRoomState.isChatDisabled,
                     onSendClick = onSendChatClick,
                     onTextChange = onChatChange,
                     onPhotoSelect = onPhotoSelect,

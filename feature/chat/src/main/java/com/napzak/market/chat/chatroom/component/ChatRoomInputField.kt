@@ -42,7 +42,7 @@ import com.napzak.market.ui_util.noRippleClickable
 @Composable
 internal fun ChatRoomInputField(
     text: String,
-    isWithdrawn: Boolean,
+    enabled: Boolean,
     onTextChange: (String) -> Unit,
     onSendClick: (String) -> Unit,
     onPhotoSelect: (String) -> Unit,
@@ -75,20 +75,23 @@ internal fun ChatRoomInputField(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        GalleryButton(onClick = onGalleryClick)
+        GalleryButton(
+            enabled = !enabled,
+            onClick = onGalleryClick,
+        )
         Spacer(modifier = Modifier.width(16.dp))
         ChatTextField(
             text = text,
             onTextChange = onTextChange,
             hint = stringResource(
-                if (isWithdrawn) chat_room_input_field_hint_withdrawn
+                if (enabled) chat_room_input_field_hint_withdrawn
                 else chat_room_input_field_hint
             ),
-            enabled = !isWithdrawn,
+            enabled = !enabled,
             modifier = Modifier.weight(1f),
             suffix = {
                 SendButton(
-                    enabled = text.isNotBlank() && !isWithdrawn,
+                    enabled = text.isNotBlank() && !enabled,
                     onClick = {
                         onSendClick(text)
                     },
@@ -130,13 +133,19 @@ private fun ChatTextField(
 @Composable
 private fun GalleryButton(
     onClick: () -> Unit,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Icon(
         imageVector = ImageVector.vectorResource(ic_gallery),
         contentDescription = stringResource(chat_room_input_field_gallery),
         tint = NapzakMarketTheme.colors.gray200,
-        modifier = modifier.noRippleClickable(onClick = onClick),
+        modifier = modifier
+            .then(
+                if (enabled) Modifier.noRippleClickable(onClick = onClick)
+                else Modifier
+            )
+
     )
 }
 
@@ -171,7 +180,7 @@ private fun ChatRoomInputFieldPreview() {
             ChatRoomInputField(
                 text = textNotWithDrawn,
                 onTextChange = { textNotWithDrawn = it },
-                isWithdrawn = false,
+                enabled = false,
                 onSendClick = {},
                 onPhotoSelect = {},
             )
@@ -181,7 +190,7 @@ private fun ChatRoomInputFieldPreview() {
             ChatRoomInputField(
                 text = textWithDrawn,
                 onTextChange = { textWithDrawn = it },
-                isWithdrawn = true,
+                enabled = true,
                 onSendClick = {},
                 onPhotoSelect = {},
             )
