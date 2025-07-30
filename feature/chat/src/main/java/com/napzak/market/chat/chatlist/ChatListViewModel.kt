@@ -28,12 +28,15 @@ class ChatListViewModel @Inject constructor(
     val chatRoomsState = _chatRoomsState.asStateFlow()
 
     private var _chatRoomPair by mutableStateOf(mapOf<Long, ChatRoom>() to listOf<ChatRoom>())
+    private var _myStoreId: Long? = null
 
     private var _messageFlow: Flow<ReceiveMessage<*>>? = null
 
     fun fetchChatRooms() = viewModelScope.launch {
         chatRepository.getChatRooms()
-            .onSuccess { chatRooms ->
+            .onSuccess { (myStoreId, chatRooms) ->
+                _myStoreId = myStoreId
+
                 if (chatRooms.isEmpty()) {
                     _chatRoomsState.update { UiState.Empty }
                     return@launch
@@ -61,7 +64,8 @@ class ChatListViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 if (_messageFlow == null) {
-                    _messageFlow = chatSocketRepository.messageFlow
+                    val storeId = requireNotNull(_myStoreId) { "myStoreId가 null입니다" }
+                    _messageFlow = chatSocketRepository.getMessageFlow(storeId)
                     _messageFlow?.collect { message -> updateChatRoom(message) }
                 }
             } catch (e: Exception) {
@@ -86,9 +90,13 @@ class ChatListViewModel @Inject constructor(
             chatRoomMap[roomId]?.let { chatRoom ->
                 val list = chatRoomList.toMutableList()
                 val map = chatRoomMap.toMutableMap()
+                val unReadMessageCount =
+                    if (message.isMessageOwner == false) chatRoom.unreadMessageCount.inc()
+                    else chatRoom.unreadMessageCount
+
                 val room = chatRoom.copy(
                     lastMessage = getLastMessage(message),
-                    unreadMessageCount = chatRoom.unreadMessageCount + 1,
+                    unreadMessageCount = unReadMessageCount,
                 )
 
                 list.removeIf { it.roomId == roomId }

@@ -78,5 +78,5 @@ private fun ChatMessageResponse.toDate(metadata: ChatMessageMetadata.Date): Rece
     )
 
 private fun Long?.isMessageOwner(other: Long): Boolean {
-    return this?.let { it != other } ?: false
+    return this?.let { it == other } ?: false
 }

@@ -4,5 +4,5 @@ import com.napzak.market.chat.model.ChatRoom
 
 interface ChatRepository {
     suspend fun getChatRoomIds(): Result<List<Long>>
-    suspend fun getChatRooms(): Result<List<ChatRoom>>
+    suspend fun getChatRooms(): Result<Pair<Long, List<ChatRoom>>>
 }
