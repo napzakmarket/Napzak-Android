@@ -122,7 +122,7 @@ internal fun ChatRoomRoute(
 internal fun ChatRoomScreen(
     chat: String,
     chatItems: ImmutableList<ReceiveMessage<*>>,
-    chatRoomState: UiState<ChatRoomUiState>,
+    chatRoomState: ChatRoomUiState,
     chatListState: LazyListState,
     opponentImageUrl: String,
     onChatChange: (String) -> Unit,
@@ -134,13 +134,13 @@ internal fun ChatRoomScreen(
     onPhotoSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when (chatRoomState) {
+    when (chatRoomState.chatRoomState) {
         is UiState.Loading -> {
             NapzakLoadingOverlay()
         }
 
         is UiState.Success -> {
-            val chatRoom = chatRoomState.data
+            val chatRoom = chatRoomState.chatRoomState.data
             var isBottomSheetVisible by remember { mutableStateOf(false) }
             var isWithdrawDialogVisible by remember { mutableStateOf(false) }
             var selectedImageUrl: String? by remember { mutableStateOf(null) }
@@ -183,7 +183,7 @@ internal fun ChatRoomScreen(
                     listState = chatListState,
                     chatItems = chatItems,
                     opponentImageUrl = opponentImageUrl,
-                    isOpponentWithdrawn = chatRoom.storeBrief?.isWithdrawn == true,
+                    isOpponentWithdrawn = chatRoomState.isOpponentWithdrawn,
                     onItemClick = { message ->
                         when (message) {
                             is ReceiveMessage.Product -> onProductDetailClick(message.product.productId)
@@ -196,7 +196,7 @@ internal fun ChatRoomScreen(
 
                 ChatRoomInputField(
                     text = chat,
-                    isWithdrawn = chatRoom.storeBrief?.isWithdrawn == true,
+                    isWithdrawn = chatRoomState.isChatDisabled,
                     onSendClick = onSendChatClick,
                     onTextChange = onChatChange,
                     onPhotoSelect = onPhotoSelect,
@@ -473,7 +473,7 @@ private fun ChatRoomScreenPreview() {
             onExitChatRoomClick = {},
             onNavigateUp = {},
             onPhotoSelect = {},
-            chatRoomState = UiState.Success(mockChatRoom),
+            chatRoomState = ChatRoomUiState(UiState.Success(mockChatRoom)),
             chatListState = rememberLazyListState(),
         )
     }
@@ -494,7 +494,7 @@ private fun ChatRoomScreenEmptyPreview() {
             onExitChatRoomClick = {},
             onNavigateUp = {},
             onPhotoSelect = {},
-            chatRoomState = UiState.Success(mockChatRoom),
+            chatRoomState = ChatRoomUiState(UiState.Success(mockChatRoom)),
             chatListState = rememberLazyListState(),
         )
     }

@@ -1,6 +1,6 @@
 package com.napzak.market.chat.chatroom.preview
 
-import com.napzak.market.chat.chatroom.ChatRoomUiState
+import com.napzak.market.chat.chatroom.ChatRoomState
 import com.napzak.market.chat.model.ProductBrief
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.chat.model.StoreBrief
@@ -118,7 +118,7 @@ internal val mockChats
             )
         )
 
-val mockProductBrief
+internal val mockProductBrief
     get() = ProductBrief(
         productId = 1,
         genreName = "은혼",
@@ -131,7 +131,7 @@ val mockProductBrief
         productOwnerId = 1
     )
 
-val mockChatRoom = ChatRoomUiState(
+internal val mockChatRoom = ChatRoomState(
     roomId = 1,
     productBrief = ProductBrief(
         productId = 1,
