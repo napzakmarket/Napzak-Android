@@ -11,6 +11,8 @@ internal data class HomeUiState(
     val recommendProductLoadState: UiState<List<Product>>,
     val popularSellLoadState: UiState<List<Product>>,
     val popularBuyLoadState: UiState<List<Product>>,
+    val privacyPolicyLink: String,
+    val termsLink: String,
 ) {
     val isLoaded: UiState<Unit>
         get() = when {

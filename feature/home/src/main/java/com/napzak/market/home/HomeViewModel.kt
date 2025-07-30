@@ -10,6 +10,7 @@ import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.product.model.Product
 import com.napzak.market.product.repository.ProductRecommendationRepository
 import com.napzak.market.repository.BannerRepository
+import com.napzak.market.store.repository.SettingRepository
 import com.napzak.market.type.HomeBannerType
 import com.napzak.market.ui_util.groupBy
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,6 +35,7 @@ import javax.inject.Inject
 internal class HomeViewModel @Inject constructor(
     private val productRepository: ProductRecommendationRepository,
     private val bannerRepository: BannerRepository,
+    private val settingRepository: SettingRepository,
     private val interestProductUseCase: SetInterestProductUseCase,
 ) : ViewModel() {
     private val nickname = MutableStateFlow("")
@@ -45,6 +47,8 @@ internal class HomeViewModel @Inject constructor(
         MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
     private val _popularBuyLoadState =
         MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
+    private val _externalLinks =
+        MutableStateFlow<Map<String, String>>(emptyMap())
 
 
     private val lastSuccessfulLoadedProducts =
@@ -55,13 +59,16 @@ internal class HomeViewModel @Inject constructor(
         _recommendProductLoadState,
         _popularSellLoadState,
         _popularBuyLoadState,
-    ) { bannerLoadState, recommendProductLoadState, popularSellLoadState, popularBuyLoadState ->
+        _externalLinks,
+    ) { bannerLoadState, recommendProductLoadState, popularSellLoadState, popularBuyLoadState, links ->
         HomeUiState(
             nickname = nickname.value,
             bannerLoadState = bannerLoadState,
             recommendProductLoadState = recommendProductLoadState,
             popularSellLoadState = popularSellLoadState,
             popularBuyLoadState = popularBuyLoadState,
+            termsLink = links[KEY_TERMS] ?: "",
+            privacyPolicyLink = links[KEY_PRIVACY_POLICY] ?: "",
         )
     }.stateIn(
         scope = viewModelScope,
@@ -72,6 +79,8 @@ internal class HomeViewModel @Inject constructor(
             recommendProductLoadState = UiState.Loading,
             popularSellLoadState = UiState.Loading,
             popularBuyLoadState = UiState.Loading,
+            termsLink = "",
+            privacyPolicyLink = "",
         )
     )
 
@@ -117,6 +126,7 @@ internal class HomeViewModel @Inject constructor(
         fetchRecommendedProducts()
         fetchPopularSellProducts()
         fetchPopularBuyProducts()
+        getExternalLinks()
     }
 
     private fun fetchBanners() = viewModelScope.launch {
@@ -184,7 +194,21 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun getExternalLinks() = viewModelScope.launch {
+        settingRepository.fetchSettingInfo()
+            .onSuccess { settingInfo ->
+                _externalLinks.update {
+                    mapOf(
+                        KEY_TERMS to settingInfo.termsLink,
+                        KEY_PRIVACY_POLICY to settingInfo.privacyPolicyLink,
+                    )
+                }
+            }
+    }
+
     companion object {
         private const val DEBOUNCE_DELAY = 300L
+        private const val KEY_TERMS = "terms"
+        private const val KEY_PRIVACY_POLICY = "privacy_policy"
     }
 }
