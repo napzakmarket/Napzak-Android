@@ -9,4 +9,14 @@
     <string name="home_list_interested_buy_title">다른 유저들은\n어떤 아이템을 찾고 있을까요?</string>
     <string name="home_list_interested_buy_sub_title">덕심 가득한 리스트에서 취향을 나눠보세요.</string>
     <string name="home_toast_interest">찜한 상품에 추가되었어요!</string>
+
+    <string name="home_footer_title">납작마켓</string>
+    <string name="home_footer_email">napzakmarket@gmail.com</string>
+    <string name="home_footer_instagram">https://www.instagram.com/napzak_official/</string>
+    <string name="home_footer_service_usage_terms">서비스 이용 약관</string>
+    <string name="home_footer_privacy_policy">개인정보 처리방침</string>
+    <string name="home_footer_license">Copyright 2025. NAPZAKmarket All rights reserved.</string>
+    <string name="home_footer_leader">대표</string>
+    <string name="home_footer_leader_name">이해인</string>
+
 </resources>

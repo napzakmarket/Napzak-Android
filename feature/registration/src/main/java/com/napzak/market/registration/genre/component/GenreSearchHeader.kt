@@ -9,7 +9,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -19,6 +18,8 @@ import com.napzak.market.designsystem.R
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.genre_search_title
+import com.napzak.market.ui_util.ShadowDirection
+import com.napzak.market.ui_util.napzakGradientShadow
 import com.napzak.market.ui_util.noRippleClickable
 
 private const val BLANK = ""
@@ -32,12 +33,14 @@ fun GenreSearchHeader(
 ) {
     Column(
         modifier = modifier
-            .shadow(
-                elevation = 4.dp,
-                spotColor = NapzakMarketTheme.colors.transBlack,
-                ambientColor = NapzakMarketTheme.colors.transBlack,
+            .napzakGradientShadow(
+                height = 4.dp,
+                startColor = NapzakMarketTheme.colors.shadowBlack,
+                endColor = NapzakMarketTheme.colors.transWhite,
+                direction = ShadowDirection.Bottom,
             )
             .background(color = NapzakMarketTheme.colors.white)
+            .padding(bottom = 24.dp),
     ) {
         val paddedModifier = Modifier.padding(horizontal = 28.dp)
 
@@ -73,8 +76,6 @@ fun GenreSearchHeader(
             onSearchClick = {},
             modifier = paddedModifier,
         )
-
-        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 

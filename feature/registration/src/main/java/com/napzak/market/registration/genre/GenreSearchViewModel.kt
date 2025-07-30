@@ -1,12 +1,13 @@
 package com.napzak.market.registration.genre
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
+import com.napzak.market.genre.model.Genre
 import com.napzak.market.genre.usecase.GetGenreNamesUseCase
 import com.napzak.market.registration.genre.state.GenreContract.GenreSearchUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,11 +20,8 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class GenreSearchViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
     private val getGenreNamesUseCase: GetGenreNamesUseCase,
 ) : ViewModel() {
-    private val genreId: Long? = savedStateHandle.get<Long>(GENRE_ID_KEY)
-
     private val _uiState = MutableStateFlow(GenreSearchUiState())
     val uiState = _uiState.asStateFlow()
 
@@ -38,28 +36,34 @@ class GenreSearchViewModel @Inject constructor(
         }
     }
 
-    fun updateSelectedGenre() = _uiState.update {
+    fun updateSelectedGenre(genreId: Long?) = _uiState.update {
         it.copy(selectedGenreId = genreId)
     }
 
     fun updateSearchTerm(searchTerm: String) = _searchTerm.update { searchTerm }
 
-    fun updateUiState(uiState: UiState<Unit>) = _uiState.update {
-        it.copy(loadState = uiState)
+    private fun updateUiState(loadState: UiState<ImmutableList<Genre>>) = _uiState.update { currentState ->
+        currentState.copy(loadState = loadState)
     }
 
     private fun updateGenreSearchResult() = viewModelScope.launch {
-        updateUiState(UiState.Loading)
-        getGenreNamesUseCase(searchTerm.value).onSuccess { genres ->
-            _uiState.update { it.copy(genres = genres.toPersistentList()) }
-            updateUiState(UiState.Success(Unit))
-        }.onFailure {
-            updateUiState(UiState.Failure("failed to load genres"))
-        }
+        getGenreNamesUseCase(searchTerm.value)
+            .onSuccess { genres ->
+                if (genres.isEmpty()) updateUiState(UiState.Empty)
+                else updateUiState(
+                    UiState.Success(
+                        genres.map {
+                            Genre(it.genreId, it.genreName)
+                        }.toPersistentList()
+                    )
+                )
+            }.onFailure {
+                updateUiState(UiState.Failure(GENRE_LOAD_ERROR))
+            }
     }
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L
-        private const val GENRE_ID_KEY = "genreId"
+        private const val GENRE_LOAD_ERROR = "failed to load genres"
     }
 }

@@ -9,7 +9,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,6 +48,7 @@ import com.napzak.market.feature.home.R.string.home_list_interested_buy_title
 import com.napzak.market.feature.home.R.string.home_list_interested_sell_sub_title
 import com.napzak.market.feature.home.R.string.home_list_interested_sell_title
 import com.napzak.market.feature.home.R.string.home_search_text_field_hint
+import com.napzak.market.home.component.HomeFooter
 import com.napzak.market.home.component.HorizontalAutoScrolledImages
 import com.napzak.market.home.component.HorizontalScrollableProducts
 import com.napzak.market.home.component.VerticalGridProducts
@@ -165,6 +165,8 @@ private fun HomeScreen(
                 onLikeButtonClick = onLikeButtonClick,
                 onMostInterestedSellNavigate = onMostInterestedSellNavigate,
                 onMostInterestedBuyNavigate = onMostInterestedBuyNavigate,
+                termsLink = uiState.termsLink,
+                privacyPolicyLink = uiState.privacyPolicyLink,
             )
 
             is UiState.Failure -> {}
@@ -186,6 +188,8 @@ private fun HomeSuccessScreen(
     onLikeButtonClick: (Long, Boolean, HomeProductType) -> Unit,
     onMostInterestedSellNavigate: () -> Unit,
     onMostInterestedBuyNavigate: () -> Unit,
+    termsLink: String,
+    privacyPolicyLink: String,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -287,11 +291,13 @@ private fun HomeSuccessScreen(
 
 
         item {
-            Spacer(
+            HomeFooter(
+                termsLink = termsLink,
+                privacyPolicyLink = privacyPolicyLink,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(165.dp)
                     .background(NapzakMarketTheme.colors.gray10)
+                    .padding(top = 20.dp, bottom = 15.dp)
             )
         }
     }
@@ -352,6 +358,8 @@ private fun HomeRoutePreview() {
                 recommendProductLoadState = UiState.Success(mockProducts),
                 popularSellLoadState = UiState.Success(mockProducts),
                 popularBuyLoadState = UiState.Success(mockProducts),
+                privacyPolicyLink = "",
+                termsLink = "",
             ),
             onSearchTextFieldClick = {},
             onProductClick = {},

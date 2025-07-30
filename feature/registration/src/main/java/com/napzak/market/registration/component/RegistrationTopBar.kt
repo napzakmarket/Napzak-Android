@@ -16,6 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_close_24
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.ui_util.ShadowDirection
+import com.napzak.market.ui_util.napzakGradientShadow
 import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
@@ -26,6 +28,13 @@ internal fun RegistrationTopBar(
 ) {
     Box(
         modifier = modifier
+            .fillMaxWidth()
+            .napzakGradientShadow(
+                height = 4.dp,
+                startColor = NapzakMarketTheme.colors.shadowBlack,
+                endColor = NapzakMarketTheme.colors.transWhite,
+                direction = ShadowDirection.Bottom,
+            )
             .background(color = NapzakMarketTheme.colors.white)
             .padding(top = 32.dp, end = 12.dp, bottom = 20.dp),
     ) {

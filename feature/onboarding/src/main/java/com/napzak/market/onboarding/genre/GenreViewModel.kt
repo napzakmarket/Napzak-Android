@@ -2,6 +2,8 @@ package com.napzak.market.onboarding.genre
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.napzak.market.common.state.UiState
+import com.napzak.market.genre.model.Genre
 import com.napzak.market.genre.usecase.SetPreferredGenreUseCase
 import com.napzak.market.genre.usecase.SetSearchPreferredGenresUseCase
 import com.napzak.market.onboarding.genre.model.GenreEvent
@@ -19,7 +21,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.napzak.market.genre.model.Genre
 
 @HiltViewModel
 class GenreViewModel @Inject constructor(
@@ -38,9 +39,30 @@ class GenreViewModel @Inject constructor(
 
     fun updatePreferredGenre() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = UiState.Loading) }
+
             setPreferredGenreUseCase()
                 .onSuccess { genres ->
                     updateGenresAllSelection(genres)
+
+                    val selectedGenreMap = _uiState.value.selectedGenres.associateBy { it.id }
+                    val genreUiModels = genres.map { genre ->
+                        val isSelected = selectedGenreMap.containsKey(genre.genreId)
+                        genre.toUiModel(isSelected = isSelected)
+                    }
+
+                    _uiState.update {
+                        it.copy(isLoading = UiState.Success(genreUiModels))
+                    }
+                }
+                .onFailure { e ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = UiState.Failure(
+                                e.message ?: "unknown error"
+                            ) as UiState<List<GenreUiModel>>
+                        )
+                    }
                 }
         }
     }
