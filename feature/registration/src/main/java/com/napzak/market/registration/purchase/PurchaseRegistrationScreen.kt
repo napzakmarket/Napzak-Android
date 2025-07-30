@@ -1,8 +1,6 @@
 package com.napzak.market.registration.purchase
 
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -16,7 +14,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,6 +43,7 @@ import com.napzak.market.registration.purchase.component.PriceNegotiationGroup
 import com.napzak.market.registration.purchase.state.PurchaseContract.PurchaseUiState
 import com.napzak.market.ui_util.ShadowDirection
 import com.napzak.market.ui_util.napzakGradientShadow
+import com.napzak.market.ui_util.nonClickableStickyHeader
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
@@ -53,14 +51,13 @@ import kotlinx.collections.immutable.toPersistentList
 fun PurchaseRegistrationRoute(
     navigateToUp: () -> Unit,
     navigateToDetail: (Long) -> Unit,
-    navigateToGenreSearch: (Long?) -> Unit,
+    navigateToGenreSearch: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PurchaseRegistrationViewModel = hiltViewModel(),
 ) {
     val registrationUiState by viewModel.registrationUiState.collectAsStateWithLifecycle()
     val purchaseUiState by viewModel.purchaseUiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
-    val onBackPressedDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
@@ -71,9 +68,7 @@ fun PurchaseRegistrationRoute(
             }
     }
 
-    BackHandler(registrationUiState.loadState !is UiState.Loading) {
-        onBackPressedDispatcherOwner?.onBackPressedDispatcher?.onBackPressed()
-    }
+    BackHandler(registrationUiState.loadState is UiState.Loading) { /* no back press allowed*/ }
 
     if (registrationUiState.loadState is UiState.Loading) NapzakLoadingOverlay()
 
@@ -84,7 +79,7 @@ fun PurchaseRegistrationRoute(
         onImageSelect = viewModel::updatePhotos,
         onPhotoPress = viewModel::updateRepresentPhoto,
         onDeleteClick = viewModel::deletePhoto,
-        onGenreClick = { navigateToGenreSearch(registrationUiState.genre?.genreId) },
+        onGenreClick = navigateToGenreSearch,
         onProductNameChange = viewModel::updateTitle,
         onProductDescriptionChange = viewModel::updateDescription,
         onPriceChange = viewModel::updatePrice,
@@ -95,7 +90,6 @@ fun PurchaseRegistrationRoute(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PurchaseRegistrationScreen(
     registrationUiState: RegistrationUiState,
@@ -130,22 +124,10 @@ fun PurchaseRegistrationScreen(
         LazyColumn(
             state = state,
         ) {
-            stickyHeader {
+            nonClickableStickyHeader {
                 RegistrationTopBar(
                     title = stringResource(title, stringResource(purchase)),
                     onCloseClick = onCloseClick,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(2.dp)
-                        .napzakGradientShadow(
-                            height = 2.dp,
-                            startColor = Color(0x0D000000),
-                            endColor = Color.Transparent,
-                            direction = ShadowDirection.Bottom,
-                        ),
                 )
             }
 
@@ -188,13 +170,14 @@ fun PurchaseRegistrationScreen(
                 )
             }
         }
+
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .napzakGradientShadow(
-                    height = 2.dp,
-                    startColor = Color(0x0D000000),
-                    endColor = Color.Transparent,
+                    height = 4.dp,
+                    startColor = NapzakMarketTheme.colors.transWhite,
+                    endColor = NapzakMarketTheme.colors.shadowBlack,
                     direction = ShadowDirection.Top,
                 )
                 .background(NapzakMarketTheme.colors.white)

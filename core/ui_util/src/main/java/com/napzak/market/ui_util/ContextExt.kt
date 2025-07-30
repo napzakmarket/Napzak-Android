@@ -6,7 +6,10 @@ import android.net.Uri
 import android.provider.Settings
 
 fun Context.openUrl(url: String) {
-    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+    try {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+    } catch (_: Exception) {
+    }
 }
 
 fun Context.openSystemNotificationSettings() {

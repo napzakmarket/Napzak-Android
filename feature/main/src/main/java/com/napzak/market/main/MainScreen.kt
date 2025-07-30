@@ -46,7 +46,6 @@ import com.napzak.market.mypage.navigation.mypageGraph
 import com.napzak.market.mypage.navigation.navigateToSettings
 import com.napzak.market.onboarding.navigation.Terms
 import com.napzak.market.onboarding.navigation.onboardingGraph
-import com.napzak.market.registration.navigation.navigateToGenreSearch
 import com.napzak.market.registration.navigation.navigateToPurchaseRegistration
 import com.napzak.market.registration.navigation.navigateToSaleRegistration
 import com.napzak.market.registration.navigation.registrationGraph
@@ -281,6 +280,7 @@ private fun MainNavHost(
         )
 
         registrationGraph(
+            navController = navigator.navController,
             navigateToUp = navigator::navigateUp,
             navigateToDetail = { productId ->
                 val navOptions = navOptions {
@@ -292,7 +292,6 @@ private fun MainNavHost(
                 }
                 navigator.navController.navigateToProductDetail(productId, navOptions)
             },
-            navigateToGenreSearch = navigator.navController::navigateToGenreSearch,
         )
 
         mypageGraph(
