@@ -27,8 +27,10 @@ import androidx.compose.ui.unit.dp
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_room_product_button
+import com.napzak.market.feature.chat.R.string.chat_room_product_price_won_format
 import com.napzak.market.feature.chat.R.string.chat_room_product_title_buy
 import com.napzak.market.feature.chat.R.string.chat_room_product_title_sell
+import com.napzak.market.ui_util.formatToPriceString
 import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
@@ -124,6 +126,8 @@ private fun ChatProductDetailView(
     modifier: Modifier = Modifier,
 ) {
     val textColor = NapzakMarketTheme.colors.black
+    val formattedPrice =
+        stringResource(chat_room_product_price_won_format, price.formatToPriceString())
     val commonText: @Composable (String, TextStyle) -> Unit = { text, style ->
         Text(
             text = text,
@@ -143,7 +147,7 @@ private fun ChatProductDetailView(
     ) {
         commonText(genre, NapzakMarketTheme.typography.caption10sb)
         commonText(name, NapzakMarketTheme.typography.caption12sb)
-        commonText(price, NapzakMarketTheme.typography.body14b)
+        commonText(formattedPrice, NapzakMarketTheme.typography.body14b)
     }
 }
 
@@ -185,7 +189,7 @@ private fun ChatProductPreview() {
                 tradeType = "SELL",
                 genre = "식품",
                 name = "김치",
-                price = "1000원",
+                price = "1000",
                 onNavigateClick = {},
                 isMessageOwner = true
             )
