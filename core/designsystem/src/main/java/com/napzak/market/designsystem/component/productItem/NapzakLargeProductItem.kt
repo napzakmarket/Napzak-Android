@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -273,11 +272,11 @@ private fun TypeTag(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .size(width = 40.dp, height = 20.dp)
                 .background(
                     color = containerColor,
                     shape = RoundedCornerShape(topEnd = 3.dp, bottomStart = 3.dp),
-                ),
+                )
+                .padding(vertical = 4.dp, horizontal = 7.dp),
         ) {
             Text(
                 text = stringResource(textRes),
@@ -293,11 +292,11 @@ private fun TypeTag(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .size(width = 50.dp, height = 20.dp)
                     .background(
                         color = NapzakMarketTheme.colors.transP100,
                         shape = RoundedCornerShape(topEnd = 3.dp, topStart = 3.dp),
-                    ),
+                    )
+                    .padding(vertical = 4.dp, horizontal = 7.dp),
             ) {
                 Text(
                     text = stringResource(production_item_price_suggestion),
