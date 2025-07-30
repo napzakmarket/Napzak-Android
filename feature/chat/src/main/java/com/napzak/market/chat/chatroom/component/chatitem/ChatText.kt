@@ -17,16 +17,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.chat.chatroom.model.ChatDirection
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
 @Composable
 internal fun ChatText(
     text: String,
-    chatDirection: ChatDirection,
+    isMessageOwner: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val (textColor, backgroundColor, shape) = getChatTextDesign(chatDirection)
+    val (textColor, backgroundColor, shape) = getChatTextDesign(isMessageOwner)
     val innerPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
     val textStyle = NapzakMarketTheme.typography.body14r
 
@@ -48,8 +47,8 @@ internal fun ChatText(
 }
 
 @Composable
-private fun getChatTextDesign(senderType: ChatDirection) = when (senderType) {
-    ChatDirection.SENT ->
+private fun getChatTextDesign(isMessageOwner: Boolean) =
+    if (isMessageOwner) {
         Triple(
             NapzakMarketTheme.colors.white,
             NapzakMarketTheme.colors.purple500,
@@ -60,8 +59,7 @@ private fun getChatTextDesign(senderType: ChatDirection) = when (senderType) {
                 bottomEnd = 16.dp,
             )
         )
-
-    ChatDirection.RECEIVED ->
+    } else {
         Triple(
             NapzakMarketTheme.colors.black,
             NapzakMarketTheme.colors.gray50,
@@ -72,7 +70,7 @@ private fun getChatTextDesign(senderType: ChatDirection) = when (senderType) {
                 bottomEnd = 16.dp,
             )
         )
-}
+    }
 
 @Preview
 @Composable
@@ -81,12 +79,12 @@ private fun ChatTextPreview() {
         Column(modifier = Modifier.fillMaxWidth()) {
             ChatText(
                 text = "안녕하세요!",
-                chatDirection = ChatDirection.SENT,
+                isMessageOwner = true,
             )
             Spacer(modifier = Modifier.height(16.dp))
             ChatText(
                 text = "네 안녕해요.",
-                chatDirection = ChatDirection.RECEIVED,
+                isMessageOwner = false,
             )
         }
     }

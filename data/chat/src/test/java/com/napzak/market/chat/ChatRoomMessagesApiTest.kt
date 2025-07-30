@@ -1,8 +1,8 @@
 package com.napzak.market.chat
 
 import com.napzak.market.chat.datasource.ChatRoomDataSource
-import com.napzak.market.chat.dto.MessageMetadata
-import com.napzak.market.chat.model.ChatItem
+import com.napzak.market.chat.dto.ChatMessageMetadata
+import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.chat.repositoryimpl.ChatRoomRepositoryImpl
 import com.napzak.market.chat.service.ChatRoomService
 import kotlinx.coroutines.test.runTest
@@ -35,11 +35,11 @@ class ChatRoomMessagesApiTest : ApiAbstract<ChatRoomService>() {
         mockWebServer.takeRequest()
 
         // then
-        assert(response.data.messages[0].metadata is MessageMetadata.Image)
-        assert(response.data.messages[1].metadata is MessageMetadata.Product)
+        assert(response.data.messages[0].metadata is ChatMessageMetadata.Image)
+        assert(response.data.messages[1].metadata is ChatMessageMetadata.Product)
         assert(response.data.messages[2].metadata == null) // Text는 metadata가 null
         assert(response.data.messages[3].metadata == null) // Text는 metadata가 null
-        assert(response.data.messages[4].metadata is MessageMetadata.Date)
+        assert(response.data.messages[4].metadata is ChatMessageMetadata.Date)
     }
 
     @Test
@@ -56,11 +56,11 @@ class ChatRoomMessagesApiTest : ApiAbstract<ChatRoomService>() {
 
         // then
         if (result != null) {
-            assertEquals(ChatItem.Image::class, result[0]::class)
-            assertEquals(ChatItem.Product::class, result[1]::class)
-            assertEquals(ChatItem.Text::class, result[2]::class)
-            assertEquals(ChatItem.Text::class, result[3]::class)
-            assertEquals(ChatItem.Date::class, result[4]::class)
+            assertEquals(ReceiveMessage.Image::class, result[0]::class)
+            assertEquals(ReceiveMessage.Product::class, result[1]::class)
+            assertEquals(ReceiveMessage.Text::class, result[2]::class)
+            assertEquals(ReceiveMessage.Text::class, result[3]::class)
+            assertEquals(ReceiveMessage.Date::class, result[4]::class)
         }
     }
 }
