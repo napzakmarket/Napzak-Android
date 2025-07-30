@@ -18,8 +18,8 @@ class ChatRepositoryImpl @Inject constructor(
 
     override suspend fun getChatRooms(): Result<Pair<Long, List<ChatRoom>>> {
         return suspendRunCatching {
-            val deviceToken = null // TODO: FCM 구현하면 fcmToken 값으로 대체
-            val response = chatDataSource.getChatRooms(deviceToken).data
+            val pushToken = null // TODO: FCM 구현하면 fcmToken 값으로 대체
+            val response = chatDataSource.getChatRooms(pushToken).data
             response.myStoreId to response.chatRooms.map { it.toDomain() }
         }
     }
