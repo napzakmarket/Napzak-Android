@@ -3,17 +3,24 @@ package com.napzak.market.registration.purchase
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,25 +31,22 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.purchase
 import com.napzak.market.feature.registration.R.string.purchase_price
 import com.napzak.market.feature.registration.R.string.purchase_price_description
 import com.napzak.market.feature.registration.R.string.purchase_price_tag
-import com.napzak.market.feature.registration.R.string.register
 import com.napzak.market.feature.registration.R.string.title
 import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect.NavigateToDetail
 import com.napzak.market.registration.RegistrationContract.RegistrationUiState
 import com.napzak.market.registration.component.PriceSettingGroup
+import com.napzak.market.registration.component.RegistrationButton
 import com.napzak.market.registration.component.RegistrationTopBar
 import com.napzak.market.registration.component.RegistrationViewGroup
 import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.purchase.component.PriceNegotiationGroup
 import com.napzak.market.registration.purchase.state.PurchaseContract.PurchaseUiState
-import com.napzak.market.ui_util.ShadowDirection
-import com.napzak.market.ui_util.napzakGradientShadow
 import com.napzak.market.ui_util.nonClickableStickyHeader
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -117,11 +121,17 @@ fun PurchaseRegistrationScreen(
         }
     }
 
+    val density = LocalDensity.current
+    var buttonHeight by remember { with(density) { mutableStateOf(0.dp) } }
+    
     Box(
         modifier = modifier
             .background(NapzakMarketTheme.colors.white),
     ) {
         LazyColumn(
+            modifier = Modifier
+                .consumeWindowInsets(PaddingValues(bottom = buttonHeight))
+                .imePadding(),
             state = state,
         ) {
             nonClickableStickyHeader {
@@ -171,25 +181,14 @@ fun PurchaseRegistrationScreen(
             }
         }
 
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .napzakGradientShadow(
-                    height = 4.dp,
-                    startColor = NapzakMarketTheme.colors.transWhite,
-                    endColor = NapzakMarketTheme.colors.shadowBlack,
-                    direction = ShadowDirection.Top,
-                )
-                .background(NapzakMarketTheme.colors.white)
-                .then(paddedModifier)
-                .padding(top = 18.dp),
-        ) {
-            NapzakButton(
-                text = stringResource(register),
-                onClick = onRegisterClick,
-                enabled = checkButtonEnabled(),
-            )
-        }
+        RegistrationButton(
+            onRegisterClick = onRegisterClick,
+            checkButtonEnabled = checkButtonEnabled,
+            modifier = paddedModifier
+                .onGloballyPositioned {
+                    buttonHeight = with(density) { it.size.height.toDp() }
+                },
+        )
     }
 }
 
