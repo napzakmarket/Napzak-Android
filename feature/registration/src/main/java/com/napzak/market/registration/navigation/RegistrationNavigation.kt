@@ -99,12 +99,12 @@ fun NavGraphBuilder.registrationGraph(
 
 @Serializable
 data class SaleRegistration(
-    val productId: Long? = null,
+    val productId: Long?,
 ) : Route
 
 @Serializable
 data class PurchaseRegistration(
-    val productId: Long? = null,
+    val productId: Long?,
 ) : Route
 
 @Serializable
