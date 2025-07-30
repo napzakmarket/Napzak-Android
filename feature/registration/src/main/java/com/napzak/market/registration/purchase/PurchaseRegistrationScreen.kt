@@ -123,7 +123,7 @@ fun PurchaseRegistrationScreen(
 
     val density = LocalDensity.current
     var buttonHeight by remember { with(density) { mutableStateOf(0.dp) } }
-    
+
     Box(
         modifier = modifier
             .background(NapzakMarketTheme.colors.white),
@@ -183,7 +183,7 @@ fun PurchaseRegistrationScreen(
 
         RegistrationButton(
             onRegisterClick = onRegisterClick,
-            checkButtonEnabled = checkButtonEnabled,
+            checkButtonEnabled = checkButtonEnabled(),
             modifier = paddedModifier
                 .onGloballyPositioned {
                     buttonHeight = with(density) { it.size.height.toDp() }

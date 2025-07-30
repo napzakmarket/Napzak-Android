@@ -238,7 +238,7 @@ fun SaleRegistrationScreen(
 
         RegistrationButton(
             onRegisterClick = onRegisterClick,
-            checkButtonEnabled = checkButtonEnabled,
+            checkButtonEnabled = checkButtonEnabled(),
             modifier = paddedModifier.onGloballyPositioned {
                 buttonHeight = with(density) { it.size.height.toDp() }
             },

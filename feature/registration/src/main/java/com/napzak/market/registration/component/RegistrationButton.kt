@@ -18,7 +18,7 @@ import com.napzak.market.ui_util.napzakGradientShadow
 @Composable
 internal fun BoxScope.RegistrationButton(
     onRegisterClick: () -> Unit,
-    checkButtonEnabled: () -> Boolean,
+    checkButtonEnabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -36,7 +36,7 @@ internal fun BoxScope.RegistrationButton(
         NapzakButton(
             text = stringResource(register),
             onClick = onRegisterClick,
-            enabled = checkButtonEnabled(),
+            enabled = checkButtonEnabled,
             modifier = Modifier
                 .padding(top = 18.dp),
         )
