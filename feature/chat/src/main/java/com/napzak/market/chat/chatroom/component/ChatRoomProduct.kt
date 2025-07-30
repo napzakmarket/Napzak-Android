@@ -17,18 +17,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.napzak.market.chat.chatroom.preview.mockProductBrief
 import com.napzak.market.chat.model.ProductBrief
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.feature.chat.R.string.chat_room_product_negotiable
+import com.napzak.market.feature.chat.R.string.chat_room_product_price_won_format
 import com.napzak.market.ui_util.ShadowDirection
+import com.napzak.market.ui_util.formatToPriceString
 import com.napzak.market.ui_util.napzakGradientShadow
 import com.napzak.market.ui_util.noRippleClickable
 
@@ -55,7 +60,10 @@ internal fun ChatRoomProductSection(
         ProductImage(imageUrl = product.photo)
         Spacer(modifier = Modifier.width(12.dp))
         Column {
-            ProductTradeTypeChip(tradeType = product.tradeType)
+            ProductTagRow(
+                tradeType = product.tradeType,
+                isPriceNegotiable = product.isPriceNegotiable,
+            )
             Spacer(modifier = Modifier.height(5.dp))
             ProductText(
                 text = product.title,
@@ -91,24 +99,57 @@ private fun ProductImage(
 }
 
 @Composable
-private fun ProductTradeTypeChip(
+private fun ProductTagRow(
     tradeType: String,
+    isPriceNegotiable: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val chipShape = RoundedCornerShape(4.dp)
-    val containerColor = NapzakMarketTheme.colors.transP500
-    val contentColor = NapzakMarketTheme.colors.white
-    val textStyle = NapzakMarketTheme.typography.caption12sb
-    val innerPadding = PaddingValues(vertical = 2.dp, horizontal = 4.dp)
+    Row {
+        Tag(
+            text = TradeType.fromName(tradeType).label,
+            textStyle = NapzakMarketTheme.typography.caption12sb,
+            contentColor = NapzakMarketTheme.colors.white,
+            containerColor = when (TradeType.fromName(tradeType)) {
+                TradeType.BUY -> NapzakMarketTheme.colors.transBlack
+                TradeType.SELL -> NapzakMarketTheme.colors.transP500
+            },
+            shape = RoundedCornerShape(4.dp),
+            modifier = modifier,
+        )
 
+        Spacer(modifier = Modifier.width(8.dp))
+
+        if (isPriceNegotiable) {
+            Tag(
+                text = stringResource(chat_room_product_negotiable),
+                textStyle = NapzakMarketTheme.typography.caption12sb,
+                contentColor = NapzakMarketTheme.colors.purple500,
+                containerColor = NapzakMarketTheme.colors.transP100,
+                shape = RoundedCornerShape(4.dp),
+                modifier = modifier,
+            )
+        }
+    }
+}
+
+@Composable
+private fun Tag(
+    text: String,
+    textStyle: TextStyle,
+    contentColor: Color,
+    containerColor: Color,
+    shape: Shape,
+    modifier: Modifier = Modifier,
+) {
+    val innerPadding = PaddingValues(vertical = 2.dp, horizontal = 4.dp)
     Box(
         modifier = modifier.background(
-            shape = chipShape,
+            shape = shape,
             color = containerColor,
         ),
     ) {
         Text(
-            text = TradeType.fromName(tradeType).label,
+            text = text,
             style = textStyle,
             color = contentColor,
             modifier = Modifier.padding(innerPadding),
@@ -123,7 +164,10 @@ private fun ProductText(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = text,
+        text = stringResource(
+            id = chat_room_product_price_won_format,
+            text.formatToPriceString(),
+        ),
         style = style,
         color = NapzakMarketTheme.colors.black,
         overflow = TextOverflow.Ellipsis,
@@ -133,10 +177,42 @@ private fun ProductText(
 
 @Preview(showBackground = true)
 @Composable
-private fun ChatRoomProductPreview() {
+private fun ChatRoomProductSellPreview() {
     NapzakMarketTheme {
         ChatRoomProductSection(
-            product = mockProductBrief,
+            product = ProductBrief(
+                productId = 1,
+                genreName = "은혼",
+                title = "은혼 긴토키 히지카타 룩업",
+                photo = "",
+                price = 129000,
+                tradeType = "SELL",
+                isPriceNegotiable = false,
+                isMyProduct = false,
+                productOwnerId = 1
+            ),
+            onClick = {},
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChatRoomProductBuyPreview() {
+    NapzakMarketTheme {
+        ChatRoomProductSection(
+            product = ProductBrief(
+                productId = 1,
+                genreName = "은혼",
+                title = "은혼 긴토키 히지카타 룩업",
+                photo = "",
+                price = 129000,
+                tradeType = "BUY",
+                isPriceNegotiable = true,
+                isMyProduct = false,
+                productOwnerId = 1
+            ),
             onClick = {},
             modifier = Modifier.fillMaxWidth(),
         )
