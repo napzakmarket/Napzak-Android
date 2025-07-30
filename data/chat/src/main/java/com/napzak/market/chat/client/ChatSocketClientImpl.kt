@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import kotlinx.serialization.builtins.serializer
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -52,7 +53,10 @@ class ChatSocketClientImpl @Inject constructor(
             val job = clientScope.launch {
                 flow
                     .catch { logError("SUBSCRIBE", it) }
-                    .collect { _messageFlow.emit(it) }
+                    .collect {
+                        logSuccess("RECEIVED", "$it")
+                        _messageFlow.emit(it)
+                    }
             }
 
             logSuccess("SUBSCRIBE", "소켓 채널이 구독되었습니다. $roomId")
@@ -84,6 +88,28 @@ class ChatSocketClientImpl @Inject constructor(
         }
     }
 
+    override suspend fun subscribeCreateChatRoom(storeId: Long) {
+        try {
+            if (jobMap.containsKey(CREATION_CHANNEL_ID)) return
+
+            val flow = stompSocketManager.subscribe(
+                destination = DESTINATION_SUBS_CREATE_CHAT_ROOMS.format(storeId),
+                deserializer = Long.serializer()
+            )
+            val job = clientScope.launch {
+                flow.collect { roomId ->
+                    logSuccess("SUBSCRIBE_CREATION", "새로운 채팅방이 개설됩니다: $storeId")
+                    subscribeChatRoom(roomId)
+                }
+            }
+
+            jobMap[CREATION_CHANNEL_ID] = job
+        } catch (e: Exception) {
+            logError("SUBSCRIBE_CREATION", e)
+            _errorFlow.emit(e)
+        }
+    }
+
     private fun logSuccess(header: String, message: String) {
         Timber.tag(TAG).d("✅ $header: $message")
     }
@@ -96,5 +122,7 @@ class ChatSocketClientImpl @Inject constructor(
         private const val TAG = "ChatSocketClient"
         private const val DESTINATION_SEND_CHAT = "/pub/chat/send"
         private const val DESTINATION_SUBSCRIBE_CHAT_ROOM = "/topic/chat.room.%s"
+        private const val DESTINATION_SUBS_CREATE_CHAT_ROOMS = "/queue/chat.room-created.%s"
+        private const val CREATION_CHANNEL_ID = 0L
     }
 }

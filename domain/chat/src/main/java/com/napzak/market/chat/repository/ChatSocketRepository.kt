@@ -10,6 +10,7 @@ interface ChatSocketRepository {
     suspend fun connect(): Result<Unit>
     suspend fun disconnect(): Result<Unit>
     suspend fun subscribeChatRoom(roomId: Long): Result<Unit>
+    suspend fun subscribeCreateChatRoom(storeId: Long): Result<Unit>
     suspend fun sendChat(chat: SendMessage<*>): Result<Unit>
     suspend fun getMessageFlow(receiverId: Long): Flow<ReceiveMessage<*>>
 }

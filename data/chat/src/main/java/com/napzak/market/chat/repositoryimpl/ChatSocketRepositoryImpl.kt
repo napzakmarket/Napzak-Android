@@ -31,6 +31,10 @@ class ChatSocketRepositoryImpl @Inject constructor(
         chatSocketDataSource.subscribeChatRoom(roomId)
     }
 
+    override suspend fun subscribeCreateChatRoom(storeId: Long) = runCatching {
+        chatSocketDataSource.subscribeCreateChatRoom(storeId)
+    }
+
     override suspend fun sendChat(chat: SendMessage<*>) = runCatching {
         chatSocketDataSource.sendMessage(chat.toRequest())
     }
