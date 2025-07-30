@@ -19,9 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,7 +28,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.designsystem.R.drawable.ic_profile_60
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.chat.R.string.chat_list_message_overflow
 import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
@@ -79,10 +77,13 @@ private fun ProfileImage(
     AsyncImage(
         model = ImageRequest.Builder(context)
             .data(imageUrl)
+            .placeholder(ic_profile_60)
+            .error(ic_profile_60)
+            .fallback(ic_profile_60)
             .crossfade(true)
             .build(),
-        placeholder = painterResource(ic_profile_60),
         contentDescription = null,
+        contentScale = ContentScale.Crop,
         modifier = modifier
             .size(imageSize)
             .clip(imageShape),
@@ -123,9 +124,12 @@ private fun ChatRoomMetaData(
     modifier: Modifier = Modifier,
 ) {
     val unReadMessageCountShape = RoundedCornerShape(16.dp)
-    val unReadMessageCountText =
-        if (unReadMessageCount > 999) stringResource(chat_list_message_overflow)
-        else unReadMessageCount.toString()
+
+    val (unReadMessageCountText, unReadMessageCountColor) = when {
+        unReadMessageCount > 99 -> "99+" to NapzakMarketTheme.colors.red
+        unReadMessageCount > 0 -> unReadMessageCount.toString() to NapzakMarketTheme.colors.red
+        else -> "" to NapzakMarketTheme.colors.white
+    }
 
     Column(
         modifier = modifier,
@@ -135,7 +139,7 @@ private fun ChatRoomMetaData(
             modifier = Modifier
                 .clip(unReadMessageCountShape)
                 .background(
-                    color = NapzakMarketTheme.colors.red,
+                    color = unReadMessageCountColor,
                 )
                 .padding(
                     horizontal = 6.dp,

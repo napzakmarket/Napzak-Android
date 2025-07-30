@@ -30,6 +30,7 @@ import com.napzak.market.chat.chatlist.component.ChatRoomItem
 import com.napzak.market.chat.model.ChatRoom
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.img_empty_chat_list
+import com.napzak.market.designsystem.component.NapzakLoadingOverlay
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_list_empty_guide_1
 import com.napzak.market.feature.chat.R.string.chat_list_empty_guide_2
@@ -62,7 +63,7 @@ internal fun ChatListRoute(
 
 @Composable
 private fun ChatListScreen(
-    chatRoomsState: UiState<Map<Long, ChatRoom>>,
+    chatRoomsState: UiState<List<ChatRoom>>,
     onChatRoomClick: (ChatRoom) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -75,11 +76,11 @@ private fun ChatListScreen(
 
         when (chatRoomsState) {
             is UiState.Loading -> {
-                /*TODO: 로딩화면 구현*/
+                NapzakLoadingOverlay()
             }
 
             is UiState.Success -> {
-                val chatRooms = chatRoomsState.data.values.sortedByDescending { it.lastMessageAt }
+                val chatRooms = chatRoomsState.data
 
                 ChatListColumn(
                     chatRooms = chatRooms.toImmutableList(),
@@ -195,14 +196,14 @@ private fun EmptyChatListScreen(
 @Composable
 private fun ChatListScreenPreview() {
     val chatRoomsState = UiState.Success(
-        buildMap {
+        buildList {
             repeat(20) { index ->
                 val randomHour = (0..12).random().toString()
                 val randomMinute = (0..60).random().toString().padStart(2, '0')
                 val randomCount = (0..1000).random()
 
-                put(
-                    index.toLong(), ChatRoom(
+                add(
+                    ChatRoom(
                         roomId = index.toLong(),
                         storeNickname = "납자기$index",
                         storePhoto = "",

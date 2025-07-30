@@ -11,5 +11,6 @@ interface ChatSocketClient {
     suspend fun disconnect()
     suspend fun subscribeChatRoom(roomId: Long)
     suspend fun unsubscribeChatRoom(roomId: Long)
+    suspend fun subscribeCreateChatRoom(storeId: Long)
     suspend fun sendMessage(request: ChatMessageRequest)
 }

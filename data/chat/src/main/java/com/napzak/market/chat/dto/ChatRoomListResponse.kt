@@ -6,6 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ChatRoomListResponse(
     @SerialName("chatRooms") val chatRooms: List<ChatRoom>,
+    @SerialName("currentStoreId") val myStoreId: Long,
+    @SerialName("isMessageAllowed") val isMessageAllowed: Boolean? = null,
 ) {
     @Serializable
     data class ChatRoom(

@@ -19,6 +19,9 @@ class ChatSocketDataSource @Inject constructor(
     suspend fun subscribeChatRoom(roomId: Long) =
         chatSocketClient.subscribeChatRoom(roomId)
 
+    suspend fun subscribeCreateChatRoom(storeId: Long) =
+        chatSocketClient.subscribeCreateChatRoom(storeId)
+
     suspend fun sendMessage(request: ChatMessageRequest) =
         chatSocketClient.sendMessage(request)
 }

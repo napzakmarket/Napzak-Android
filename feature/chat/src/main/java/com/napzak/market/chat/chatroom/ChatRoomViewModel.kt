@@ -78,7 +78,7 @@ internal class ChatRoomViewModel @Inject constructor(
     private suspend fun prepareChatRoomWithRoomId(roomId: Long) {
         val productId = enterChatRoom(roomId)
         fetchMessages(roomId)
-        fetchChatRoomDetail(productId)
+        fetchChatRoomDetail(productId, roomId)
         collectMessages(roomId)
     }
 
@@ -116,8 +116,8 @@ internal class ChatRoomViewModel @Inject constructor(
      * 채팅방의 정보를 불러옵니다.
      * 불러온 정보로 [_chatRoomState]의 상태를 초기화합니다.
      */
-    private suspend fun fetchChatRoomDetail(productId: Long) {
-        chatRepository.getChatRoomInformation(productId)
+    private suspend fun fetchChatRoomDetail(productId: Long, roomId: Long? = null) {
+        chatRepository.getChatRoomInformation(productId, roomId)
             .onSuccess { response ->
                 _chatRoomState.update {
                     UiState.Success(

@@ -27,8 +27,20 @@ sealed class ChatMessageMetadata {
     ) : ChatMessageMetadata()
 
     @Serializable
-    @SerialName("SYSTEM")
-    data class System(
+    @SerialName("EXIT")
+    data class EXIT(
+        @SerialName("content") val content: String,
+    ) : ChatMessageMetadata()
+
+    @Serializable
+    @SerialName("REPORTED")
+    data class REPORTED(
+        @SerialName("content") val content: String,
+    ) : ChatMessageMetadata()
+
+    @Serializable
+    @SerialName("WITHDRAWN")
+    data class WITHDRAWN(
         @SerialName("content") val content: String,
     ) : ChatMessageMetadata()
 

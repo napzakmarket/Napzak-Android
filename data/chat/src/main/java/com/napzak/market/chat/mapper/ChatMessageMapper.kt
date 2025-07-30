@@ -10,7 +10,9 @@ fun ChatMessageResponse.toDomain(receiverId: Long = 0): ReceiveMessage<*> {
         null -> toText(receiverId)
         is ChatMessageMetadata.Image -> toImage(receiverId, metadata)
         is ChatMessageMetadata.Product -> toProduct(receiverId, metadata)
-        is ChatMessageMetadata.System -> toNotice(metadata)
+        is ChatMessageMetadata.EXIT -> toNotice(metadata.content)
+        is ChatMessageMetadata.REPORTED -> toNotice(metadata.content)
+        is ChatMessageMetadata.WITHDRAWN -> toNotice(metadata.content)
         is ChatMessageMetadata.Date -> toDate(metadata)
     }
 }
@@ -59,11 +61,11 @@ private fun ChatMessageResponse.toProduct(
         isMessageOwner = senderId.isMessageOwner(receiverId)
     )
 
-private fun ChatMessageResponse.toNotice(metadata: ChatMessageMetadata.System): ReceiveMessage.Notice =
+private fun ChatMessageResponse.toNotice(content: String): ReceiveMessage.Notice =
     ReceiveMessage.Notice(
         roomId = roomId,
         messageId = messageId,
-        notice = metadata.content,
+        notice = content,
         timeStamp = createdAt,
     )
 
@@ -76,5 +78,5 @@ private fun ChatMessageResponse.toDate(metadata: ChatMessageMetadata.Date): Rece
     )
 
 private fun Long?.isMessageOwner(other: Long): Boolean {
-    return this?.let { it != other } ?: false
+    return this?.let { it == other } ?: false
 }

@@ -19,7 +19,8 @@ import retrofit2.http.Query
 interface ChatRoomService {
     @GET("products/chat/{productId}")
     suspend fun getProductChatInformation(
-        @Path("productId") productId: Long
+        @Path("productId") productId: Long,
+        @Query("roomId") roomId: Long?
     ): BaseResponse<ChatRoomInformationResponse>
 
     @POST("chat/rooms")

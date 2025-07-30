@@ -51,8 +51,9 @@ class ChatRoomListApiTest : ApiAbstract<ChatService>() {
 
         // then
         if (result != null) {
-            assertEquals(6, result[0].roomId)
-            assertEquals("납자기", result[1].storeNickname)
+
+            assertEquals(6, result.second[0].roomId)
+            assertEquals("납자기", result.second[1].storeNickname)
         }
     }
 }

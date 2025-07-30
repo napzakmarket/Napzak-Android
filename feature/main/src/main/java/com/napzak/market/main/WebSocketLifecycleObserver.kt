@@ -4,6 +4,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.napzak.market.chat.repository.ChatRepository
 import com.napzak.market.chat.repository.ChatSocketRepository
+import com.napzak.market.store.repository.StoreRepository
 import com.napzak.market.util.android.TokenProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class WebSocketLifecycleObserver @Inject constructor(
     private val chatSocketRepository: ChatSocketRepository,
     private val chatRepository: ChatRepository,
+    private val storeRepository: StoreRepository,
     private val tokenProvider: TokenProvider,
 ) : DefaultLifecycleObserver {
     private val activityScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -31,8 +33,8 @@ class WebSocketLifecycleObserver @Inject constructor(
                 if (loggedIn && isTokenAvailable()) {
                     chatSocketRepository.connect()
                         .onSuccess {
-                            val roomIds = chatRepository.getChatRoomIds().getOrElse { emptyList() }
-                            subscribeChatRooms(roomIds)
+                            subscribeChatRooms()
+                            subscribeCreateChatRoom()
                         }
                 }
             }
@@ -48,13 +50,21 @@ class WebSocketLifecycleObserver @Inject constructor(
         this.isLoggedIn.update { isLoggedIn }
     }
 
-    private fun subscribeChatRooms(roomIds: List<Long>) {
-        activityScope.launch {
-            roomIds.map { roomId ->
-                async {
-                    chatSocketRepository.subscribeChatRoom(roomId)
-                }
-            }.awaitAll()
+    private suspend fun subscribeChatRooms() {
+        chatRepository.getChatRoomIds().onSuccess { roomIds ->
+            activityScope.launch {
+                roomIds.map { roomId ->
+                    async {
+                        chatSocketRepository.subscribeChatRoom(roomId)
+                    }
+                }.awaitAll()
+            }
+        }
+    }
+
+    private suspend fun subscribeCreateChatRoom() {
+        storeRepository.fetchStoreInfo().onSuccess { response ->
+            chatSocketRepository.subscribeCreateChatRoom(response.storeId)
         }
     }
 
