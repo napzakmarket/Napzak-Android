@@ -37,6 +37,7 @@ import com.napzak.market.feature.registration.R.string.normal_shipping
 import com.napzak.market.feature.registration.R.string.normal_shipping_hint
 import com.napzak.market.feature.registration.R.string.shipping_excluded
 import com.napzak.market.feature.registration.R.string.shipping_included
+import com.napzak.market.ui_util.bringContentIntoView
 import com.napzak.market.ui_util.noRippleClickable
 
 private const val EMPTY_STRING = ""
@@ -90,7 +91,8 @@ internal fun ShippingFeeSelector(
                     width = 1.dp,
                     color = NapzakMarketTheme.colors.gray50,
                     shape = RoundedCornerShape(14.dp),
-                ),
+                )
+                .bringContentIntoView(),
         ) {
             Column {
                 SelectorButton(
@@ -120,6 +122,7 @@ internal fun ShippingFeeSelector(
                             maxPrice = NORMAL_MAX_PRICE,
                             hint = stringResource(normal_shipping_hint),
                         )
+
                         ExpandedShippingFee(
                             title = stringResource(half_priced_shipping),
                             isChecked = isHalfShippingChecked,

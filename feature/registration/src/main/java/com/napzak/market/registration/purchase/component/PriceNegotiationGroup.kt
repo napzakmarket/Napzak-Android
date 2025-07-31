@@ -83,7 +83,7 @@ internal fun PriceNegotiationGroup(
             )
         }
 
-        Spacer(modifier = Modifier.height(126.dp))
+        Spacer(modifier = Modifier.height(56.dp))
     }
 }
 

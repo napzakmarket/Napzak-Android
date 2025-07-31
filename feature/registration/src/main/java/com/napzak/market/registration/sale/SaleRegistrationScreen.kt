@@ -3,11 +3,13 @@ package com.napzak.market.registration.sale
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -18,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -52,6 +55,7 @@ import com.napzak.market.registration.component.PriceSettingGroup
 import com.napzak.market.registration.component.RegistrationButton
 import com.napzak.market.registration.component.RegistrationTopBar
 import com.napzak.market.registration.component.RegistrationViewGroup
+import com.napzak.market.registration.component.bringContentIntoView
 import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.sale.component.ProductConditionGridButton
 import com.napzak.market.registration.sale.component.ShippingFeeSelector
@@ -115,6 +119,7 @@ fun SaleRegistrationRoute(
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SaleRegistrationScreen(
     registrationUiState: RegistrationUiState,
@@ -138,16 +143,17 @@ fun SaleRegistrationScreen(
     modifier: Modifier = Modifier,
 ) {
     val paddedModifier = Modifier.padding(horizontal = 20.dp)
-    val focusManager = LocalFocusManager.current
     val scrollState = rememberLazyListState()
-
-    LaunchedEffect(scrollState.isScrollInProgress) {
-        if (scrollState.isScrollInProgress) {
-            focusManager.clearFocus()
-        }
-    }
     val density = LocalDensity.current
     var buttonHeight by remember { with(density) { mutableStateOf(0.dp) } }
+    val isImeVisible = WindowInsets.isImeVisible
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(isImeVisible) {
+        if (!isImeVisible) {
+            focusManager.clearFocus(force = true)
+        }
+    }
 
     Box(
         modifier = modifier
@@ -155,9 +161,11 @@ fun SaleRegistrationScreen(
     ) {
         LazyColumn(
             modifier = Modifier
-                .consumeWindowInsets(PaddingValues(bottom = buttonHeight))
                 .imePadding(),
             state = scrollState,
+            contentPadding = PaddingValues(
+                bottom = if (isImeVisible) 0.dp else buttonHeight,
+            ),
         ) {
             nonClickableStickyHeader {
                 RegistrationTopBar(
@@ -178,6 +186,7 @@ fun SaleRegistrationScreen(
                     onProductNameChange = onProductNameChange,
                     productDescription = registrationUiState.description,
                     onProductDescriptionChange = onProductDescriptionChange,
+                    modifier = paddedModifier,
                 )
             }
 
@@ -211,7 +220,7 @@ fun SaleRegistrationScreen(
                     price = registrationUiState.price,
                     onPriceChange = onPriceChange,
                     priceTag = stringResource(sale_price_tag),
-                    modifier = paddedModifier,
+                    modifier = paddedModifier.bringContentIntoView(),
                 )
             }
 
@@ -244,16 +253,18 @@ fun SaleRegistrationScreen(
 
                 val bottomSpacer = if (saleUiState.isShippingFeeIncluded == false) 80.dp else 20.dp
 
-                Spacer(modifier = Modifier.height(buttonHeight + bottomSpacer))
+                Spacer(modifier = Modifier.height(bottomSpacer))
             }
         }
 
         RegistrationButton(
             onRegisterClick = onRegisterClick,
             checkButtonEnabled = checkButtonEnabled(),
-            modifier = paddedModifier.onGloballyPositioned {
-                buttonHeight = with(density) { it.size.height.toDp() }
-            },
+            modifier = paddedModifier
+                .align(Alignment.BottomCenter)
+                .onGloballyPositioned {
+                    buttonHeight = with(density) { it.size.height.toDp() }
+                },
         )
     }
 }
