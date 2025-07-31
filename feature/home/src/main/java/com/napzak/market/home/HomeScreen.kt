@@ -90,7 +90,7 @@ internal fun HomeRoute(
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        viewModel.setNotificationSettings(isGranted)
+        viewModel.setNotificationSettings(isGranted, true)
     }
 
     LaunchedEffect(Unit) {

@@ -213,12 +213,12 @@ internal class HomeViewModel @Inject constructor(
             }
     }
 
-    fun setNotificationSettings(isEnabled: Boolean) =
+    fun setNotificationSettings(isEnabled: Boolean, isPermissionSetting: Boolean = false) =
         viewModelScope.launch {
             val pushToken = notificationRepository.getPushToken()
             if (pushToken != null) {
                 getNotificationSettings(pushToken)
-                updateNotificationSettings(pushToken, isEnabled)
+                updateNotificationSettings(pushToken, isEnabled, isPermissionSetting)
             } else Timber.tag("FCM_TOKEN")
                 .d("Home-updateNotificationSettings() : pushToken == null")
         }
@@ -235,11 +235,13 @@ internal class HomeViewModel @Inject constructor(
     private suspend fun updateNotificationSettings(
         pushToken: String,
         isEnabled: Boolean,
+        isPermissionSetting: Boolean,
     ) {
+        val allowMessageValue = if (isPermissionSetting) isEnabled else allowMessage
         updatePushTokenUseCase(
             pushToken = pushToken,
             isEnabled = isEnabled,
-            allowMessage = allowMessage,
+            allowMessage = allowMessageValue,
         )
     }
 
