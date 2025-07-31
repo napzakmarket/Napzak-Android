@@ -1,4 +1,4 @@
-package com.napzak.market.store.component
+package com.napzak.market.store.store.component
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
