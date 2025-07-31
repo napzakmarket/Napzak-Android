@@ -27,12 +27,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.chat.chatlist.component.ChatRoomItem
-import com.napzak.market.chat.model.ChatRoom
 import com.napzak.market.chat.chatlist.component.NotificationPermissionModal
-import com.napzak.market.chat.chatlist.model.ChatRoomDetail
+import com.napzak.market.chat.model.ChatRoom
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.img_empty_chat_list
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
@@ -61,7 +59,7 @@ internal fun ChatListRoute(
     val isSystemPermissionGranted =
         NotificationManagerCompat.from(context).areNotificationsEnabled()
 
-    LifecycleResumeEffect(Unit) {
+    LaunchedEffect(Unit) {
         viewModel.fetchChatRooms()
         viewModel.checkAndSetNotificationModal(isSystemPermissionGranted)
         viewModel.collectChatMessages()
