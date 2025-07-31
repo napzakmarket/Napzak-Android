@@ -56,6 +56,7 @@ import com.napzak.market.chat.chatroom.preview.mockChatRoom
 import com.napzak.market.chat.chatroom.preview.mockChats
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.common.state.UiState
+import com.napzak.market.designsystem.R.drawable.ic_profile_60
 import com.napzak.market.designsystem.R.drawable.img_empty_chat_room
 import com.napzak.market.designsystem.component.image.ZoomableImageScreen
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
@@ -106,7 +107,6 @@ internal fun ChatRoomRoute(
         chatItems = chatItems.toImmutableList(),
         chatRoomState = chatRoomState,
         chatListState = chatListState,
-        opponentImageUrl = "",
         onChatChange = { viewModel.chat = it },
         onProductDetailClick = onProductDetailNavigate,
         onReportClick = onStoreReportNavigate,
@@ -124,7 +124,6 @@ internal fun ChatRoomScreen(
     chatItems: ImmutableList<ReceiveMessage<*>>,
     chatRoomState: ChatRoomUiState,
     chatListState: LazyListState,
-    opponentImageUrl: String,
     onChatChange: (String) -> Unit,
     onProductDetailClick: (Long) -> Unit,
     onReportClick: (Long) -> Unit,
@@ -182,7 +181,7 @@ internal fun ChatRoomScreen(
                 ChatRoomRecordView(
                     listState = chatListState,
                     chatItems = chatItems,
-                    opponentImageUrl = opponentImageUrl,
+                    opponentImageUrl = chatRoom.storeBrief?.storePhoto,
                     isOpponentWithdrawn = chatRoomState.isOpponentWithdrawn,
                     onItemClick = { message ->
                         when (message) {
@@ -223,7 +222,7 @@ internal fun ChatRoomScreen(
 private fun ChatRoomRecordView(
     listState: LazyListState,
     chatItems: ImmutableList<ReceiveMessage<*>>,
-    opponentImageUrl: String,
+    opponentImageUrl: String?,
     isOpponentWithdrawn: Boolean,
     onItemClick: (ReceiveMessage<*>) -> Unit,
     modifier: Modifier = Modifier,
@@ -233,6 +232,8 @@ private fun ChatRoomRecordView(
         ImageRequest
             .Builder(context)
             .data(opponentImageUrl)
+            .error(ic_profile_60)
+            .fallback(ic_profile_60)
             .build()
     }
 
@@ -330,7 +331,7 @@ private fun ChatItemRenderer(
                 isProfileImageVisible = !isChatDirectionEqualsPrevious || isPreviousItemProduct,
                 isProduct = chatItem is ReceiveMessage.Product,
                 timeStamp = timeStamp,
-                isRead = chatItem.isRead,
+                isRead = true,
                 content = {
                     ChatItemView(
                         chatItem = chatItem,
@@ -465,7 +466,6 @@ private fun ChatRoomScreenPreview() {
         ChatRoomScreen(
             chat = "",
             chatItems = mockChats.toImmutableList(),
-            opponentImageUrl = "",
             onChatChange = {},
             onSendChatClick = {},
             onProductDetailClick = {},
@@ -486,7 +486,6 @@ private fun ChatRoomScreenEmptyPreview() {
         ChatRoomScreen(
             chat = "",
             chatItems = emptyList<ReceiveMessage<*>>().toImmutableList(),
-            opponentImageUrl = "",
             onChatChange = {},
             onSendChatClick = {},
             onProductDetailClick = {},
