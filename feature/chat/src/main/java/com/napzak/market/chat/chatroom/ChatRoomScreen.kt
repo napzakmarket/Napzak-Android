@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,9 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,35 +25,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import coil.request.ImageRequest
 import com.napzak.market.chat.chatroom.component.ChatRoomBottomSheet
 import com.napzak.market.chat.chatroom.component.ChatRoomInputField
+import com.napzak.market.chat.chatroom.component.ChatRoomItemColumn
 import com.napzak.market.chat.chatroom.component.ChatRoomProductSection
 import com.napzak.market.chat.chatroom.component.ChatRoomTopBar
 import com.napzak.market.chat.chatroom.component.NapzakWithdrawDialog
-import com.napzak.market.chat.chatroom.component.chatitem.ChatDate
-import com.napzak.market.chat.chatroom.component.chatitem.ChatImageItem
-import com.napzak.market.chat.chatroom.component.chatitem.ChatNotice
-import com.napzak.market.chat.chatroom.component.chatitem.ChatProduct
-import com.napzak.market.chat.chatroom.component.chatitem.ChatText
-import com.napzak.market.chat.chatroom.component.chatitem.MyChatItemContainer
-import com.napzak.market.chat.chatroom.component.chatitem.OpponentChatItemContainer
 import com.napzak.market.chat.chatroom.preview.mockChatRoom
 import com.napzak.market.chat.chatroom.preview.mockChats
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.common.state.UiState
-import com.napzak.market.designsystem.R.drawable.ic_profile_60
 import com.napzak.market.designsystem.R.drawable.img_empty_chat_room
 import com.napzak.market.designsystem.component.image.ZoomableImageScreen
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
@@ -178,20 +165,39 @@ internal fun ChatRoomScreen(
                     )
                 }
 
-                ChatRoomRecordView(
-                    listState = chatListState,
-                    chatItems = chatItems,
-                    opponentImageUrl = chatRoom.storeBrief?.storePhoto,
-                    isOpponentWithdrawn = chatRoomState.isOpponentWithdrawn,
-                    onItemClick = { message ->
-                        when (message) {
-                            is ReceiveMessage.Product -> onProductDetailClick(message.product.productId)
-                            is ReceiveMessage.Image -> selectedImageUrl = message.imageUrl
-                            else -> {}
+                Box(modifier = Modifier.weight(1f)) {
+                    if (chatItems.isEmpty()) {
+                        EmptyChatScreen(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 20.dp),
+                        )
+                    } else {
+                        ChatRoomItemColumn(
+                            listState = chatListState,
+                            chatItems = chatItems,
+                            opponentImageUrl = chatRoom.storeBrief?.storePhoto,
+                            onItemClick = { message ->
+                                when (message) {
+                                    is ReceiveMessage.Product -> onProductDetailClick(message.product.productId)
+                                    is ReceiveMessage.Image -> selectedImageUrl = message.imageUrl
+                                    else -> {}
+                                }
+                            },
+                            modifier = Modifier.fillMaxSize()
+                        )
+
+                        if (chatRoomState.isOpponentWithdrawn) {
+                            Image(
+                                painter = painterResource(img_user_blocked_popup),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .padding(bottom = 23.dp),
+                            )
                         }
-                    },
-                    modifier = Modifier.weight(1f)
-                )
+                    }
+                }
 
                 ChatRoomInputField(
                     text = chat,
@@ -216,195 +222,6 @@ internal fun ChatRoomScreen(
             Timber.tag("ChatRoom").d("none ChatRoomScreen called")
         }
     }
-}
-
-@Composable
-private fun ChatRoomRecordView(
-    listState: LazyListState,
-    chatItems: ImmutableList<ReceiveMessage<*>>,
-    opponentImageUrl: String?,
-    isOpponentWithdrawn: Boolean,
-    onItemClick: (ReceiveMessage<*>) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val context = LocalContext.current
-    val opponentProfileImageRequest = remember(opponentImageUrl) {
-        ImageRequest
-            .Builder(context)
-            .data(opponentImageUrl)
-            .error(ic_profile_60)
-            .fallback(ic_profile_60)
-            .build()
-    }
-
-    Box(modifier) {
-        if (chatItems.isEmpty()) {
-            EmptyChatScreen(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp),
-            )
-        } else {
-            LazyColumn(
-                state = listState,
-                reverseLayout = true,
-                contentPadding = PaddingValues(vertical = 30.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp),
-            ) {
-                itemsIndexed(chatItems) { index, chatItem ->
-                    val nextChatItem =
-                        if (index > 0) chatItems[index - 1] else null
-                    val previousChatItem =
-                        if (index < chatItems.lastIndex) chatItems[index + 1] else null
-
-
-                    ChatItemRenderer(
-                        opponentImageRequest = opponentProfileImageRequest,
-                        chatItem = chatItem,
-                        nextChatItem = nextChatItem,
-                        previousChatItem = previousChatItem,
-                        onItemClick = { onItemClick(chatItem) },
-                    )
-
-                    ChatItemSpacer(
-                        currentChatItem = chatItem,
-                        previousChatItem = previousChatItem,
-                    )
-                }
-            }
-        }
-
-        if (isOpponentWithdrawn) {
-            Image(
-                painter = painterResource(img_user_blocked_popup),
-                contentDescription = null,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 23.dp),
-            )
-        }
-    }
-}
-
-@Composable
-private fun ChatItemRenderer(
-    chatItem: ReceiveMessage<*>,
-    modifier: Modifier = Modifier,
-    nextChatItem: ReceiveMessage<*>? = null,
-    previousChatItem: ReceiveMessage<*>? = null,
-    opponentImageRequest: ImageRequest,
-    onItemClick: () -> Unit,
-) {
-    val isPreviousItemProduct = previousChatItem is ReceiveMessage.Product
-    val isChatDirectionEqualsPrevious = chatItem.isMessageOwner == previousChatItem?.isMessageOwner
-    val isChatDirectionEqualsNext = chatItem.isMessageOwner == nextChatItem?.isMessageOwner
-    val isTimeStampEqualsNext = chatItem.timeStamp == nextChatItem?.timeStamp
-    val timeStamp = chatItem.timeStamp.takeIf {
-        !isTimeStampEqualsNext || !isChatDirectionEqualsNext
-    }
-    val chatItemAlignment = when (chatItem.isMessageOwner) {
-        true -> Alignment.TopEnd
-        false -> Alignment.TopStart
-        null -> Alignment.Center
-    }
-
-    Box(
-        modifier = modifier.fillMaxWidth(),
-        contentAlignment = chatItemAlignment,
-    ) {
-        when (chatItem.isMessageOwner) {
-            true -> MyChatItemContainer(
-                timeStamp = timeStamp,
-                isRead = chatItem.isRead,
-                content = {
-                    ChatItemView(
-                        chatItem = chatItem,
-                        onItemClick = onItemClick
-                    )
-                },
-            )
-
-            false -> OpponentChatItemContainer(
-                imageRequest = opponentImageRequest,
-                isProfileImageVisible = !isChatDirectionEqualsPrevious || isPreviousItemProduct,
-                isProduct = chatItem is ReceiveMessage.Product,
-                timeStamp = timeStamp,
-                isRead = true,
-                content = {
-                    ChatItemView(
-                        chatItem = chatItem,
-                        onItemClick = onItemClick
-                    )
-                },
-            )
-
-            null -> ChatItemView(chatItem = chatItem) // ChatDate()가 표시된다.
-        }
-    }
-}
-
-@Composable
-private fun ChatItemView(
-    chatItem: ReceiveMessage<*>,
-    onItemClick: () -> Unit = {},
-) {
-    when (chatItem) {
-        is ReceiveMessage.Text -> {
-            ChatText(
-                text = chatItem.text,
-                isMessageOwner = chatItem.isMessageOwner,
-            )
-        }
-
-        is ReceiveMessage.Image -> {
-            ChatImageItem(
-                imageUrl = chatItem.imageUrl,
-                onClick = onItemClick,
-            )
-        }
-
-        is ReceiveMessage.Product -> {
-            with(chatItem) {
-                ChatProduct(
-                    tradeType = product.tradeType,
-                    genre = product.genreName,
-                    name = product.title,
-                    price = product.price.toString(),
-                    isMessageOwner = isMessageOwner,
-                    onNavigateClick = onItemClick,
-                )
-            }
-        }
-
-        is ReceiveMessage.Date -> {
-            ChatDate(
-                date = chatItem.date,
-            )
-        }
-
-        is ReceiveMessage.Notice -> {
-            ChatNotice(
-                notice = chatItem.notice,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp),
-            )
-        }
-    }
-}
-
-@Composable
-private fun ChatItemSpacer(
-    currentChatItem: ReceiveMessage<*>? = null,
-    previousChatItem: ReceiveMessage<*>? = null,
-) {
-    val height: Dp = when {
-        currentChatItem is ReceiveMessage.Date || previousChatItem is ReceiveMessage.Date -> 20.dp
-        currentChatItem is ReceiveMessage.Notice || previousChatItem is ReceiveMessage.Notice -> 30.dp
-        else -> 8.dp
-    }
-    Spacer(modifier = Modifier.height(height))
 }
 
 @Composable

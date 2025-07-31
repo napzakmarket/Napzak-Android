@@ -10,7 +10,7 @@ internal val mockChats
         listOf<ReceiveMessage<*>>(
             ReceiveMessage.Notice(
                 roomId = 1,
-                messageId = 4,
+                messageId = 14,
                 notice = "채팅방을 나갔습니다",
                 timeStamp = "오후 9:01",
             ),
