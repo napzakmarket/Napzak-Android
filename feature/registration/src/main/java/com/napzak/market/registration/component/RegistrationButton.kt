@@ -2,10 +2,8 @@ package com.napzak.market.registration.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -16,22 +14,20 @@ import com.napzak.market.ui_util.ShadowDirection
 import com.napzak.market.ui_util.napzakGradientShadow
 
 @Composable
-internal fun BoxScope.RegistrationButton(
+internal fun RegistrationButton(
     onRegisterClick: () -> Unit,
     checkButtonEnabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = Modifier
-            .align(Alignment.BottomCenter)
+        modifier = modifier
             .napzakGradientShadow(
                 height = 4.dp,
                 startColor = NapzakMarketTheme.colors.transWhite,
                 endColor = NapzakMarketTheme.colors.shadowBlack,
                 direction = ShadowDirection.Top,
             )
-            .background(NapzakMarketTheme.colors.white)
-            .then(modifier),
+            .background(NapzakMarketTheme.colors.white),
     ) {
         NapzakButton(
             text = stringResource(register),
