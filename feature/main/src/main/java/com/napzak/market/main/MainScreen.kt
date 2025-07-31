@@ -68,6 +68,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun MainScreen(
     restartApplication: () -> Unit,
+    connectSocket: () -> Unit,
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
     val context = LocalContext.current
@@ -142,6 +143,7 @@ fun MainScreen(
                     navigator = navigator,
                     restartApplication = restartApplication,
                     endApplicationAtHome = mainBackHandlerEvent,
+                    connectSocket = connectSocket,
                     modifier = Modifier.padding(innerPadding),
                 )
             }
@@ -154,8 +156,11 @@ private fun MainNavHost(
     navigator: MainNavigator,
     restartApplication: () -> Unit,
     endApplicationAtHome: () -> Unit,
+    connectSocket: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
+
     NavHost(
         enterTransition = {
             EnterTransition.None
@@ -174,6 +179,7 @@ private fun MainNavHost(
     ) {
         splashGraph(
             onNavigateToMain = {
+                connectSocket()
                 navigator.navController.navigateToHome(
                     navOptions {
                         popUpTo<Splash> { inclusive = true }
@@ -193,12 +199,16 @@ private fun MainNavHost(
 
         loginGraph(
             onNavigateToTerms = { navigator.navController.navigate(Terms) },
-            onNavigateToHome = { navigator.navController.navigate(Home) },
+            onNavigateToHome = {
+                connectSocket()
+                navigator.navController.navigate(Home)
+            },
         )
 
         onboardingGraph(
             navController = navigator.navController,
             onFinish = {
+                connectSocket()
                 navigator.navController.navigate(Home) {
                     popUpTo(Terms) { inclusive = true }
                 }
@@ -260,7 +270,9 @@ private fun MainNavHost(
 
         productDetailGraph(
             onMarketNavigate = navigator.navController::navigateToStore,
-            onChatNavigate = {}, //TODO: 채팅 화면으로 이동
+            onChatNavigate = {
+                navigator.navController.navigateToChatRoom(productId = it)
+            },
             onModifyNavigate = { productId, tradeType ->
                 when (tradeType) {
                     TradeType.SELL -> navigator.navController.navigateToSaleRegistration(productId = productId)

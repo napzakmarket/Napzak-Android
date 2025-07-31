@@ -1,15 +1,24 @@
 package com.napzak.market.chat.chatroom.component
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,6 +32,8 @@ import com.napzak.market.designsystem.R.drawable.ic_send
 import com.napzak.market.designsystem.component.textfield.NapzakDefaultTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_room_input_field_gallery
+import com.napzak.market.feature.chat.R.string.chat_room_input_field_hint
+import com.napzak.market.feature.chat.R.string.chat_room_input_field_hint_withdrawn
 import com.napzak.market.feature.chat.R.string.chat_room_input_field_send
 import com.napzak.market.ui_util.ShadowDirection
 import com.napzak.market.ui_util.napzakGradientShadow
@@ -31,12 +42,22 @@ import com.napzak.market.ui_util.noRippleClickable
 @Composable
 internal fun ChatRoomInputField(
     text: String,
-    hint: String,
+    isWithdrawn: Boolean,
     onTextChange: (String) -> Unit,
     onSendClick: (String) -> Unit,
-    onGalleryClick: () -> Unit,
+    onPhotoSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri -> uri?.let { onPhotoSelect(it.toString()) } }
+
+    val onGalleryClick = {
+        photoPickerLauncher.launch(
+            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        )
+    }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -59,11 +80,15 @@ internal fun ChatRoomInputField(
         ChatTextField(
             text = text,
             onTextChange = onTextChange,
-            hint = hint,
+            hint = stringResource(
+                if (isWithdrawn) chat_room_input_field_hint_withdrawn
+                else chat_room_input_field_hint
+            ),
+            enabled = !isWithdrawn,
             modifier = Modifier.weight(1f),
             suffix = {
                 SendButton(
-                    enabled = text.isNotBlank(),
+                    enabled = text.isNotBlank() && !isWithdrawn,
                     onClick = {
                         onSendClick(text)
                     },
@@ -78,6 +103,7 @@ private fun ChatTextField(
     text: String,
     onTextChange: (String) -> Unit,
     hint: String,
+    enabled: Boolean,
     suffix: @Composable () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -93,6 +119,7 @@ private fun ChatTextField(
         textStyle = textStyle,
         hintTextStyle = textStyle,
         suffix = suffix,
+        enabled = enabled,
         modifier = modifier
             .clip(shape)
             .background(color = backgroundColor)
@@ -137,12 +164,27 @@ private fun SendButton(
 @Composable
 private fun ChatRoomInputFieldPreview() {
     NapzakMarketTheme {
-        ChatRoomInputField(
-            text = "",
-            onTextChange = {},
-            hint = "메시지를 입력해주세요",
-            onSendClick = {},
-            onGalleryClick = {},
-        )
+        var textNotWithDrawn by remember { mutableStateOf("") }
+        var textWithDrawn by remember { mutableStateOf("") }
+
+        Column {
+            ChatRoomInputField(
+                text = textNotWithDrawn,
+                onTextChange = { textNotWithDrawn = it },
+                isWithdrawn = false,
+                onSendClick = {},
+                onPhotoSelect = {},
+            )
+
+            Spacer(Modifier.height(10.dp))
+
+            ChatRoomInputField(
+                text = textWithDrawn,
+                onTextChange = { textWithDrawn = it },
+                isWithdrawn = true,
+                onSendClick = {},
+                onPhotoSelect = {},
+            )
+        }
     }
 }

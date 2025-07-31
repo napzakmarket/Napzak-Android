@@ -3,6 +3,7 @@
     <string name="chat_room_input_field_gallery">갤러리</string>
     <string name="chat_room_input_field_send">전송</string>
     <string name="chat_room_input_field_hint">메시지를 입력해주세요</string>
+    <string name="chat_room_input_field_hint_withdrawn">상대방과 대화가 불가능합니다.</string>
     <string name="chat_room_is_not_read">1</string>
 
     <string name="chat_room_bottom_sheet_report">마켓 신고하기</string>
@@ -19,6 +20,11 @@
     <string name="chat_list_message_overflow">999+</string>
     <string name="chat_list_empty_guide_1">아직 시작된 대화가 없어요</string>
     <string name="chat_list_empty_guide_2">관심 있는 아이템이 있다면 대화를 시작해보세요</string>
+
+    <string name="chat_room_withdraw_dialog_title">채팅방 나가기</string>
+    <string name="chat_room_withdraw_dialog_content">채팅방에서 나가시겠어요? 나가기를 하면 더이상 상대방과 대화할 수 없습니다.</string>
+    <string name="chat_room_withdraw_dialog_confirm">나가기</string>
+    <string name="chat_room_withdraw_dialog_cancel">취소</string>
 
     <string name="permission_modal_system_setting_off_title">기기 알림이 꺼져있어요!</string>
     <string name="permission_modal_app_setting_off_title">앱 내 알림이 꺼져있어요!</string>

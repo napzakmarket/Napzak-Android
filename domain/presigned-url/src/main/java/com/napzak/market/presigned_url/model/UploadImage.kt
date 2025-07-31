@@ -12,6 +12,6 @@ data class UploadImage(
         PRODUCT,
         COVER(imageName = "cover.jpg"),
         PROFILE(imageName = "profile.jpg"),
-        CHAT
+        CHAT(imageName = "chat.jpg")
     }
 }

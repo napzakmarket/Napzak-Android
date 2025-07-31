@@ -17,6 +17,7 @@ android {
         debug {
             buildConfigField("String", "BASE_URL", properties.getProperty("base.url"))
             buildConfigField("String", "CHAT_URL", properties.getProperty("chat.url"))
+            buildConfigField("String", "WEBSOCKET_URL", properties.getProperty("websocket.url"))
             buildConfigField("String", "ACCESS_TOKEN", properties.getProperty("test.access.token"))
         }
     }
@@ -26,4 +27,8 @@ dependencies {
     implementation(projects.data.local)
     implementation(projects.core.util)
     implementation(libs.timber)
+
+    implementation(libs.krossbow.stomp.core)
+    implementation(libs.krossbow.websocket.okhttp)
+    implementation(libs.krossbow.stomp.kxserialization)
 }

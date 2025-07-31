@@ -4,8 +4,8 @@ import com.napzak.market.chat.datasource.ChatRoomDataSource
 import com.napzak.market.chat.dto.ChatRoomCreateRequest
 import com.napzak.market.chat.dto.ChatRoomPatchProductRequest
 import com.napzak.market.chat.mapper.toDomain
-import com.napzak.market.chat.model.ChatItem
 import com.napzak.market.chat.model.ChatRoomInformation
+import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.chat.repository.ChatRoomRepository
 import com.napzak.market.util.android.suspendRunCatching
 import javax.inject.Inject
@@ -14,10 +14,11 @@ class ChatRoomRepositoryImpl @Inject constructor(
     private val chatRoomDataSource: ChatRoomDataSource,
 ) : ChatRoomRepository {
     override suspend fun getChatRoomInformation(
-        roomId: Long,
+        productId: Long,
+        roomId: Long?,
     ): Result<ChatRoomInformation> {
         return suspendRunCatching {
-            val response = chatRoomDataSource.getChatRoomInformation(roomId)
+            val response = chatRoomDataSource.getChatRoomInformation(productId, roomId)
             with(response.data) {
                 val productBrief = productInfo.toDomain()
                 val storeBrief = storeInfo.toDomain()
@@ -39,10 +40,10 @@ class ChatRoomRepositoryImpl @Inject constructor(
 
     override suspend fun getChatRoomMessages(
         roomId: Long,
-    ): Result<List<ChatItem<*>>> {
+    ): Result<List<ReceiveMessage<*>>> {
         return suspendRunCatching {
             val response = chatRoomDataSource.getChatRoomMessages(roomId)
-            response.data.messages.map { it.toDomain() }
+            response.data.messages.map { it.toDomain(roomId) }
         }
     }
 

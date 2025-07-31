@@ -29,11 +29,11 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
         enqueueResponse("ChatRoomInformation.json")
 
         // when
-        val response = service.getProductChatInformation(roomId = 5)
+        val response = service.getProductChatInformation(productId = 5, roomId = null)
         mockWebServer.takeRequest()
 
         // then
-        assertEquals(5, response.data.roomId)
+        assertEquals(5L, response.data.roomId)
 
         assertEquals("BUY", response.data.productInfo.tradeType)
         assertEquals("슈가슈가룬 쇼콜라 브라이스 인형", response.data.productInfo.title)
@@ -48,11 +48,12 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
         enqueueResponse("ChatRoomInformation.json")
 
         // when
-        val response = ChatRoomDataSource(service).getChatRoomInformation(roomId = 5)
+        val response =
+            ChatRoomDataSource(service).getChatRoomInformation(productId = 5, roomId = null)
         mockWebServer.takeRequest()
 
         // then
-        assertEquals(5, response.data.roomId)
+        assertEquals(5L, response.data.roomId)
 
         assertEquals("BUY", response.data.productInfo.tradeType)
         assertEquals("슈가슈가룬 쇼콜라 브라이스 인형", response.data.productInfo.title)
@@ -69,7 +70,7 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
 
         // when
         val result = ChatRoomRepositoryImpl(dataSource)
-            .getChatRoomInformation(roomId = 5)
+            .getChatRoomInformation(productId = 5, roomId = 5L)
             .getOrNull()
         mockWebServer.takeRequest()
 

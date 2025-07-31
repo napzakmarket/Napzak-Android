@@ -16,7 +16,10 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.util)
     implementation(projects.core.uiUtil)
+
     implementation(projects.domain.product)
+    implementation(projects.domain.chat)
+    implementation(projects.domain.presignedUrl)
     implementation(projects.domain.notification)
 
     implementation(libs.androidx.navigation.compose)
