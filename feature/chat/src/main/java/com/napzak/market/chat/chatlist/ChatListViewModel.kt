@@ -15,7 +15,6 @@ import com.napzak.market.notification.usecase.GetNotificationSettingsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -31,10 +30,8 @@ class ChatListViewModel @Inject constructor(
 ) : ViewModel() {
     private val _chatRoomsState = MutableStateFlow<UiState<List<ChatRoom>>>(UiState.Loading)
     val chatRoomsState = _chatRoomsState.asStateFlow()
-    private val _isNotificationModalOpen = MutableStateFlow(false)
-    val isNotificationModalOpen: StateFlow<Boolean> = _isNotificationModalOpen.asStateFlow()
-    private val _isAppPermissionGranted = MutableStateFlow(false)
-    val isAppPermissionGranted: StateFlow<Boolean> = _isAppPermissionGranted.asStateFlow()
+    private val _notificationState = MutableStateFlow<NotificationState>(NotificationState())
+    val notificationState = _notificationState.asStateFlow()
 
     private var _chatRoomPair by mutableStateOf(mapOf<Long, ChatRoom>() to listOf<ChatRoom>())
     private var _myStoreId: Long? = null
@@ -133,7 +130,9 @@ class ChatListViewModel @Inject constructor(
         val pushToken = notificationRepository.getPushToken()
 
         if (pushToken != null) getNotificationSettingsUseCase(pushToken)
-            .onSuccess { _isAppPermissionGranted.value = it.allowMessage }
+            .onSuccess { result ->
+                _notificationState.update { it.copy(isAppPermissionGranted = result.allowMessage) }
+            }
             .onFailure { Timber.e(it) }
         else Timber.tag("FCM_TOKEN")
             .d("ChatList-checkAndSetNotificationModal() : pushToken == null")
@@ -144,15 +143,15 @@ class ChatListViewModel @Inject constructor(
         if (hasShown == true) return@launch
 
         checkAppPermission()
-        if (!isSystemPermissionGranted || !_isAppPermissionGranted.value) {
-            _isNotificationModalOpen.value = true
+        if (!isSystemPermissionGranted || !_notificationState.value.isAppPermissionGranted) {
+            _notificationState.update { it.copy(isNotificationModalOpen = true) }
         }
 
         notificationRepository.updateNotificationModalShown()
     }
 
     fun updateNotificationModelOpenState() {
-        _isNotificationModalOpen.value = false
+        _notificationState.update { it.copy(isNotificationModalOpen = false) }
     }
 
     companion object {
