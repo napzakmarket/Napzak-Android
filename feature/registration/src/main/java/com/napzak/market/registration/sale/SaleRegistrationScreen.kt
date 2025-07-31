@@ -55,11 +55,11 @@ import com.napzak.market.registration.component.PriceSettingGroup
 import com.napzak.market.registration.component.RegistrationButton
 import com.napzak.market.registration.component.RegistrationTopBar
 import com.napzak.market.registration.component.RegistrationViewGroup
-import com.napzak.market.registration.component.bringContentIntoView
 import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.sale.component.ProductConditionGridButton
 import com.napzak.market.registration.sale.component.ShippingFeeSelector
 import com.napzak.market.registration.sale.state.SaleContract.SaleUiState
+import com.napzak.market.ui_util.bringContentIntoView
 import com.napzak.market.ui_util.nonClickableStickyHeader
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
