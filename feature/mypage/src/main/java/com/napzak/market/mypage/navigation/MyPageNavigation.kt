@@ -144,7 +144,10 @@ fun NavGraphBuilder.mypageGraph(
 
             WithdrawConfirmScreen(
                 isWithdrawing = viewModel.isWithdrawing,
-                onConfirmClick = viewModel::withdrawStore,
+                onConfirmClick = {
+                    viewModel.deletePushToken()
+                    viewModel.withdrawStore()
+                },
                 onCancelClick = navController::popBackStackOnCompleteWithdraw,
                 onNavigateUpClick = navigateToUp,
                 modifier = systemBarPaddingModifier,

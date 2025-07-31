@@ -3,7 +3,6 @@ package com.napzak.market.mypage.setting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.notification.repository.NotificationRepository
-import com.napzak.market.notification.usecase.DeletePushTokenUseCase
 import com.napzak.market.notification.usecase.GetNotificationSettingsUseCase
 import com.napzak.market.notification.usecase.PatchNotificationSettingsUseCase
 import com.napzak.market.store.model.SettingInfo
@@ -25,7 +24,6 @@ internal class SettingViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val getNotificationSettingsUseCase: GetNotificationSettingsUseCase,
     private val patchNotificationSettingsUseCase: PatchNotificationSettingsUseCase,
-    private val deletePushTokenUseCase: DeletePushTokenUseCase,
     private val notificationRepository: NotificationRepository,
 ) : ViewModel() {
 
@@ -66,13 +64,6 @@ internal class SettingViewModel @Inject constructor(
     }
 
     fun signOutUser() = viewModelScope.launch {
-        val pushToken = notificationRepository.getPushToken()
-        if (pushToken != null) {
-            deletePushTokenUseCase(pushToken)
-                .onSuccess { notificationRepository.cleanPushToken() }
-                .onFailure { Timber.e(it) }
-        }
-
         logoutUseCase()
             .onSuccess { _sideEffect.send(SettingSideEffect.OnSignOutComplete) }
             .onFailure(Timber::e)
