@@ -9,8 +9,6 @@ import com.napzak.market.chat.model.ChatRoom
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.chat.repository.ChatRepository
 import com.napzak.market.chat.repository.ChatSocketRepository
-import androidx.lifecycle.viewModelScope
-import com.napzak.market.chat.chatlist.model.ChatRoomDetail
 import com.napzak.market.common.state.UiState
 import com.napzak.market.notification.repository.NotificationRepository
 import com.napzak.market.notification.usecase.GetNotificationSettingsUseCase
@@ -31,7 +29,7 @@ class ChatListViewModel @Inject constructor(
     private val notificationRepository: NotificationRepository,
     private val getNotificationSettingsUseCase: GetNotificationSettingsUseCase,
 ) : ViewModel() {
-    private val _chatRoomsState = MutableStateFlow<UiState<List<ChatRoomDetail>>>(UiState.Loading)
+    private val _chatRoomsState = MutableStateFlow<UiState<List<ChatRoom>>>(UiState.Loading)
     val chatRoomsState = _chatRoomsState.asStateFlow()
     private val _isNotificationModalOpen = MutableStateFlow(false)
     val isNotificationModalOpen: StateFlow<Boolean> = _isNotificationModalOpen.asStateFlow()
@@ -155,10 +153,6 @@ class ChatListViewModel @Inject constructor(
 
     fun updateNotificationModelOpenState() {
         _isNotificationModalOpen.value = false
-    }
-
-    fun fetchChatRooms() {
-        _chatRoomsState.update { UiState.Success(ChatRoomDetail.mockList) }
     }
 
     companion object {
