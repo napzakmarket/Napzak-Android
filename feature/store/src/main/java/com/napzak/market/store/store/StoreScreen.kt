@@ -157,7 +157,7 @@ private fun StoreScreen(
                     sortType = sortOption,
                     genreItems = genreSearchResultItems,
                     productCount = (uiState.storeProductsState as UiState.Success<Pair<Int, List<Product>>>).data.first,
-                    productList = (uiState.storeProductsState as UiState.Success<Pair<Int, List<Product>>>).data.second,
+                    productList = uiState.storeProductsState.data.second,
                     bottomSheetState = bottomSheetState,
                     onProfileEditClick = onProfileEditClick,
                     onTabClicked = onTabClicked,
