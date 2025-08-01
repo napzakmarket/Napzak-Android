@@ -24,7 +24,7 @@ import com.napzak.market.feature.store.R.string.store_empty_product_title
 @Composable
 internal fun StoreEmptyView(modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier.padding(top = 48.dp),
+        modifier = modifier.padding(top = 48.dp, bottom = 100.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
