@@ -70,6 +70,8 @@ internal fun ReportRoute(
 
     val reportState = rememberReportState(reportType)
 
+    BackHandler(viewModel.isUploading) { /* no back press allowed*/ }
+
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
