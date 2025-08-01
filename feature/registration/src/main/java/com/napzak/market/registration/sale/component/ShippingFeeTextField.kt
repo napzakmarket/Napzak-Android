@@ -36,7 +36,6 @@ fun ShippingFeeTextField(
     onPriceChange: (String) -> Unit,
     hint: String,
     maxPrice: Int,
-    enabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
     var priceFieldValue by remember { mutableStateOf(TextFieldValue(price)) }
@@ -61,7 +60,6 @@ fun ShippingFeeTextField(
                 onPriceChange(limited.text)
             },
             modifier = modifier,
-            enabled = enabled,
             textStyle = NapzakMarketTheme.typography.body14sb.copy(
                 color = NapzakMarketTheme.colors.gray400,
                 textAlign = TextAlign.End,
@@ -116,7 +114,6 @@ private fun ShippingFeeTextFieldPreview() {
             onPriceChange = { price = it },
             hint = "100~30,000",
             maxPrice = 30000,
-            enabled = true,
         )
     }
 }

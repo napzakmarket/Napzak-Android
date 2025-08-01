@@ -22,6 +22,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -187,6 +190,7 @@ private fun ExpandedShippingFee(
     modifier: Modifier = Modifier,
 ) {
     val checkIcon = if (isChecked) ic_checked_box else ic_unchecked_box
+    val focusRequester = remember { FocusRequester() }
 
     Row(
         modifier = modifier
@@ -221,7 +225,13 @@ private fun ExpandedShippingFee(
             onPriceChange = onShippingFeeChange,
             hint = hint,
             maxPrice = maxPrice,
-            enabled = isChecked,
+            modifier = Modifier
+                .focusRequester(focusRequester)
+                .onFocusChanged { state ->
+                    if (state.isFocused) {
+                        onCheckChange(true)
+                    }
+                },
         )
     }
 }
