@@ -1,5 +1,6 @@
 package com.napzak.market.mypage.withdraw
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,6 +50,8 @@ internal fun WithdrawConfirmScreen(
 ) {
     val innerScreenScrollState = rememberScrollState()
     var withdrawDialogVisible by rememberSaveable { mutableStateOf(false) }
+
+    BackHandler(isWithdrawing) { /* no back press allowed */ }
 
     DisposableEffect(Unit) {
         onDispose {

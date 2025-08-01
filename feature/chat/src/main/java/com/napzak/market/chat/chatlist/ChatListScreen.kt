@@ -21,12 +21,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.chat.chatlist.component.ChatRoomItem
+import com.napzak.market.chat.chatlist.component.NotificationPermissionModal
 import com.napzak.market.chat.model.ChatRoom
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.img_empty_chat_list
@@ -38,25 +41,38 @@ import com.napzak.market.feature.chat.R.string.chat_list_top_bar
 import com.napzak.market.ui_util.ScreenPreview
 import com.napzak.market.ui_util.ShadowDirection
 import com.napzak.market.ui_util.napzakGradientShadow
+import com.napzak.market.ui_util.openSystemNotificationSettings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 internal fun ChatListRoute(
     onChatRoomNavigate: (Long) -> Unit,
+    onSettingsNavigate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChatListViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     val chatRoomsState by viewModel.chatRoomsState.collectAsStateWithLifecycle()
+    val notificationState by viewModel.notificationState.collectAsStateWithLifecycle()
+    val isSystemPermissionGranted =
+        NotificationManagerCompat.from(context).areNotificationsEnabled()
 
     LaunchedEffect(Unit) {
         viewModel.fetchChatRooms()
+        viewModel.checkAndSetNotificationModal(isSystemPermissionGranted)
         viewModel.collectChatMessages()
     }
 
     ChatListScreen(
         chatRoomsState = chatRoomsState,
         onChatRoomClick = { chatRoom -> onChatRoomNavigate(chatRoom.roomId) },
+        isNotificationModalOpen = notificationState.isNotificationModalOpen,
+        isSystemPermissionGranted = isSystemPermissionGranted,
+        isAppPermissionGranted = notificationState.isAppPermissionGranted,
+        onDismissRequest = viewModel::updateNotificationModelOpenState,
+        onSystemSettingNavigate = context::openSystemNotificationSettings,
+        onSettingsNavigate = onSettingsNavigate,
         modifier = modifier,
     )
 }
@@ -65,6 +81,12 @@ internal fun ChatListRoute(
 private fun ChatListScreen(
     chatRoomsState: UiState<List<ChatRoom>>,
     onChatRoomClick: (ChatRoom) -> Unit,
+    isNotificationModalOpen: Boolean,
+    isSystemPermissionGranted: Boolean,
+    isAppPermissionGranted: Boolean,
+    onDismissRequest: () -> Unit,
+    onSystemSettingNavigate: () -> Unit,
+    onSettingsNavigate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -103,7 +125,19 @@ private fun ChatListScreen(
                 // 실패 시 빈 화면
             }
         }
+    }
 
+    if (isNotificationModalOpen) {
+        NotificationPermissionModal(
+            isAppPermissionGranted = isAppPermissionGranted,
+            isSystemPermissionGranted = isSystemPermissionGranted,
+            onDismissRequest = onDismissRequest,
+            onButtonClick = {
+                if (!isSystemPermissionGranted) onSystemSettingNavigate()
+                else if (!isAppPermissionGranted) onSettingsNavigate()
+                onDismissRequest()
+            },
+        )
     }
 }
 
@@ -218,7 +252,13 @@ private fun ChatListScreenPreview() {
     NapzakMarketTheme {
         ChatListScreen(
             chatRoomsState = chatRoomsState,
+            isNotificationModalOpen = true,
+            isSystemPermissionGranted = false,
+            isAppPermissionGranted = false,
             onChatRoomClick = {},
+            onDismissRequest = {},
+            onSettingsNavigate = {},
+            onSystemSettingNavigate = {},
         )
     }
 }
@@ -229,7 +269,13 @@ private fun ChatListEmptyScreenPreview() {
     NapzakMarketTheme {
         ChatListScreen(
             chatRoomsState = UiState.Empty,
+            isNotificationModalOpen = true,
+            isSystemPermissionGranted = false,
+            isAppPermissionGranted = false,
             onChatRoomClick = {},
+            onDismissRequest = {},
+            onSettingsNavigate = {},
+            onSystemSettingNavigate = {},
         )
     }
 }

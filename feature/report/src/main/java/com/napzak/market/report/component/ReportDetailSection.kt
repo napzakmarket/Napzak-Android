@@ -11,8 +11,12 @@ import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusState
@@ -29,10 +33,8 @@ import com.napzak.market.feature.report.R.string.report_input_title_detail
 import com.napzak.market.report.state.ReportState
 import com.napzak.market.report.state.rememberReportState
 import com.napzak.market.report.type.ReportType
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.napzak.market.ui_util.bringIntoView
 
-private val MinHeight = 180.dp
 private const val DETAIL_LENGTH_MAX = 200
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -42,18 +44,14 @@ internal fun ReportDetailSection(
     onTextFieldFocus: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val minHeight = 180.dp
+
     val coroutineScope = rememberCoroutineScope()
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
-    val focusEvent: (FocusState) -> Unit = remember {
-        {
-            val imeDelay = 300L
-            if (it.isFocused) {
-                onTextFieldFocus()
-                coroutineScope.launch {
-                    delay(imeDelay)
-                    bringIntoViewRequester.bringIntoView()
-                }
-            }
+    var focusState: FocusState? by remember { mutableStateOf(null) }
+    LaunchedEffect(focusState) {
+        if (focusState?.isFocused == true) {
+            onTextFieldFocus()
         }
     }
 
@@ -81,8 +79,11 @@ internal fun ReportDetailSection(
             contentAlignment = Alignment.TopStart,
             paddingValues = PaddingValues(16.dp),
             modifier = Modifier
-                .onFocusEvent(focusEvent)
-                .defaultMinSize(minHeight = MinHeight),
+                .onFocusEvent {
+                    bringIntoViewRequester.bringIntoView(coroutineScope, it)
+                    focusState = it
+                }
+                .defaultMinSize(minHeight = minHeight),
         )
 
         Spacer(Modifier.height(9.dp))
@@ -91,7 +92,7 @@ internal fun ReportDetailSection(
             text = stringResource(
                 report_input_letter_num_detail,
                 reportState.detail.length,
-                DETAIL_LENGTH_MAX
+                DETAIL_LENGTH_MAX,
             ),
             style = NapzakMarketTheme.typography.caption10sb.copy(
                 color = NapzakMarketTheme.colors.gray300,
