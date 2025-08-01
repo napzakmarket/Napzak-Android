@@ -205,7 +205,7 @@ internal class ChatRoomViewModel @Inject constructor(
 
         if (added) {
             chatMessageList.sortBy { it.messageId }
-            _chatItems.update { chatMessageList.reversed().toList() }
+            _chatItems.update { chatMessageList.toList() }
         }
     }
 

@@ -56,7 +56,7 @@ internal fun ChatRoomItemColumn(
             .fillMaxSize()
             .padding(horizontal = 20.dp),
     ) {
-        itemsIndexed(chatItems, key = { _, item -> item.messageId }) { index, chatItem ->
+        itemsIndexed(chatItems.reversed(), key = { _, item -> item.messageId }) { index, chatItem ->
             val nextChatItem =
                 if (index > 0) chatItems[index - 1] else null
             val previousChatItem =
