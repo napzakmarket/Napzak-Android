@@ -31,12 +31,14 @@ fun NavGraphBuilder.chatGraph(
     onChatRoomNavigate: (Long) -> Unit,
     onProductDetailNavigate: (Long) -> Unit,
     onStoreReportNavigate: (Long) -> Unit,
+    onSettingsNavigate: () -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<ChatList> {
         ChatListRoute(
             onChatRoomNavigate = onChatRoomNavigate,
+            onSettingsNavigate = onSettingsNavigate,
             modifier = modifier,
         )
     }
