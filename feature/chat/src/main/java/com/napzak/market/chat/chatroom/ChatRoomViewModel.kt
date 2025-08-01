@@ -193,13 +193,43 @@ internal class ChatRoomViewModel @Inject constructor(
     private fun addMessages(newMessages: List<ReceiveMessage<*>>) {
         var added = false
         newMessages.forEach { message ->
-            if (message is ReceiveMessage.Notice) {
-                _chatRoomState.update { it.copy(isRoomWithdrawn = true) }
-            }
+            when (message) {
+                is ReceiveMessage.Join -> {
+                    chatMessageList.forEachIndexed { index, record ->
+                        if (with(record) { isMessage && isMessageOwner == true && isRead }) {
+                            return@forEachIndexed
+                        }
+                        chatMessageList[index] =
+                            if (with(record) { isMessage && isMessageOwner == true && !isRead }) {
+                                runCatching {
+                                    (record as ReceiveMessage.Text).copy(isRead = true)
+                                }.recoverCatching {
+                                    (record as ReceiveMessage.Image).copy(isRead = true)
+                                }.recoverCatching {
+                                    (record as ReceiveMessage.Product).copy(isRead = true)
+                                }.getOrNull() ?: record
+                            } else record
 
-            if (chatMessageIdSet.add(message.messageId)) {
-                chatMessageList.add(preprocessMessage(message))
-                added = true
+                    }
+
+                    _chatRoomState.update { it.copy(isOpponentOnline = true) }
+                    _chatItems.update { chatMessageList.toList() }
+                }
+
+                is ReceiveMessage.Leave -> {
+                    _chatRoomState.update { it.copy(isOpponentOnline = false) }
+                }
+
+                else -> {
+                    if (message is ReceiveMessage.Notice) {
+                        _chatRoomState.update { it.copy(isRoomWithdrawn = true) }
+                    }
+
+                    if (chatMessageIdSet.add(message.messageId)) {
+                        chatMessageList.add(preprocessMessage(message))
+                        added = true
+                    }
+                }
             }
         }
 
@@ -302,14 +332,15 @@ internal class ChatRoomViewModel @Inject constructor(
      * 쿼리 파라미터를 없앱니다.
      */
     private fun preprocessMessage(message: ReceiveMessage<*>): ReceiveMessage<*> {
+        val isRead = message.isMessageOwner == false || _chatRoomState.value.isOpponentOnline
 
         return when (message) {
-            is ReceiveMessage.Text -> message.copy(isRead = !message.isMessageOwner)
-            is ReceiveMessage.Product -> message.copy(isRead = !message.isMessageOwner)
+            is ReceiveMessage.Text -> message.copy(isRead = isRead)
+            is ReceiveMessage.Product -> message.copy(isRead = isRead)
             is ReceiveMessage.Image -> {
                 message.copy(
                     imageUrl = message.imageUrl.toUri().toString().substringBefore("?"),
-                    isRead = !message.isMessageOwner
+                    isRead = isRead
                 )
             }
 

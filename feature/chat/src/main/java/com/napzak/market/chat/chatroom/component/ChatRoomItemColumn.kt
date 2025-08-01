@@ -48,6 +48,8 @@ internal fun ChatRoomItemColumn(
             .build()
     }
 
+    val reversedChatItem = remember(chatItems) { chatItems.reversed() }
+
     LazyColumn(
         state = listState,
         reverseLayout = true,
@@ -56,11 +58,11 @@ internal fun ChatRoomItemColumn(
             .fillMaxSize()
             .padding(horizontal = 20.dp),
     ) {
-        itemsIndexed(chatItems.reversed(), key = { _, item -> item.messageId }) { index, chatItem ->
+        itemsIndexed(reversedChatItem, key = { _, item -> item.messageId }) { index, chatItem ->
             val nextChatItem =
-                if (index > 0) chatItems[index - 1] else null
+                if (index > 0) reversedChatItem[index - 1] else null
             val previousChatItem =
-                if (index < chatItems.lastIndex) chatItems[index + 1] else null
+                if (index < reversedChatItem.lastIndex) reversedChatItem[index + 1] else null
 
             ChatItemRenderer(
                 opponentImageRequest = opponentProfileImageRequest,
@@ -181,6 +183,8 @@ private fun ChatItemView(
                     .padding(horizontal = 16.dp),
             )
         }
+
+        else -> {}
     }
 }
 
