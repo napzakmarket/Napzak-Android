@@ -156,8 +156,8 @@ class SaleRegistrationViewModel @Inject constructor(
                 it.copy(
                     condition = fromConditionByName(product.productCondition),
                     isShippingFeeIncluded = product.isDeliveryIncluded,
-                    normalShippingFee = product.standardDeliveryFee.toString(),
-                    halfShippingFee = product.halfDeliveryFee.toString(),
+                    normalShippingFee = product.standardDeliveryFee.takeIf { it != 0 }?.toString() ?: "",
+                    halfShippingFee = product.halfDeliveryFee.takeIf { it != 0 }?.toString() ?: "",
                 )
             }
             if (product.standardDeliveryFee > 0) updateNormalShippingFeeInclusion(true)
