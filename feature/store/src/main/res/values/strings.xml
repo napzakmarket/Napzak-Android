@@ -3,7 +3,9 @@
     <string name="back_button_description">뒤로 가기 버튼</string>
 
     <string name="store_genre">장르</string>
-    <string name="store_empty_text"></string>
+    <string name="store_empty_text" />
+    <string name="store_empty_product_title">아직 업로드한 소장품이 없어요</string>
+    <string name="store_empty_product_subtitle">첫 상품을 등록해보세요</string>
 
     <string name="store_filter_selling">판매중</string>
     <string name="store_filter_buying">구매중</string>

@@ -4,12 +4,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.napzak.market.local.datastore.NotificationDataStore.Companion.preferencesNotificationModalShown
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class TokenDataStore @Inject constructor(
-    private val preferenceDataStore: DataStore<Preferences>
+    private val preferenceDataStore: DataStore<Preferences>,
 ) {
     suspend fun getAccessToken(): String? = preferenceDataStore.data
         .map { it[preferencesAccessTokenKey] }
@@ -37,6 +38,7 @@ class TokenDataStore @Inject constructor(
         preferenceDataStore.edit { preferences ->
             token?.let {
                 preferences[preferencesAccessTokenKey] = it
+                preferences[preferencesNotificationModalShown] = false
             } ?: preferences.remove(preferencesAccessTokenKey)
         }
     }

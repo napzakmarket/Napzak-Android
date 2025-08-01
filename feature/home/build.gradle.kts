@@ -18,6 +18,7 @@ dependencies {
     implementation(projects.domain.product)
     implementation(projects.domain.banner)
     implementation(projects.domain.interest)
+    implementation(projects.domain.notification)
     implementation(projects.domain.store)
 
 

@@ -1,12 +1,18 @@
 package com.napzak.market.store.edit_store
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -57,6 +63,8 @@ internal fun EditStoreRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    BackHandler(uiState.isUploading) { /* no back press allowed*/ }
+
     LaunchedEffect(Unit) {
         viewModel.getEditProfile()
     }
@@ -98,11 +106,11 @@ private fun EditStoreScreen(
     onProceedButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val focusManager = LocalFocusManager.current
-
     if (uiState.isUploading || uiState.loadState is UiState.Loading) {
         NapzakLoadingOverlay()
     }
+
+    FocusSideEffectsHandler()
 
     Scaffold(
         topBar = {
@@ -115,7 +123,6 @@ private fun EditStoreScreen(
             EditStoreProceedButton(
                 onClick = {
                     onProceedButtonClick()
-                    focusManager.clearFocus()
                 },
                 enabled = uiState.submitEnabled,
             )
@@ -143,7 +150,10 @@ private fun EditStoreScreen(
                         onNameValidityCheckClick = onNameValidityCheckClick,
                         onGenreSelectButtonClick = { bottomSheetVisibility.value = true },
                         onPhotoChange = onPhotoChange,
-                        modifier = modifier.padding(innerPadding),
+                        modifier = modifier
+                            .padding(innerPadding)
+                            .consumeWindowInsets(innerPadding)
+                            .imePadding(),
                     )
                 }
 
@@ -273,6 +283,20 @@ private fun SectionDivider(modifier: Modifier = Modifier) {
         thickness = 4.dp,
         modifier = modifier,
     )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun FocusSideEffectsHandler() {
+    val focusManager = LocalFocusManager.current
+    val imeVisible = WindowInsets.isImeVisible
+
+    // 키보드가 내려가면 포커스 제거
+    LaunchedEffect(imeVisible) {
+        if (!imeVisible) {
+            focusManager.clearFocus(force = true)
+        }
+    }
 }
 
 @Preview(showBackground = true, widthDp = 360)

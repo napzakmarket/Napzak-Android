@@ -24,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -89,7 +90,7 @@ internal fun HomeRoute(
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        // TODO: 시스템 설정 값 API 연결
+        viewModel.setNotificationSettings(isGranted, true)
     }
 
     LaunchedEffect(Unit) {
@@ -98,7 +99,17 @@ internal fun HomeRoute(
             navigationBarColor = backgroundColor
         )
         viewModel.fetchHomeData()
-        checkNotificationPermission(context, permissionLauncher)
+
+        val isRequested = viewModel.getNotificationPermissionRequested()
+        checkNotificationPermission(
+            context = context,
+            isRequested = isRequested,
+            permissionLauncher = permissionLauncher,
+            onRequested = viewModel::updateNotificationPermissionRequested,
+        )
+
+        val isEnable = NotificationManagerCompat.from(context).areNotificationsEnabled()
+        viewModel.setNotificationSettings(isEnable)
     }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
@@ -362,19 +373,25 @@ private fun HomeRoutePreview() {
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 private fun checkNotificationPermission(
     context: Context,
+    isRequested: Boolean,
+    onRequested: () -> Unit,
     permissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
 ) {
     val permission = android.Manifest.permission.POST_NOTIFICATIONS
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        if (ContextCompat.checkSelfPermission(
-                context,
-                permission
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            permissionLauncher.launch(permission)
-        } else {
-            Timber.tag("Notification Permission").d("Already granted")
-        }
+    if (isRequested) {
+        Timber.tag("Notification Permission").d("Already granted")
+        return
+    }
+
+    if (ContextCompat.checkSelfPermission(
+            context,
+            permission
+        ) != PackageManager.PERMISSION_GRANTED
+    ) {
+        permissionLauncher.launch(permission)
+        onRequested()
+    } else {
+        onRequested()
     }
 }

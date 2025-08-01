@@ -20,6 +20,7 @@ dependencies {
     implementation(projects.domain.chat)
     implementation(projects.domain.presignedUrl)
     implementation(projects.domain.store)
+    implementation(projects.domain.notification)
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)

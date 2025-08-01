@@ -1,4 +1,4 @@
-package com.napzak.market.store.component
+package com.napzak.market.store.store.component
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
