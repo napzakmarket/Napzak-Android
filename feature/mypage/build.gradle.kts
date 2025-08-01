@@ -21,6 +21,7 @@ dependencies {
     implementation(projects.core.util)
     implementation(projects.core.uiUtil)
     implementation(projects.domain.store)
+    implementation(projects.domain.notification)
     implementation(projects.feature.detail)
 
     implementation(libs.androidx.navigation.compose)

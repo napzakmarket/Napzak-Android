@@ -1,19 +1,39 @@
 package com.napzak.market.config.messaging
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.O
+import android.os.Build.VERSION_CODES.TIRAMISU
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
 import com.napzak.market.R.drawable.ic_push_notification
+import com.napzak.market.local.datastore.NotificationDataStore
+import com.napzak.market.notification.usecase.UpdatePushTokenUseCase
 import com.skydoves.firebase.messaging.lifecycle.ktx.LifecycleAwareFirebaseMessagingService
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
+
+    @Inject
+    lateinit var dataStore: NotificationDataStore
+
+    @Inject
+    lateinit var updatePushTokenUseCase: UpdatePushTokenUseCase
+
     @SuppressLint("LaunchActivityFromNotification")
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
@@ -58,12 +78,25 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Timber.tag("FCM Token").d(token)
-        // TODO: 토큰 저장 API 연결
+        Timber.tag(TAG).d(token)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val appPermission = dataStore.getNotificationPermission() == true
+                val systemPermission = isNotificationPermissionGranted() && isNotificationEnabled()
+                dataStore.setPushToken(token)
+                updatePushTokenUseCase(
+                    pushToken = token,
+                    isEnabled = systemPermission,
+                    allowMessage = appPermission,
+                )
+            } catch (e: Exception) {
+                Timber.tag(TAG).e(e, "푸시 토큰 저장 오류")
+            }
+        }
     }
 
     private fun ensureNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (SDK_INT >= O) {
             val channel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
                 CHANNEL_NAME,
@@ -74,7 +107,20 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
         }
     }
 
+    private fun isNotificationPermissionGranted(): Boolean {
+        return if (SDK_INT >= TIRAMISU) {
+            checkSelfPermission(POST_NOTIFICATIONS) == PERMISSION_GRANTED
+        } else {
+            true // 33 미만은 기본적으로 권한 있음
+        }
+    }
+
+    private fun isNotificationEnabled(): Boolean {
+        return NotificationManagerCompat.from(this).areNotificationsEnabled()
+    }
+
     companion object {
+        private const val TAG = "FCM - okhttp"
         const val NOTIFICATION_CHANNEL_ID = "NAPZAK"
         const val CHANNEL_NAME = "납작 푸시 알림 채널"
         const val OPEN_DEEPLINK_ACTION = "com.napzak.OPEN_DEEP_LINK"

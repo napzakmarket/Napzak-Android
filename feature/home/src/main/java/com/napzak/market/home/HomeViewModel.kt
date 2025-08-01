@@ -7,6 +7,9 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.home.state.HomeUiState
 import com.napzak.market.home.type.HomeProductType
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
+import com.napzak.market.notification.repository.NotificationRepository
+import com.napzak.market.notification.usecase.GetNotificationSettingsUseCase
+import com.napzak.market.notification.usecase.UpdatePushTokenUseCase
 import com.napzak.market.product.model.Product
 import com.napzak.market.product.repository.ProductRecommendationRepository
 import com.napzak.market.repository.BannerRepository
@@ -37,8 +40,12 @@ internal class HomeViewModel @Inject constructor(
     private val bannerRepository: BannerRepository,
     private val settingRepository: SettingRepository,
     private val interestProductUseCase: SetInterestProductUseCase,
+    private val notificationRepository: NotificationRepository,
+    private val getNotificationSettingsUseCase: GetNotificationSettingsUseCase,
+    private val updatePushTokenUseCase: UpdatePushTokenUseCase,
 ) : ViewModel() {
     private val nickname = MutableStateFlow("")
+    private var allowMessage = false
     private val _bannerLoadState =
         MutableStateFlow<UiState<Map<HomeBannerType, List<Banner>>>>(UiState.Loading)
     private val _recommendProductLoadState =
@@ -166,7 +173,7 @@ internal class HomeViewModel @Inject constructor(
     fun setInterest(
         productId: Long,
         isInterested: Boolean,
-        productType: HomeProductType = HomeProductType.RECOMMEND
+        productType: HomeProductType = HomeProductType.RECOMMEND,
     ) = viewModelScope.launch {
         val flow = when (productType) {
             HomeProductType.RECOMMEND -> _recommendProductLoadState
@@ -204,6 +211,45 @@ internal class HomeViewModel @Inject constructor(
                     )
                 }
             }
+    }
+
+    fun setNotificationSettings(isEnabled: Boolean, isPermissionSetting: Boolean = false) =
+        viewModelScope.launch {
+            val pushToken = notificationRepository.getPushToken()
+            if (pushToken != null) {
+                getNotificationSettings(pushToken)
+                updateNotificationSettings(pushToken, isEnabled, isPermissionSetting)
+            } else Timber.tag("FCM_TOKEN")
+                .d("Home-updateNotificationSettings() : pushToken == null")
+        }
+
+    private suspend fun getNotificationSettings(pushToken: String) {
+        getNotificationSettingsUseCase(pushToken)
+            .onSuccess {
+                allowMessage = it.allowMessage
+                notificationRepository.setNotificationPermission(it.allowMessage)
+            }
+            .onFailure { Timber.e(it) }
+    }
+
+    private suspend fun updateNotificationSettings(
+        pushToken: String,
+        isEnabled: Boolean,
+        isPermissionSetting: Boolean,
+    ) {
+        val allowMessageValue = if (isPermissionSetting) isEnabled else allowMessage
+        updatePushTokenUseCase(
+            pushToken = pushToken,
+            isEnabled = isEnabled,
+            allowMessage = allowMessageValue,
+        )
+    }
+
+    suspend fun getNotificationPermissionRequested(): Boolean =
+        notificationRepository.getNotificationPermissionRequested() == true
+
+    fun updateNotificationPermissionRequested() = viewModelScope.launch {
+        notificationRepository.updateNotificationPermissionRequested()
     }
 
     companion object {

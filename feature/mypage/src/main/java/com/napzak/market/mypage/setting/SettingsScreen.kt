@@ -34,9 +34,11 @@ import com.napzak.market.feature.mypage.R.string.settings_button_withdraw
 import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_cancel_button
 import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_confirm_button
 import com.napzak.market.feature.mypage.R.string.settings_logout_dialog_title
+import com.napzak.market.feature.mypage.R.string.settings_section_notification_title
 import com.napzak.market.feature.mypage.R.string.settings_section_service_info_title
 import com.napzak.market.feature.mypage.R.string.settings_topbar_title
 import com.napzak.market.mypage.setting.component.SettingItem
+import com.napzak.market.mypage.setting.component.SettingNotificationItem
 import com.napzak.market.mypage.setting.component.SettingVersionItem
 import com.napzak.market.mypage.setting.type.SettingsMenu
 import com.napzak.market.ui_util.ScreenPreview
@@ -48,11 +50,12 @@ internal fun SettingsRoute(
     onBackClick: () -> Unit,
     onLogoutConfirm: () -> Unit,
     onWithdrawClick: () -> Unit,
-    viewModel: SettingViewModel = hiltViewModel()
+    viewModel: SettingViewModel = hiltViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val state by viewModel.settingInfo.collectAsStateWithLifecycle()
+    val isAppNotificationOn by viewModel.isAppNotificationOn.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect {
@@ -63,7 +66,9 @@ internal fun SettingsRoute(
     }
 
     SettingsScreen(
+        isAppNotificationOn = isAppNotificationOn,
         onBackClick = onBackClick,
+        onNotificationToggleClick = { viewModel.updateAppNotificationSetting(!isAppNotificationOn) },
         onLogoutConfirm = viewModel::signOutUser,
         onWithdrawClick = onWithdrawClick,
         onNoticeClick = { if (state.noticeLink.isNotBlank()) context.openUrl(state.noticeLink) },
@@ -74,7 +79,9 @@ internal fun SettingsRoute(
 
 @Composable
 private fun SettingsScreen(
+    isAppNotificationOn: Boolean,
     onBackClick: () -> Unit = {},
+    onNotificationToggleClick: () -> Unit = {},
     onNoticeClick: () -> Unit = {},
     onTermsClick: () -> Unit = {},
     onPrivacyClick: () -> Unit = {},
@@ -100,8 +107,33 @@ private fun SettingsScreen(
                 .background(NapzakMarketTheme.colors.white),
         ) {
             Column(
-                modifier = Modifier.padding(horizontal = 20.dp)
+                modifier = Modifier.padding(horizontal = 20.dp),
             ) {
+                Spacer(modifier = Modifier.height(28.dp))
+
+                Text(
+                    text = stringResource(id = settings_section_notification_title),
+                    style = NapzakMarketTheme.typography.body14r,
+                    color = NapzakMarketTheme.colors.gray400,
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                SettingNotificationItem(
+                    isAppNotificationOn = isAppNotificationOn,
+                    onToggleClick = onNotificationToggleClick,
+                )
+
+                Spacer(modifier = Modifier.height(28.dp))
+
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    HorizontalDivider(
+                        color = NapzakMarketTheme.colors.gray10,
+                        thickness = 7.dp,
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(28.dp))
 
@@ -212,7 +244,9 @@ private fun SettingsScreen(
 private fun SettingsScreenPreview() {
     NapzakMarketTheme {
         SettingsScreen(
+            isAppNotificationOn = true,
             onBackClick = {},
+            onNotificationToggleClick = {},
             onNoticeClick = {},
             onTermsClick = {},
             onPrivacyClick = {},

@@ -56,6 +56,9 @@
 
     <!-- SettingsScreen -->
     <string name="settings_topbar_title">설정</string>
+    <string name="settings_section_notification_title">알림</string>
+    <string name="settings_section_app_notification_title">앱 알림</string>
+    <string name="settings_section_app_notification_off_title">기기 알림이 꺼져있어요.</string>
     <string name="settings_section_service_info_title">서비스 정보</string>
     <string name="settings_item_notice_title">공지사항</string>
     <string name="settings_item_terms_of_use_title">이용약관</string>
