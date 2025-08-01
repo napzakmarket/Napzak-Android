@@ -394,9 +394,12 @@ internal class ChatRoomViewModel @Inject constructor(
      * @return 채팅방 ID
      */
     private suspend fun enterChatRoom(roomId: Long): Long =
-        chatRepository.enterChatRoom(roomId).onSuccess {
+        chatRepository.enterChatRoom(roomId).mapCatching { (productId, isOnline) ->
             Timber.tag(TAG).d("채팅방 입장 및 구독 시작함")
+            _chatRoomState.update { it.copy(isOpponentOnline = isOnline) }
+            productId
         }.getOrThrow()
+
 
     /**
      * 현재 채팅방에 접속 중이지 않음을 서버에 알리기 위해 호춣합니다.

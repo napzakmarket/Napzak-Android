@@ -44,10 +44,10 @@ class ChatRoomRepositoryImpl @Inject constructor(
 
     override suspend fun enterChatRoom(
         roomId: Long,
-    ): Result<Long> {
+    ): Result<Pair<Long, Boolean>> {
         return suspendRunCatching {
             val response = chatRoomDataSource.enterChatRoom(roomId)
-            response.data.productId
+            response.data.productId to response.data.onlineStoreIds.isNotEmpty()
         }
     }
 
