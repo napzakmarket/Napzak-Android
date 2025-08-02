@@ -26,6 +26,7 @@ import com.napzak.market.feature.registration.R.string.product_image_description
 import com.napzak.market.feature.registration.R.string.product_name
 import com.napzak.market.feature.registration.R.string.product_name_hint
 import com.napzak.market.registration.model.Photo
+import com.napzak.market.ui_util.bringContentIntoView
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -48,10 +49,8 @@ internal fun RegistrationViewGroup(
     onProductDescriptionChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val paddedModifier = Modifier.padding(horizontal = 20.dp)
-
     Column(
-        modifier = modifier,
+        modifier = Modifier,
     ) {
         Spacer(modifier = Modifier.height(30.dp))
 
@@ -60,7 +59,7 @@ internal fun RegistrationViewGroup(
             style = NapzakMarketTheme.typography.body14b.copy(
                 color = NapzakMarketTheme.colors.gray500,
             ),
-            modifier = paddedModifier,
+            modifier = modifier,
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -70,7 +69,7 @@ internal fun RegistrationViewGroup(
             style = NapzakMarketTheme.typography.caption12m.copy(
                 color = NapzakMarketTheme.colors.gray300,
             ),
-            modifier = paddedModifier,
+            modifier = modifier,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -87,7 +86,7 @@ internal fun RegistrationViewGroup(
         RegistrationGenreButton(
             selectedGenre = productGenre,
             onGenreClick = onGenreClick,
-            modifier = paddedModifier
+            modifier = modifier
                 .padding(vertical = 8.dp),
         )
 
@@ -102,13 +101,14 @@ internal fun RegistrationViewGroup(
             style = NapzakMarketTheme.typography.body14b.copy(
                 color = NapzakMarketTheme.colors.gray500,
             ),
-            modifier = paddedModifier,
+            modifier = modifier,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Column(
-            modifier = paddedModifier,
+            modifier = modifier
+                .bringContentIntoView(),
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
@@ -137,13 +137,14 @@ internal fun RegistrationViewGroup(
             style = NapzakMarketTheme.typography.body14b.copy(
                 color = NapzakMarketTheme.colors.gray500,
             ),
-            modifier = paddedModifier,
+            modifier = modifier,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Column(
-            modifier = paddedModifier,
+            modifier = modifier
+                .bringContentIntoView(),
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {

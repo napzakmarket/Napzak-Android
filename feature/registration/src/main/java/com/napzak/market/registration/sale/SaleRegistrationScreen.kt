@@ -2,9 +2,17 @@ package com.napzak.market.registration.sale
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -12,8 +20,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,11 +43,13 @@ import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.ProductConditionType
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.component.button.NapzakButton
+import com.napzak.market.designsystem.R.drawable.ic_check_snackbar_18
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
+import com.napzak.market.designsystem.component.toast.LocalNapzakToast
+import com.napzak.market.designsystem.component.toast.ToastFontType
+import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.product_condition
-import com.napzak.market.feature.registration.R.string.register
 import com.napzak.market.feature.registration.R.string.sale
 import com.napzak.market.feature.registration.R.string.sale_price
 import com.napzak.market.feature.registration.R.string.sale_price_description
@@ -37,16 +57,18 @@ import com.napzak.market.feature.registration.R.string.sale_price_tag
 import com.napzak.market.feature.registration.R.string.shipping_method
 import com.napzak.market.feature.registration.R.string.title
 import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect.NavigateToDetail
+import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect.ShowToast
 import com.napzak.market.registration.RegistrationContract.RegistrationUiState
 import com.napzak.market.registration.component.PriceSettingGroup
+import com.napzak.market.registration.component.RegistrationButton
 import com.napzak.market.registration.component.RegistrationTopBar
 import com.napzak.market.registration.component.RegistrationViewGroup
 import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.sale.component.ProductConditionGridButton
 import com.napzak.market.registration.sale.component.ShippingFeeSelector
 import com.napzak.market.registration.sale.state.SaleContract.SaleUiState
-import com.napzak.market.ui_util.ShadowDirection
-import com.napzak.market.ui_util.napzakGradientShadow
+import com.napzak.market.ui_util.bringContentIntoView
+import com.napzak.market.ui_util.clearFocusOnScrollConnection
 import com.napzak.market.ui_util.nonClickableStickyHeader
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -62,12 +84,19 @@ fun SaleRegistrationRoute(
     val registrationUiState by viewModel.registrationUiState.collectAsStateWithLifecycle()
     val saleUiState by viewModel.saleUiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val toast = LocalNapzakToast.current
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
                     is NavigateToDetail -> navigateToDetail(sideEffect.productId)
+                    is ShowToast -> toast.makeText(
+                        toastType = ToastType.COMMON,
+                        message = sideEffect.message,
+                        icon = ic_check_snackbar_18,
+                        fontType = ToastFontType.LARGE,
+                    )
                 }
             }
     }
@@ -99,6 +128,7 @@ fun SaleRegistrationRoute(
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SaleRegistrationScreen(
     registrationUiState: RegistrationUiState,
@@ -122,21 +152,39 @@ fun SaleRegistrationScreen(
     modifier: Modifier = Modifier,
 ) {
     val paddedModifier = Modifier.padding(horizontal = 20.dp)
-    val focusManager = LocalFocusManager.current
     val scrollState = rememberLazyListState()
+    val density = LocalDensity.current
+    var buttonHeight by remember { with(density) { mutableStateOf(0.dp) } }
+    val isImeVisible = WindowInsets.isImeVisible
+    val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(scrollState.isScrollInProgress) {
-        if (scrollState.isScrollInProgress) {
-            focusManager.clearFocus()
+    LaunchedEffect(isImeVisible) {
+        if (!isImeVisible) {
+            focusManager.clearFocus(force = true)
         }
     }
 
+    val nestedScrollConnection = remember { clearFocusOnScrollConnection(focusManager) }
+
     Box(
         modifier = modifier
-            .background(NapzakMarketTheme.colors.white),
+            .background(NapzakMarketTheme.colors.white)
+            .nestedScroll(nestedScrollConnection)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        focusManager.clearFocus()
+                    },
+                )
+            },
     ) {
         LazyColumn(
+            modifier = Modifier
+                .imePadding(),
             state = scrollState,
+            contentPadding = PaddingValues(
+                bottom = if (isImeVisible) 0.dp else buttonHeight,
+            ),
         ) {
             nonClickableStickyHeader {
                 RegistrationTopBar(
@@ -157,6 +205,7 @@ fun SaleRegistrationScreen(
                     onProductNameChange = onProductNameChange,
                     productDescription = registrationUiState.description,
                     onProductDescriptionChange = onProductDescriptionChange,
+                    modifier = paddedModifier,
                 )
             }
 
@@ -190,7 +239,7 @@ fun SaleRegistrationScreen(
                     price = registrationUiState.price,
                     onPriceChange = onPriceChange,
                     priceTag = stringResource(sale_price_tag),
-                    modifier = paddedModifier,
+                    modifier = paddedModifier.bringContentIntoView(),
                 )
             }
 
@@ -221,33 +270,22 @@ fun SaleRegistrationScreen(
                     modifier = paddedModifier,
                 )
 
-                val spacerHeight = if (saleUiState.isShippingFeeIncluded == false) 120.dp else 80.dp
+                val bottomSpacer = if (saleUiState.isShippingFeeIncluded == false) 80.dp else 20.dp
 
-                Spacer(modifier = Modifier.height(spacerHeight))
+                Spacer(modifier = Modifier.height(bottomSpacer))
             }
         }
 
-        Box(
-            modifier = Modifier
+        RegistrationButton(
+            onRegisterClick = onRegisterClick,
+            checkButtonEnabled = checkButtonEnabled(),
+            modifier = paddedModifier
                 .align(Alignment.BottomCenter)
-                .napzakGradientShadow(
-                    height = 4.dp,
-                    startColor = NapzakMarketTheme.colors.transWhite,
-                    endColor = NapzakMarketTheme.colors.shadowBlack,
-                    direction = ShadowDirection.Top,
-                )
-                .background(NapzakMarketTheme.colors.white)
-                .then(paddedModifier)
-                .padding(top = 18.dp),
-        ) {
-            NapzakButton(
-                text = stringResource(register),
-                onClick = onRegisterClick,
-                enabled = checkButtonEnabled(),
-            )
-        }
+                .onGloballyPositioned {
+                    buttonHeight = with(density) { it.size.height.toDp() }
+                },
+        )
     }
-
 }
 
 @Preview

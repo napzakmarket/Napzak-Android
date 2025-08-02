@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -58,19 +59,19 @@ internal fun PriceSettingGroup(
     modifier: Modifier = Modifier,
 ) {
     var priceFieldValue by remember { mutableStateOf(TextFieldValue(price)) }
-    val emptyTextToolbar = remember { EmptyTextToolbar() }
 
     LaunchedEffect(price) {
         if (price != priceFieldValue.text) {
             priceFieldValue = TextFieldValue(
                 text = price,
-                selection = TextRange(price.length)
+                selection = TextRange(price.length),
             )
         }
     }
 
     val transformedPrice = price.priceToNumericTransformation()
-    val purchaseError = tradeType == TradeType.BUY && transformedPrice != 0 && transformedPrice % THOUSAND != 0
+    val purchaseError = tradeType == TradeType.BUY && transformedPrice != 0
+            && transformedPrice % THOUSAND != 0
     val napzakColors = NapzakMarketTheme.colors
     val textColor = if (purchaseError) napzakColors.red else napzakColors.gray400
     val borderColor = if (purchaseError) napzakColors.red else napzakColors.gray100
@@ -103,7 +104,9 @@ internal fun PriceSettingGroup(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        CompositionLocalProvider(LocalTextToolbar provides emptyTextToolbar) {
+        CompositionLocalProvider(
+            LocalTextToolbar provides EmptyTextToolbar()
+        ) {
             InputTextField(
                 text = priceFieldValue,
                 onTextChange = {
@@ -128,7 +131,7 @@ internal fun PriceSettingGroup(
                             color = hintColor,
                         ),
                     )
-                }
+                },
             )
         }
 
@@ -139,11 +142,11 @@ internal fun PriceSettingGroup(
                 visible = transformedPrice != 0 && transformedPrice % THOUSAND != 0,
             ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 2.dp),
                     horizontalAlignment = Alignment.End,
                 ) {
-                    Spacer(modifier = Modifier.height(2.dp))
-
                     Row(
                         modifier = Modifier,
                         horizontalArrangement = Arrangement.spacedBy(2.dp),
@@ -154,6 +157,7 @@ internal fun PriceSettingGroup(
                             contentDescription = null,
                             tint = NapzakMarketTheme.colors.red,
                         )
+
                         Text(
                             text = stringResource(purchase_price_error),
                             style = NapzakMarketTheme.typography.caption10sb.copy(
@@ -161,8 +165,6 @@ internal fun PriceSettingGroup(
                             ),
                         )
                     }
-
-                    Spacer(modifier = Modifier.height(2.dp))
                 }
             }
         }
