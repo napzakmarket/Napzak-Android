@@ -8,4 +8,7 @@
     <string name="explore_search_hint">어떤 상품을 찾고 계신가요?</string>
     <string name="explore_product">상품&#160;</string>
     <string name="explore_count">%d개</string>
+
+    <string name="explore_empty_search_result_title">검색 결과가 없어요</string>
+    <string name="explore_empty_search_result_subtitle">다른 키워드로 다시 검색해보세요</string>
 </resources>
