@@ -12,6 +12,7 @@ import com.napzak.market.presigned_url.usecase.GetProductPresignedUrlUseCase
 import com.napzak.market.presigned_url.usecase.UploadImageUseCase
 import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect
 import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect.NavigateToDetail
+import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect.ShowToast
 import com.napzak.market.registration.RegistrationViewModel
 import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.model.ProductImage
@@ -98,6 +99,7 @@ class PurchaseRegistrationViewModel @Inject constructor(
         productId?.let { id ->
             editRegisteredProductUseCase(id, product).onSuccess {
                 updateLoadState(UiState.Success(Unit))
+                _sideEffect.emit(ShowToast(EDIT_SUCCESS))
                 _sideEffect.emit(NavigateToDetail(id))
             }.onFailure {
                 updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))

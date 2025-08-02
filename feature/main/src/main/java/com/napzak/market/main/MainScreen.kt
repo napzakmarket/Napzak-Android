@@ -296,6 +296,8 @@ private fun MainNavHost(
             navigateToUp = navigator::navigateUp,
             navigateToDetail = { productId ->
                 val navOptions = navOptions {
+                    launchSingleTop = true
+
                     navigator.navController.currentDestination?.route?.let {
                         popUpTo(it) {
                             inclusive = true

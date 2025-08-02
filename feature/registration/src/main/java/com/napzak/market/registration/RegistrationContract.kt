@@ -20,5 +20,6 @@ class RegistrationContract {
 
     sealed class RegistrationSideEffect {
         data class NavigateToDetail(val productId: Long) : RegistrationSideEffect()
+        data class ShowToast(val message: String) : RegistrationSideEffect()
     }
 }

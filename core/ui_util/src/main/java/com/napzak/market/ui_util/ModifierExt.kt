@@ -5,13 +5,17 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
@@ -83,4 +87,28 @@ inline fun Modifier.throttledNoRippleClickable(
             }
         }
     }
+}
+
+/**
+ * Bring content into view
+ *
+ * 텍스트 필드에 포커스될 시, 화면 안으로 컴포넌트를 가져오는 확장 함수
+ */
+@OptIn(ExperimentalFoundationApi::class)
+fun Modifier.bringContentIntoView(
+    delay: Long = 300L,
+): Modifier = composed {
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
+
+    this
+        .bringIntoViewRequester(bringIntoViewRequester)
+        .onFocusChanged { focusState ->
+            if (focusState.hasFocus) {
+                coroutineScope.launch {
+                    delay(delay)
+                    bringIntoViewRequester.bringIntoView()
+                }
+            }
+        }
 }

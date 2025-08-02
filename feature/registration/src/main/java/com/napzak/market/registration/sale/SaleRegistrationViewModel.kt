@@ -14,6 +14,7 @@ import com.napzak.market.presigned_url.usecase.GetProductPresignedUrlUseCase
 import com.napzak.market.presigned_url.usecase.UploadImageUseCase
 import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect
 import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect.NavigateToDetail
+import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect.ShowToast
 import com.napzak.market.registration.RegistrationViewModel
 import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.model.ProductImage
@@ -132,6 +133,7 @@ class SaleRegistrationViewModel @Inject constructor(
         productId?.let { id ->
             editRegisteredProductUseCase(id, product).onSuccess {
                 updateLoadState(UiState.Success(Unit))
+                _sideEffect.emit(ShowToast(EDIT_SUCCESS))
                 _sideEffect.emit(NavigateToDetail(id))
             }.onFailure {
                 updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
@@ -154,8 +156,8 @@ class SaleRegistrationViewModel @Inject constructor(
                 it.copy(
                     condition = fromConditionByName(product.productCondition),
                     isShippingFeeIncluded = product.isDeliveryIncluded,
-                    normalShippingFee = product.standardDeliveryFee.toString(),
-                    halfShippingFee = product.halfDeliveryFee.toString(),
+                    normalShippingFee = product.standardDeliveryFee.takeIf { it != 0 }?.toString() ?: "",
+                    halfShippingFee = product.halfDeliveryFee.takeIf { it != 0 }?.toString() ?: "",
                 )
             }
             if (product.standardDeliveryFee > 0) updateNormalShippingFeeInclusion(true)

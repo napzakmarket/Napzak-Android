@@ -22,6 +22,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -37,7 +40,7 @@ import com.napzak.market.feature.registration.R.string.normal_shipping
 import com.napzak.market.feature.registration.R.string.normal_shipping_hint
 import com.napzak.market.feature.registration.R.string.shipping_excluded
 import com.napzak.market.feature.registration.R.string.shipping_included
-import com.napzak.market.registration.component.ShippingFeeTextField
+import com.napzak.market.ui_util.bringContentIntoView
 import com.napzak.market.ui_util.noRippleClickable
 
 private const val EMPTY_STRING = ""
@@ -91,7 +94,8 @@ internal fun ShippingFeeSelector(
                     width = 1.dp,
                     color = NapzakMarketTheme.colors.gray50,
                     shape = RoundedCornerShape(14.dp),
-                ),
+                )
+                .bringContentIntoView(),
         ) {
             Column {
                 SelectorButton(
@@ -107,7 +111,11 @@ internal fun ShippingFeeSelector(
                 AnimatedVisibility(
                     visible = isShippingIncluded == false,
                 ) {
-                    Column {
+                    Column(
+                        modifier = Modifier
+                            .padding(20.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
                         ExpandedShippingFee(
                             title = stringResource(normal_shipping),
                             isChecked = isNormalShippingChecked,
@@ -117,6 +125,7 @@ internal fun ShippingFeeSelector(
                             maxPrice = NORMAL_MAX_PRICE,
                             hint = stringResource(normal_shipping_hint),
                         )
+
                         ExpandedShippingFee(
                             title = stringResource(half_priced_shipping),
                             isChecked = isHalfShippingChecked,
@@ -159,6 +168,7 @@ private fun SelectorButton(
             contentDescription = null,
             tint = Color.Unspecified,
         )
+
         Text(
             text = title,
             style = NapzakMarketTheme.typography.body14b.copy(
@@ -169,7 +179,7 @@ private fun SelectorButton(
 }
 
 @Composable
-fun ExpandedShippingFee(
+private fun ExpandedShippingFee(
     title: String,
     isChecked: Boolean,
     onCheckChange: (Boolean) -> Unit,
@@ -180,16 +190,15 @@ fun ExpandedShippingFee(
     modifier: Modifier = Modifier,
 ) {
     val checkIcon = if (isChecked) ic_checked_box else ic_unchecked_box
+    val focusRequester = remember { FocusRequester() }
 
     Row(
         modifier = modifier
-            .padding(20.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
-
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -202,6 +211,7 @@ fun ExpandedShippingFee(
                     if (isChecked) onShippingFeeChange(EMPTY_STRING)
                 },
             )
+
             Text(
                 text = title,
                 style = NapzakMarketTheme.typography.body14r.copy(
@@ -209,12 +219,19 @@ fun ExpandedShippingFee(
                 ),
             )
         }
+
         ShippingFeeTextField(
             price = shippingFee,
             onPriceChange = onShippingFeeChange,
             hint = hint,
             maxPrice = maxPrice,
-            enabled = isChecked,
+            modifier = Modifier
+                .focusRequester(focusRequester)
+                .onFocusChanged { state ->
+                    if (state.isFocused) {
+                        onCheckChange(true)
+                    }
+                },
         )
     }
 }

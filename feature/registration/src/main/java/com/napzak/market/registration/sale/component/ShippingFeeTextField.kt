@@ -1,4 +1,4 @@
-package com.napzak.market.registration.component
+package com.napzak.market.registration.sale.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.sale_price_tag
+import com.napzak.market.ui_util.EmptyTextToolbar
 import com.napzak.market.ui_util.adjustToMaxPrice
 import com.napzak.market.ui_util.priceSeparatorTransformation
 
@@ -35,11 +36,9 @@ fun ShippingFeeTextField(
     onPriceChange: (String) -> Unit,
     hint: String,
     maxPrice: Int,
-    enabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
     var priceFieldValue by remember { mutableStateOf(TextFieldValue(price)) }
-    val emptyTextToolbar = remember { com.napzak.market.ui_util.EmptyTextToolbar() }
 
     LaunchedEffect(price) {
         if (price != priceFieldValue.text) {
@@ -50,7 +49,9 @@ fun ShippingFeeTextField(
         }
     }
 
-    CompositionLocalProvider(LocalTextToolbar provides emptyTextToolbar) {
+    CompositionLocalProvider(
+        LocalTextToolbar provides EmptyTextToolbar()
+    ) {
         BasicTextField(
             value = priceFieldValue,
             onValueChange = {
@@ -59,7 +60,6 @@ fun ShippingFeeTextField(
                 onPriceChange(limited.text)
             },
             modifier = modifier,
-            enabled = enabled,
             textStyle = NapzakMarketTheme.typography.body14sb.copy(
                 color = NapzakMarketTheme.colors.gray400,
                 textAlign = TextAlign.End,
@@ -90,6 +90,7 @@ fun ShippingFeeTextField(
                         }
                         innerTextField()
                     }
+
                     Text(
                         text = stringResource(sale_price_tag),
                         style = NapzakMarketTheme.typography.body14sb.copy(
@@ -97,7 +98,7 @@ fun ShippingFeeTextField(
                         ),
                     )
                 }
-            }
+            },
         )
     }
 }
@@ -113,7 +114,6 @@ private fun ShippingFeeTextFieldPreview() {
             onPriceChange = { price = it },
             hint = "100~30,000",
             maxPrice = 30000,
-            enabled = true,
         )
     }
 }
