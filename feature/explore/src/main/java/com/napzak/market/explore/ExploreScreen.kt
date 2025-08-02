@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -42,6 +43,7 @@ import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.ic_down_chevron
+import com.napzak.market.designsystem.R.drawable.img_no_search_result
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.GenreFilterChip
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
@@ -57,6 +59,8 @@ import com.napzak.market.explore.component.GenreNavigationButton
 import com.napzak.market.explore.state.ExploreBottomSheetState
 import com.napzak.market.explore.state.ExploreUiState
 import com.napzak.market.feature.explore.R.string.explore_count
+import com.napzak.market.feature.explore.R.string.explore_empty_search_result_subtitle
+import com.napzak.market.feature.explore.R.string.explore_empty_search_result_title
 import com.napzak.market.feature.explore.R.string.explore_exclude_sold_out
 import com.napzak.market.feature.explore.R.string.explore_product
 import com.napzak.market.feature.explore.R.string.explore_search_hint
@@ -263,44 +267,48 @@ private fun ExploreSuccessScreen(
             modifier = Modifier.padding(horizontal = 20.dp),
         )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = NapzakMarketTheme.colors.gray10)
-                .padding(horizontal = 20.dp)
-                .padding(top = 15.dp, bottom = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            GenreFilterChip(
-                genreList = filteredGenres,
-                onChipClick = onGenreFilterClick,
-            )
+        if (productCount != 0 || searchTerm.isNullOrEmpty()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = NapzakMarketTheme.colors.gray10)
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 15.dp, bottom = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                GenreFilterChip(
+                    genreList = filteredGenres,
+                    onChipClick = onGenreFilterClick,
+                )
 
-            if (selectedTab == TradeType.SELL) {
+                if (selectedTab == TradeType.SELL) {
+                    BasicFilterChip(
+                        filterName = stringResource(explore_unopened),
+                        isClicked = isUnopenSelected,
+                        onChipClick = onUnopenFilterClick,
+                    )
+                }
+
                 BasicFilterChip(
-                    filterName = stringResource(explore_unopened),
-                    isClicked = isUnopenSelected,
-                    onChipClick = onUnopenFilterClick,
+                    filterName = stringResource(explore_exclude_sold_out),
+                    isClicked = isSoldOutSelected,
+                    onChipClick = onExcludeSoldOutFilterClick,
                 )
             }
 
-            BasicFilterChip(
-                filterName = stringResource(explore_exclude_sold_out),
-                isClicked = isSoldOutSelected,
-                onChipClick = onExcludeSoldOutFilterClick,
+            GenreAndProductList(
+                genreList = filteredGenres,
+                productCount = productCount,
+                productList = products,
+                sortType = sortOption,
+                onGenreButtonClick = onGenreDetailNavigate,
+                onSortOptionClick = { onSortOptionClick(sortOption) },
+                onProductClick = onProductDetailNavigate,
+                onLikeButtonClick = onLikeButtonClick,
             )
+        } else {
+            if (searchTerm.isNotEmpty()) EmptySearchResultView()
         }
-
-        GenreAndProductList(
-            genreList = filteredGenres,
-            productCount = productCount,
-            productList = products,
-            sortType = sortOption,
-            onGenreButtonClick = onGenreDetailNavigate,
-            onSortOptionClick = { onSortOptionClick(sortOption) },
-            onProductClick = onProductDetailNavigate,
-            onLikeButtonClick = onLikeButtonClick,
-        )
     }
 
     ExploreBottomSheetScreen(
@@ -314,6 +322,43 @@ private fun ExploreSuccessScreen(
         onTextChange = onGenreBottomSheetTextChange,
         onGenreSelectButtonClick = onGenreSelectButtonClick,
     )
+}
+
+@Composable
+private fun EmptySearchResultView(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Row {
+            Spacer(Modifier.weight(1.5f))
+            Icon(
+                imageVector = ImageVector.vectorResource(img_no_search_result),
+                contentDescription = null,
+                tint = Color.Unspecified,
+            )
+            Spacer(Modifier.weight(1f))
+        }
+
+        Spacer(Modifier.height(20.dp))
+
+        Text(
+            text = stringResource(explore_empty_search_result_title),
+            style = NapzakMarketTheme.typography.body16sb.copy(
+                color = NapzakMarketTheme.colors.gray300,
+            )
+        )
+
+        Spacer(Modifier.height(6.dp))
+
+        Text(
+            text = stringResource(explore_empty_search_result_subtitle),
+            style = NapzakMarketTheme.typography.caption12sb.copy(
+                color = NapzakMarketTheme.colors.gray200,
+            )
+        )
+    }
 }
 
 @Composable
