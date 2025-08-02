@@ -2,6 +2,7 @@ package com.napzak.market.registration.purchase
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,6 +23,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
@@ -56,6 +59,7 @@ import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.purchase.component.PriceNegotiationGroup
 import com.napzak.market.registration.purchase.state.PurchaseContract.PurchaseUiState
 import com.napzak.market.ui_util.bringContentIntoView
+import com.napzak.market.ui_util.clearFocusOnScrollConnection
 import com.napzak.market.ui_util.nonClickableStickyHeader
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -135,6 +139,7 @@ fun PurchaseRegistrationScreen(
     var buttonHeight by remember { with(density) { mutableStateOf(0.dp) } }
     val isImeVisible = WindowInsets.isImeVisible
     val focusManager = LocalFocusManager.current
+    val nestedScrollConnection = remember { clearFocusOnScrollConnection(focusManager) }
 
     LaunchedEffect(isImeVisible) {
         if (!isImeVisible) {
@@ -144,7 +149,15 @@ fun PurchaseRegistrationScreen(
 
     Box(
         modifier = modifier
-            .background(NapzakMarketTheme.colors.white),
+            .background(NapzakMarketTheme.colors.white)
+            .nestedScroll(nestedScrollConnection)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        focusManager.clearFocus()
+                    },
+                )
+            },
     ) {
         LazyColumn(
             modifier = Modifier
