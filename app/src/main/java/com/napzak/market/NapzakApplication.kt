@@ -3,6 +3,7 @@ package com.napzak.market
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.kakao.sdk.common.KakaoSdk
+import com.napzak.market.config.messaging.NapzakFirebaseMessaging
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
@@ -14,6 +15,7 @@ class NapzakApplication: Application() {
 
         initTimber()
         setDayMode()
+        NapzakFirebaseMessaging.fetchPushTokenFromFirebase()
     }
 
     private fun initTimber() {

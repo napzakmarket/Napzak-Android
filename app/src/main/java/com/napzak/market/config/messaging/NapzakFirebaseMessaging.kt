@@ -13,6 +13,7 @@ import android.os.Build.VERSION_CODES.O
 import android.os.Build.VERSION_CODES.TIRAMISU
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.RemoteMessage
 import com.napzak.market.R.drawable.ic_push_notification
 import com.napzak.market.local.datastore.NotificationDataStore
@@ -26,7 +27,11 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
+object NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
+    private const val TAG = "FCM - okhttp"
+    const val NOTIFICATION_CHANNEL_ID = "NAPZAK"
+    const val CHANNEL_NAME = "납작 푸시 알림 채널"
+    const val OPEN_DEEPLINK_ACTION = "com.napzak.OPEN_DEEP_LINK"
 
     @Inject
     lateinit var dataStore: NotificationDataStore
@@ -80,18 +85,37 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
         super.onNewToken(token)
         Timber.tag(TAG).d(token)
         CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val appPermission = dataStore.getNotificationPermission() == true
-                val systemPermission = isNotificationPermissionGranted() && isNotificationEnabled()
-                dataStore.setPushToken(token)
-                updatePushTokenUseCase(
-                    pushToken = token,
-                    isEnabled = systemPermission,
-                    allowMessage = appPermission,
-                )
-            } catch (e: Exception) {
-                Timber.tag(TAG).e(e, "푸시 토큰 저장 오류")
+            updatePushToken(token)
+        }
+    }
+
+    fun fetchPushTokenFromFirebase() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Timber.tag(TAG).w(task.exception, "Fetching FCM registration token failed")
+                return@addOnCompleteListener
             }
+
+            val token = task.result
+            Timber.tag(TAG).d("FCM Token: $token")
+            CoroutineScope(Dispatchers.IO).launch {
+                updatePushToken(token)
+            }
+        }
+    }
+
+    suspend fun updatePushToken(token: String) {
+        try {
+            val appPermission = dataStore.getNotificationPermission() == true
+            val systemPermission = isNotificationPermissionGranted() && isNotificationEnabled()
+            dataStore.setPushToken(token)
+            updatePushTokenUseCase(
+                pushToken = token,
+                isEnabled = systemPermission,
+                allowMessage = appPermission,
+            )
+        } catch (e: Exception) {
+            Timber.tag(TAG).e(e, "푸시 토큰 저장 오류")
         }
     }
 
@@ -117,12 +141,5 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
     private fun isNotificationEnabled(): Boolean {
         return NotificationManagerCompat.from(this).areNotificationsEnabled()
-    }
-
-    companion object {
-        private const val TAG = "FCM - okhttp"
-        const val NOTIFICATION_CHANNEL_ID = "NAPZAK"
-        const val CHANNEL_NAME = "납작 푸시 알림 채널"
-        const val OPEN_DEEPLINK_ACTION = "com.napzak.OPEN_DEEP_LINK"
     }
 }
