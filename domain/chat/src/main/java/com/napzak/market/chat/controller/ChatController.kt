@@ -1,5 +1,9 @@
 package com.napzak.market.chat.controller
 
+import com.napzak.market.chat.model.ChatSocketException
+import com.napzak.market.chat.model.ChatSocketException.ConnectionFailureException
+import com.napzak.market.chat.model.ChatSocketException.SendFailureException
+import com.napzak.market.chat.model.ChatSocketException.SubscriptionFailureException
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.chat.model.SendMessage
 import com.napzak.market.chat.repository.ChatSocketRepository
@@ -23,14 +27,13 @@ class ChatController @Inject constructor(
     private val _messageFlow = MutableSharedFlow<ReceiveMessage<*>>()
     val messageFlow = _messageFlow.asSharedFlow()
 
-    private val _errorFlow = MutableSharedFlow<Throwable>()
+    private val _errorFlow = MutableSharedFlow<ChatSocketException>()
     val errorFlow = _errorFlow.asSharedFlow()
 
     suspend fun connect(storeId: Long): Result<Unit> {
         return chatSocketRepository.connect()
-            .onSuccess {
-                createChatRoom(storeId)
-            }
+            .onSuccess { createChatRoom(storeId) }
+            .onFailure { _errorFlow.emit(ConnectionFailureException(it)) }
     }
 
     suspend fun disconnect(): Result<Unit> {
@@ -45,7 +48,7 @@ class ChatController @Inject constructor(
             chatSocketRepository.subscribeChatRoom(roomId, storeId).mapCatching { flow ->
                 val job = CoroutineScope(Dispatchers.Default).launch {
                     flow
-                        .catch { _errorFlow.emit(it) }
+                        .catch { _errorFlow.emit(SubscriptionFailureException(it)) }
                         .collect { message ->
                             _messageFlow.emit(message)
                         }
@@ -66,7 +69,7 @@ class ChatController @Inject constructor(
         return chatSocketRepository.subscribeCreateChatRoom(storeId).mapCatching { flow ->
             val job = CoroutineScope(Dispatchers.Default).launch {
                 flow
-                    .catch { _errorFlow.emit(it) }
+                    .catch { _errorFlow.emit(SubscriptionFailureException(it)) }
                     .collect { roomId ->
                         subscribeChatRoom(roomId, storeId)
                     }
@@ -79,7 +82,7 @@ class ChatController @Inject constructor(
         try {
             chatSocketRepository.sendChat(message)
         } catch (e: Exception) {
-            _errorFlow.emit(e)
+            _errorFlow.emit(SendFailureException(e))
         }
     }
 
