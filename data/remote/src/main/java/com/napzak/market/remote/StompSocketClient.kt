@@ -179,7 +179,7 @@ class StompSocketClientImpl @Inject constructor(
         val pingDelay = 30000L
         pingJob = serviceScope.launch {
             try {
-                while (session != null) {
+                while (session != null && _connectionState.value == CONNECTED) {
                     delay(pingDelay)
                     session?.send(
                         headers = StompSendHeaders(destination = destination),
