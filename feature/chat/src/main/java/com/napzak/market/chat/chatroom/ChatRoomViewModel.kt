@@ -373,9 +373,8 @@ internal class ChatRoomViewModel @Inject constructor(
             enterChatRoom(roomId)
             collectMessages(roomId)
             fetchChatRoomDetail(productId, roomId)
-            subscribeChatRoomUseCase(productId, roomId)
+            subscribeChatRoomUseCase(roomId, storeId)
             sendProductMessage()
-
         } catch (e: Exception) {
             Timber.tag(TAG).e(e, "채팅방 생성에 실패했습니다.")
             throw e
