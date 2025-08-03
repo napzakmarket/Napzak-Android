@@ -5,12 +5,10 @@ import com.napzak.market.chat.dto.ChatMessageResponse
 import kotlinx.coroutines.flow.Flow
 
 interface ChatSocketClient {
-    val messageFlow: Flow<ChatMessageResponse>
-    val errorFlow: Flow<Exception>
+    val errorFlow: Flow<Throwable>
     suspend fun connect()
     suspend fun disconnect()
-    suspend fun subscribeChatRoom(roomId: Long)
-    suspend fun unsubscribeChatRoom(roomId: Long)
-    suspend fun subscribeCreateChatRoom(storeId: Long)
+    suspend fun subscribeChatRoom(roomId: Long): Flow<ChatMessageResponse>
+    suspend fun subscribeCreateChatRoom(storeId: Long): Flow<Long>
     suspend fun sendMessage(request: ChatMessageRequest)
 }

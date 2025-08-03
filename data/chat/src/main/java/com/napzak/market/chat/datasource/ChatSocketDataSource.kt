@@ -2,15 +2,13 @@ package com.napzak.market.chat.datasource
 
 import com.napzak.market.chat.client.ChatSocketClient
 import com.napzak.market.chat.dto.ChatMessageRequest
-import com.napzak.market.chat.dto.ChatMessageResponse
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ChatSocketDataSource @Inject constructor(
     private val chatSocketClient: ChatSocketClient,
 ) {
-    val messageFlow: Flow<ChatMessageResponse> = chatSocketClient.messageFlow
-    val errorFlow: Flow<Exception> = chatSocketClient.errorFlow
+    val errorFlow: Flow<Throwable> = chatSocketClient.errorFlow
 
     suspend fun connect() = chatSocketClient.connect()
 
