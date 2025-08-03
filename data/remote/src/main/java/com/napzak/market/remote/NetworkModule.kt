@@ -167,13 +167,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideSocketManager(
-        webSocketClient: OkHttpWebSocketClient,
-        json: Json
-    ): StompSocketManager = StompSocketManagerImpl(webSocketClient, json)
-
-    @Provides
-    @Singleton
     fun provideSocketClient(
         webSocketClient: OkHttpWebSocketClient,
         json: Json
