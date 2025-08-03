@@ -46,8 +46,7 @@ internal fun ChatRoomItemColumn(
             .data(opponentImageUrl)
             .build()
     }
-
-    val reversedChatItem = remember(chatItems) { chatItems.reversed() }
+    val reversedChatItem = chatItems.asReversed()
 
     LazyColumn(
         state = listState,

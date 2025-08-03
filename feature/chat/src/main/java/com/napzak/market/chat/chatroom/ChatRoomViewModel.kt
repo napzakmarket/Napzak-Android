@@ -153,14 +153,18 @@ internal class ChatRoomViewModel @Inject constructor(
     }
 
     /**
-     * TODO: 페이징 처리 + 채팅 기록 저장 방식 수정 (Collection 교체 혹은 저장 방향 수정)
+     * TODO: 페이징 처리
      *
      * 과거 채팅 기록들을 불러옵니다.
      */
     private suspend fun fetchMessages(roomId: Long) {
         chatRepository.getChatRoomMessages(roomId)
             .onSuccess { messages ->
-                addMessages(messages)
+                val reversedMessage = messages.asReversed()
+                if (reversedMessage.any { it is ReceiveMessage.Notice }) {
+                    _chatRoomState.update { it.copy(isRoomWithdrawn = true) }
+                }
+                addMessages(reversedMessage)
             }
             .getOrThrow()
     }
