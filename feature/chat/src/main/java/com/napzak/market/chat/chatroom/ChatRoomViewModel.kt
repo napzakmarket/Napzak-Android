@@ -172,6 +172,7 @@ internal class ChatRoomViewModel @Inject constructor(
         try {
             getChatFlowUseCase(roomId).collect { message ->
                 if (message.roomId == roomId) {
+                    _sideEffect.send(ChatRoomSideEffect.OnReceiveChatMessage)
                     addMessages(listOf(message))
                 }
             }
