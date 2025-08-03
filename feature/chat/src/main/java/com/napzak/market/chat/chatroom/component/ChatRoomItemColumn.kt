@@ -82,11 +82,11 @@ internal fun ChatRoomItemColumn(
 @Composable
 private fun ChatItemRenderer(
     chatItem: ReceiveMessage<*>,
+    opponentImageRequest: ImageRequest,
+    onItemClick: () -> Unit,
     modifier: Modifier = Modifier,
     nextChatItem: ReceiveMessage<*>? = null,
     previousChatItem: ReceiveMessage<*>? = null,
-    opponentImageRequest: ImageRequest,
-    onItemClick: () -> Unit,
 ) {
     val isPreviousItemProduct = previousChatItem is ReceiveMessage.Product
     val isChatDirectionEqualsPrevious = chatItem.isMessageOwner == previousChatItem?.isMessageOwner
