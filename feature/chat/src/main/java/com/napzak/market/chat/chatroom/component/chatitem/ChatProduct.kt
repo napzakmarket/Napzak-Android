@@ -76,7 +76,7 @@ internal fun ChatProduct(
             ChatProductDetailView(
                 genre = genre,
                 name = name,
-                price = price,
+                price = price.formatToPriceString(),
                 modifier = Modifier.padding(horizontal = 20.dp),
             )
             Spacer(
