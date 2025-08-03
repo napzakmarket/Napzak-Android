@@ -79,7 +79,9 @@ class ChatListViewModel @Inject constructor(
                 if (!isCollectingMessage.value) {
                     isCollectingMessage.update { true }
                     getAllChatFlowsUseCase().collect { message ->
-                        updateChatRoom(message)
+                        if (message.isMessage) {
+                            updateChatRoom(message)
+                        }
                     }
                 }
             }
