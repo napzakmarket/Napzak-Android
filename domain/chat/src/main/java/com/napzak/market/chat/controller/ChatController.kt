@@ -10,6 +10,7 @@ import com.napzak.market.chat.repository.ChatSocketRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
@@ -21,6 +22,7 @@ import javax.inject.Singleton
 class ChatController @Inject constructor(
     private val chatSocketRepository: ChatSocketRepository,
 ) {
+    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val roomIdSet = mutableSetOf<Long>()
     private val jobMap = mutableMapOf<Long, Job>()
 
@@ -47,14 +49,14 @@ class ChatController @Inject constructor(
     suspend fun subscribeChatRoom(roomId: Long, storeId: Long): Result<Unit> {
         return if (roomIdSet.add(roomId)) {
             chatSocketRepository.subscribeChatRoom(roomId, storeId).mapCatching { flow ->
-                val job = CoroutineScope(Dispatchers.Default).launch {
+                val job = coroutineScope.launch {
                     flow
                         .catch { _errorFlow.emit(SubscriptionFailureException(it)) }
                         .collect { message ->
                             _messageFlow.emit(message)
                         }
                 }
-                jobMap[roomId] = job.apply { this.start() }
+                jobMap[roomId] = job
             }
         } else {
             Result.success(Unit)
@@ -69,7 +71,7 @@ class ChatController @Inject constructor(
 
     private suspend fun createChatRoom(storeId: Long): Result<Unit> {
         return chatSocketRepository.subscribeCreateChatRoom(storeId).mapCatching { flow ->
-            val job = CoroutineScope(Dispatchers.Default).launch {
+            val job = coroutineScope.launch {
                 flow
                     .catch { _errorFlow.emit(SubscriptionFailureException(it)) }
                     .collect { roomId ->
