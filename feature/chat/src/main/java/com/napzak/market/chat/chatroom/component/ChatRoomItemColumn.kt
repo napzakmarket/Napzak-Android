@@ -1,7 +1,6 @@
 package com.napzak.market.chat.chatroom.component
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -53,11 +52,11 @@ internal fun ChatRoomItemColumn(
     LazyColumn(
         state = listState,
         reverseLayout = true,
-        contentPadding = PaddingValues(vertical = 30.dp),
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp),
     ) {
+        item { Spacer(Modifier.height(30.dp)) }
         itemsIndexed(reversedChatItem, key = { _, item -> item.messageId }) { index, chatItem ->
             val nextChatItem =
                 if (index > 0) reversedChatItem[index - 1] else null
@@ -77,6 +76,7 @@ internal fun ChatRoomItemColumn(
                 previousChatItem = previousChatItem,
             )
         }
+        item { Spacer(Modifier.height(30.dp)) }
     }
 }
 
