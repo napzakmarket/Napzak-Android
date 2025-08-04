@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
@@ -22,7 +23,7 @@ import javax.inject.Singleton
 class ChatController @Inject constructor(
     private val chatSocketRepository: ChatSocketRepository,
 ) {
-    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private var coroutineScope: CoroutineScope? = null
     private val roomIdSet = mutableSetOf<Long>()
     private val jobMap = mutableMapOf<Long, Job>()
 
@@ -33,6 +34,7 @@ class ChatController @Inject constructor(
     val errorFlow = _errorFlow.asSharedFlow()
 
     suspend fun connect(storeId: Long): Result<Unit> {
+        coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
         return chatSocketRepository.connect()
             .onSuccess { createChatRoom(storeId) }
             .onFailure { _errorFlow.emit(ConnectionFailureException(it)) }
@@ -42,20 +44,21 @@ class ChatController @Inject constructor(
         jobMap.forEach { (_, job) -> job.cancel() }
         jobMap.clear()
         roomIdSet.clear()
+        coroutineScope?.cancel()
         return chatSocketRepository.disconnect()
     }
 
     suspend fun subscribeChatRoom(roomId: Long, storeId: Long): Result<Unit> {
         return if (roomIdSet.add(roomId)) {
             chatSocketRepository.subscribeChatRoom(roomId, storeId).mapCatching { flow ->
-                val job = coroutineScope.launch {
+                val job = coroutineScope?.launch {
                     flow
                         .catch { _errorFlow.emit(SubscriptionFailureException(it)) }
                         .collect { message ->
                             _messageFlow.emit(message)
                         }
                 }
-                jobMap[roomId] = job
+                job?.let { jobMap[roomId] = it } ?: Unit
             }
         } else {
             Result.success(Unit)
@@ -70,14 +73,14 @@ class ChatController @Inject constructor(
 
     private suspend fun createChatRoom(storeId: Long): Result<Unit> {
         return chatSocketRepository.subscribeCreateChatRoom(storeId).mapCatching { flow ->
-            val job = coroutineScope.launch {
+            val job = coroutineScope?.launch {
                 flow
                     .catch { _errorFlow.emit(SubscriptionFailureException(it)) }
                     .collect { roomId ->
                         subscribeChatRoom(roomId, storeId)
                     }
             }
-            jobMap[CREATE_JOB_ID] = job
+            job?.let { jobMap[CREATE_JOB_ID] = it } ?: Unit
         }
     }
 
