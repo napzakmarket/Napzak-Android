@@ -39,11 +39,10 @@ class ChatController @Inject constructor(
     }
 
     suspend fun disconnect(): Result<Unit> {
-        return chatSocketRepository.disconnect().onSuccess {
-            jobMap.forEach { (_, job) -> job.cancel() }
-            jobMap.clear()
-            roomIdSet.clear()
-        }
+        jobMap.forEach { (_, job) -> job.cancel() }
+        jobMap.clear()
+        roomIdSet.clear()
+        return chatSocketRepository.disconnect()
     }
 
     suspend fun subscribeChatRoom(roomId: Long, storeId: Long): Result<Unit> {
