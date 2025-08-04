@@ -20,14 +20,14 @@ class ChatSocketService @Inject constructor(
 
     suspend fun subscribeChatRoom(roomId: Long): Flow<ChatMessageResponse> {
         return stompSocketClient.subscribe(
-            destination = DESTINATION_SUBSCRIBE_CHAT_ROOM.format(roomId),
+            destination = Destination.SUBSCRIBE_CHAT_ROOM.format(roomId),
             deserializer = ChatMessageResponse.serializer(),
         )
     }
 
     suspend fun sendMessage(request: ChatMessageRequest) {
         stompSocketClient.send(
-            destination = DESTINATION_SEND_CHAT,
+            destination = Destination.SEND_CHAT,
             request = request,
             serializer = ChatMessageRequest.serializer(),
         )
@@ -35,15 +35,18 @@ class ChatSocketService @Inject constructor(
 
     suspend fun subscribeCreateChatRoom(storeId: Long): Flow<Long> {
         return stompSocketClient.subscribe(
-            destination = DESTINATION_SUBS_CREATE_CHAT_ROOMS.format(storeId),
+            destination = Destination.SUBS_CREATE_CHAT_ROOMS.format(storeId),
             deserializer = Long.serializer()
         )
     }
 
+    private object Destination {
+        const val SEND_CHAT = "/pub/chat/send"
+        const val SUBSCRIBE_CHAT_ROOM = "/topic/chat.room.%s"
+        const val SUBS_CREATE_CHAT_ROOMS = "/queue/chat.room-created.%s"
+    }
+
     companion object {
         private const val BASE_HOST = "/"
-        private const val DESTINATION_SEND_CHAT = "/pub/chat/send"
-        private const val DESTINATION_SUBSCRIBE_CHAT_ROOM = "/topic/chat.room.%s"
-        private const val DESTINATION_SUBS_CREATE_CHAT_ROOMS = "/queue/chat.room-created.%s"
     }
 }
