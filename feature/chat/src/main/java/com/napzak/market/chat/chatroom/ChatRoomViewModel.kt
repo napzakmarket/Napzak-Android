@@ -15,6 +15,7 @@ import com.napzak.market.chat.repository.ChatSocketRepository
 import com.napzak.market.common.state.UiState
 import com.napzak.market.presigned_url.model.UploadImage
 import com.napzak.market.presigned_url.usecase.UploadImagesUseCase
+import com.napzak.market.store.repository.StoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +33,7 @@ internal class ChatRoomViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val chatRepository: ChatRoomRepository,
     private val chatSocketRepository: ChatSocketRepository,
+    private val storeRepository: StoreRepository,
     private val uploadImagesUseCase: UploadImagesUseCase
 ) : ViewModel() {
     private val chatMessageIdSet = mutableSetOf<Long>()
@@ -40,8 +42,8 @@ internal class ChatRoomViewModel @Inject constructor(
     private val _chatItems = MutableStateFlow<List<ReceiveMessage<*>>>(emptyList())
     val chatItems: StateFlow<List<ReceiveMessage<*>>> = _chatItems.asStateFlow()
 
-    private val _chatRoomState = MutableStateFlow<UiState<ChatRoomUiState>>(UiState.Loading)
-    val chatRoomState: StateFlow<UiState<ChatRoomUiState>> = _chatRoomState.asStateFlow()
+    private val _chatRoomState = MutableStateFlow(ChatRoomUiState())
+    val chatRoomState = _chatRoomState.asStateFlow()
 
     private val _sideEffect = Channel<ChatRoomSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
@@ -58,18 +60,32 @@ internal class ChatRoomViewModel @Inject constructor(
         get() = requireNotNull(savedStateHandle.get<Long>(PRODUCT_ID_KEY))
 
     private val _chatRoomStateAsSuccess
-        get() = (_chatRoomState.value as UiState.Success).data
+        get() = (_chatRoomState.value.chatRoomState as UiState.Success).data
 
     /**
      * [SavedStateHandle]에 저장된 값들을 활용하여 채팅방 정보들을 준비합니다.
      */
     fun prepareChatRoom() = viewModelScope.launch {
+        fetchStoreId()
         runCatching { prepareChatRoomWithRoomId(_roomId) }
             .recoverCatching { prepareChatRoomWithProductId(_productId) }
             .onFailure { e ->
-                _chatRoomState.update { UiState.Failure(e.message.toString()) }
+                _chatRoomState.update {
+                    it.copy(chatRoomState = UiState.Failure(e.message.toString()))
+                }
                 Timber.e(e)
             }
+    }
+
+    /**
+     * [StoreRepository]를 통해 내 상점 ID를 불러옵니다.
+     *
+     * 불러온 상점 ID는 메시지의 방향을 설정하기 위해 사용합니다.
+     */
+    private fun fetchStoreId() = viewModelScope.launch {
+        _chatRoomState.update {
+            it.copy(storeId = storeRepository.fetchStoreInfo().getOrNull()?.storeId)
+        }
     }
 
     /**
@@ -120,11 +136,13 @@ internal class ChatRoomViewModel @Inject constructor(
         chatRepository.getChatRoomInformation(productId, roomId)
             .onSuccess { response ->
                 _chatRoomState.update {
-                    UiState.Success(
-                        ChatRoomUiState(
-                            roomId = response.roomId,
-                            storeBrief = response.storeBrief,
-                            productBrief = response.productBrief,
+                    it.copy(
+                        chatRoomState = UiState.Success(
+                            ChatRoomState(
+                                roomId = response.roomId,
+                                storeBrief = response.storeBrief,
+                                productBrief = response.productBrief,
+                            )
                         )
                     )
                 }
@@ -149,7 +167,7 @@ internal class ChatRoomViewModel @Inject constructor(
      */
     private fun collectMessages(roomId: Long) = viewModelScope.launch {
         try {
-            val storeId = requireNotNull(_chatRoomStateAsSuccess.storeBrief?.storeId)
+            val storeId = requireNotNull(_chatRoomState.value.storeId)
 
             if (messageFlow == null) {
                 messageFlow = chatSocketRepository.getMessageFlow(storeId)
@@ -175,15 +193,49 @@ internal class ChatRoomViewModel @Inject constructor(
     private fun addMessages(newMessages: List<ReceiveMessage<*>>) {
         var added = false
         newMessages.forEach { message ->
-            if (chatMessageIdSet.add(message.messageId)) {
-                chatMessageList.add(preprocessMessage(message))
-                added = true
+            when (message) {
+                is ReceiveMessage.Join -> {
+                    chatMessageList.forEachIndexed { index, record ->
+                        if (with(record) { isMessage && isMessageOwner == true && isRead }) {
+                            return@forEachIndexed
+                        }
+                        chatMessageList[index] =
+                            if (with(record) { isMessage && isMessageOwner == true && !isRead }) {
+                                runCatching {
+                                    (record as ReceiveMessage.Text).copy(isRead = true)
+                                }.recoverCatching {
+                                    (record as ReceiveMessage.Image).copy(isRead = true)
+                                }.recoverCatching {
+                                    (record as ReceiveMessage.Product).copy(isRead = true)
+                                }.getOrNull() ?: record
+                            } else record
+
+                    }
+
+                    _chatRoomState.update { it.copy(isOpponentOnline = true) }
+                    _chatItems.update { chatMessageList.toList() }
+                }
+
+                is ReceiveMessage.Leave -> {
+                    _chatRoomState.update { it.copy(isOpponentOnline = false) }
+                }
+
+                else -> {
+                    if (message is ReceiveMessage.Notice) {
+                        _chatRoomState.update { it.copy(isRoomWithdrawn = true) }
+                    }
+
+                    if (chatMessageIdSet.add(message.messageId)) {
+                        chatMessageList.add(preprocessMessage(message))
+                        added = true
+                    }
+                }
             }
         }
 
         if (added) {
             chatMessageList.sortBy { it.messageId }
-            _chatItems.update { chatMessageList.reversed().toList() }
+            _chatItems.update { chatMessageList.toList() }
         }
     }
 
@@ -196,8 +248,7 @@ internal class ChatRoomViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 onProductChanged()
-                val chatRoomState = (_chatRoomState.value as UiState.Success).data
-                val roomId = chatRoomState.roomId ?: return@launch
+                val roomId = _chatRoomStateAsSuccess.roomId ?: return@launch
                 sendMessage(SendMessage.Text(roomId, text))
                 chat = ""
             } catch (e: Exception) {
@@ -281,14 +332,15 @@ internal class ChatRoomViewModel @Inject constructor(
      * 쿼리 파라미터를 없앱니다.
      */
     private fun preprocessMessage(message: ReceiveMessage<*>): ReceiveMessage<*> {
+        val isRead = message.isMessageOwner == false || _chatRoomState.value.isOpponentOnline
 
         return when (message) {
-            is ReceiveMessage.Text -> message.copy(isRead = !message.isMessageOwner)
-            is ReceiveMessage.Product -> message.copy(isRead = !message.isMessageOwner)
+            is ReceiveMessage.Text -> message.copy(isRead = isRead)
+            is ReceiveMessage.Product -> message.copy(isRead = isRead)
             is ReceiveMessage.Image -> {
                 message.copy(
                     imageUrl = message.imageUrl.toUri().toString().substringBefore("?"),
-                    isRead = !message.isMessageOwner
+                    isRead = isRead
                 )
             }
 
@@ -302,7 +354,7 @@ internal class ChatRoomViewModel @Inject constructor(
      * 각 과정에서 에러가 발생하면 예외를 던집니다.
      * 1. 채팅방을 생성합니다. 이 과정에서 채팅방의 ID를 반환받습니다.
      * 2. 생성된 채팅방에 입장합니다.
-     * 3. 채팅방 상태의 `roomId`를 업데이트합니다.
+     * 3. 채팅방 상태를 업데이트합니다.
      * 3. 채팅방에 대한 메시지 채널을 구독합니다.
      * 4. 채팅방 채널을 통해 제품 정보를 전송합니다.
      */
@@ -313,9 +365,7 @@ internal class ChatRoomViewModel @Inject constructor(
         try {
             enterChatRoom(roomId)
             collectMessages(roomId)
-            _chatRoomState.update { currentState ->
-                UiState.Success((currentState as UiState.Success).data.copy(roomId = roomId))
-            }
+            fetchChatRoomDetail(productId, roomId)
             with(chatSocketRepository) {
                 subscribeChatRoom(roomId)
                 sendProductMessage()
@@ -344,9 +394,12 @@ internal class ChatRoomViewModel @Inject constructor(
      * @return 채팅방 ID
      */
     private suspend fun enterChatRoom(roomId: Long): Long =
-        chatRepository.enterChatRoom(roomId).onSuccess {
+        chatRepository.enterChatRoom(roomId).mapCatching { (productId, isOnline) ->
             Timber.tag(TAG).d("채팅방 입장 및 구독 시작함")
+            _chatRoomState.update { it.copy(isOpponentOnline = isOnline) }
+            productId
         }.getOrThrow()
+
 
     /**
      * 현재 채팅방에 접속 중이지 않음을 서버에 알리기 위해 호춣합니다.

@@ -13,6 +13,7 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.notification.repository.NotificationRepository
 import com.napzak.market.notification.usecase.GetNotificationSettingsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,14 +35,18 @@ class ChatListViewModel @Inject constructor(
     val notificationState = _notificationState.asStateFlow()
 
     private var _chatRoomPair by mutableStateOf(mapOf<Long, ChatRoom>() to listOf<ChatRoom>())
-    private var _myStoreId: Long? = null
-
     private var _messageFlow: Flow<ReceiveMessage<*>>? = null
+    private val _storeIdFlow = Channel<Long>()
 
-    fun fetchChatRooms() = viewModelScope.launch {
+    fun prepareChatRooms() {
+        fetchChatRooms()
+        collectChatMessages()
+    }
+
+    private fun fetchChatRooms() = viewModelScope.launch {
         chatRepository.getChatRooms()
             .onSuccess { (myStoreId, chatRooms) ->
-                _myStoreId = myStoreId
+                _storeIdFlow.trySend(myStoreId)
 
                 if (chatRooms.isEmpty()) {
                     _chatRoomsState.update { UiState.Empty }
@@ -61,30 +66,28 @@ class ChatListViewModel @Inject constructor(
                 _chatRoomPair = map to list
                 _chatRoomsState.update { UiState.Success(list) }
             }
-            .onFailure { error ->
-                _chatRoomsState.update { UiState.Failure(error.message.toString()) }
+            .onFailure { e ->
+                Timber.tag(TAG).e(e)
+                _chatRoomsState.update { UiState.Failure(e.message.toString()) }
             }
     }
 
-    fun collectChatMessages() {
-        viewModelScope.launch {
-            try {
-                if (_messageFlow == null) {
-                    val storeId = requireNotNull(_myStoreId) { "myStoreId가 null입니다" }
-                    _messageFlow = chatSocketRepository.getMessageFlow(storeId)
-                    _messageFlow?.collect { message -> updateChatRoom(message) }
-                }
-            } catch (e: Exception) {
-                Timber.e(e)
+    private fun collectChatMessages() = viewModelScope.launch {
+        try {
+            val storeId = _storeIdFlow.receive()
+            if (_messageFlow == null) {
+                _messageFlow = chatSocketRepository.getMessageFlow(storeId)
+                _messageFlow?.collect { message -> updateChatRoom(message) }
             }
+        } catch (e: Exception) {
+            Timber.tag(TAG).e(e)
+            _chatRoomsState.update { UiState.Failure(e.message.toString()) }
         }
     }
 
     private fun updateChatRoom(message: ReceiveMessage<*>) {
         try {
-            val roomId = message.roomId
-                ?: throw IllegalStateException("메시지에 roomId가 없습니다")
-
+            val roomId = requireNotNull(message.roomId) { "메시지에 roomId가 없습니다" }
             val chatRoomMap = _chatRoomPair.first
             val chatRoomList = _chatRoomPair.second
 

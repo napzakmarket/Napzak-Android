@@ -9,7 +9,9 @@
       "title": "슈가슈가룬 쇼콜라 브라이스 인형",
       "price": 450000,
       "isPriceNegotiable": true,
-      "genreName": "브라이스"
+      "genreName": "브라이스",
+      "productOwnerId": 3,
+      "isMyProduct": false
     },
     "storeInfo": {
       "storeId": 2,

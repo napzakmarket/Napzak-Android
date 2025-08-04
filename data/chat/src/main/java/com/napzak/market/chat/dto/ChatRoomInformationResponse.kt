@@ -18,6 +18,8 @@ data class ChatRoomInformationResponse(
         @SerialName("price") val price: Int,
         @SerialName("isPriceNegotiable") val isPriceNegotiable: Boolean,
         @SerialName("genreName") val genreName: String,
+        @SerialName("productOwnerId") val productOwnerId: Long,
+        @SerialName("isMyProduct") val isMyProduct: Boolean,
     )
 
     @Serializable

@@ -1,6 +1,5 @@
 package com.napzak.market.chat.chatroom.component.chatitem
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,11 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_room_is_not_read
@@ -89,17 +87,8 @@ private fun ProfileImage(
     modifier: Modifier = Modifier,
 ) {
     val shape = CircleShape
-    // TODO: 주석 해제 및 Image 삭제
-    /*AsyncImage(
+    AsyncImage(
         model = imageRequest,
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-        modifier = modifier
-            .size(40.dp)
-            .clip(shape)
-    )*/
-    Image(
-        imageVector = ImageVector.vectorResource(com.napzak.market.designsystem.R.drawable.ic_product_sell_complete),
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = modifier

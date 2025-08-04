@@ -85,4 +85,31 @@ sealed class ReceiveMessage<T>(
         isRead = true,
         isMessageOwner = null,
     )
+
+    // TODO: 중복되는 값 초기화 제거
+    data class Join(
+        override val roomId: Long?,
+        override val messageId: Long,
+    ) : ReceiveMessage<Unit>(
+        message = Unit,
+        roomId = roomId,
+        messageId = messageId,
+        timeStamp = "",
+        isRead = true,
+        isMessageOwner = null,
+    )
+
+    data class Leave(
+        override val roomId: Long?,
+        override val messageId: Long,
+    ) : ReceiveMessage<Unit>(
+        message = Unit,
+        roomId = roomId,
+        messageId = messageId,
+        timeStamp = "",
+        isRead = true,
+        isMessageOwner = null,
+    )
+
+    val isMessage: Boolean get() = this is Text || this is Image || this is Product
 }

@@ -11,7 +11,7 @@ interface ChatRoomRepository {
 
     suspend fun createChatRoom(productId: Long, receiverId: Long): Result<Long>
     suspend fun getChatRoomMessages(roomId: Long): Result<List<ReceiveMessage<*>>>
-    suspend fun enterChatRoom(roomId: Long): Result<Long>
+    suspend fun enterChatRoom(roomId: Long): Result<Pair<Long, Boolean>>
     suspend fun leaveChatRoom(roomId: Long): Result<Unit>
     suspend fun withdrawChatRoom(roomId: Long): Result<Unit>
     suspend fun patchChatRoomProduct(roomId: Long, productId: Long): Result<Long>
