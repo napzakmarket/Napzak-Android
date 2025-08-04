@@ -72,7 +72,7 @@ class StompSocketClientImpl @Inject constructor(
      */
     override suspend fun connect(host: String): Unit = connectMutex.withLock {
         try {
-            if (session != null && _connectionState.value != DISCONNECTED) {
+            if (_connectionState.value != DISCONNECTED) {
                 logSuccess("CONNECT", "이미 소켓이 연결되었습니다.")
                 return@withLock
             }
