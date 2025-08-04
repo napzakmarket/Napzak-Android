@@ -7,4 +7,6 @@ import kotlinx.serialization.Serializable
 data class ChatRoomEnterResponse(
     @SerialName("productId")
     val productId: Long,
+    @SerialName("onlineStoreIds")
+    val onlineStoreIds: List<Long>,
 )

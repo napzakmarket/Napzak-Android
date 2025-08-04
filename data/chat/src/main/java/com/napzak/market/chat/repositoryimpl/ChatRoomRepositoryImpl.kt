@@ -18,12 +18,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
         roomId: Long?,
     ): Result<ChatRoomInformation> {
         return suspendRunCatching {
-            val response = chatRoomDataSource.getChatRoomInformation(productId, roomId)
-            with(response.data) {
-                val productBrief = productInfo.toDomain()
-                val storeBrief = storeInfo.toDomain()
-                ChatRoomInformation(roomId, productBrief, storeBrief)
-            }
+            chatRoomDataSource.getChatRoomInformation(productId, roomId).data.toDomain()
         }
     }
 
@@ -49,10 +44,10 @@ class ChatRoomRepositoryImpl @Inject constructor(
 
     override suspend fun enterChatRoom(
         roomId: Long,
-    ): Result<Long> {
+    ): Result<Pair<Long, Boolean>> {
         return suspendRunCatching {
             val response = chatRoomDataSource.enterChatRoom(roomId)
-            response.data.productId
+            response.data.productId to response.data.onlineStoreIds.isNotEmpty()
         }
     }
 

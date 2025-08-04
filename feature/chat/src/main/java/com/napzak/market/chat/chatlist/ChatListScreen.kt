@@ -59,9 +59,8 @@ internal fun ChatListRoute(
         NotificationManagerCompat.from(context).areNotificationsEnabled()
 
     LaunchedEffect(Unit) {
-        viewModel.fetchChatRooms()
+        viewModel.prepareChatRooms()
         viewModel.checkAndSetNotificationModal(isSystemPermissionGranted)
-        viewModel.collectChatMessages()
     }
 
     ChatListScreen(
