@@ -34,6 +34,7 @@ import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.img_empty_wishlist
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
+import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
@@ -105,6 +106,7 @@ private fun WishlistScreen(
 ) {
     when (uiState.loadState) {
         is UiState.Loading -> {
+            NapzakLoadingOverlay(modifier)
         }
 
         is UiState.Empty -> {
