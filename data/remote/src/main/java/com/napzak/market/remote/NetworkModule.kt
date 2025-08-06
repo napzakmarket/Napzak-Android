@@ -2,7 +2,6 @@ package com.napzak.market.remote
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.napzak.market.local.datastore.TokenDataStore
-import com.napzak.market.remote.qualifier.Chat
 import com.napzak.market.remote.qualifier.JWT
 import com.napzak.market.remote.qualifier.NoAuth
 import com.napzak.market.remote.qualifier.S3
@@ -13,7 +12,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import data.remote.BuildConfig.BASE_URL
-import data.remote.BuildConfig.CHAT_URL
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
@@ -125,18 +123,6 @@ object NetworkModule {
         factory: Converter.Factory
     ): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
-        .client(client)
-        .addConverterFactory(factory)
-        .build()
-
-    @Provides
-    @Chat
-    @Singleton
-    fun provideWebSocketRetrofit(
-        @JWT client: OkHttpClient,
-        factory: Converter.Factory,
-    ): Retrofit = Retrofit.Builder()
-        .baseUrl(CHAT_URL)
         .client(client)
         .addConverterFactory(factory)
         .build()
