@@ -49,7 +49,10 @@ internal class WishlistViewModel @Inject constructor(
             TradeType.SELL -> {
                 productInterestRepository.getInterestSellProducts(null)
                     .onSuccess {
-                        updateLoadState(UiState.Success(WishListProducts(it.first, it.second)))
+                        val updateState =
+                            if (it.first.isEmpty()) UiState.Empty
+                            else UiState.Success(WishListProducts(it.first, it.second))
+                        updateLoadState(updateState)
                         lastSuccessfulLoadedProducts = it
                     }
                     .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
@@ -58,7 +61,10 @@ internal class WishlistViewModel @Inject constructor(
             TradeType.BUY -> {
                 productInterestRepository.getInterestBuyProducts(null)
                     .onSuccess {
-                        updateLoadState(UiState.Success(WishListProducts(it.first, it.second)))
+                        val updateState =
+                            if (it.first.isEmpty()) UiState.Empty
+                            else UiState.Success(WishListProducts(it.first, it.second))
+                        updateLoadState(updateState)
                         lastSuccessfulLoadedProducts = it
                     }
                     .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
