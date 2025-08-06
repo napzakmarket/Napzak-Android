@@ -83,7 +83,15 @@ internal fun ChatRoomRoute(
         viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
-                    is ChatRoomSideEffect.OnSendChatMessage -> chatListState.scrollToItem(0)
+                    is ChatRoomSideEffect.OnSendChatMessage -> {
+                        chatListState.scrollToItem(0)
+                    }
+
+                    is ChatRoomSideEffect.OnReceiveChatMessage -> {
+                        if (chatListState.firstVisibleItemIndex <= 0) {
+                            chatListState.scrollToItem(0)
+                        }
+                    }
                     is ChatRoomSideEffect.OnWithdrawChatRoom -> onNavigateUp()
                 }
             }
@@ -201,7 +209,7 @@ internal fun ChatRoomScreen(
 
                 ChatRoomInputField(
                     text = chat,
-                    enabled = chatRoomState.isChatDisabled,
+                    enabled = !chatRoomState.isChatDisabled,
                     onSendClick = onSendChatClick,
                     onTextChange = onChatChange,
                     onPhotoSelect = onPhotoSelect,

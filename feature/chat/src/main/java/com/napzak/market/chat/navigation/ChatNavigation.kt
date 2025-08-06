@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.navOptions
 import com.napzak.market.chat.chatlist.ChatListRoute
 import com.napzak.market.chat.chatroom.ChatRoomRoute
 import com.napzak.market.common.navigation.MainTabRoute
@@ -21,10 +22,13 @@ fun NavHostController.navigateToChatList(
 fun NavHostController.navigateToChatRoom(
     chatRoomId: Long? = null,
     productId: Long? = null,
-    navOptions: NavOptions? = null,
 ) = this.navigate(
     route = ChatRoom(chatRoomId, productId),
-    navOptions = navOptions,
+    navOptions = navOptions {
+        popUpTo<ChatRoom> {
+            inclusive = true
+        }
+    },
 )
 
 fun NavGraphBuilder.chatGraph(

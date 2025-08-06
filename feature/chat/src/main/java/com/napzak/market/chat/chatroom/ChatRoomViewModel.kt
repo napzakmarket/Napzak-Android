@@ -11,14 +11,15 @@ import com.napzak.market.chat.chatroom.type.ChatCondition
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.chat.model.SendMessage
 import com.napzak.market.chat.repository.ChatRoomRepository
-import com.napzak.market.chat.repository.ChatSocketRepository
+import com.napzak.market.chat.usecase.GetChatFlowUseCase
+import com.napzak.market.chat.usecase.SendMessageUseCase
+import com.napzak.market.chat.usecase.SubscribeChatRoomUseCase
 import com.napzak.market.common.state.UiState
 import com.napzak.market.presigned_url.model.UploadImage
 import com.napzak.market.presigned_url.usecase.UploadImagesUseCase
 import com.napzak.market.store.repository.StoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,7 +33,10 @@ import javax.inject.Inject
 internal class ChatRoomViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val chatRepository: ChatRoomRepository,
-    private val chatSocketRepository: ChatSocketRepository,
+    private val getChatFlowUseCase: GetChatFlowUseCase,
+    private val sendMessageUseCase: SendMessageUseCase,
+    private val subscribeChatRoomUseCase: SubscribeChatRoomUseCase,
+
     private val storeRepository: StoreRepository,
     private val uploadImagesUseCase: UploadImagesUseCase
 ) : ViewModel() {
@@ -49,7 +53,6 @@ internal class ChatRoomViewModel @Inject constructor(
     val sideEffect = _sideEffect.receiveAsFlow()
 
     private val chatCondition = mutableStateOf(ChatCondition.PRODUCT_NOT_CHANGED)
-    private var messageFlow: Flow<ReceiveMessage<*>>? = null
 
     var chat by mutableStateOf("")
 
@@ -146,20 +149,30 @@ internal class ChatRoomViewModel @Inject constructor(
                         )
                     )
                 }
-            }.getOrThrow()
+            }.getOrElse {
+                Timber.tag(TAG).e(it)
+                throw it
+            }
     }
 
     /**
-     * TODO: 페이징 처리 + 채팅 기록 저장 방식 수정 (Collection 교체 혹은 저장 방향 수정)
+     * TODO: 페이징 처리
      *
      * 과거 채팅 기록들을 불러옵니다.
      */
     private suspend fun fetchMessages(roomId: Long) {
         chatRepository.getChatRoomMessages(roomId)
             .onSuccess { messages ->
-                addMessages(messages)
+                val reversedMessage = messages.asReversed()
+                if (reversedMessage.any { it is ReceiveMessage.Notice }) {
+                    _chatRoomState.update { it.copy(isRoomWithdrawn = true) }
+                }
+                addMessages(reversedMessage)
             }
-            .getOrThrow()
+            .getOrElse {
+                Timber.tag(TAG).e(it)
+                throw it
+            }
     }
 
     /**
@@ -167,15 +180,10 @@ internal class ChatRoomViewModel @Inject constructor(
      */
     private fun collectMessages(roomId: Long) = viewModelScope.launch {
         try {
-            val storeId = requireNotNull(_chatRoomState.value.storeId)
-
-            if (messageFlow == null) {
-                messageFlow = chatSocketRepository.getMessageFlow(storeId)
-                messageFlow?.collect { message ->
-                    if (message.roomId == roomId) {
-                        Timber.tag("ChatRoom").d("구독 중인 메시지: $message")
-                        addMessages(listOf(message))
-                    }
+            getChatFlowUseCase(roomId).collect { message ->
+                if (message.roomId == roomId) {
+                    _sideEffect.send(ChatRoomSideEffect.OnReceiveChatMessage)
+                    addMessages(listOf(message))
                 }
             }
         } catch (e: Exception) {
@@ -307,7 +315,7 @@ internal class ChatRoomViewModel @Inject constructor(
      * 성공적으로 전송하면 [ChatRoomSideEffect.OnSendChatMessage]를 발생시킵니다.
      */
     private suspend fun sendMessage(message: SendMessage<*>) {
-        chatSocketRepository.sendChat(message)
+        sendMessageUseCase(message)
         _sideEffect.trySend(ChatRoomSideEffect.OnSendChatMessage)
     }
 
@@ -329,10 +337,15 @@ internal class ChatRoomViewModel @Inject constructor(
 
     /**
      * 인식할 수 없는 이미지 링크에 대해서 전처리를 수행합니다.
-     * 쿼리 파라미터를 없앱니다.
+     * 1. 쿼리 파라미터를 없앱니다.
+     * 2. 메시지 읽음 처리를 수행합니다. 다음 상태일 때 메시지를 읽음 처리합니다:
+     *    - 불러온 메시지의 기록의 isRead가 true
+     *    - 수신한 메시지의 송신자가 '본인'일 경우
+     *    - 상대방이 채팅방에 접속해있는 경우
      */
     private fun preprocessMessage(message: ReceiveMessage<*>): ReceiveMessage<*> {
-        val isRead = message.isMessageOwner == false || _chatRoomState.value.isOpponentOnline
+        val isRead =
+            message.isRead || message.isMessageOwner == false || _chatRoomState.value.isOpponentOnline
 
         return when (message) {
             is ReceiveMessage.Text -> message.copy(isRead = isRead)
@@ -366,10 +379,8 @@ internal class ChatRoomViewModel @Inject constructor(
             enterChatRoom(roomId)
             collectMessages(roomId)
             fetchChatRoomDetail(productId, roomId)
-            with(chatSocketRepository) {
-                subscribeChatRoom(roomId)
-                sendProductMessage()
-            }
+            subscribeChatRoomUseCase(roomId, storeId)
+            sendProductMessage()
         } catch (e: Exception) {
             Timber.tag(TAG).e(e, "채팅방 생성에 실패했습니다.")
             throw e
@@ -398,7 +409,10 @@ internal class ChatRoomViewModel @Inject constructor(
             Timber.tag(TAG).d("채팅방 입장 및 구독 시작함")
             _chatRoomState.update { it.copy(isOpponentOnline = isOnline) }
             productId
-        }.getOrThrow()
+        }.getOrElse {
+            Timber.tag(TAG).e(it)
+            throw it
+        }
 
 
     /**
