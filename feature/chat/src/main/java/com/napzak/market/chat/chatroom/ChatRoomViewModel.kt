@@ -149,7 +149,10 @@ internal class ChatRoomViewModel @Inject constructor(
                         )
                     )
                 }
-            }.getOrThrow()
+            }.getOrElse {
+                Timber.tag(TAG).e(it)
+                throw it
+            }
     }
 
     /**
@@ -166,7 +169,10 @@ internal class ChatRoomViewModel @Inject constructor(
                 }
                 addMessages(reversedMessage)
             }
-            .getOrThrow()
+            .getOrElse {
+                Timber.tag(TAG).e(it)
+                throw it
+            }
     }
 
     /**
@@ -403,7 +409,10 @@ internal class ChatRoomViewModel @Inject constructor(
             Timber.tag(TAG).d("채팅방 입장 및 구독 시작함")
             _chatRoomState.update { it.copy(isOpponentOnline = isOnline) }
             productId
-        }.getOrThrow()
+        }.getOrElse {
+            Timber.tag(TAG).e(it)
+            throw it
+        }
 
 
     /**
