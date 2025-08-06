@@ -132,39 +132,41 @@ internal fun StoreInfoSection(
 
         Spacer(Modifier.height(20.dp))
 
-        Button(
-            onClick = { onProfileEditClick() },
-            enabled = isMyStore,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 10.dp, horizontal = 20.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = NapzakMarketTheme.colors.gray50,
-                contentColor = NapzakMarketTheme.colors.gray400,
-            ),
-            shape = RoundedCornerShape(8.dp),
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+        if (isMyStore) {
+            Button(
+                onClick = { onProfileEditClick() },
+                enabled = isMyStore,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp, horizontal = 20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = NapzakMarketTheme.colors.gray50,
+                    contentColor = NapzakMarketTheme.colors.gray400,
+                ),
+                shape = RoundedCornerShape(8.dp),
             ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(ic_edit_pencil),
-                    contentDescription = null,
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size(12.dp),
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(ic_edit_pencil),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(12.dp),
+                    )
 
-                Text(
-                    text = stringResource(store_edit_profile),
-                    style = NapzakMarketTheme.typography.caption12m,
-                    color = NapzakMarketTheme.colors.gray400,
-                    modifier = Modifier
-                        .padding(vertical = 8.dp),
-                )
+                    Text(
+                        text = stringResource(store_edit_profile),
+                        style = NapzakMarketTheme.typography.caption12m,
+                        color = NapzakMarketTheme.colors.gray400,
+                        modifier = Modifier
+                            .padding(vertical = 8.dp),
+                    )
+                }
             }
-        }
 
-        Spacer(Modifier.height(6.dp))
+            Spacer(Modifier.height(6.dp))
+        }
     }
 }
