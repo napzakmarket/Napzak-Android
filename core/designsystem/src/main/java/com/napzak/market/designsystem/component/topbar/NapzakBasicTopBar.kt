@@ -94,7 +94,7 @@ fun NapzakBasicTopBar(
 
 @Composable
 private fun ActionButton(
-    @DrawableRes iconRes: Int,
+    @DrawableRes iconRes: Int?,
     color: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -106,16 +106,18 @@ private fun ActionButton(
             .size(24.dp)
             .noRippleClickable(onClick = onClick),
     ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(iconRes),
-            contentDescription = null,
-            tint = color,
-        )
+        if (iconRes != null) {
+            Icon(
+                imageVector = ImageVector.vectorResource(iconRes),
+                contentDescription = null,
+                tint = color,
+            )
+        }
     }
 }
 
 data class NapzakTopBarAction(
-    @DrawableRes val iconRes: Int,
+    @DrawableRes val iconRes: Int?,
     val onClick: () -> Unit,
 )
 

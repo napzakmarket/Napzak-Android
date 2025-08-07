@@ -1,24 +1,18 @@
 package com.napzak.market.registration.component
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_close_24
+import com.napzak.market.designsystem.component.topbar.NapzakBasicTopBar
+import com.napzak.market.designsystem.component.topbar.NapzakTopBarAction
+import com.napzak.market.designsystem.component.topbar.NapzakTopBarColor
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.ui_util.ShadowDirection
-import com.napzak.market.ui_util.napzakGradientShadow
-import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun RegistrationTopBar(
@@ -26,34 +20,24 @@ internal fun RegistrationTopBar(
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .napzakGradientShadow(
-                height = 4.dp,
-                startColor = NapzakMarketTheme.colors.shadowBlack,
-                endColor = NapzakMarketTheme.colors.transWhite,
-                direction = ShadowDirection.Bottom,
-            )
-            .background(color = NapzakMarketTheme.colors.white)
-            .padding(top = 32.dp, end = 12.dp, bottom = 20.dp),
-    ) {
-        Text(
-            text = title,
-            style = NapzakMarketTheme.typography.body16b.copy(
-                color = NapzakMarketTheme.colors.gray500,
-            ),
-            modifier = Modifier.align(Alignment.Center),
-        )
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_close_24),
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .noRippleClickable(onCloseClick),
-            tint = Color.Unspecified,
-        )
-    }
+    val actions = listOf(NapzakTopBarAction(ic_close_24, onCloseClick))
+    val navigator = listOf(NapzakTopBarAction(null, {})) // 좌우 균형을 위한 빈 아이콘
+    val topBarColor = NapzakTopBarColor(
+        containerColor = NapzakMarketTheme.colors.white,
+        contentColor = NapzakMarketTheme.colors.gray500,
+        iconColor = Color.Unspecified,
+    )
+
+    NapzakBasicTopBar(
+        title = title,
+        actions = actions,
+        color = topBarColor,
+        modifier = modifier,
+        isShadowed = true,
+        titleAlign = TextAlign.Center,
+        navigators = navigator,
+        paddingValues = PaddingValues(start = 12.dp, top = 32.dp, end = 12.dp, bottom = 20.dp),
+    )
 }
 
 @Preview
