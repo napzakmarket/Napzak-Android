@@ -70,7 +70,10 @@ internal fun ChatRoomProductSection(
                 style = NapzakMarketTheme.typography.body14sb,
             )
             ProductText(
-                text = product.price.toString(),
+                text = stringResource(
+                    chat_room_product_price_won_format,
+                    product.price.toString().formatToPriceString(),
+                ),
                 style = NapzakMarketTheme.typography.body16b,
             )
         }
@@ -164,10 +167,7 @@ private fun ProductText(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = stringResource(
-            id = chat_room_product_price_won_format,
-            text.formatToPriceString(),
-        ),
+        text = text,
         style = style,
         color = NapzakMarketTheme.colors.black,
         overflow = TextOverflow.Ellipsis,

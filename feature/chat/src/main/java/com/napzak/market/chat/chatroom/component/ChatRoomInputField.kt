@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -76,7 +77,7 @@ internal fun ChatRoomInputField(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         GalleryButton(
-            enabled = !enabled,
+            enabled = enabled,
             onClick = onGalleryClick,
         )
         Spacer(modifier = Modifier.width(16.dp))
@@ -84,14 +85,14 @@ internal fun ChatRoomInputField(
             text = text,
             onTextChange = onTextChange,
             hint = stringResource(
-                if (enabled) chat_room_input_field_hint_withdrawn
-                else chat_room_input_field_hint
+                if (enabled) chat_room_input_field_hint
+                else chat_room_input_field_hint_withdrawn
             ),
-            enabled = !enabled,
+            enabled = enabled,
             modifier = Modifier.weight(1f),
             suffix = {
                 SendButton(
-                    enabled = text.isNotBlank() && !enabled,
+                    enabled = text.isNotBlank() && enabled,
                     onClick = {
                         onSendClick(text)
                     },
@@ -123,7 +124,9 @@ private fun ChatTextField(
         hintTextStyle = textStyle,
         suffix = suffix,
         enabled = enabled,
+        isSingleLined = false,
         modifier = modifier
+            .heightIn(max = 140.dp)
             .clip(shape)
             .background(color = backgroundColor)
             .padding(innerPadding),

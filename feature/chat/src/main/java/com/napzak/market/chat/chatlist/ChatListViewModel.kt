@@ -8,13 +8,13 @@ import androidx.lifecycle.viewModelScope
 import com.napzak.market.chat.model.ChatRoom
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.chat.repository.ChatRepository
-import com.napzak.market.chat.repository.ChatSocketRepository
+import com.napzak.market.chat.usecase.GetAllChatFlowsUseCase
+import com.napzak.market.chat.usecase.SubscribeChatRoomUseCase
 import com.napzak.market.common.state.UiState
 import com.napzak.market.notification.repository.NotificationRepository
 import com.napzak.market.notification.usecase.GetNotificationSettingsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -25,9 +25,10 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatListViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
-    private val chatSocketRepository: ChatSocketRepository,
     private val notificationRepository: NotificationRepository,
     private val getNotificationSettingsUseCase: GetNotificationSettingsUseCase,
+    private val subscribeChatRoomUseCase: SubscribeChatRoomUseCase,
+    private val getAllChatFlowsUseCase: GetAllChatFlowsUseCase,
 ) : ViewModel() {
     private val _chatRoomsState = MutableStateFlow<UiState<List<ChatRoom>>>(UiState.Loading)
     val chatRoomsState = _chatRoomsState.asStateFlow()
@@ -35,8 +36,8 @@ class ChatListViewModel @Inject constructor(
     val notificationState = _notificationState.asStateFlow()
 
     private var _chatRoomPair by mutableStateOf(mapOf<Long, ChatRoom>() to listOf<ChatRoom>())
-    private var _messageFlow: Flow<ReceiveMessage<*>>? = null
     private val _storeIdFlow = Channel<Long>()
+    private val isCollectingMessage = MutableStateFlow(false)
 
     fun prepareChatRooms() {
         fetchChatRooms()
@@ -57,7 +58,7 @@ class ChatListViewModel @Inject constructor(
                 val list = mutableListOf<ChatRoom>()
 
                 chatRooms.forEach { chatRoom ->
-                    chatSocketRepository.subscribeChatRoom(chatRoom.roomId).onSuccess {
+                    subscribeChatRoomUseCase(chatRoom.roomId, myStoreId).onSuccess {
                         map[chatRoom.roomId] = chatRoom
                         list.add(chatRoom)
                     }
@@ -72,16 +73,22 @@ class ChatListViewModel @Inject constructor(
             }
     }
 
-    private fun collectChatMessages() = viewModelScope.launch {
+    private fun collectChatMessages() {
         try {
-            val storeId = _storeIdFlow.receive()
-            if (_messageFlow == null) {
-                _messageFlow = chatSocketRepository.getMessageFlow(storeId)
-                _messageFlow?.collect { message -> updateChatRoom(message) }
+            viewModelScope.launch {
+                if (!isCollectingMessage.value) {
+                    isCollectingMessage.update { true }
+                    getAllChatFlowsUseCase().collect { message ->
+                        if (message.isMessage) {
+                            updateChatRoom(message)
+                        }
+                    }
+                }
             }
         } catch (e: Exception) {
             Timber.tag(TAG).e(e)
             _chatRoomsState.update { UiState.Failure(e.message.toString()) }
+            isCollectingMessage.update { false }
         }
     }
 

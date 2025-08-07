@@ -3,7 +3,9 @@ package com.napzak.market.main
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.napzak.market.chat.repository.ChatRepository
-import com.napzak.market.chat.repository.ChatSocketRepository
+import com.napzak.market.chat.usecase.ConnectChatSocketUseCase
+import com.napzak.market.chat.usecase.DisconnectChatSocketUseCase
+import com.napzak.market.chat.usecase.SubscribeChatRoomUseCase
 import com.napzak.market.store.repository.StoreRepository
 import com.napzak.market.util.android.TokenProvider
 import kotlinx.coroutines.CoroutineScope
@@ -18,24 +20,29 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class WebSocketLifecycleObserver @Inject constructor(
-    private val chatSocketRepository: ChatSocketRepository,
     private val chatRepository: ChatRepository,
     private val storeRepository: StoreRepository,
     private val tokenProvider: TokenProvider,
+    private val connectChatSocketUseCase: ConnectChatSocketUseCase,
+    private val disconnectChatSocketUseCase: DisconnectChatSocketUseCase,
+    private val subscribeChatRoomUseCase: SubscribeChatRoomUseCase,
 ) : DefaultLifecycleObserver {
     private val activityScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val isLoggedIn = MutableStateFlow(false)
+
+    fun updateLoggedInState(isLoggedIn: Boolean) {
+        this.isLoggedIn.update { isLoggedIn }
+    }
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
         activityScope.launch {
             isLoggedIn.collectLatest { loggedIn ->
                 if (loggedIn && isTokenAvailable()) {
-                    chatSocketRepository.connect()
-                        .onSuccess {
-                            subscribeChatRooms()
-                            subscribeCreateChatRoom()
-                        }
+                    storeRepository.fetchStoreInfo().onSuccess { storeInfo ->
+                        connectChatSocketUseCase(storeInfo.storeId)
+                        subscribeChatRooms(storeInfo.storeId)
+                    }
                 }
             }
         }
@@ -43,28 +50,18 @@ class WebSocketLifecycleObserver @Inject constructor(
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
-        activityScope.launch { chatSocketRepository.disconnect() }
+        activityScope.launch { disconnectChatSocketUseCase() }
     }
 
-    fun updateLoggedInState(isLoggedIn: Boolean) {
-        this.isLoggedIn.update { isLoggedIn }
-    }
-
-    private suspend fun subscribeChatRooms() {
+    private suspend fun subscribeChatRooms(storeId: Long) {
         chatRepository.getChatRoomIds().onSuccess { roomIds ->
             activityScope.launch {
                 roomIds.map { roomId ->
                     async {
-                        chatSocketRepository.subscribeChatRoom(roomId)
+                        subscribeChatRoomUseCase(roomId = roomId, storeId = storeId)
                     }
                 }.awaitAll()
             }
-        }
-    }
-
-    private suspend fun subscribeCreateChatRoom() {
-        storeRepository.fetchStoreInfo().onSuccess { response ->
-            chatSocketRepository.subscribeCreateChatRoom(response.storeId)
         }
     }
 
