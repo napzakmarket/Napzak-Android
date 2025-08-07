@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.napzak.market.designsystem.R.drawable.ic_chevron_left_24
 import com.napzak.market.designsystem.R.drawable.ic_menu
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
@@ -24,14 +25,21 @@ fun MenuTopBar(
         NapzakTopBarAction(iconRes = ic_menu, onClick = onMenuClick),
     )
 
+    val navigators = listOf(
+        NapzakTopBarAction(
+            iconRes = ic_chevron_left_24,
+            onClick = onNavigateUp,
+        )
+    )
+
     NapzakBasicTopBar(
-        onNavigateUp = onNavigateUp,
         title = title,
         titleAlign = titleAlign,
         isShadowed = isShadowed,
         actions = actions,
         color = topBarColor,
         paddingValues = paddingValues,
+        navigators = navigators,
         modifier = modifier,
     )
 }

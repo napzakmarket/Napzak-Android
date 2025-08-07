@@ -23,7 +23,7 @@ fun TitleTopBar(
         paddingValues = paddingValues,
         color = topBarColor,
         isShadowed = isShadowed,
-        onNavigateUp = null,
+        navigators = null,
         actions = null,
     )
 }

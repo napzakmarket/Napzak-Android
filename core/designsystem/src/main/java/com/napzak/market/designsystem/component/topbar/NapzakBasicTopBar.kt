@@ -17,26 +17,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_chevron_left_24
-import com.napzak.market.designsystem.R.string.top_bar_navigate_up
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.ShadowDirection
 import com.napzak.market.ui_util.napzakGradientShadow
 import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
-internal fun NapzakBasicTopBar(
+fun NapzakBasicTopBar(
     isShadowed: Boolean,
     title: String?,
     titleAlign: TextAlign?,
-    onNavigateUp: (() -> Unit)?,
+    navigators: List<NapzakTopBarAction>?,
     actions: List<NapzakTopBarAction>?,
     paddingValues: PaddingValues,
     color: NapzakTopBarColor,
@@ -61,15 +58,13 @@ internal fun NapzakBasicTopBar(
             )
             .padding(paddingValues)
     ) {
-        if (onNavigateUp != null) {
-            Icon(
-                imageVector = ImageVector.vectorResource(ic_chevron_left_24),
-                contentDescription = stringResource(top_bar_navigate_up),
-                tint = color.iconColor,
-                modifier = Modifier
-                    .semantics { role = Role.Button }
-                    .noRippleClickable(onClick = onNavigateUp),
+        navigators?.forEach { navigation ->
+            ActionButton(
+                iconRes = navigation.iconRes,
+                color = color.iconColor,
+                onClick = navigation.onClick,
             )
+            Spacer(modifier = Modifier.width(4.dp))
         }
 
         Spacer(modifier = Modifier.width(2.dp))
@@ -85,20 +80,35 @@ internal fun NapzakBasicTopBar(
         }
 
         actions?.forEach { action ->
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .semantics { role = Role.Button }
-                    .size(24.dp)
-                    .noRippleClickable(onClick = action.onClick),
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(action.iconRes),
-                    contentDescription = null,
-                    tint = color.iconColor,
-                )
-            }
+            Spacer(modifier = Modifier.width(4.dp))
+            ActionButton(
+                iconRes = action.iconRes,
+                color = color.iconColor,
+                onClick = action.onClick,
+            )
         }
+    }
+}
+
+@Composable
+private fun ActionButton(
+    @DrawableRes iconRes: Int,
+    color: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .semantics { role = Role.Button }
+            .size(24.dp)
+            .noRippleClickable(onClick = onClick),
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(iconRes),
+            contentDescription = null,
+            tint = color,
+        )
     }
 }
 
