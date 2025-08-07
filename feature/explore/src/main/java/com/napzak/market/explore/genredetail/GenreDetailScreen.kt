@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -55,6 +56,9 @@ import com.napzak.market.designsystem.component.bottomsheet.SortBottomSheet
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
+import com.napzak.market.designsystem.component.topbar.NapzakBasicTopBar
+import com.napzak.market.designsystem.component.topbar.NapzakTopBarAction
+import com.napzak.market.designsystem.component.topbar.NapzakTopBarColor
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.explore.component.BasicFilterChip
 import com.napzak.market.explore.component.GenreLabel
@@ -238,27 +242,24 @@ private fun GenreTopBar(
     onHomeButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier
-            .padding(start = 20.dp, top = 66.dp, end = 20.dp, bottom = 18.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_left_chevron_24),
-            contentDescription = null,
-            tint = NapzakMarketTheme.colors.gray200,
-            modifier = Modifier.noRippleClickable(onBackButtonClick),
-        )
-
-        Spacer(Modifier.width(4.dp))
-
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_home),
-            contentDescription = null,
-            tint = NapzakMarketTheme.colors.gray200,
-            modifier = Modifier.noRippleClickable(onHomeButtonClick),
-        )
-    }
+    val navigators = listOf(
+        NapzakTopBarAction(ic_left_chevron_24, onBackButtonClick),
+        NapzakTopBarAction(ic_home, onHomeButtonClick)
+    )
+    NapzakBasicTopBar(
+        navigators = navigators,
+        isShadowed = true,
+        title = null,
+        titleAlign = null,
+        actions = null,
+        color = NapzakTopBarColor(
+            iconColor = NapzakMarketTheme.colors.gray200,
+            contentColor = NapzakMarketTheme.colors.gray400,
+            containerColor = NapzakMarketTheme.colors.white,
+        ),
+        paddingValues = PaddingValues(start = 13.dp, top = 34.dp, end = 13.dp, bottom = 18.dp),
+        modifier = modifier,
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
