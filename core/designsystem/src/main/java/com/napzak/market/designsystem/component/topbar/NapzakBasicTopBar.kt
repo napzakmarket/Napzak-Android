@@ -47,7 +47,7 @@ fun NapzakBasicTopBar(
             .then(
                 if (isShadowed) {
                     Modifier.napzakGradientShadow(
-                        height = 2.dp,
+                        height = 4.dp,
                         startColor = NapzakMarketTheme.colors.shadowBlack,
                         endColor = NapzakMarketTheme.colors.transWhite,
                         direction = ShadowDirection.Bottom,
