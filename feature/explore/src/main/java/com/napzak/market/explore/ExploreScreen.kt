@@ -57,6 +57,7 @@ import com.napzak.market.explore.component.BasicFilterChip
 import com.napzak.market.explore.component.ExploreBottomSheetScreen
 import com.napzak.market.explore.component.GenreNavigationButton
 import com.napzak.market.explore.state.ExploreBottomSheetState
+import com.napzak.market.explore.state.ExploreProducts
 import com.napzak.market.explore.state.ExploreUiState
 import com.napzak.market.feature.explore.R.string.explore_count
 import com.napzak.market.feature.explore.R.string.explore_empty_search_result_subtitle
@@ -249,12 +250,12 @@ private fun ExploreSuccessScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = NapzakMarketTheme.colors.white)
-            .padding(top = 54.dp),
+            .background(color = NapzakMarketTheme.colors.white),
     ) {
         ExploreSearchTextField(
             searchTerm = searchTerm ?: "",
             modifier = Modifier
+                .padding(top = 30.dp)
                 .padding(horizontal = 20.dp)
                 .noRippleClickable(onSearchNavigate),
         )
@@ -504,7 +505,7 @@ private fun ExploreScreenPreview(modifier: Modifier = Modifier) {
     NapzakMarketTheme {
         ExploreScreen(
             searchTerm = "",
-            uiState = ExploreUiState(),
+            uiState = ExploreUiState(loadState = UiState.Success(ExploreProducts(1, emptyList()))),
             bottomSheetState = ExploreBottomSheetState(),
             onDismissRequest = { },
             onSearchNavigate = { },
