@@ -77,6 +77,8 @@ fun NapzakBasicTopBar(
                 textAlign = titleAlign,
                 modifier = Modifier.weight(1f)
             )
+        } else {
+            Spacer(modifier = Modifier.weight(1f))
         }
 
         actions?.forEach { action ->

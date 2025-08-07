@@ -1,11 +1,9 @@
 package com.napzak.market.onboarding.genre
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -14,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -28,14 +24,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.napzak.market.designsystem.R.drawable.ic_arrow_left
 import com.napzak.market.designsystem.R.drawable.ic_third_step_indicator
 import com.napzak.market.designsystem.R.string.warning_snackbar_genre_limit_message
 import com.napzak.market.designsystem.component.GenreChipButtonGroup
@@ -50,12 +43,12 @@ import com.napzak.market.feature.onboarding.R.string.onboarding_genre_skip
 import com.napzak.market.feature.onboarding.R.string.onboarding_genre_sub_title
 import com.napzak.market.feature.onboarding.R.string.onboarding_genre_title
 import com.napzak.market.onboarding.genre.component.GenreGridList
+import com.napzak.market.onboarding.genre.component.OnboardingTopBar
 import com.napzak.market.onboarding.genre.model.GenreEvent
 import com.napzak.market.onboarding.genre.model.GenreUiModel
 import com.napzak.market.onboarding.genre.model.GenreUiState
 import com.napzak.market.ui_util.ShadowDirection
 import com.napzak.market.ui_util.napzakGradientShadow
-import com.napzak.market.ui_util.noRippleClickable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -241,29 +234,13 @@ private fun GenreTopBar(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
+    OnboardingTopBar(
+        onBackClick = onBackClick,
+        indicatorIcon = ic_third_step_indicator,
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_arrow_left),
-            contentDescription = null,
-            tint = Color.Unspecified,
-            modifier = Modifier
-                .noRippleClickable(onClick = onBackClick)
-                .size(12.dp),
-        )
-
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_third_step_indicator),
-            contentDescription = null,
-            tint = Color.Unspecified,
-            modifier = Modifier.size(20.dp),
-        )
-    }
+            .padding(horizontal = 20.dp)
+    )
 }
 
 @Composable

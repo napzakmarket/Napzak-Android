@@ -2,7 +2,6 @@ package com.napzak.market.onboarding.nickname
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,23 +14,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.napzak.market.designsystem.R.drawable.ic_arrow_left
 import com.napzak.market.designsystem.R.drawable.ic_second_step_indicator
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.textfield.NapzakDefaultTextField
@@ -42,9 +36,9 @@ import com.napzak.market.feature.onboarding.R.string.onboarding_nickname_sub_tit
 import com.napzak.market.feature.onboarding.R.string.onboarding_nickname_success
 import com.napzak.market.feature.onboarding.R.string.onboarding_nickname_title
 import com.napzak.market.feature.onboarding.R.string.onboarding_nickname_validation_button
+import com.napzak.market.onboarding.genre.component.OnboardingTopBar
 import com.napzak.market.onboarding.nickname.model.NicknameUiState
 import com.napzak.market.store.model.NicknameValidationResult
-import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun NicknameRoute(
@@ -89,7 +83,11 @@ fun NicknameScreen(
                     .calculateBottomPadding()
             ),
     ) {
-        NicknameTopBar(onBackClick = onBackClick)
+        OnboardingTopBar(
+            onBackClick = onBackClick,
+            indicatorIcon = ic_second_step_indicator,
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Spacer(Modifier.height(30.dp))
 
@@ -177,35 +175,6 @@ fun NicknameScreen(
             enabled = uiState.isNextEnabled,
             modifier = Modifier
                 .fillMaxWidth(),
-        )
-    }
-}
-
-@Composable
-private fun NicknameTopBar(
-    onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_arrow_left),
-            contentDescription = null,
-            tint = Color.Unspecified,
-            modifier = Modifier
-                .noRippleClickable(onClick = onBackClick)
-                .size(12.dp),
-        )
-
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_second_step_indicator),
-            contentDescription = null,
-            tint = Color.Unspecified,
-            modifier = Modifier.size(20.dp),
         )
     }
 }
