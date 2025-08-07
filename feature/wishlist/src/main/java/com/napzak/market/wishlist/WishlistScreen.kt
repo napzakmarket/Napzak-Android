@@ -44,7 +44,6 @@ import com.napzak.market.product.model.Product
 import com.napzak.market.ui_util.noRippleClickable
 import com.napzak.market.wishlist.component.WishlistTopSection
 import com.napzak.market.wishlist.state.WishlistUiState
-import kotlin.collections.chunked
 
 @Composable
 internal fun WishlistRoute(
@@ -145,8 +144,7 @@ private fun WishlistEmptyScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = NapzakMarketTheme.colors.white)
-            .padding(top = 58.dp),
+            .background(color = NapzakMarketTheme.colors.white),
     ) {
         WishlistTopSection(
             selectedTab = selectedTab,
@@ -201,8 +199,7 @@ private fun WishlistSuccessScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = NapzakMarketTheme.colors.white)
-            .padding(top = 58.dp),
+            .background(color = NapzakMarketTheme.colors.white),
     ) {
         WishlistTopSection(
             selectedTab = selectedTab,

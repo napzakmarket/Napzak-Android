@@ -1,29 +1,18 @@
 package com.napzak.market.wishlist.component
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.R.drawable.ic_left_chevron
 import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
-import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.wishlist.R.string.wishlist_back_button
+import com.napzak.market.designsystem.component.topbar.NavigateUpTopBar
 import com.napzak.market.feature.wishlist.R.string.wishlist_title
 import com.napzak.market.ui_util.ShadowDirection
 import com.napzak.market.ui_util.napzakGradientShadow
-import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun WishlistTopSection(
@@ -32,34 +21,11 @@ internal fun WishlistTopSection(
     onTabClick: (TradeType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .napzakGradientShadow(
-                height = 2.dp,
-                startColor = Color(0xFF000000), // TODO: shadow 컬러값 변경
-                endColor = Color.Transparent,
-                direction = ShadowDirection.Bottom,
-            )
-            .padding(start = 20.dp, bottom = 18.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_left_chevron),
-            contentDescription = stringResource(wishlist_back_button),
-            tint = NapzakMarketTheme.colors.black,
-            modifier = Modifier.noRippleClickable(onBackButtonClick),
-        )
-
-        Spacer(Modifier.width(6.dp))
-
-        Text(
-            text = stringResource(wishlist_title),
-            style = NapzakMarketTheme.typography.body16b.copy(
-                color = NapzakMarketTheme.colors.black,
-            )
-        )
-    }
+    NavigateUpTopBar(
+        title = stringResource(wishlist_title),
+        onNavigateUp = onBackButtonClick,
+        modifier = modifier,
+    )
 
     TradeTypeTabBar(
         selectedTab = selectedTab,
