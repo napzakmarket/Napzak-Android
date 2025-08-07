@@ -134,7 +134,7 @@ internal fun StoreInfoSection(
 
         if (isMyStore) {
             Button(
-                onClick = { onProfileEditClick() },
+                onClick = onProfileEditClick,
                 enabled = isMyStore,
                 modifier = Modifier
                     .fillMaxWidth()
