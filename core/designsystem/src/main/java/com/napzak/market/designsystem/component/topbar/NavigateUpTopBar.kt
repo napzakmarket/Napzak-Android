@@ -13,7 +13,7 @@ fun NavigateUpTopBar(
     modifier: Modifier = Modifier,
     title: String? = null,
     isShadowed: Boolean = true,
-    paddingValues: PaddingValues? = null,
+    paddingValues: PaddingValues = NapzakTopBarDefault.topBarInnerPadding,
     topBarColor: NapzakTopBarColor = NapzakTopBarDefault.topBarColor()
 ) {
     NapzakBasicTopBar(
@@ -21,7 +21,7 @@ fun NavigateUpTopBar(
         title = title,
         isShadowed = isShadowed,
         color = topBarColor,
-        paddingValues = paddingValues ?: NapzakTopBarDefault.topBarInnerPadding,
+        paddingValues = paddingValues,
         modifier = modifier,
         actions = null,
         titleAlign = null,

@@ -17,7 +17,7 @@ fun MenuTopBar(
     modifier: Modifier = Modifier,
     titleAlign: TextAlign = TextAlign.Start,
     isShadowed: Boolean = true,
-    paddingValues: PaddingValues? = null,
+    paddingValues: PaddingValues = NapzakTopBarDefault.topBarInnerPadding,
     topBarColor: NapzakTopBarColor = NapzakTopBarDefault.topBarColor(),
 ) {
     val actions = listOf(
@@ -31,7 +31,7 @@ fun MenuTopBar(
         isShadowed = isShadowed,
         actions = actions,
         color = topBarColor,
-        paddingValues = paddingValues ?: NapzakTopBarDefault.topBarInnerPadding,
+        paddingValues = paddingValues,
         modifier = modifier,
     )
 }
