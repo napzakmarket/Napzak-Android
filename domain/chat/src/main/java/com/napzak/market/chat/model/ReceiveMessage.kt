@@ -111,5 +111,5 @@ sealed class ReceiveMessage<T>(
         isMessageOwner = null,
     )
 
-    val isMessage: Boolean get() = this is Text || this is Image || this is Product
+    val isMessage: Boolean get() = this is Text || this is Image || this is Notice
 }
