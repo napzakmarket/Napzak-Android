@@ -128,7 +128,10 @@ internal fun StoreScrollSection(
         if (selectedTab != MarketTab.REVIEW) {
             if (productCount == 0) {
                 item {
-                    StoreEmptyView(Modifier.fillMaxSize())
+                    StoreEmptyView(
+                        isOwner = isOwner,
+                        modifier = Modifier.fillMaxSize(),
+                    )
                 }
             } else {
                 item {
