@@ -1,4 +1,4 @@
-package com.napzak.market.wishlist
+package com.napzak.market.mypage.wishlist
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -39,12 +39,11 @@ import com.napzak.market.designsystem.component.productItem.NapzakLargeProductIt
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.wishlist.R.string.wishlist_no_items_subtitle
-import com.napzak.market.feature.wishlist.R.string.wishlist_no_items_title
+import com.napzak.market.feature.mypage.R.string.wishlist_no_items_subtitle
+import com.napzak.market.feature.mypage.R.string.wishlist_no_items_title
+import com.napzak.market.mypage.wishlist.state.WishlistUiState
 import com.napzak.market.product.model.Product
 import com.napzak.market.ui_util.noRippleClickable
-import com.napzak.market.wishlist.component.WishlistTopSection
-import com.napzak.market.wishlist.state.WishlistUiState
 import kotlin.collections.chunked
 
 @Composable
@@ -150,7 +149,7 @@ private fun WishlistEmptyScreen(
             .background(color = NapzakMarketTheme.colors.white)
             .padding(top = 58.dp),
     ) {
-        WishlistTopSection(
+        com.napzak.market.mypage.wishlist.component.WishlistTopSection(
             selectedTab = selectedTab,
             onBackButtonClick = onBackButtonClick,
             onTabClick = onTabClick,
@@ -206,7 +205,7 @@ private fun WishlistSuccessScreen(
             .background(color = NapzakMarketTheme.colors.white)
             .padding(top = 58.dp),
     ) {
-        WishlistTopSection(
+        com.napzak.market.mypage.wishlist.component.WishlistTopSection(
             selectedTab = selectedTab,
             onBackButtonClick = onBackButtonClick,
             onTabClick = onTabClick,

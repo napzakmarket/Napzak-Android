@@ -72,4 +72,10 @@
     <string name="settings_logout_dialog_title">로그아웃 하시겠어요?</string>
     <string name="settings_logout_dialog_confirm_button">예</string>
     <string name="settings_logout_dialog_cancel_button">아니요</string>
+
+    <!-- Wishlist -->
+    <string name="wishlist_back_button">뒤로가기 버튼</string>
+    <string name="wishlist_title">찜</string>
+    <string name="wishlist_no_items_title">아직 찜한 소장품이 없어요</string>
+    <string name="wishlist_no_items_subtitle">마음에 드는 아이템을 저장해보세요</string>
 </resources>

@@ -1,15 +1,15 @@
-package com.napzak.market.wishlist
+package com.napzak.market.mypage.wishlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
+import com.napzak.market.mypage.wishlist.state.WishListProducts
+import com.napzak.market.mypage.wishlist.state.WishlistUiState
 import com.napzak.market.product.model.Product
 import com.napzak.market.product.repository.ProductInterestRepository
 import com.napzak.market.ui_util.groupBy
-import com.napzak.market.wishlist.state.WishListProducts
-import com.napzak.market.wishlist.state.WishlistUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -73,19 +73,11 @@ internal class WishlistViewModel @Inject constructor(
     }
 
     fun updateTradeType(newTradeType: TradeType) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                selectedTab = newTradeType,
-            )
-        }
+        _uiState.update { currentState -> currentState.copy(selectedTab = newTradeType) }
     }
 
     private fun updateLoadState(loadState: UiState<WishListProducts>) =
-        _uiState.update { currentState ->
-            currentState.copy(
-                loadState = loadState,
-            )
-        }
+        _uiState.update { currentState -> currentState.copy(loadState = loadState) }
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     fun handleInterestDebounce() = viewModelScope.launch {

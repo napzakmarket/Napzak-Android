@@ -15,9 +15,9 @@ import com.napzak.market.chat.navigation.navigateToChatList
 import com.napzak.market.explore.navigation.navigateToExplore
 import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.navigateToHome
+import com.napzak.market.mypage.navigation.Wishlist
 import com.napzak.market.mypage.navigation.navigateToMyPage
 import com.napzak.market.splash.navigation.Splash
-import com.napzak.market.wishlist.navigation.Wishlist
 
 class MainNavigator(
     val navController: NavHostController,
