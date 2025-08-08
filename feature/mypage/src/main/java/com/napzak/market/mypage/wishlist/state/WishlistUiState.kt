@@ -1,4 +1,4 @@
-package com.napzak.market.wishlist.state
+package com.napzak.market.mypage.wishlist.state
 
 import androidx.compose.runtime.Immutable
 import com.napzak.market.common.state.UiState

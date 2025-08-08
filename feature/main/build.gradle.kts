@@ -23,7 +23,6 @@ dependencies {
     implementation(projects.feature.mypage)
     implementation(projects.feature.login)
     implementation(projects.feature.chat)
-    implementation(projects.feature.wishlist)
 
     implementation(projects.domain.chat)
     implementation(projects.domain.store)

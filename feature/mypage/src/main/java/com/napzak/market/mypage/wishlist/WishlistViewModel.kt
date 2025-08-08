@@ -1,15 +1,15 @@
-package com.napzak.market.wishlist
+package com.napzak.market.mypage.wishlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
+import com.napzak.market.mypage.wishlist.state.WishListProducts
+import com.napzak.market.mypage.wishlist.state.WishlistUiState
 import com.napzak.market.product.model.Product
 import com.napzak.market.product.repository.ProductInterestRepository
 import com.napzak.market.ui_util.groupBy
-import com.napzak.market.wishlist.state.WishListProducts
-import com.napzak.market.wishlist.state.WishlistUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -49,7 +49,10 @@ internal class WishlistViewModel @Inject constructor(
             TradeType.SELL -> {
                 productInterestRepository.getInterestSellProducts(null)
                     .onSuccess {
-                        updateLoadState(UiState.Success(WishListProducts(it.first, it.second)))
+                        val updateState =
+                            if (it.first.isEmpty()) UiState.Empty
+                            else UiState.Success(WishListProducts(it.first, it.second))
+                        updateLoadState(updateState)
                         lastSuccessfulLoadedProducts = it
                     }
                     .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
@@ -58,7 +61,10 @@ internal class WishlistViewModel @Inject constructor(
             TradeType.BUY -> {
                 productInterestRepository.getInterestBuyProducts(null)
                     .onSuccess {
-                        updateLoadState(UiState.Success(WishListProducts(it.first, it.second)))
+                        val updateState =
+                            if (it.first.isEmpty()) UiState.Empty
+                            else UiState.Success(WishListProducts(it.first, it.second))
+                        updateLoadState(updateState)
                         lastSuccessfulLoadedProducts = it
                     }
                     .onFailure { updateLoadState(UiState.Failure(it.message.toString())) }
@@ -67,19 +73,11 @@ internal class WishlistViewModel @Inject constructor(
     }
 
     fun updateTradeType(newTradeType: TradeType) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                selectedTab = newTradeType,
-            )
-        }
+        _uiState.update { currentState -> currentState.copy(selectedTab = newTradeType) }
     }
 
     private fun updateLoadState(loadState: UiState<WishListProducts>) =
-        _uiState.update { currentState ->
-            currentState.copy(
-                loadState = loadState,
-            )
-        }
+        _uiState.update { currentState -> currentState.copy(loadState = loadState) }
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     fun handleInterestDebounce() = viewModelScope.launch {

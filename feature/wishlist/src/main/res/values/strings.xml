@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="wishlist_back_button">뒤로가기 버튼</string>
-    <string name="wishlist_title">찜</string>
-    <string name="wishlist_no_items_title">아직 찜한 소장품이 없어요</string>
-    <string name="wishlist_no_items_subtitle">마음에 드는 아이템을 저장해보세요</string>
-</resources>
