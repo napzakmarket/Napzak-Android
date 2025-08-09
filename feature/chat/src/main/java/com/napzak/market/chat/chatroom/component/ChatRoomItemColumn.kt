@@ -1,7 +1,6 @@
 package com.napzak.market.chat.chatroom.component
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,17 +46,16 @@ internal fun ChatRoomItemColumn(
             .data(opponentImageUrl)
             .build()
     }
-
-    val reversedChatItem = remember(chatItems) { chatItems.reversed() }
+    val reversedChatItem = chatItems.asReversed()
 
     LazyColumn(
         state = listState,
         reverseLayout = true,
-        contentPadding = PaddingValues(vertical = 30.dp),
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp),
     ) {
+        item { Spacer(Modifier.height(30.dp)) }
         itemsIndexed(reversedChatItem, key = { _, item -> item.messageId }) { index, chatItem ->
             val nextChatItem =
                 if (index > 0) reversedChatItem[index - 1] else null
@@ -77,17 +75,18 @@ internal fun ChatRoomItemColumn(
                 previousChatItem = previousChatItem,
             )
         }
+        item { Spacer(Modifier.height(30.dp)) }
     }
 }
 
 @Composable
 private fun ChatItemRenderer(
     chatItem: ReceiveMessage<*>,
+    opponentImageRequest: ImageRequest,
+    onItemClick: () -> Unit,
     modifier: Modifier = Modifier,
     nextChatItem: ReceiveMessage<*>? = null,
     previousChatItem: ReceiveMessage<*>? = null,
-    opponentImageRequest: ImageRequest,
-    onItemClick: () -> Unit,
 ) {
     val isPreviousItemProduct = previousChatItem is ReceiveMessage.Product
     val isChatDirectionEqualsPrevious = chatItem.isMessageOwner == previousChatItem?.isMessageOwner

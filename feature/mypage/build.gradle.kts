@@ -23,6 +23,8 @@ dependencies {
     implementation(projects.domain.store)
     implementation(projects.domain.notification)
     implementation(projects.feature.detail)
+    implementation(projects.domain.product)
+    implementation(projects.domain.interest)
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)

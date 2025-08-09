@@ -22,7 +22,10 @@ import com.napzak.market.feature.store.R.string.store_empty_product_subtitle
 import com.napzak.market.feature.store.R.string.store_empty_product_title
 
 @Composable
-internal fun StoreEmptyView(modifier: Modifier = Modifier) {
+internal fun StoreEmptyView(
+    isOwner: Boolean,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier.padding(top = 48.dp, bottom = 100.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -34,28 +37,38 @@ internal fun StoreEmptyView(modifier: Modifier = Modifier) {
             tint = Color.Unspecified,
         )
 
-        Spacer(Modifier.height(20.dp))
+        if (isOwner) {
+            Spacer(Modifier.height(20.dp))
 
-        Text(
-            text = stringResource(store_empty_product_title),
-            style = NapzakMarketTheme.typography.body16sb.copy(
-                color = NapzakMarketTheme.colors.gray300,
+            Text(
+                text = stringResource(store_empty_product_title),
+                style = NapzakMarketTheme.typography.body16sb.copy(
+                    color = NapzakMarketTheme.colors.gray300,
+                )
             )
-        )
 
-        Text(
-            text = stringResource(store_empty_product_subtitle),
-            style = NapzakMarketTheme.typography.caption12sb.copy(
-                color = NapzakMarketTheme.colors.gray200,
+            Text(
+                text = stringResource(store_empty_product_subtitle),
+                style = NapzakMarketTheme.typography.caption12sb.copy(
+                    color = NapzakMarketTheme.colors.gray200,
+                )
             )
-        )
+        }
     }
 }
 
 @Preview
 @Composable
-private fun StoreEmptyViewPreview(modifier: Modifier = Modifier) {
+private fun MyStoreEmptyViewPreview(modifier: Modifier = Modifier) {
     NapzakMarketTheme {
-        StoreEmptyView(modifier)
+        StoreEmptyView(true, modifier)
+    }
+}
+
+@Preview
+@Composable
+private fun OtherStoreEmptyViewPreview(modifier: Modifier = Modifier) {
+    NapzakMarketTheme {
+        StoreEmptyView(false, modifier)
     }
 }

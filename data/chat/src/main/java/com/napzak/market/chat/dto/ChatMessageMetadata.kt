@@ -13,7 +13,7 @@ sealed class ChatMessageMetadata {
     @Serializable
     @SerialName("IMAGE")
     data class Image(
-        @SerialName("imageUrls") val imageUrls: List<String>,
+        @SerialName("imageUrls") val imageUrls: List<String?>,
     ) : ChatMessageMetadata()
 
     @Serializable
