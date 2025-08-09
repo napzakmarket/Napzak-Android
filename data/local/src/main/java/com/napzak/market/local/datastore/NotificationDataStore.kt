@@ -46,9 +46,9 @@ class NotificationDataStore @Inject constructor(
         }
     }
 
-    suspend fun updateNotificationModalShown() {
+    suspend fun updateNotificationModalShown(isModalShown: Boolean) {
         preferenceDataStore.edit { preferences ->
-            preferences[preferencesNotificationModalShown] = true
+            preferences[preferencesNotificationModalShown] = isModalShown
         }
     }
 

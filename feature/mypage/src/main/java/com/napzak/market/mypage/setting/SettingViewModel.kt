@@ -59,7 +59,10 @@ internal class SettingViewModel @Inject constructor(
     fun updateAppNotificationSetting(allowMessage: Boolean) = viewModelScope.launch {
         val pushToken = notificationRepository.getPushToken()
         if (pushToken != null) patchNotificationSettingsUseCase(pushToken, allowMessage)
-            .onSuccess { _isAppNotificationOn.value = allowMessage }
+            .onSuccess {
+                _isAppNotificationOn.value = allowMessage
+                if (!allowMessage) notificationRepository.updateNotificationModalShown(allowMessage)
+            }
             .onFailure { Timber.e(it) }
     }
 
