@@ -62,7 +62,7 @@ object NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
         val pendingIntent = PendingIntent.getBroadcast(
             this, notifyId, intent,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+            if (SDK_INT >= Build.VERSION_CODES.S)
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
             else
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -83,7 +83,6 @@ object NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Timber.tag(TAG).d(token)
         CoroutineScope(Dispatchers.IO).launch {
             updatePushToken(token)
         }
@@ -119,6 +118,7 @@ object NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
         }
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     private fun ensureNotificationChannel() {
         if (SDK_INT >= O) {
             val channel = NotificationChannel(
