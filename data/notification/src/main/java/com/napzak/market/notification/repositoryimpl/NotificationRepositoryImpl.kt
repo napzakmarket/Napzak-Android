@@ -55,8 +55,8 @@ class NotificationRepositoryImpl @Inject constructor(
         notificationDataStore.clearPushToken()
     }
 
-    override suspend fun updateNotificationModalShown() {
-        notificationDataStore.updateNotificationModalShown()
+    override suspend fun updateNotificationModalShown(isModalShown: Boolean) {
+        notificationDataStore.updateNotificationModalShown(isModalShown)
     }
 
     override suspend fun updateNotificationPermissionRequested() {
