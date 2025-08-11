@@ -52,7 +52,7 @@ internal class SettingViewModel @Inject constructor(
         val pushToken = notificationRepository.getPushToken()
         if (pushToken != null) getNotificationSettingsUseCase(pushToken)
             .onSuccess { _isAppNotificationOn.value = it.allowMessage }
-            .onFailure { Timber.e(it) }
+            .onFailure(Timber::e)
         else Timber.tag("FCM_TOKEN").d("Setting-fetchAppNotificationSetting() : pushToken == null")
     }
 
@@ -63,7 +63,7 @@ internal class SettingViewModel @Inject constructor(
                 _isAppNotificationOn.value = allowMessage
                 if (!allowMessage) notificationRepository.updateNotificationModalShown(allowMessage)
             }
-            .onFailure { Timber.e(it) }
+            .onFailure(Timber::e)
     }
 
     fun signOutUser() = viewModelScope.launch {
