@@ -1,16 +1,16 @@
-package com.napzak.market.wishlist.component
+package com.napzak.market.mypage.wishlist.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
 import com.napzak.market.designsystem.component.topbar.NavigateUpTopBar
-import com.napzak.market.feature.wishlist.R.string.wishlist_title
+import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.feature.mypage.R.string.wishlist_title
 import com.napzak.market.ui_util.ShadowDirection
 import com.napzak.market.ui_util.napzakGradientShadow
 
@@ -34,8 +34,8 @@ internal fun WishlistTopSection(
             .fillMaxWidth()
             .napzakGradientShadow(
                 height = 2.dp,
-                startColor = Color(0xFF000000), // TODO: shadow 컬러값 변경
-                endColor = Color.Transparent,
+                startColor = NapzakMarketTheme.colors.shadowBlack,
+                endColor = NapzakMarketTheme.colors.transWhite,
                 direction = ShadowDirection.Bottom,
             )
             .padding(horizontal = 20.dp),

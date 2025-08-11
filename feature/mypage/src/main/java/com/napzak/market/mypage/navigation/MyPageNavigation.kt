@@ -15,6 +15,7 @@ import com.napzak.market.common.navigation.MainTabRoute
 import com.napzak.market.common.navigation.Route
 import com.napzak.market.mypage.mypage.MyPageRoute
 import com.napzak.market.mypage.setting.SettingsRoute
+import com.napzak.market.mypage.wishlist.WishlistRoute
 import com.napzak.market.mypage.withdraw.WithdrawConfirmScreen
 import com.napzak.market.mypage.withdraw.WithdrawDetailScreen
 import com.napzak.market.mypage.withdraw.WithdrawReasonScreen
@@ -66,6 +67,12 @@ fun NavHostController.popBackStackOnCompleteWithdraw() {
     )
 }
 
+fun NavController.navigateToWishlist(navOptions: NavOptions? = null) =
+    this.navigate(
+        route = Wishlist,
+        navOptions = navOptions,
+    )
+
 fun NavGraphBuilder.mypageGraph(
     navController: NavHostController,
     restartApplication: () -> Unit,
@@ -74,7 +81,7 @@ fun NavGraphBuilder.mypageGraph(
     navigateToSales: () -> Unit,
     navigateToPurchase: () -> Unit,
     navigateToRecent: () -> Unit,
-    navigateToWishlist: () -> Unit,
+    navigateToProductDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<MyPage> {
@@ -87,7 +94,7 @@ fun NavGraphBuilder.mypageGraph(
             onSalesClick = navigateToSales,
             onPurchaseClick = navigateToPurchase,
             onRecentClick = navigateToRecent,
-            onFavoriteClick = navigateToWishlist,
+            onFavoriteClick = navController::navigateToWishlist,
             onSettingsClick = navController::navigateToSettings,
             modifier = modifier,
         )
@@ -154,6 +161,14 @@ fun NavGraphBuilder.mypageGraph(
             )
         }
     }
+
+    composable<Wishlist> {
+        WishlistRoute(
+            onNavigateUp = navigateToUp,
+            onProductDetailNavigate = navigateToProductDetail,
+            modifier = modifier,
+        )
+    }
 }
 
 @Serializable
@@ -164,6 +179,9 @@ data object Settings : Route
 
 @Serializable
 data object Withdraw : Route
+
+@Serializable
+data object Wishlist : Route
 
 @Serializable
 private data object WithdrawReason : Route
