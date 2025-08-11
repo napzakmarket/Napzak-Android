@@ -75,7 +75,7 @@ fun NapzakBasicTopBar(
                 style = NapzakMarketTheme.typography.body16b,
                 color = color.contentColor,
                 textAlign = titleAlign,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
         } else {
             Spacer(modifier = Modifier.weight(1f))
