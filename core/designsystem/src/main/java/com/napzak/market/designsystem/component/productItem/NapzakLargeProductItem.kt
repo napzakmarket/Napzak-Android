@@ -49,6 +49,7 @@ import com.napzak.market.designsystem.R.string.production_item_price
 import com.napzak.market.designsystem.R.string.production_item_price_suggestion
 import com.napzak.market.designsystem.R.string.production_item_sell
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.ui_util.formatToPriceString
 import com.napzak.market.ui_util.noRippleClickable
 
 /**
@@ -126,14 +127,13 @@ fun NapzakLargeProductItem(
         )
 
         Text(
-            text = stringResource(production_item_price, price),
+            text = stringResource(production_item_price, price.formatToPriceString()),
             style = NapzakMarketTheme.typography.body16b,
             color = NapzakMarketTheme.colors.gray500,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
             modifier = Modifier.padding(top = 6.dp),
         )
-
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -376,7 +376,7 @@ private fun LargeProductItemPreview() {
                     genre = "은혼",
                     title = "은혼 긴토키 히지카타 룩업",
                     imgUrl = "",
-                    price = "125,000",
+                    price = "125000",
                     createdDate = "1일 전",
                     reviewCount = "999+",
                     likeCount = "999+",

@@ -1,9 +1,7 @@
 package com.napzak.market.onboarding.termsAgreement
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -12,15 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -28,7 +22,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.napzak.market.designsystem.R.drawable.ic_arrow_left
 import com.napzak.market.designsystem.R.drawable.ic_arrow_right
 import com.napzak.market.designsystem.R.drawable.ic_first_step_indicator
 import com.napzak.market.designsystem.component.button.NapzakButton
@@ -37,10 +30,10 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.onboarding.R.string.onboarding_all_agreement_title
 import com.napzak.market.feature.onboarding.R.string.onboarding_next
 import com.napzak.market.feature.onboarding.R.string.onboarding_title
+import com.napzak.market.onboarding.genre.component.OnboardingTopBar
 import com.napzak.market.onboarding.termsAgreement.model.TermType
 import com.napzak.market.onboarding.termsAgreement.model.TermsAgreementUiState
 import com.napzak.market.onboarding.termsAgreement.model.getDisplayLabel
-import com.napzak.market.ui_util.noRippleClickable
 import com.napzak.market.ui_util.openUrl
 
 @Composable
@@ -91,8 +84,10 @@ fun TermsAgreementScreen(
                     .calculateBottomPadding()
             ),
     ) {
-        TermsAgreementTopBar(
+        OnboardingTopBar(
             onBackClick = onBackClick,
+            indicatorIcon = ic_first_step_indicator,
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -139,35 +134,6 @@ fun TermsAgreementScreen(
             enabled = uiState.isAllAgreed,
             modifier = Modifier
                 .fillMaxWidth(),
-        )
-    }
-}
-
-@Composable
-private fun TermsAgreementTopBar(
-    onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_arrow_left),
-            contentDescription = null,
-            tint = Color.Unspecified,
-            modifier = Modifier
-                .noRippleClickable(onClick = onBackClick)
-                .size(12.dp),
-        )
-
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_first_step_indicator),
-            contentDescription = null,
-            tint = Color.Unspecified,
-            modifier = Modifier.size(20.dp),
         )
     }
 }

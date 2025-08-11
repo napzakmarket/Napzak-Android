@@ -3,7 +3,6 @@ package com.napzak.market.chat.chatlist
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -34,13 +33,12 @@ import com.napzak.market.chat.model.ChatRoom
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.img_empty_chat_list
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
+import com.napzak.market.designsystem.component.topbar.TitleTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_list_empty_guide_1
 import com.napzak.market.feature.chat.R.string.chat_list_empty_guide_2
 import com.napzak.market.feature.chat.R.string.chat_list_top_bar
 import com.napzak.market.ui_util.ScreenPreview
-import com.napzak.market.ui_util.ShadowDirection
-import com.napzak.market.ui_util.napzakGradientShadow
 import com.napzak.market.ui_util.openSystemNotificationSettings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -144,23 +142,11 @@ private fun ChatListScreen(
 internal fun ChatListTopBar(
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .napzakGradientShadow(
-                height = 4.dp,
-                startColor = NapzakMarketTheme.colors.shadowBlack,
-                endColor = NapzakMarketTheme.colors.transWhite,
-                direction = ShadowDirection.Bottom,
-            )
-            .padding(top = 34.dp, bottom = 20.dp, start = 20.dp),
-    ) {
-        Text(
-            text = stringResource(chat_list_top_bar),
-            style = NapzakMarketTheme.typography.body16b,
-            color = NapzakMarketTheme.colors.gray400,
-        )
-    }
+    TitleTopBar(
+        title = stringResource(chat_list_top_bar),
+        paddingValues = PaddingValues(start = 20.dp, top = 36.dp, bottom = 20.dp),
+        modifier = modifier,
+    )
 }
 
 @Composable
