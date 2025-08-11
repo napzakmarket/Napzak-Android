@@ -19,7 +19,6 @@ internal fun StoreTopBar(
         )
     } else {
         MenuTopBar(
-            title = "",
             onNavigateUp = onBackButtonClick,
             onMenuClick = onMenuButtonClick,
             modifier = modifier,

@@ -12,10 +12,10 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
 @Composable
 fun MenuTopBar(
-    title: String,
     onNavigateUp: () -> Unit,
     onMenuClick: () -> Unit,
     modifier: Modifier = Modifier,
+    title: String? = null,
     titleAlign: TextAlign = TextAlign.Start,
     isShadowed: Boolean = true,
     paddingValues: PaddingValues = NapzakTopBarDefault.topBarInnerPadding,
