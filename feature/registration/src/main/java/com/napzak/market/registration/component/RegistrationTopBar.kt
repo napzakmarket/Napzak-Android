@@ -21,7 +21,6 @@ internal fun RegistrationTopBar(
     modifier: Modifier = Modifier,
 ) {
     val actions = listOf(NapzakTopBarAction(ic_close_24, onCloseClick))
-    val navigator = listOf(NapzakTopBarAction(null, {})) // 좌우 균형을 위한 빈 아이콘
     val topBarColor = NapzakTopBarColor(
         containerColor = NapzakMarketTheme.colors.white,
         contentColor = NapzakMarketTheme.colors.gray500,
@@ -31,11 +30,11 @@ internal fun RegistrationTopBar(
     NapzakBasicTopBar(
         title = title,
         actions = actions,
+        navigators = null,
         color = topBarColor,
         modifier = modifier,
         isShadowed = true,
         titleAlign = TextAlign.Center,
-        navigators = navigator,
         paddingValues = PaddingValues(start = 12.dp, top = 32.dp, end = 12.dp, bottom = 20.dp),
     )
 }

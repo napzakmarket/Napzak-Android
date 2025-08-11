@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,6 +40,17 @@ fun NapzakBasicTopBar(
     color: NapzakTopBarColor,
     modifier: Modifier = Modifier,
 ) {
+    fun getExtendedActions(length: Int, actions: List<NapzakTopBarAction>?) = buildList {
+        addAll(actions.orEmpty())
+        repeat(length - (actions?.size ?: 0)) {
+            add(NapzakTopBarAction.Empty)
+        }
+    }
+
+    val maxNum = maxOf(navigators?.size ?: 0, actions?.size ?: 0)
+    val extendedNavigators = getExtendedActions(maxNum, navigators)
+    val extendedActions = getExtendedActions(maxNum, actions)
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -58,7 +70,7 @@ fun NapzakBasicTopBar(
             )
             .padding(paddingValues)
     ) {
-        navigators?.forEach { navigation ->
+        extendedNavigators.forEach { navigation ->
             ActionButton(
                 iconRes = navigation.iconRes,
                 color = color.iconColor,
@@ -81,7 +93,7 @@ fun NapzakBasicTopBar(
             Spacer(modifier = Modifier.weight(1f))
         }
 
-        actions?.forEach { action ->
+        extendedActions.forEach { action ->
             Spacer(modifier = Modifier.width(4.dp))
             ActionButton(
                 iconRes = action.iconRes,
@@ -116,11 +128,17 @@ private fun ActionButton(
     }
 }
 
+@Immutable
 data class NapzakTopBarAction(
     @DrawableRes val iconRes: Int?,
     val onClick: () -> Unit,
-)
+) {
+    companion object {
+        val Empty = NapzakTopBarAction(null, {})
+    }
+}
 
+@Immutable
 data class NapzakTopBarColor(
     val iconColor: Color,
     val contentColor: Color,
