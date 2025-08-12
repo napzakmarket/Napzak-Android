@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -142,7 +143,8 @@ fun MainScreen(
                     restartApplication = restartApplication,
                     endApplicationAtHome = mainBackHandlerEvent,
                     connectSocket = connectSocket,
-                    modifier = Modifier.padding(innerPadding),
+                    innerPadding = innerPadding,
+                    modifier = Modifier,
                 )
             }
         }
@@ -155,9 +157,10 @@ private fun MainNavHost(
     restartApplication: () -> Unit,
     endApplicationAtHome: () -> Unit,
     connectSocket: () -> Unit,
+    innerPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
-
+    val bottomPadding = innerPadding.calculateBottomPadding()
 
     NavHost(
         enterTransition = {
@@ -173,7 +176,7 @@ private fun MainNavHost(
             ExitTransition.None
         },
         navController = navigator.navController,
-        startDestination = navigator.startDestination
+        startDestination = navigator.startDestination,
     ) {
         splashGraph(
             onNavigateToMain = {
@@ -192,7 +195,7 @@ private fun MainNavHost(
                         launchSingleTop = true
                     }
                 )
-            }
+            },
         )
 
         loginGraph(
@@ -234,7 +237,8 @@ private fun MainNavHost(
                     sortType = SortType.POPULAR,
                 )
             },
-            modifier = modifier,
+            modifier = modifier
+                .padding(bottom = bottomPadding),
         )
 
         exploreGraph(
@@ -243,7 +247,8 @@ private fun MainNavHost(
             navigateToSearch = navigator.navController::navigateToSearch,
             navigateToGenreDetail = navigator.navController::navigateToGenreDetail,
             navigateToProductDetail = navigator.navController::navigateToProductDetail,
-            modifier = modifier,
+            modifier = modifier
+                .padding(bottom = bottomPadding),
         )
 
         searchGraph(
@@ -315,7 +320,8 @@ private fun MainNavHost(
             navigateToRecent = { /* TODO: 최근 본 상품 화면으로 이동 */ },
             navigateToProductDetail = navigator.navController::navigateToProductDetail,
             restartApplication = restartApplication,
-            modifier = modifier,
+            modifier = modifier
+                .padding(bottom = bottomPadding),
         )
 
         chatGraph(
@@ -324,7 +330,8 @@ private fun MainNavHost(
             onStoreReportNavigate = navigator.navController::navigateToUserReport,
             onSettingsNavigate = navigator.navController::navigateToSettings,
             onNavigateUp = navigator::navigateUp,
-            modifier = modifier,
+            modifier = modifier
+                .padding(bottom = bottomPadding),
         )
     }
 }
