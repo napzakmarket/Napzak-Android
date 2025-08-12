@@ -128,8 +128,9 @@ internal fun HomeRoute(
         onLikeButtonClick = viewModel::setInterest,
         onMostInterestedSellNavigate = onMostInterestedSellNavigate,
         onMostInterestedBuyNavigate = onMostInterestedBuyNavigate,
-        modifier = modifier
-            .background(NapzakMarketTheme.colors.white),
+        modifier = Modifier
+            .background(NapzakMarketTheme.colors.white)
+            .then(modifier),
     )
 }
 
