@@ -204,6 +204,8 @@ private fun MainNavHost(
                 connectSocket()
                 navigator.navController.navigate(Home)
             },
+            modifier = modifier
+                .padding(bottom = bottomPadding),
         )
 
         onboardingGraph(
@@ -248,7 +250,7 @@ private fun MainNavHost(
             navigateToGenreDetail = navigator.navController::navigateToGenreDetail,
             navigateToProductDetail = navigator.navController::navigateToProductDetail,
             modifier = modifier
-                .padding(bottom = bottomPadding),
+                .padding(innerPadding),
         )
 
         searchGraph(
@@ -258,6 +260,8 @@ private fun MainNavHost(
                 navigator.navController.navigateToExplore(searchTerm)
             },
             navigateToGenreDetail = navigator.navController::navigateToGenreDetail,
+            modifier = modifier
+                .padding(innerPadding),
         )
 
         storeGraph(
@@ -331,7 +335,7 @@ private fun MainNavHost(
             onSettingsNavigate = navigator.navController::navigateToSettings,
             onNavigateUp = navigator::navigateUp,
             modifier = modifier
-                .padding(bottom = bottomPadding),
+                .padding(innerPadding),
         )
     }
 }
