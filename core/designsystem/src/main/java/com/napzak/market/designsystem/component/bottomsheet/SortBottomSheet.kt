@@ -66,12 +66,15 @@ fun SortBottomSheet(
         dragHandle = null,
     ) {
         val view = LocalView.current
-        val window = (view.parent as DialogWindowProvider).window
+        val dialogWindow = (view.parent as? DialogWindowProvider)?.window
 
         SideEffect {
-            window.disableContrastEnforcement()
-            WindowInsetsControllerCompat(window, view).isAppearanceLightStatusBars = true
-            WindowInsetsControllerCompat(window, view).isAppearanceLightNavigationBars = true
+            dialogWindow?.let { window ->
+                window.disableContrastEnforcement()
+                val controller = WindowInsetsControllerCompat(window, view)
+                controller.isAppearanceLightStatusBars = false
+                controller.isAppearanceLightNavigationBars = true
+            }
         }
 
         Column(
