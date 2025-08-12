@@ -24,11 +24,11 @@ import com.napzak.market.ui_util.LocalSystemBarsColor
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashRoute(
+internal fun SplashRoute(
     onNavigateToMain: () -> Unit,
     onNavigateToOnboarding: () -> Unit,
-    viewModel: SplashViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
+    viewModel: SplashViewModel = hiltViewModel(),
 ) {
     val localSystemBarsColor = LocalSystemBarsColor.current
     val splashColor = NapzakMarketTheme.colors.purple500
