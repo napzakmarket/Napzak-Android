@@ -15,13 +15,18 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.view.WindowInsetsControllerCompat
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.designsystem.R
+import com.napzak.market.ui_util.disableContrastEnforcement
 
 /**
  * dragHandle 바텀 시트
@@ -40,10 +45,11 @@ fun DragHandleBottomSheet(
     modifier: Modifier = Modifier,
     bottomSheetContent: @Composable ColumnScope.() -> Unit,
 ) {
+
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        shape = RoundedCornerShape(topStart = 31.dp, topEnd = 31.dp),
+        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
         containerColor = NapzakMarketTheme.colors.white,
         scrimColor = NapzakMarketTheme.colors.transBlack,
         dragHandle = {
@@ -55,12 +61,21 @@ fun DragHandleBottomSheet(
                         .height(2.dp)
                         .background(
                             color = NapzakMarketTheme.colors.gray100,
-                            shape = RoundedCornerShape(31)
+                            shape = RoundedCornerShape(32),
                         ),
                 )
             }
         },
     ) {
+        val view = LocalView.current
+        val window = (view.parent as DialogWindowProvider).window
+
+        SideEffect {
+            window.disableContrastEnforcement()
+            WindowInsetsControllerCompat(window, view).isAppearanceLightStatusBars = true
+            WindowInsetsControllerCompat(window, view).isAppearanceLightNavigationBars = true
+        }
+
         Column(
             modifier = modifier
                 .fillMaxWidth()
