@@ -34,7 +34,7 @@ fun NavGraphBuilder.productDetailGraph(
             onNavigateUp = onNavigateUp,
             onModifyNavigate = onModifyNavigate,
             onReportNavigate = onReportNavigate,
-            modifier = modifier.systemBarsPadding(),
+            modifier = modifier,
         )
     }
 }
