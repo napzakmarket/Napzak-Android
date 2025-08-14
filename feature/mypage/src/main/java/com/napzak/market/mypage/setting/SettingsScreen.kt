@@ -26,7 +26,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
+import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.topbar.NavigateUpTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.settings_button_logout
@@ -40,7 +42,9 @@ import com.napzak.market.feature.mypage.R.string.settings_topbar_title
 import com.napzak.market.mypage.setting.component.SettingItem
 import com.napzak.market.mypage.setting.component.SettingNotificationItem
 import com.napzak.market.mypage.setting.component.SettingVersionItem
+import com.napzak.market.mypage.setting.state.SettingUiState
 import com.napzak.market.mypage.setting.type.SettingsMenu
+import com.napzak.market.store.model.SettingInfo
 import com.napzak.market.ui_util.ScreenPreview
 import com.napzak.market.ui_util.noRippleClickable
 import com.napzak.market.ui_util.openUrl
@@ -54,8 +58,9 @@ internal fun SettingsRoute(
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
-    val state by viewModel.settingInfo.collectAsStateWithLifecycle()
-    val isAppNotificationOn by viewModel.isAppNotificationOn.collectAsStateWithLifecycle()
+    val uiState by viewModel.settingUiState.collectAsStateWithLifecycle()
+//    val state by viewModel.settingInfo.collectAsStateWithLifecycle()
+//    val isAppNotificationOn by viewModel.isAppNotificationOn.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect {
@@ -65,30 +70,71 @@ internal fun SettingsRoute(
         }
     }
 
-    SettingsScreen(
-        isAppNotificationOn = isAppNotificationOn,
-        onBackClick = onBackClick,
-        onNotificationToggleClick = { viewModel.updateAppNotificationSetting(!isAppNotificationOn) },
-        onLogoutConfirm = viewModel::signOutUser,
-        onWithdrawClick = onWithdrawClick,
-        onNoticeClick = { if (state.noticeLink.isNotBlank()) context.openUrl(state.noticeLink) },
-        onTermsClick = { if (state.termsLink.isNotBlank()) context.openUrl(state.termsLink) },
-        onPrivacyClick = { if (state.privacyPolicyLink.isNotBlank()) context.openUrl(state.privacyPolicyLink) },
-    )
+    with(uiState.settingInfoState) {
+        SettingsScreen(
+            uiState = uiState,
+            onBackClick = onBackClick,
+            onNotificationToggleClick = viewModel::updateAppNotificationSetting,
+            onNoticeClick = context::openUrl,
+            onTermsClick = context::openUrl,
+            onPrivacyClick = context::openUrl,
+            onLogoutConfirm = viewModel::signOutUser,
+            onWithdrawClick = onWithdrawClick,
+        )
+    }
 }
 
 @Composable
 private fun SettingsScreen(
-    isAppNotificationOn: Boolean,
-    onBackClick: () -> Unit = {},
-    onNotificationToggleClick: () -> Unit = {},
-    onNoticeClick: () -> Unit = {},
-    onTermsClick: () -> Unit = {},
-    onPrivacyClick: () -> Unit = {},
-    onLogoutConfirm: () -> Unit = {},
-    onWithdrawClick: () -> Unit = {},
+    uiState: SettingUiState,
+    onBackClick: () -> Unit,
+    onNotificationToggleClick: (Boolean) -> Unit,
+    onNoticeClick: (String) -> Unit,
+    onTermsClick: (String) -> Unit,
+    onPrivacyClick: (String) -> Unit,
+    onLogoutConfirm: () -> Unit,
+    onWithdrawClick: () -> Unit,
 ) {
+    when (uiState.isLoaded) {
+        is UiState.Loading -> NapzakLoadingOverlay()
 
+        is UiState.Empty -> {}
+
+        is UiState.Failure -> {}
+
+        is UiState.Success -> {
+            val settingInfo = (uiState.settingInfoState as UiState.Success<SettingInfo>).data
+
+            SettingSuccessScreen(
+                isAppNotificationOn = (uiState.appNotificationState as UiState.Success<Boolean>).data,
+                onBackClick = onBackClick,
+                onNotificationToggleClick = onNotificationToggleClick,
+                onLogoutConfirm = onLogoutConfirm,
+                onWithdrawClick = onWithdrawClick,
+                onNoticeClick = { if (settingInfo.noticeLink.isNotBlank()) onNoticeClick(settingInfo.noticeLink) },
+                onTermsClick = { if (settingInfo.termsLink.isNotBlank()) onTermsClick(settingInfo.termsLink) },
+                onPrivacyClick = {
+                    if (settingInfo.privacyPolicyLink.isNotBlank()) onPrivacyClick(
+                        settingInfo.privacyPolicyLink
+                    )
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun SettingSuccessScreen(
+    isAppNotificationOn: Boolean,
+    onBackClick: () -> Unit,
+    onNotificationToggleClick: (Boolean) -> Unit,
+    onNoticeClick: () -> Unit,
+    onTermsClick: () -> Unit,
+    onPrivacyClick: () -> Unit,
+    onLogoutConfirm: () -> Unit,
+    onWithdrawClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     var showLogoutDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -101,7 +147,7 @@ private fun SettingsScreen(
         modifier = Modifier.systemBarsPadding(),
     ) { padding ->
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .padding(padding)
                 .fillMaxSize()
                 .background(NapzakMarketTheme.colors.white),
@@ -121,7 +167,7 @@ private fun SettingsScreen(
 
                 SettingNotificationItem(
                     isAppNotificationOn = isAppNotificationOn,
-                    onToggleClick = onNotificationToggleClick,
+                    onToggleClick = { onNotificationToggleClick(!isAppNotificationOn) },
                 )
 
                 Spacer(modifier = Modifier.height(28.dp))
@@ -242,7 +288,7 @@ private fun SettingsScreen(
 @Composable
 private fun SettingsScreenPreview() {
     NapzakMarketTheme {
-        SettingsScreen(
+        SettingSuccessScreen(
             isAppNotificationOn = true,
             onBackClick = {},
             onNotificationToggleClick = {},
