@@ -1,5 +1,6 @@
 package com.napzak.market.splash
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,8 +17,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.napzak.market.designsystem.R.drawable.ic_logo
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -30,6 +34,16 @@ internal fun SplashRoute(
     viewModel: SplashViewModel = hiltViewModel(),
 ) {
     var isSuccess by remember { mutableStateOf(false) }
+    val view = LocalView.current
+
+    DisposableEffect(Unit) {
+        val window = (view.context as Activity).window
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        onDispose {
+            controller.isAppearanceLightStatusBars = true
+            controller.isAppearanceLightNavigationBars = true
+        }
+    }
 
     LaunchedEffect(Unit) {
         val result = viewModel.tryAutoLogin()
