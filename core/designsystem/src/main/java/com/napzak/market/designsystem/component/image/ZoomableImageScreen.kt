@@ -1,5 +1,6 @@
 package com.napzak.market.designsystem.component.image
 
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -9,10 +10,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
@@ -30,10 +33,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.core.view.WindowCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.designsystem.R.drawable.ic_arrow_left
@@ -51,18 +56,33 @@ fun ZoomableImageScreen(
 ) {
     val pagerState = rememberPagerState(initialPage = initialPage) { imageUrls.size }
     var layoutSize by remember { mutableStateOf(IntSize.Zero) }
+    val view = LocalView.current
+
+    DisposableEffect(Unit) {
+        val window = (view.context as Activity).window
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+
+        controller.isAppearanceLightStatusBars = false
+        controller.isAppearanceLightNavigationBars = false
+
+        onDispose {
+            controller.isAppearanceLightStatusBars = true
+            controller.isAppearanceLightNavigationBars = true
+        }
+    }
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(color = NapzakMarketTheme.colors.black)
+            .systemBarsPadding()
             .zIndex(1f)
             .onGloballyPositioned { layoutSize = it.size },
         contentAlignment = Alignment.Center,
     ) {
         Box(
             modifier = Modifier
-                .padding(start = 15.dp, top = 26.dp)
+                .padding(start = 13.dp, top = 34.dp)
                 .size(24.dp)
                 .align(Alignment.TopStart)
                 .zIndex(1f)
