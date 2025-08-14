@@ -2,8 +2,6 @@ package com.napzak.market.designsystem.component.button
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.snap
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
@@ -12,11 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,21 +29,13 @@ fun NapzakToggleButton(
     val padding = 2.dp
     val thumbSize = toggleHeight - padding * 2
 
-    var hasBeenInitialized by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        hasBeenInitialized = true
-    }
-
     val offsetX by animateDpAsState(
         targetValue = if (isToggleOn) toggleWidth - thumbSize - padding * 2 else 0.dp,
-        animationSpec = if (!hasBeenInitialized) snap() else tween(durationMillis = 300),
         label = "thumb_offset",
     )
 
     val backgroundColor by animateColorAsState(
         targetValue = if (isToggleOn) NapzakMarketTheme.colors.purple500 else NapzakMarketTheme.colors.gray100,
-        animationSpec = if (!hasBeenInitialized) snap() else tween(durationMillis = 300),
         label = "bg_color"
     )
 
