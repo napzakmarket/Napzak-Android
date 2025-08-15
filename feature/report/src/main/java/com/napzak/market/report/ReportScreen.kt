@@ -1,10 +1,12 @@
 package com.napzak.market.report
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -14,13 +16,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,14 +26,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -46,8 +44,8 @@ import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastFontType
 import com.napzak.market.designsystem.component.toast.ToastType
+import com.napzak.market.designsystem.component.topbar.NavigateUpTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.report.R.drawable.ic_chevron_left
 import com.napzak.market.feature.report.R.string.report_button_submit
 import com.napzak.market.report.component.ReportContactSection
 import com.napzak.market.report.component.ReportDetailSection
@@ -55,7 +53,7 @@ import com.napzak.market.report.component.ReportReasonSection
 import com.napzak.market.report.state.ReportState
 import com.napzak.market.report.state.rememberReportState
 import com.napzak.market.report.type.ReportType
-import com.napzak.market.ui_util.noRippleClickable
+import com.napzak.market.ui_util.clearFocusOnScrollConnection
 
 @Composable
 internal fun ReportRoute(
@@ -116,8 +114,12 @@ private fun ReportScreen(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scrollState = rememberScrollState()
+    val density = LocalDensity.current
     val focusManager = LocalFocusManager.current
+
+    val scrollState = rememberScrollState()
+    var buttonHeight by remember { mutableStateOf(0.dp) }
+    val nestedScrollConnection = remember { clearFocusOnScrollConnection(focusManager) }
     var dropdownEnabled by remember { mutableStateOf(false) }
     val disableDropDown = { dropdownEnabled = false }
 
@@ -129,33 +131,31 @@ private fun ReportScreen(
         onNavigateUp = onNavigateUp,
     )
 
-    Scaffold(
-        topBar = {
-            ReportTopBar(
-                onNavigateUp = onNavigateUp,
-            )
-        },
-        bottomBar = {
-            ReportSubmitButton(
-                onClick = onSubmitButtonClick,
-                enabled = reportState.isReportFilled,
-            )
-        },
-        containerColor = NapzakMarketTheme.colors.white,
-        modifier = modifier.fillMaxSize(),
-    ) { innerPadding ->
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(color = NapzakMarketTheme.colors.white)
+            .nestedScroll(nestedScrollConnection),
+    ) {
+        NavigateUpTopBar(
+            onNavigateUp = onNavigateUp,
+            isShadowed = true
+        )
+
         Column(
             modifier = Modifier
-                .padding(innerPadding)
-                .consumeWindowInsets(innerPadding)
+                .weight(1f)
+                .consumeWindowInsets(PaddingValues(bottom = buttonHeight))
                 .imePadding()
                 .verticalScroll(scrollState)
                 .pointerInput(Unit) {
-                    detectVerticalDragGestures { _, _ ->
-                        focusManager.clearFocus()
-                        disableDropDown()
-                    }
-                }
+                    detectTapGestures(
+                        onTap = {
+                            focusManager.clearFocus()
+                            disableDropDown()
+                        },
+                    )
+                },
         ) {
             Spacer(Modifier.height(40.dp))
 
@@ -194,30 +194,14 @@ private fun ReportScreen(
 
             Spacer(Modifier.height(35.dp))
         }
-    }
-}
 
-@Composable
-private fun ReportTopBar(
-    onNavigateUp: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Surface(
-        shadowElevation = 1.dp,
-        color = NapzakMarketTheme.colors.white,
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        Box(contentAlignment = Alignment.TopStart) {
-            Icon(
-                imageVector = ImageVector.vectorResource(ic_chevron_left),
-                contentDescription = null,
-                tint = NapzakMarketTheme.colors.gray200,
-                modifier = Modifier
-                    .noRippleClickable(onNavigateUp)
-                    .wrapContentWidth()
-                    .padding(horizontal = 20.dp, vertical = 22.dp),
-            )
-        }
+        ReportSubmitButton(
+            onClick = onSubmitButtonClick,
+            enabled = reportState.isReportFilled,
+            modifier = Modifier.onGloballyPositioned {
+                buttonHeight = with(density) { it.size.height.toDp() }
+            }
+        )
     }
 }
 
