@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.IOException
 import javax.inject.Inject
 
 class ImageCompressor @Inject constructor(
@@ -35,7 +36,7 @@ class ImageCompressor @Inject constructor(
             buffer.toByteArray()
         }
 
-        val cacheFile = File(context.cacheDir, "compressed_${System.currentTimeMillis()}_$fileName")
+        val cacheFile = File(createCompressDir(), "${System.currentTimeMillis()}_$fileName")
 
         cacheFile.outputStream()
             .use { it.write(compressedImage) }
@@ -44,7 +45,7 @@ class ImageCompressor @Inject constructor(
     }
 
     private fun getImageMetaData(uri: Uri): Pair<String, Long> {
-        var fileName = "unknown.jpg"
+        var fileName = DEF_NAME
         var size = -1L
 
         context.contentResolver.query(
@@ -78,13 +79,20 @@ class ImageCompressor @Inject constructor(
         else -> 90
     }
 
-    fun clearCachedImage() = context.cacheDir.listFiles()
-        ?.filter { it.name.startsWith("compressed_") }
-        ?.forEach { it.delete() }
+    private fun createCompressDir(): File = File(context.cacheDir, COMPRESSED).apply { mkdirs() }
+
+    suspend fun clearCachedImage() = withContext(Dispatchers.IO) {
+        val dir = File(context.cacheDir, COMPRESSED)
+        if (dir.exists() && !dir.deleteRecursively()) {
+            throw IOException("Failed to delete ${dir.absolutePath}")
+        }
+    }
 
     companion object {
         private const val MAX_WIDTH = 1024
         private const val MAX_HEIGHT = 1024
         private const val MAX_FILE_SIZE = 1024 * 1024 // 1MB
+        private const val DEF_NAME = "unknown.jpg"
+        private const val COMPRESSED = "compressed"
     }
 }
