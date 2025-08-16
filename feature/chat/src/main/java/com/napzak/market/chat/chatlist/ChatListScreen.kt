@@ -55,19 +55,18 @@ internal fun ChatListRoute(
     val context = LocalContext.current
     val chatRoomsState by viewModel.chatRoomsState.collectAsStateWithLifecycle()
     val notificationState by viewModel.notificationState.collectAsStateWithLifecycle()
-    val isSystemPermissionGranted =
-        NotificationManagerCompat.from(context).areNotificationsEnabled()
+    val systemPermission = NotificationManagerCompat.from(context).areNotificationsEnabled()
 
     LaunchedEffect(Unit) {
         viewModel.prepareChatRooms()
-        viewModel.checkAndSetNotificationModal(isSystemPermissionGranted)
+        viewModel.checkAndSetNotificationModal(systemPermission)
     }
 
     ChatListScreen(
         chatRoomsState = chatRoomsState,
         onChatRoomClick = { chatRoom -> onChatRoomNavigate(chatRoom.roomId) },
         isNotificationModalOpen = notificationState.isNotificationModalOpen,
-        isSystemPermissionGranted = isSystemPermissionGranted,
+        isSystemPermissionGranted = systemPermission,
         isAppPermissionGranted = notificationState.isAppPermissionGranted,
         onDismissRequest = viewModel::updateNotificationModelOpenState,
         onSystemSettingNavigate = context::openSystemNotificationSettings,
