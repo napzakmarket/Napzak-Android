@@ -8,7 +8,6 @@ import com.napzak.market.home.state.HomeUiState
 import com.napzak.market.home.type.HomeProductType
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.notification.repository.NotificationRepository
-import com.napzak.market.notification.usecase.GetNotificationSettingsUseCase
 import com.napzak.market.notification.usecase.UpdatePushTokenUseCase
 import com.napzak.market.product.model.Product
 import com.napzak.market.product.repository.ProductRecommendationRepository
@@ -41,11 +40,9 @@ internal class HomeViewModel @Inject constructor(
     private val settingRepository: SettingRepository,
     private val interestProductUseCase: SetInterestProductUseCase,
     private val notificationRepository: NotificationRepository,
-    private val getNotificationSettingsUseCase: GetNotificationSettingsUseCase,
     private val updatePushTokenUseCase: UpdatePushTokenUseCase,
 ) : ViewModel() {
     private val nickname = MutableStateFlow("")
-    private var allowMessage = false
     private val _bannerLoadState =
         MutableStateFlow<UiState<Map<HomeBannerType, List<Banner>>>>(UiState.Loading)
     private val _recommendProductLoadState =
