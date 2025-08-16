@@ -28,8 +28,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.napzak.market.designsystem.R.drawable.ic_profile
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.store.R.drawable.ic_profile_basic
 import com.napzak.market.feature.store.R.drawable.ic_profile_edit
 import com.napzak.market.presigned_url.type.PhotoType
 import com.napzak.market.ui_util.noRippleClickable
@@ -80,7 +80,9 @@ internal fun EditStorePhotoSection(
             model = ImageRequest
                 .Builder(context)
                 .data(storePhoto)
-                .placeholder(ic_profile_basic)
+                .placeholder(ic_profile)
+                .error(ic_profile)
+                .fallback(ic_profile)
                 .build(),
             contentDescription = null,
             contentScale = ContentScale.Crop,

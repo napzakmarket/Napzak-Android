@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.napzak.market.designsystem.R.drawable.ic_profile_60
+import com.napzak.market.designsystem.R.drawable.ic_profile
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
 
@@ -76,10 +76,10 @@ private fun ProfileImage(
 
     AsyncImage(
         model = ImageRequest.Builder(context)
+            .placeholder(ic_profile)
+            .error(ic_profile)
+            .fallback(ic_profile)
             .data(imageUrl)
-            .placeholder(ic_profile_60)
-            .error(ic_profile_60)
-            .fallback(ic_profile_60)
             .crossfade(true)
             .build(),
         contentDescription = null,
