@@ -70,7 +70,7 @@ internal fun ProductImageGroup(
                     .crossfade(true)
                     .build(),
                 contentDescription = contentDescription,
-                contentScale = ContentScale.FillBounds,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
                     .noRippleClickable { onClick(currentPage) }

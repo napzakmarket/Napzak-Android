@@ -8,7 +8,9 @@
 
     <string name="detail_product_image_indicator">%d/%d</string>
     <string name="detail_product_tag_is_price_negotiable">가격제시</string>
+    <string name="detail_product_count_overflow">999+</string>
 
+    <string name="detail_product_price">%s원</string>
     <string name="detail_product_title_is_price_negotiable">가격 제시</string>
     <string name="detail_product_is_price_negotiable_true">받음</string>
     <string name="detail_product_is_price_negotiable_false">받지않음</string>
