@@ -42,7 +42,7 @@ import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun ChatRoomInputField(
-    text: String,
+    text: () -> String,
     enabled: Boolean,
     onTextChange: (String) -> Unit,
     onSendClick: (String) -> Unit,
@@ -82,7 +82,7 @@ internal fun ChatRoomInputField(
         )
         Spacer(modifier = Modifier.width(16.dp))
         ChatTextField(
-            text = text,
+            text = text(),
             onTextChange = onTextChange,
             hint = stringResource(
                 if (enabled) chat_room_input_field_hint
@@ -92,9 +92,9 @@ internal fun ChatRoomInputField(
             modifier = Modifier.weight(1f),
             suffix = {
                 SendButton(
-                    enabled = text.isNotBlank() && enabled,
+                    enabled = text().isNotBlank() && enabled,
                     onClick = {
-                        onSendClick(text)
+                        onSendClick(text())
                     },
                 )
             },
@@ -181,7 +181,7 @@ private fun ChatRoomInputFieldPreview() {
 
         Column {
             ChatRoomInputField(
-                text = textNotWithDrawn,
+                text = { textNotWithDrawn },
                 onTextChange = { textNotWithDrawn = it },
                 enabled = false,
                 onSendClick = {},
@@ -191,7 +191,7 @@ private fun ChatRoomInputFieldPreview() {
             Spacer(Modifier.height(10.dp))
 
             ChatRoomInputField(
-                text = textWithDrawn,
+                text = { textWithDrawn },
                 onTextChange = { textWithDrawn = it },
                 enabled = true,
                 onSendClick = {},
