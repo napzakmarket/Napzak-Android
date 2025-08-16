@@ -187,7 +187,11 @@ internal fun ChatRoomScreen(
                 chatRoom.productBrief?.let { product ->
                     ChatRoomProductSection(
                         product = product,
-                        onClick = { onProductDetailClick(product.productId) },
+                        onClick = {
+                            if (chatRoomState.isOpponentWithdrawn.not()) {
+                                onProductDetailClick(product.productId)
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
