@@ -148,6 +148,7 @@ internal val mockChatRoom = ChatRoomState(
         storeId = 1,
         nickname = "",
         storePhoto = "",
-        isWithdrawn = true
+        isWithdrawn = true,
+        isReported = true,
     )
 )

@@ -28,4 +28,5 @@ private fun ChatRoomInformationResponse.StoreInfo.toDomain(): StoreBrief = Store
     nickname = nickname,
     storePhoto = storePhoto,
     isWithdrawn = isWithdrawn,
+    isReported = isReported,
 )
