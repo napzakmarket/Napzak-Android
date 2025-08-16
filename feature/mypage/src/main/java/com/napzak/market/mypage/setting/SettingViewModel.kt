@@ -79,6 +79,7 @@ internal class SettingViewModel @Inject constructor(
         if (pushToken != null) patchNotificationSettingsUseCase(pushToken, allowMessage)
             .onSuccess {
                 _appNotificationState.value = UiState.Success(allowMessage)
+                notificationRepository.setNotificationPermission(allowMessage)
                 if (!allowMessage) notificationRepository.updateNotificationModalShown(allowMessage)
             }
             .onFailure(Timber::e)
