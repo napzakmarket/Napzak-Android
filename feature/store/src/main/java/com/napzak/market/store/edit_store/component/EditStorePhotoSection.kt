@@ -5,20 +5,17 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -28,9 +25,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.napzak.market.designsystem.R.drawable.ic_profile
+import com.napzak.market.designsystem.R.drawable.ic_image_edit
+import com.napzak.market.designsystem.component.image.NapzakProfileImage
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.store.R.drawable.ic_profile_edit
 import com.napzak.market.presigned_url.type.PhotoType
 import com.napzak.market.ui_util.noRippleClickable
 
@@ -41,9 +38,6 @@ internal fun EditStorePhotoSection(
     onPhotoChange: (PhotoType, Uri?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-    val storePhotoShape = CircleShape
-
     val photoType = remember { mutableStateOf(PhotoType.COVER) }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -58,54 +52,72 @@ internal fun EditStorePhotoSection(
     }
 
     Box(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxWidth()
+            .background(NapzakMarketTheme.colors.white),
+        contentAlignment = Alignment.TopCenter
     ) {
-        // Cover Image
-        AsyncImage(
-            model = ImageRequest
-                .Builder(context)
-                .data(storeCover)
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(2.25f)
-                .background(NapzakMarketTheme.colors.gray200)
-                .noRippleClickable { onPhotoClick(PhotoType.COVER) },
-        )
+        CoverImageSection(
+            imageUrl = storeCover,
+            modifier = Modifier.matchParentSize()
+        ) {
+            onPhotoClick(PhotoType.COVER)
+        }
 
-        // Profile Image
-        AsyncImage(
-            model = ImageRequest
-                .Builder(context)
-                .data(storePhoto)
-                .placeholder(ic_profile)
-                .error(ic_profile)
-                .fallback(ic_profile)
-                .build(),
+        ProfileImageSection(
+            imageUrl = storePhoto,
+        ) {
+            onPhotoClick(PhotoType.PROFILE)
+        }
+    }
+}
+
+@Composable
+private fun CoverImageSection(
+    imageUrl: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    val context = LocalContext.current
+
+    AsyncImage(
+        model = ImageRequest
+            .Builder(context)
+            .data(imageUrl)
+            .build(),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = modifier
+            .noRippleClickable(onClick = onClick),
+    )
+}
+
+@Composable
+private fun ProfileImageSection(
+    imageUrl: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .padding(top = 48.dp)
+            .size(110.dp)
+            .noRippleClickable(onClick = onClick),
+    ) {
+        NapzakProfileImage(
+            imageUrl = imageUrl,
             contentDescription = null,
-            contentScale = ContentScale.Crop,
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 80.dp)
-                .size(110.dp)
-                .clip(storePhotoShape)
-                .noRippleClickable { onPhotoClick(PhotoType.PROFILE) }
-                .border(
-                    width = 5.dp,
-                    color = NapzakMarketTheme.colors.white,
-                    shape = storePhotoShape,
-                ),
+                .fillMaxSize()
         )
 
         Icon(
-            imageVector = ImageVector.vectorResource(ic_profile_edit),
+            imageVector = ImageVector.vectorResource(ic_image_edit),
             contentDescription = null,
             tint = Color.Unspecified,
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(start = 96.dp, bottom = 16.dp),
+                .align(Alignment.BottomEnd)
+                .padding(bottom = 8.dp),
         )
     }
 }
