@@ -44,12 +44,9 @@ class MainNavigator(
 
         val navOptions = navOptions {
             navController.getBackStackEntry<Home>().destination.route?.let {
-                popUpTo(it) {
-                    saveState = true
-                }
+                popUpTo(it)
             }
             launchSingleTop = true
-            restoreState = true
         }
 
         when (tab) {
@@ -58,6 +55,7 @@ class MainNavigator(
             MainTab.REGISTER -> {
                 isRegister = isRegister.not()
             }
+
             MainTab.CHAT -> navController.navigateToChatList(navOptions = navOptions)
             MainTab.MY_PAGE -> navController.navigateToMyPage(navOptions = navOptions)
         }
