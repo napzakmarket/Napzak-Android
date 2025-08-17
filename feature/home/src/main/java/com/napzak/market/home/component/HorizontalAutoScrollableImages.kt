@@ -90,7 +90,7 @@ internal fun HorizontalAutoScrolledImages(
                     .data(currentImage)
                     .build(),
                 contentDescription = null,
-                contentScale = ContentScale.FillBounds,
+                contentScale = ContentScale.Crop,
             )
         }
 

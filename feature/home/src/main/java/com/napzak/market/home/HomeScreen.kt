@@ -119,6 +119,7 @@ internal fun HomeRoute(
                     napzakToast.makeText(
                         toastType = ToastType.HEART,
                         message = context.getString(heart_click_snackbar_message),
+                        yOffset = napzakToast.toastOffsetWithBottomBar()
                     )
                 }
 
@@ -316,7 +317,7 @@ private fun HomeSingleBanner(
             .data(banner.imageUrl)
             .build(),
         contentDescription = null,
-        contentScale = ContentScale.FillBounds,
+        contentScale = ContentScale.Crop,
         modifier = modifier
             .noRippleClickable { context.openUrl(banner.linkUrl) }
             .fillMaxWidth()
