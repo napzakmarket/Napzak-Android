@@ -47,7 +47,7 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
         val chatRoomId = messageData["roomId"]
 
         val uri = "napzak://$notifyType/$chatRoomId"
-        chatRoomId?.toInt()?.let { notifyId ->
+        chatRoomId?.toIntOrNull()?.let { notifyId ->
             val intent = Intent(this, NotificationClickReceiver::class.java).apply {
                 putExtra("deep_link", uri)
                 action = OPEN_DEEPLINK_ACTION
