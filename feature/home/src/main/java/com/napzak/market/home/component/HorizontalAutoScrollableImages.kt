@@ -36,8 +36,6 @@ import kotlinx.coroutines.delay
 
 private const val SCROLL_DELAY = 5000L
 private const val SCROLL_TWEEN = 1000
-private const val GRADIENT_RATIO = 126 / 216f
-
 
 /**
  * 가로 스크롤 및 자동 스크롤을 지원하는 이미지 목록 컴포넌트입니다.
