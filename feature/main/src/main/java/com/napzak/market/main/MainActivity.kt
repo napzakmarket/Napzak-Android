@@ -1,15 +1,14 @@
 package com.napzak.market.main
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.ui_util.LocalSystemBarsColor
-import com.napzak.market.ui_util.SystemBarsColorController
+import com.napzak.market.ui_util.disableContrastEnforcement
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,31 +18,25 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject
-    lateinit var systemBarsColorController: SystemBarsColorController
-
-    @Inject
     lateinit var webSocketLifecycleObserver: WebSocketLifecycleObserver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(webSocketLifecycleObserver)
-        enableEdgeToEdge()
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+        )
+        window.disableContrastEnforcement()
+
         setContent {
             NapzakMarketTheme {
-                SystemBarColorHandler()
-                CompositionLocalProvider(LocalSystemBarsColor provides systemBarsColorController) {
-                    MainScreen(
-                        restartApplication = ::restartApplication,
-                        connectSocket = { webSocketLifecycleObserver.updateLoggedInState(true) },
-                    )
-                }
+                MainScreen(
+                    restartApplication = ::restartApplication,
+                    connectSocket = { webSocketLifecycleObserver.updateLoggedInState(true) },
+                )
             }
         }
-    }
-
-    @Composable
-    private fun SystemBarColorHandler() {
-        systemBarsColorController.Apply(activity = this)
     }
 
     private fun restartApplication() {

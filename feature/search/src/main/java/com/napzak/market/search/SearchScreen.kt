@@ -30,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -55,7 +54,10 @@ import com.napzak.market.genre.model.RecommendedSearchWordGenre.SearchWord
 import com.napzak.market.search.component.GenreNavigationButton
 import com.napzak.market.search.component.SuggestedGenreCard
 import com.napzak.market.search.component.SuggestedKeywordChip
+import com.napzak.market.search.state.SearchRecommendation
 import com.napzak.market.search.state.SearchUiState
+import com.napzak.market.ui_util.ShadowDirection
+import com.napzak.market.ui_util.napzakGradientShadow
 import com.napzak.market.ui_util.noRippleClickable
 import kotlinx.coroutines.delay
 
@@ -157,13 +159,14 @@ private fun SearchSuccessScreen(
     ) {
         Row(
             modifier = Modifier
-                .shadow(
-                    elevation = 4.dp,
-                    spotColor = NapzakMarketTheme.colors.transBlack,
-                    ambientColor = NapzakMarketTheme.colors.transBlack,
+                .napzakGradientShadow(
+                    height = 4.dp,
+                    startColor = NapzakMarketTheme.colors.shadowBlack,
+                    endColor = NapzakMarketTheme.colors.transWhite,
+                    direction = ShadowDirection.Bottom,
                 )
                 .background(color = NapzakMarketTheme.colors.white)
-                .padding(start = 20.dp, top = 66.dp, end = 20.dp, bottom = 20.dp),
+                .padding(start = 20.dp, top = 42.dp, end = 20.dp, bottom = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -370,7 +373,14 @@ private fun SearchScreenPreview(modifier: Modifier = Modifier) {
 
     NapzakMarketTheme {
         SearchScreen(
-            uiState = SearchUiState(),
+            uiState = SearchUiState(
+                loadState = UiState.Success(
+                    SearchRecommendation(
+                        emptyList(),
+                        emptyList()
+                    )
+                )
+            ),
             searchText = searchText,
             onBackButtonClick = { },
             onTextChange = { searchText = it },

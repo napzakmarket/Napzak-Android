@@ -146,8 +146,7 @@ private fun WishlistEmptyScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = NapzakMarketTheme.colors.white)
-            .padding(top = 58.dp),
+            .background(color = NapzakMarketTheme.colors.white),
     ) {
         com.napzak.market.mypage.wishlist.component.WishlistTopSection(
             selectedTab = selectedTab,
@@ -202,8 +201,7 @@ private fun WishlistSuccessScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = NapzakMarketTheme.colors.white)
-            .padding(top = 58.dp),
+            .background(color = NapzakMarketTheme.colors.white),
     ) {
         com.napzak.market.mypage.wishlist.component.WishlistTopSection(
             selectedTab = selectedTab,

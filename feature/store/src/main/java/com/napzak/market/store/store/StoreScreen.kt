@@ -3,6 +3,7 @@ package com.napzak.market.store.store
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -214,6 +215,7 @@ private fun StoreSuccessScreen(
 
     Column(
         modifier = modifier
+            .systemBarsPadding()
             .fillMaxSize()
             .background(color = NapzakMarketTheme.colors.white),
     ) {
