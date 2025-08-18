@@ -24,7 +24,7 @@ fun SettingNotificationItem(
         if (isAppNotificationOn) stringResource(settings_section_app_notification_title)
         else stringResource(settings_section_app_notification_off_title)
     val textColor =
-        if (isAppNotificationOn) NapzakMarketTheme.colors.black
+        if (isAppNotificationOn) NapzakMarketTheme.colors.gray400
         else NapzakMarketTheme.colors.red
 
     Row(
@@ -34,7 +34,7 @@ fun SettingNotificationItem(
     ) {
         Text(
             text = text,
-            style = NapzakMarketTheme.typography.body16b.copy(textColor),
+            style = NapzakMarketTheme.typography.body16m.copy(textColor),
         )
 
         NapzakToggleButton(

@@ -159,8 +159,8 @@ private fun SettingSuccessScreen(
 
                 Text(
                     text = stringResource(id = settings_section_notification_title),
-                    style = NapzakMarketTheme.typography.body14r,
-                    color = NapzakMarketTheme.colors.gray400,
+                    style = NapzakMarketTheme.typography.body14sb,
+                    color = NapzakMarketTheme.colors.gray200,
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -171,22 +171,26 @@ private fun SettingSuccessScreen(
                 )
 
                 Spacer(modifier = Modifier.height(28.dp))
+            }
 
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    HorizontalDivider(
-                        color = NapzakMarketTheme.colors.gray10,
-                        thickness = 7.dp,
-                    )
-                }
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                HorizontalDivider(
+                    color = NapzakMarketTheme.colors.gray10,
+                    thickness = 7.dp,
+                )
+            }
 
+            Column(
+                modifier = Modifier.padding(horizontal = 20.dp),
+            ) {
                 Spacer(modifier = Modifier.height(28.dp))
 
                 Text(
                     text = stringResource(id = settings_section_service_info_title),
-                    style = NapzakMarketTheme.typography.body14r,
-                    color = NapzakMarketTheme.colors.gray400,
+                    style = NapzakMarketTheme.typography.body14sb,
+                    color = NapzakMarketTheme.colors.gray200,
                 )
 
                 Spacer(modifier = Modifier.height(28.dp))
