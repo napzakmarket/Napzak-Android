@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
 import com.napzak.market.mypage.setting.state.SettingUiState
-import com.napzak.market.notification.repository.FirebaseRepository
 import com.napzak.market.notification.repository.NotificationRepository
 import com.napzak.market.notification.usecase.GetNotificationSettingsUseCase
 import com.napzak.market.notification.usecase.PatchNotificationSettingsUseCase
@@ -30,7 +29,6 @@ internal class SettingViewModel @Inject constructor(
     private val getNotificationSettingsUseCase: GetNotificationSettingsUseCase,
     private val patchNotificationSettingsUseCase: PatchNotificationSettingsUseCase,
     private val notificationRepository: NotificationRepository,
-    private val firebaseRepository: FirebaseRepository,
 ) : ViewModel() {
 
     private val _settingInfoState = MutableStateFlow<UiState<SettingInfo>>(UiState.Loading)
@@ -88,7 +86,6 @@ internal class SettingViewModel @Inject constructor(
     fun signOutUser() = viewModelScope.launch {
         logoutUseCase()
             .onSuccess {
-                firebaseRepository.deletePushTokenFromFirebase()
                 _sideEffect.send(SettingSideEffect.OnSignOutComplete)
             }
             .onFailure(Timber::e)
