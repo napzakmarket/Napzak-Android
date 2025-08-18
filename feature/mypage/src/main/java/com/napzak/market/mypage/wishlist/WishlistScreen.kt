@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +42,7 @@ import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.wishlist_no_items_subtitle
 import com.napzak.market.feature.mypage.R.string.wishlist_no_items_title
+import com.napzak.market.mypage.wishlist.component.WishlistTopSection
 import com.napzak.market.mypage.wishlist.state.WishlistUiState
 import com.napzak.market.product.model.Product
 import com.napzak.market.ui_util.noRippleClickable
@@ -148,7 +150,7 @@ private fun WishlistEmptyScreen(
             .fillMaxSize()
             .background(color = NapzakMarketTheme.colors.white),
     ) {
-        com.napzak.market.mypage.wishlist.component.WishlistTopSection(
+        WishlistTopSection(
             selectedTab = selectedTab,
             onBackButtonClick = onBackButtonClick,
             onTabClick = onTabClick,
@@ -203,7 +205,7 @@ private fun WishlistSuccessScreen(
             .fillMaxSize()
             .background(color = NapzakMarketTheme.colors.white),
     ) {
-        com.napzak.market.mypage.wishlist.component.WishlistTopSection(
+        WishlistTopSection(
             selectedTab = selectedTab,
             onBackButtonClick = onBackButtonClick,
             onTabClick = onTabClick,
@@ -224,6 +226,12 @@ private fun WishlistProducts(
     onLikeButtonClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(products) {
+        listState.scrollToItem(0)
+    }
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
