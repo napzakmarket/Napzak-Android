@@ -1,5 +1,6 @@
 package com.napzak.market.login.navigation
 
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -14,6 +15,7 @@ fun NavController.navigateToLogin(navOptions: NavOptions? = null) = navigate(Log
 fun NavGraphBuilder.loginGraph(
     onNavigateToTerms: () -> Unit,
     onNavigateToHome: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     composable<Login> {
         LoginRoute(
@@ -22,7 +24,8 @@ fun NavGraphBuilder.loginGraph(
                     LoginFlowRoute.Terms -> onNavigateToTerms()
                     LoginFlowRoute.Main -> onNavigateToHome()
                 }
-            }
+            },
+            modifier = modifier,
         )
     }
 }
