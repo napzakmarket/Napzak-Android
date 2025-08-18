@@ -239,8 +239,10 @@ internal fun ChatRoomScreen(
         else -> {
             /*TODO: 채팅방 정보를 불러오지 못하는 경우에 대한 화면 구현*/
             Timber.tag("ChatRoom").d("none ChatRoomScreen called")
-            if (chatRoomState.isUserExitChatRoom) {
-                onNavigateUp()
+            LaunchedEffect(chatRoomState.isUserExitChatRoom) {
+                if (chatRoomState.isUserExitChatRoom) {
+                    onNavigateUp()
+                }
             }
         }
     }
