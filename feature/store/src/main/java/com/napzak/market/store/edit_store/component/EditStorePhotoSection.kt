@@ -5,11 +5,13 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -59,7 +61,9 @@ internal fun EditStorePhotoSection(
     ) {
         CoverImageSection(
             imageUrl = storeCover,
-            modifier = Modifier.matchParentSize()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(134.dp)
         ) {
             onPhotoClick(PhotoType.COVER)
         }
@@ -101,14 +105,19 @@ private fun ProfileImageSection(
     Box(
         modifier = modifier
             .padding(top = 48.dp)
-            .size(110.dp)
             .noRippleClickable(onClick = onClick),
     ) {
         NapzakProfileImage(
             imageUrl = imageUrl,
             contentDescription = null,
             modifier = Modifier
-                .fillMaxSize()
+                .border(
+                    width = 4.dp,
+                    color = NapzakMarketTheme.colors.white,
+                    shape = CircleShape
+                )
+                .padding(4.dp)
+                .size(110.dp)
         )
 
         Icon(
