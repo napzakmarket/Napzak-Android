@@ -56,7 +56,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import timber.log.Timber
 
-
 @Composable
 internal fun ChatRoomRoute(
     onProductDetailNavigate: (Long) -> Unit,

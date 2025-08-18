@@ -30,6 +30,7 @@ import com.napzak.market.login.model.LoginFlowRoute
 @Composable
 fun LoginRoute(
     onRouteChanged: (LoginFlowRoute) -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -48,34 +49,31 @@ fun LoginRoute(
                     //TODO 추후 구현
                 }
             ).startKakaoLogin()
-        }
+        },
+        modifier = modifier,
     )
 }
 
 @Composable
 private fun LoginScreen(
-    onKakaoLoginClick: () -> Unit = {},
+    onKakaoLoginClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ){
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(lottie_login)
     )
     val progress by animateLottieCompositionAsState(
         composition = composition,
-        iterations = LottieConstants.IterateForever
+        iterations = LottieConstants.IterateForever,
     )
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(NapzakMarketTheme.colors.white)
             .padding(
                 horizontal = 20.dp,
                 vertical = 40.dp,
-            )
-            .padding(
-                bottom = WindowInsets.navigationBars
-                    .asPaddingValues()
-                    .calculateBottomPadding()
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
