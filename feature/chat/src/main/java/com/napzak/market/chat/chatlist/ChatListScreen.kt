@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +25,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.chat.chatlist.component.ChatRoomItem
 import com.napzak.market.chat.chatlist.component.NotificationPermissionModal
@@ -42,6 +42,7 @@ import com.napzak.market.ui_util.ScreenPreview
 import com.napzak.market.ui_util.openSystemNotificationSettings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import timber.log.Timber
 
 @Composable
 internal fun ChatListRoute(
@@ -55,9 +56,13 @@ internal fun ChatListRoute(
     val notificationState by viewModel.notificationState.collectAsStateWithLifecycle()
     val systemPermission = NotificationManagerCompat.from(context).areNotificationsEnabled()
 
-    LaunchedEffect(Unit) {
+    LifecycleResumeEffect(Unit) {
         viewModel.prepareChatRooms()
         viewModel.checkAndSetNotificationModal(systemPermission)
+
+        onPauseOrDispose {
+            // No resource to close
+        }
     }
 
     ChatListScreen(
