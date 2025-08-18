@@ -69,7 +69,9 @@ internal class SettingViewModel @Inject constructor(
         if (pushToken != null) getNotificationSettingsUseCase(pushToken)
             .onSuccess { _appNotificationState.value = UiState.Success(it.allowMessage) }
             .onFailure { _appNotificationState.value = UiState.Failure(it.message.toString()) }
-        else Timber.tag("FCM_TOKEN").d("Setting-fetchAppNotificationSetting() : pushToken == null")
+        else {
+            _appNotificationState.value = UiState.Failure("pushToken == null")
+        }
     }
 
     fun updateAppNotificationSetting(allowMessage: Boolean) = viewModelScope.launch {
@@ -81,6 +83,9 @@ internal class SettingViewModel @Inject constructor(
                 if (!allowMessage) notificationRepository.updateNotificationModalShown(allowMessage)
             }
             .onFailure(Timber::e)
+        else {
+            _appNotificationState.value = UiState.Failure("pushToken == null")
+        }
     }
 
     fun signOutUser() = viewModelScope.launch {
