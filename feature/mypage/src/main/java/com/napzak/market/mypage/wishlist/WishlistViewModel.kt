@@ -92,7 +92,6 @@ internal class WishlistViewModel @Inject constructor(
                 if (originalState != finalState) return@collect //원래 값과 동일한 값이 되면 api 호출 생략
 
                 setInterestProductUseCase(productId, finalState)
-                    .onSuccess { updateWishlistInformation() }
                     .onFailure {
                         Timber.e(it.message.toString())
                         updateLoadState(

@@ -148,12 +148,13 @@ class ChatListViewModel @Inject constructor(
             .d("ChatList-checkAndSetNotificationModal() : pushToken == null")
     }
 
-    fun checkAndSetNotificationModal(isSystemPermissionGranted: Boolean) = viewModelScope.launch {
+    fun checkAndSetNotificationModal(systemPermission: Boolean) = viewModelScope.launch {
+        isSystemPermissionEqual(systemPermission)
         val hasShown = notificationRepository.getNotificationModalShown()
         if (hasShown == true) return@launch
 
         checkAppPermission()
-        if (!isSystemPermissionGranted || !_notificationState.value.isAppPermissionGranted) {
+        if (!systemPermission || !_notificationState.value.isAppPermissionGranted) {
             _notificationState.update { it.copy(isNotificationModalOpen = true) }
         }
 
@@ -162,6 +163,14 @@ class ChatListViewModel @Inject constructor(
 
     fun updateNotificationModelOpenState() {
         _notificationState.update { it.copy(isNotificationModalOpen = false) }
+    }
+
+    private suspend fun isSystemPermissionEqual(newPermission: Boolean) {
+        val lastedSystemPermission = notificationRepository.getSystemNotificationPermission()
+        if (lastedSystemPermission != newPermission) {
+            notificationRepository.setSystemNotificationPermission(newPermission)
+            if (!newPermission) notificationRepository.updateNotificationModalShown(false)
+        }
     }
 
     companion object {

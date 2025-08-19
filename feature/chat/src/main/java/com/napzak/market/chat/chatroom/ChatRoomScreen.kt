@@ -51,6 +51,9 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.img_empty_chat_room
 import com.napzak.market.designsystem.component.image.ZoomableImageScreen
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
+import com.napzak.market.designsystem.component.toast.LocalNapzakToast
+import com.napzak.market.designsystem.component.toast.ToastFontType
+import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.drawable.img_user_blocked_popup
 import com.napzak.market.feature.chat.R.string.chat_room_empty_guide_1
@@ -62,7 +65,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import timber.log.Timber
 
-
 @Composable
 internal fun ChatRoomRoute(
     onProductDetailNavigate: (Long) -> Unit,
@@ -73,6 +75,7 @@ internal fun ChatRoomRoute(
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
+    val toast = LocalNapzakToast.current
     val chatListState = rememberLazyListState()
 
     val chatRoomState by viewModel.chatRoomState.collectAsStateWithLifecycle()
@@ -112,6 +115,13 @@ internal fun ChatRoomRoute(
                     }
 
                     is ChatRoomSideEffect.OnWithdrawChatRoom -> onNavigateUp()
+
+                    is ChatRoomSideEffect.ShowToast -> toast.makeText(
+                        toastType = ToastType.COMMON,
+                        message = sideEffect.message,
+                        fontType = ToastFontType.SMALL,
+                        yOffset = toast.toastOffsetWithBottomBar(),
+                    )
                 }
             }
     }
@@ -251,6 +261,11 @@ internal fun ChatRoomScreen(
         else -> {
             /*TODO: 채팅방 정보를 불러오지 못하는 경우에 대한 화면 구현*/
             Timber.tag("ChatRoom").d("none ChatRoomScreen called")
+            LaunchedEffect(chatRoomState.isUserExitChatRoom) {
+                if (chatRoomState.isUserExitChatRoom) {
+                    onNavigateUp()
+                }
+            }
         }
     }
 }

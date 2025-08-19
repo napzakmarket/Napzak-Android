@@ -11,10 +11,12 @@ interface NotificationRepository {
 
     suspend fun getPushToken(): String?
     suspend fun getNotificationPermission(): Boolean?
+    suspend fun getSystemNotificationPermission(): Boolean?
     suspend fun getNotificationPermissionRequested(): Boolean?
     suspend fun setNotificationPermission(allowed: Boolean)
+    suspend fun setSystemNotificationPermission(systemPermission: Boolean)
     suspend fun cleanPushToken()
     suspend fun getNotificationModalShown(): Boolean?
-    suspend fun updateNotificationModalShown()
+    suspend fun updateNotificationModalShown(isModalShown: Boolean = true)
     suspend fun updateNotificationPermissionRequested()
 }

@@ -2,6 +2,8 @@ package com.napzak.market.mypage.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.napzak.market.common.state.UiState
+import com.napzak.market.mypage.setting.state.SettingUiState
 import com.napzak.market.notification.repository.NotificationRepository
 import com.napzak.market.notification.usecase.GetNotificationSettingsUseCase
 import com.napzak.market.notification.usecase.PatchNotificationSettingsUseCase
@@ -11,9 +13,11 @@ import com.napzak.market.store.usecase.LogoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -27,10 +31,24 @@ internal class SettingViewModel @Inject constructor(
     private val notificationRepository: NotificationRepository,
 ) : ViewModel() {
 
-    private val _settingInfo = MutableStateFlow(SettingInfo("", "", "", ""))
-    val settingInfo: StateFlow<SettingInfo> = _settingInfo.asStateFlow()
-    private val _isAppNotificationOn = MutableStateFlow(false)
-    val isAppNotificationOn: StateFlow<Boolean> = _isAppNotificationOn.asStateFlow()
+    private val _settingInfoState = MutableStateFlow<UiState<SettingInfo>>(UiState.Loading)
+    private val _appNotificationState = MutableStateFlow<UiState<Boolean>>(UiState.Loading)
+    val settingUiState: StateFlow<SettingUiState> = combine(
+        _settingInfoState,
+        _appNotificationState,
+    ) { settingInfoState, appNotificationState ->
+        SettingUiState(
+            settingInfoState = settingInfoState,
+            appNotificationState = appNotificationState,
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = SettingUiState(
+            settingInfoState = UiState.Loading,
+            appNotificationState = UiState.Loading,
+        )
+    )
 
     private val _sideEffect = Channel<SettingSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
@@ -42,30 +60,39 @@ internal class SettingViewModel @Inject constructor(
 
     private fun fetchSettingInfo() = viewModelScope.launch {
         settingRepository.fetchSettingInfo()
-            .onSuccess { _settingInfo.value = it }
-            .onFailure { throwable ->
-                Timber.e(throwable, "설정 정보 가져오기 실패")
-            }
+            .onSuccess { _settingInfoState.value = UiState.Success(it) }
+            .onFailure { _settingInfoState.value = UiState.Failure(it.message.toString()) }
     }
 
     fun fetchAppNotificationSetting() = viewModelScope.launch {
         val pushToken = notificationRepository.getPushToken()
         if (pushToken != null) getNotificationSettingsUseCase(pushToken)
-            .onSuccess { _isAppNotificationOn.value = it.allowMessage }
-            .onFailure { Timber.e(it) }
-        else Timber.tag("FCM_TOKEN").d("Setting-fetchAppNotificationSetting() : pushToken == null")
+            .onSuccess { _appNotificationState.value = UiState.Success(it.allowMessage) }
+            .onFailure { _appNotificationState.value = UiState.Failure(it.message.toString()) }
+        else {
+            _appNotificationState.value = UiState.Failure("pushToken == null")
+        }
     }
 
     fun updateAppNotificationSetting(allowMessage: Boolean) = viewModelScope.launch {
         val pushToken = notificationRepository.getPushToken()
         if (pushToken != null) patchNotificationSettingsUseCase(pushToken, allowMessage)
-            .onSuccess { _isAppNotificationOn.value = allowMessage }
-            .onFailure { Timber.e(it) }
+            .onSuccess {
+                _appNotificationState.value = UiState.Success(allowMessage)
+                notificationRepository.setNotificationPermission(allowMessage)
+                if (!allowMessage) notificationRepository.updateNotificationModalShown(allowMessage)
+            }
+            .onFailure(Timber::e)
+        else {
+            _appNotificationState.value = UiState.Failure("pushToken == null")
+        }
     }
 
     fun signOutUser() = viewModelScope.launch {
         logoutUseCase()
-            .onSuccess { _sideEffect.send(SettingSideEffect.OnSignOutComplete) }
+            .onSuccess {
+                _sideEffect.send(SettingSideEffect.OnSignOutComplete)
+            }
             .onFailure(Timber::e)
     }
 }

@@ -105,7 +105,7 @@ class SaleRegistrationViewModel @Inject constructor(
         return !(registrationState.imageUris.isEmpty() || registrationState.genre == null || registrationState.title.isEmpty()
                 || registrationState.description.isEmpty() || registrationState.price.isEmpty() || saleState.condition == null
                 || saleState.isShippingFeeIncluded == null || (saleState.isShippingFeeIncluded == false && (saleState.normalShippingFee.isEmpty() && saleState.halfShippingFee.isEmpty()))
-                || (saleState.isNormalShippingChecked && saleState.normalShippingFee.priceToNumericTransformation() < 100) || (saleState.isHalfShippingChecked && saleState.halfShippingFee.isEmpty()))
+                || (saleState.isNormalShippingChecked && saleState.normalShippingFee.priceToNumericTransformation() < 100) || (saleState.isHalfShippingChecked && saleState.halfShippingFee.priceToNumericTransformation() < 100))
     }
 
     override suspend fun uploadProduct(presignedUrls: List<PresignedUrl>) {

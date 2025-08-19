@@ -78,23 +78,27 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Timber.tag(TAG).d(token)
         CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val appPermission = dataStore.getNotificationPermission() == true
-                val systemPermission = isNotificationPermissionGranted() && isNotificationEnabled()
-                dataStore.setPushToken(token)
-                updatePushTokenUseCase(
-                    pushToken = token,
-                    isEnabled = systemPermission,
-                    allowMessage = appPermission,
-                )
-            } catch (e: Exception) {
-                Timber.tag(TAG).e(e, "푸시 토큰 저장 오류")
-            }
+            updatePushToken(token)
         }
     }
 
+    suspend fun updatePushToken(token: String) {
+        try {
+            val appPermission = dataStore.getNotificationPermission() == true
+            val systemPermission = isNotificationPermissionGranted() && isNotificationEnabled()
+            dataStore.setPushToken(token)
+            updatePushTokenUseCase(
+                pushToken = token,
+                isEnabled = systemPermission,
+                allowMessage = appPermission,
+            )
+        } catch (e: Exception) {
+            Timber.tag(TAG).e(e, "푸시 토큰 저장 오류")
+        }
+    }
+
+    @SuppressLint("ObsoleteSdkInt")
     private fun ensureNotificationChannel() {
         if (SDK_INT >= O) {
             val channel = NotificationChannel(

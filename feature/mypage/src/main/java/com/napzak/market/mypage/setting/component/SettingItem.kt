@@ -27,7 +27,7 @@ internal fun SettingItem(title: String, onClick: () -> Unit) {
     ) {
         Text(
             text = title,
-            style = NapzakMarketTheme.typography.body16b,
+            style = NapzakMarketTheme.typography.body16m,
             color = NapzakMarketTheme.colors.gray400,
         )
         Icon(

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.napzak.market.notification.repository.FirebaseRepository
 import com.napzak.market.notification.repository.NotificationRepository
 import com.napzak.market.notification.usecase.DeletePushTokenUseCase
 import com.napzak.market.store.usecase.WithdrawUseCase
@@ -20,6 +21,7 @@ internal class WithdrawViewModel @Inject constructor(
     private val withdrawUseCase: WithdrawUseCase,
     private val deletePushTokenUseCase: DeletePushTokenUseCase,
     private val notificationRepository: NotificationRepository,
+    private val firebaseRepository: FirebaseRepository,
 ) : ViewModel() {
     private val _sideEffect = MutableSharedFlow<WithdrawSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
@@ -36,7 +38,7 @@ internal class WithdrawViewModel @Inject constructor(
                 deletePushTokenUseCase(pushToken)
                     .onSuccess { notificationRepository.cleanPushToken() }
                     .onFailure { Timber.e(it) }
-
+                firebaseRepository.deletePushTokenFromFirebase()
             }
         }
     }

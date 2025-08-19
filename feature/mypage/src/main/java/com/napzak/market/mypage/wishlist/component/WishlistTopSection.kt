@@ -33,7 +33,7 @@ internal fun WishlistTopSection(
         modifier = Modifier
             .fillMaxWidth()
             .napzakGradientShadow(
-                height = 2.dp,
+                height = 4.dp,
                 startColor = NapzakMarketTheme.colors.shadowBlack,
                 endColor = NapzakMarketTheme.colors.transWhite,
                 direction = ShadowDirection.Bottom,

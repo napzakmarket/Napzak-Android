@@ -12,6 +12,7 @@ internal data class ChatRoomUiState(
     val storeId: Long? = null,
     val isRoomWithdrawn: Boolean = false,
     val isOpponentOnline: Boolean = false,
+    val isUserExitChatRoom: Boolean = false,
 ) {
     val isOpponentWithdrawn
         get() = if (chatRoomState is UiState.Success) {

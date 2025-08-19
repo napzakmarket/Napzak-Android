@@ -1,5 +1,6 @@
 package com.napzak.market.splash
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,40 +16,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.napzak.market.designsystem.R.drawable.ic_logo
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.ui_util.LocalSystemBarsColor
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashRoute(
+internal fun SplashRoute(
     onNavigateToMain: () -> Unit,
     onNavigateToOnboarding: () -> Unit,
-    viewModel: SplashViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
+    viewModel: SplashViewModel = hiltViewModel(),
 ) {
-    val localSystemBarsColor = LocalSystemBarsColor.current
-    val splashColor = NapzakMarketTheme.colors.purple500
-    val originalColor = NapzakMarketTheme.colors.white
-
     var isSuccess by remember { mutableStateOf(false) }
+    val view = LocalView.current
 
     DisposableEffect(Unit) {
-        localSystemBarsColor.setSystemBarColor(
-            statusBarColor = splashColor,
-            navigationBarColor = splashColor,
-            isStatusDarkIcon = false,
-            isNavigationDarkIcon = false,
-        )
-
+        val window = (view.context as Activity).window
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
         onDispose {
-            localSystemBarsColor.setSystemBarColor(
-                statusBarColor = originalColor,
-                navigationBarColor = originalColor
-            )
+            controller.isAppearanceLightStatusBars = true
+            controller.isAppearanceLightNavigationBars = true
         }
     }
 
@@ -66,27 +59,33 @@ fun SplashRoute(
 
     SplashScreen(
         modifier = modifier,
-        backgroundColor = splashColor,
     )
 }
 
 @Composable
 private fun SplashScreen(
-    backgroundColor: Color,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(backgroundColor),
+            .background(NapzakMarketTheme.colors.purple500),
         contentAlignment = Alignment.Center,
     ) {
         Image(
-            painter = painterResource(ic_logo),
+            imageVector = ImageVector.vectorResource(ic_logo),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth(0.6f)
                 .aspectRatio(1.7f),
         )
+    }
+}
+
+@Preview
+@Composable
+private fun SplashScreenPreview() {
+    NapzakMarketTheme {
+        SplashScreen()
     }
 }
