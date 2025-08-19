@@ -47,33 +47,33 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
         val chatRoomId = messageData["roomId"]
 
         val uri = "napzak://$notifyType/$chatRoomId"
-        val notifyId = System.currentTimeMillis().toInt()
+        chatRoomId?.toIntOrNull()?.let { notifyId ->
+            val intent = Intent(this, NotificationClickReceiver::class.java).apply {
+                putExtra("deep_link", uri)
+                action = OPEN_DEEPLINK_ACTION
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
 
-        val intent = Intent(this, NotificationClickReceiver::class.java).apply {
-            putExtra("deep_link", uri)
-            action = OPEN_DEEPLINK_ACTION
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            val pendingIntent = PendingIntent.getBroadcast(
+                this, notifyId, intent,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+                else
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(ic_push_notification)
+                .setContentTitle(title).setContentText(body)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+                .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.notify(notifyId, notificationBuilder.build())
         }
-
-        val pendingIntent = PendingIntent.getBroadcast(
-            this, notifyId, intent,
-            if (SDK_INT >= Build.VERSION_CODES.S)
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
-            else
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(ic_push_notification)
-            .setContentTitle(title).setContentText(body)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
-            .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(notifyId, notificationBuilder.build())
     }
 
     override fun onNewToken(token: String) {
