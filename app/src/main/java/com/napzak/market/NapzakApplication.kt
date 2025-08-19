@@ -28,11 +28,7 @@ class NapzakApplication : Application() {
 
         initTimber()
         setDayMode()
-        lifecycleOwner.lifecycleScope.launch {
-            lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                firebaseRepository.getPushTokenFromFirebase()
-            }
-        }
+        getPushToken()
     }
 
     private fun initTimber() {
@@ -41,5 +37,13 @@ class NapzakApplication : Application() {
 
     private fun setDayMode() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+    }
+
+    private fun getPushToken() {
+        lifecycleOwner.lifecycleScope.launch {
+            lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                firebaseRepository.getPushTokenFromFirebase()
+            }
+        }
     }
 }
