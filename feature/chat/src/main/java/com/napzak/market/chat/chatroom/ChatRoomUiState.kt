@@ -12,13 +12,19 @@ internal data class ChatRoomUiState(
     val storeId: Long? = null,
     val isRoomWithdrawn: Boolean = false,
     val isOpponentOnline: Boolean = false,
+    val isUserExitChatRoom: Boolean = false,
 ) {
     val isOpponentWithdrawn
         get() = if (chatRoomState is UiState.Success) {
             chatRoomState.data.storeBrief?.isWithdrawn == true
         } else false
 
-    val isChatDisabled get() = isRoomWithdrawn || isOpponentWithdrawn
+    val isOpponentReported
+        get() = if (chatRoomState is UiState.Success) {
+            chatRoomState.data.storeBrief?.isReported == true
+        } else false
+
+    val isChatDisabled get() = isRoomWithdrawn || isOpponentWithdrawn || isOpponentReported
 }
 
 @Immutable

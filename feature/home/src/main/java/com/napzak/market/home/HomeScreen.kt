@@ -56,7 +56,6 @@ import com.napzak.market.home.state.HomeUiState
 import com.napzak.market.home.type.HomeProductType
 import com.napzak.market.product.model.Product
 import com.napzak.market.type.HomeBannerType
-import com.napzak.market.ui_util.LocalSystemBarsColor
 import com.napzak.market.ui_util.ScreenPreview
 import com.napzak.market.ui_util.ellipsis
 import com.napzak.market.ui_util.noRippleClickable
@@ -84,20 +83,13 @@ internal fun HomeRoute(
     val napzakToast = LocalNapzakToast.current
     val context = LocalContext.current
 
-    val localSystemBarsColor = LocalSystemBarsColor.current
-    val backgroundColor = NapzakMarketTheme.colors.white
-
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        viewModel.setNotificationSettings(isGranted, true)
+        viewModel.setNotificationSettings(isGranted)
     }
 
     LaunchedEffect(Unit) {
-        localSystemBarsColor.setSystemBarColor(
-            statusBarColor = backgroundColor,
-            navigationBarColor = backgroundColor
-        )
         viewModel.fetchHomeData()
 
         val isRequested = viewModel.getNotificationPermissionRequested()
@@ -119,6 +111,7 @@ internal fun HomeRoute(
                     napzakToast.makeText(
                         toastType = ToastType.HEART,
                         message = context.getString(heart_click_snackbar_message),
+                        yOffset = napzakToast.toastOffsetWithBottomBar()
                     )
                 }
 
@@ -136,7 +129,9 @@ internal fun HomeRoute(
         onLikeButtonClick = viewModel::setInterest,
         onMostInterestedSellNavigate = onMostInterestedSellNavigate,
         onMostInterestedBuyNavigate = onMostInterestedBuyNavigate,
-        modifier = modifier.background(backgroundColor),
+        modifier = Modifier
+            .background(NapzakMarketTheme.colors.white)
+            .then(modifier),
     )
 }
 
@@ -316,7 +311,7 @@ private fun HomeSingleBanner(
             .data(banner.imageUrl)
             .build(),
         contentDescription = null,
-        contentScale = ContentScale.FillBounds,
+        contentScale = ContentScale.Crop,
         modifier = modifier
             .noRippleClickable { context.openUrl(banner.linkUrl) }
             .fillMaxWidth()

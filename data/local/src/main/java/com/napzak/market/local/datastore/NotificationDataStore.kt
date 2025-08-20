@@ -20,6 +20,10 @@ class NotificationDataStore @Inject constructor(
         .map { it[preferencesNotificationPermission] }
         .firstOrNull()
 
+    suspend fun getSystemNotificationPermission(): Boolean? = preferenceDataStore.data
+        .map { it[preferencesSystemNotificationPermission] }
+        .firstOrNull()
+
     suspend fun getNotificationModalShown(): Boolean? = preferenceDataStore.data
         .map { it[preferencesNotificationModalShown] }
         .firstOrNull()
@@ -40,15 +44,21 @@ class NotificationDataStore @Inject constructor(
         }
     }
 
+    suspend fun setSystemNotificationPermission(systemPermission: Boolean) {
+        preferenceDataStore.edit { preferences ->
+            preferences[preferencesSystemNotificationPermission] = systemPermission
+        }
+    }
+
     suspend fun clearPushToken() {
         preferenceDataStore.edit { preferences ->
             preferences.remove(preferencesPushTokenKey)
         }
     }
 
-    suspend fun updateNotificationModalShown() {
+    suspend fun updateNotificationModalShown(isModalShown: Boolean) {
         preferenceDataStore.edit { preferences ->
-            preferences[preferencesNotificationModalShown] = true
+            preferences[preferencesNotificationModalShown] = isModalShown
         }
     }
 
@@ -61,12 +71,15 @@ class NotificationDataStore @Inject constructor(
     companion object {
         private const val PUSH_TOKEN_KEY = "push_token"
         private const val NOTIFICATION_PERMISSION_KEY = "notification_permission"
+        private const val SYSTEM_NOTIFICATION_PERMISSION_KEY = "system_notification_permission"
         private const val NOTIFICATION_MODAL_SHOWN_KEY = "notification_modal_shown"
         private const val NOTIFICATION_PERMISSION_REQUESTED_KEY =
             "notification_permission_requested"
 
         val preferencesPushTokenKey = stringPreferencesKey(PUSH_TOKEN_KEY)
         val preferencesNotificationPermission = booleanPreferencesKey(NOTIFICATION_PERMISSION_KEY)
+        val preferencesSystemNotificationPermission =
+            booleanPreferencesKey(SYSTEM_NOTIFICATION_PERMISSION_KEY)
         val preferencesNotificationModalShown = booleanPreferencesKey(NOTIFICATION_MODAL_SHOWN_KEY)
         val preferencesNotificationPermissionRequested =
             booleanPreferencesKey(NOTIFICATION_PERMISSION_REQUESTED_KEY)

@@ -13,7 +13,6 @@ import android.os.Build.VERSION_CODES.O
 import android.os.Build.VERSION_CODES.TIRAMISU
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.RemoteMessage
 import com.napzak.market.R.drawable.ic_push_notification
 import com.napzak.market.local.datastore.NotificationDataStore
@@ -27,11 +26,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-object NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
-    private const val TAG = "FCM - okhttp"
-    const val NOTIFICATION_CHANNEL_ID = "NAPZAK"
-    const val CHANNEL_NAME = "납작 푸시 알림 채널"
-    const val OPEN_DEEPLINK_ACTION = "com.napzak.OPEN_DEEP_LINK"
+class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
     @Inject
     lateinit var dataStore: NotificationDataStore
@@ -52,55 +47,39 @@ object NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
         val chatRoomId = messageData["roomId"]
 
         val uri = "napzak://$notifyType/$chatRoomId"
-        val notifyId = System.currentTimeMillis().toInt()
+        chatRoomId?.toIntOrNull()?.let { notifyId ->
+            val intent = Intent(this, NotificationClickReceiver::class.java).apply {
+                putExtra("deep_link", uri)
+                action = OPEN_DEEPLINK_ACTION
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
 
-        val intent = Intent(this, NotificationClickReceiver::class.java).apply {
-            putExtra("deep_link", uri)
-            action = OPEN_DEEPLINK_ACTION
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            val pendingIntent = PendingIntent.getBroadcast(
+                this, notifyId, intent,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+                else
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(ic_push_notification)
+                .setContentTitle(title).setContentText(body)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+                .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.notify(notifyId, notificationBuilder.build())
         }
-
-        val pendingIntent = PendingIntent.getBroadcast(
-            this, notifyId, intent,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
-            else
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(ic_push_notification)
-            .setContentTitle(title).setContentText(body)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
-            .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(notifyId, notificationBuilder.build())
     }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Timber.tag(TAG).d(token)
         CoroutineScope(Dispatchers.IO).launch {
             updatePushToken(token)
-        }
-    }
-
-    fun fetchPushTokenFromFirebase() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Timber.tag(TAG).w(task.exception, "Fetching FCM registration token failed")
-                return@addOnCompleteListener
-            }
-
-            val token = task.result
-            Timber.tag(TAG).d("FCM Token: $token")
-            CoroutineScope(Dispatchers.IO).launch {
-                updatePushToken(token)
-            }
         }
     }
 
@@ -119,6 +98,7 @@ object NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
         }
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     private fun ensureNotificationChannel() {
         if (SDK_INT >= O) {
             val channel = NotificationChannel(
@@ -141,5 +121,12 @@ object NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
 
     private fun isNotificationEnabled(): Boolean {
         return NotificationManagerCompat.from(this).areNotificationsEnabled()
+    }
+
+    companion object {
+        private const val TAG = "FCM - okhttp"
+        const val NOTIFICATION_CHANNEL_ID = "NAPZAK"
+        const val CHANNEL_NAME = "납작 푸시 알림 채널"
+        const val OPEN_DEEPLINK_ACTION = "com.napzak.OPEN_DEEP_LINK"
     }
 }

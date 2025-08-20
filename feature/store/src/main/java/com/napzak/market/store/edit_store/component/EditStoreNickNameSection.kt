@@ -143,27 +143,35 @@ private fun NickNameSupportingText(
     nickNameDuplicationState: UiState<String>,
     modifier: Modifier = Modifier,
 ) {
-    val bulletedText = "\u2022 %s"
-
     val (supportingText, supportingTextColor) = when {
         nickNameDuplicationState is UiState.Success ->
-            bulletedText.format(nickNameDuplicationState.data) to NapzakMarketTheme.colors.green
+            nickNameDuplicationState.data to NapzakMarketTheme.colors.green
 
         nickNameDuplicationState is UiState.Failure ->
-            bulletedText.format(nickNameDuplicationState.msg) to NapzakMarketTheme.colors.red
+            nickNameDuplicationState.msg to NapzakMarketTheme.colors.red
 
         nickNameValidationState is NicknameValidationResult.Invalid ->
-            bulletedText.format(nickNameValidationState.error.toMessage()) to NapzakMarketTheme.colors.red
+            nickNameValidationState.error.toMessage() to NapzakMarketTheme.colors.red
 
         else -> "" to NapzakMarketTheme.colors.gray300
     }
 
-    Text(
-        text = supportingText,
-        color = supportingTextColor,
-        style = NapzakMarketTheme.typography.caption12sb,
-        modifier = modifier,
-    )
+    val texts =
+        if (supportingText.isNotBlank()) listOf("\u2022", supportingText)
+        else listOf("") // 간격 유지를 위해 빈 문자열 사용
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        texts.forEach {
+            Text(
+                text = it,
+                color = supportingTextColor,
+                style = NapzakMarketTheme.typography.caption12sb,
+                modifier = modifier,
+            )
+        }
+    }
 }
 
 @Composable

@@ -2,7 +2,7 @@
 <resources>
     <string name="chat_room_input_field_gallery">갤러리</string>
     <string name="chat_room_input_field_send">전송</string>
-    <string name="chat_room_input_field_hint">메시지를 입력해주세요</string>
+    <string name="chat_room_input_field_hint">메시지를 입력하세요</string>
     <string name="chat_room_input_field_hint_withdrawn">상대방과 대화가 불가능합니다.</string>
     <string name="chat_room_is_not_read">1</string>
     <string name="chat_room_product_negotiable">가격 제시</string>

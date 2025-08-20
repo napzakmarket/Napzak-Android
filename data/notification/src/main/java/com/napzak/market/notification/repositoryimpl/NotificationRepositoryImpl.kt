@@ -42,6 +42,9 @@ class NotificationRepositoryImpl @Inject constructor(
     override suspend fun getNotificationPermission(): Boolean? =
         notificationDataStore.getNotificationPermission()
 
+    override suspend fun getSystemNotificationPermission(): Boolean? =
+        notificationDataStore.getSystemNotificationPermission()
+
     override suspend fun getNotificationPermissionRequested(): Boolean? =
         notificationDataStore.getNotificationPermissionRequested()
 
@@ -51,12 +54,15 @@ class NotificationRepositoryImpl @Inject constructor(
     override suspend fun setNotificationPermission(allowMessage: Boolean) =
         notificationDataStore.setNotificationPermission(allowMessage)
 
+    override suspend fun setSystemNotificationPermission(systemPermission: Boolean) =
+        notificationDataStore.setSystemNotificationPermission(systemPermission)
+
     override suspend fun cleanPushToken() {
         notificationDataStore.clearPushToken()
     }
 
-    override suspend fun updateNotificationModalShown() {
-        notificationDataStore.updateNotificationModalShown()
+    override suspend fun updateNotificationModalShown(isModalShown: Boolean) {
+        notificationDataStore.updateNotificationModalShown(isModalShown)
     }
 
     override suspend fun updateNotificationPermissionRequested() {

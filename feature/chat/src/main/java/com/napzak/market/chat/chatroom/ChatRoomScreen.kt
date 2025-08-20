@@ -1,5 +1,7 @@
 package com.napzak.market.chat.chatroom
 
+import android.app.NotificationManager
+import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,9 +24,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -47,6 +51,9 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.img_empty_chat_room
 import com.napzak.market.designsystem.component.image.ZoomableImageScreen
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
+import com.napzak.market.designsystem.component.toast.LocalNapzakToast
+import com.napzak.market.designsystem.component.toast.ToastFontType
+import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.drawable.img_user_blocked_popup
 import com.napzak.market.feature.chat.R.string.chat_room_empty_guide_1
@@ -54,8 +61,9 @@ import com.napzak.market.feature.chat.R.string.chat_room_empty_guide_2
 import com.napzak.market.ui_util.ScreenPreview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import timber.log.Timber
-
 
 @Composable
 internal fun ChatRoomRoute(
@@ -66,6 +74,8 @@ internal fun ChatRoomRoute(
     viewModel: ChatRoomViewModel = hiltViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
+    val toast = LocalNapzakToast.current
     val chatListState = rememberLazyListState()
 
     val chatRoomState by viewModel.chatRoomState.collectAsStateWithLifecycle()
@@ -77,6 +87,17 @@ internal fun ChatRoomRoute(
         onPauseOrDispose {
             viewModel.leaveChatRoom()
         }
+    }
+
+    LaunchedEffect(Unit) {
+        snapshotFlow { (chatRoomState.chatRoomState as? UiState.Success)?.data?.roomId?.toInt() }
+            .distinctUntilChanged()
+            .filterNotNull()
+            .collect { notificationId ->
+                val notificationManager =
+                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.cancel(notificationId)
+            }
     }
 
     LaunchedEffect(viewModel.sideEffect) {
@@ -92,13 +113,21 @@ internal fun ChatRoomRoute(
                             chatListState.scrollToItem(0)
                         }
                     }
+
                     is ChatRoomSideEffect.OnWithdrawChatRoom -> onNavigateUp()
+
+                    is ChatRoomSideEffect.ShowToast -> toast.makeText(
+                        toastType = ToastType.COMMON,
+                        message = sideEffect.message,
+                        fontType = ToastFontType.SMALL,
+                        yOffset = toast.toastOffsetWithBottomBar(),
+                    )
                 }
             }
     }
 
     ChatRoomScreen(
-        chat = viewModel.chat,
+        chat = { viewModel.chat },
         chatItems = chatItems.toImmutableList(),
         chatRoomState = chatRoomState,
         chatListState = chatListState,
@@ -115,7 +144,7 @@ internal fun ChatRoomRoute(
 
 @Composable
 internal fun ChatRoomScreen(
-    chat: String,
+    chat: () -> String,
     chatItems: ImmutableList<ReceiveMessage<*>>,
     chatRoomState: ChatRoomUiState,
     chatListState: LazyListState,
@@ -168,7 +197,11 @@ internal fun ChatRoomScreen(
                 chatRoom.productBrief?.let { product ->
                     ChatRoomProductSection(
                         product = product,
-                        onClick = { onProductDetailClick(product.productId) },
+                        onClick = {
+                            if (chatRoomState.isOpponentWithdrawn.not()) {
+                                onProductDetailClick(product.productId)
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
@@ -228,6 +261,11 @@ internal fun ChatRoomScreen(
         else -> {
             /*TODO: 채팅방 정보를 불러오지 못하는 경우에 대한 화면 구현*/
             Timber.tag("ChatRoom").d("none ChatRoomScreen called")
+            LaunchedEffect(chatRoomState.isUserExitChatRoom) {
+                if (chatRoomState.isUserExitChatRoom) {
+                    onNavigateUp()
+                }
+            }
         }
     }
 }
@@ -289,7 +327,7 @@ private fun ChatImageZoomScreen(
 private fun ChatRoomScreenPreview() {
     NapzakMarketTheme {
         ChatRoomScreen(
-            chat = "",
+            chat = { "" },
             chatItems = mockChats.toImmutableList(),
             onChatChange = {},
             onSendChatClick = {},
@@ -309,7 +347,7 @@ private fun ChatRoomScreenPreview() {
 private fun ChatRoomScreenEmptyPreview() {
     NapzakMarketTheme {
         ChatRoomScreen(
-            chat = "",
+            chat = { "" },
             chatItems = emptyList<ReceiveMessage<*>>().toImmutableList(),
             onChatChange = {},
             onSendChatClick = {},

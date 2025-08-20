@@ -43,5 +43,5 @@
 
     <!--GenreFilterChip-->
     <string name="genre_filter_genre">장르</string>
-    <string name="genre_filter_genre_extra_count">외 %d</string>
+    <string name="genre_filter_genre_extra_count">\u00A0외 %d</string>
 </resources>
