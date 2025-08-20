@@ -29,7 +29,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_gallery
-import com.napzak.market.designsystem.R.drawable.ic_send
+import com.napzak.market.designsystem.R.drawable.ic_gray_send
 import com.napzak.market.designsystem.component.textfield.NapzakDefaultTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_room_input_field_gallery
@@ -163,7 +163,7 @@ private fun SendButton(
         else NapzakMarketTheme.colors.gray200
 
     Icon(
-        imageVector = ImageVector.vectorResource(ic_send),
+        imageVector = ImageVector.vectorResource(ic_gray_send),
         contentDescription = stringResource(chat_room_input_field_send),
         tint = tint,
         modifier = modifier.noRippleClickable {

@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.napzak.market.designsystem.R.drawable.ic_arrow_left
+import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_left
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
@@ -70,7 +70,7 @@ fun ZoomableImageScreen(
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(ic_arrow_left),
+                imageVector = ImageVector.vectorResource(ic_gray_arrow_left),
                 contentDescription = null,
                 tint = NapzakMarketTheme.colors.white,
             )

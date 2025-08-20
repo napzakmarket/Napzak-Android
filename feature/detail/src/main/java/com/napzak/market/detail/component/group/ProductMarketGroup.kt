@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.napzak.market.designsystem.R.drawable.ic_chevron_right
+import com.napzak.market.designsystem.R.drawable.ic_white_arrow_right
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.detail.R.drawable.ic_profile
 import com.napzak.market.feature.detail.R.string.detail_product_market_buy
@@ -140,7 +140,7 @@ private fun ProductMarketProfile(
         Spacer(Modifier.weight(1f))
 
         Icon(
-            imageVector = ImageVector.vectorResource(ic_chevron_right),
+            imageVector = ImageVector.vectorResource(ic_white_arrow_right),
             contentDescription = null,
             tint = NapzakMarketTheme.colors.gray300,
             modifier = Modifier.padding(start = 10.dp),

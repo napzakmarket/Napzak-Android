@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.napzak.market.designsystem.R.drawable.ic_close_24
+import com.napzak.market.designsystem.R.drawable.ic_gray_cancel
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.drawable.img_notification_permission
 import com.napzak.market.feature.chat.R.string.permission_modal_app_setting_off_title
@@ -71,7 +71,7 @@ fun NotificationPermissionModal(
             contentAlignment = Alignment.TopEnd,
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(ic_close_24),
+                imageVector = ImageVector.vectorResource(ic_gray_cancel),
                 contentDescription = null,
                 tint = NapzakMarketTheme.colors.gray200,
                 modifier = Modifier

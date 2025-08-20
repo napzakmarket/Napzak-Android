@@ -44,7 +44,7 @@ import com.napzak.market.chat.chatroom.preview.mockChatRoom
 import com.napzak.market.chat.chatroom.preview.mockChats
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.common.state.UiState
-import com.napzak.market.designsystem.R.drawable.img_empty_chat_room
+import com.napzak.market.designsystem.R.drawable.ic_no_chatting_histroy
 import com.napzak.market.designsystem.component.image.ZoomableImageScreen
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -242,7 +242,7 @@ private fun EmptyChatScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         Image(
-            imageVector = ImageVector.vectorResource(img_empty_chat_room),
+            imageVector = ImageVector.vectorResource(ic_no_chatting_histroy),
             contentDescription = null,
             modifier = Modifier.padding(end = 80.dp)
         )

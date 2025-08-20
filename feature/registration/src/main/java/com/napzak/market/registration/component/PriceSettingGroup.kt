@@ -32,7 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.R.drawable.ic_error_9
+import com.napzak.market.designsystem.R.drawable.ic_red_translate_error
 import com.napzak.market.designsystem.component.textfield.InputTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.purchase_price_error
@@ -153,7 +153,7 @@ internal fun PriceSettingGroup(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(ic_error_9),
+                            imageVector = ImageVector.vectorResource(ic_red_translate_error),
                             contentDescription = null,
                             tint = NapzakMarketTheme.colors.red,
                         )

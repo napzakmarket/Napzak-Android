@@ -85,7 +85,7 @@ private fun ProductReportBottomSheetPreview() {
             modifier = Modifier.height(140.dp),
         ) {
             BottomSheetMenuItem(
-                menuIcon = ImageVector.vectorResource(R.drawable.ic_error_24),
+                menuIcon = ImageVector.vectorResource(R.drawable.ic_circle_error),
                 menuName = "마켓 신고하기",
                 onItemClick = { },
                 textColor = NapzakMarketTheme.colors.red,
@@ -107,7 +107,7 @@ private fun ProductBottomSheetPreview() {
             modifier = Modifier.height(380.dp),
         ) {
             BottomSheetMenuItem(
-                menuIcon = ImageVector.vectorResource(R.drawable.ic_edit_24),
+                menuIcon = ImageVector.vectorResource(R.drawable.ic_circle_edit),
                 menuName = "상품 수정",
                 onItemClick = { },
             )
@@ -115,7 +115,7 @@ private fun ProductBottomSheetPreview() {
             Spacer(Modifier.height(20.dp))
 
             BottomSheetMenuItem(
-                menuIcon = ImageVector.vectorResource(R.drawable.ic_setting_24),
+                menuIcon = ImageVector.vectorResource(R.drawable.ic_circle_gray_setting),
                 menuName = "상품 상태 변경",
                 onItemClick = { },
                 isToggleOption = true,
@@ -125,7 +125,7 @@ private fun ProductBottomSheetPreview() {
             Spacer(Modifier.height(20.dp))
 
             BottomSheetMenuItem(
-                menuIcon = ImageVector.vectorResource(R.drawable.ic_delete_24),
+                menuIcon = ImageVector.vectorResource(R.drawable.ic_circle_trash_bin),
                 menuName = "삭제하기",
                 onItemClick = { },
                 textColor = NapzakMarketTheme.colors.red,

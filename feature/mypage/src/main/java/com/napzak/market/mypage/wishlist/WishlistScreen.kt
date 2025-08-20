@@ -32,7 +32,7 @@ import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.R.drawable.img_empty_wishlist
+import com.napzak.market.designsystem.R.drawable.ic_no_dips
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
@@ -162,7 +162,7 @@ private fun WishlistEmptyScreen(
             verticalArrangement = Arrangement.Center,
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(img_empty_wishlist),
+                imageVector = ImageVector.vectorResource(ic_no_dips),
                 contentDescription = null,
                 tint = Color.Unspecified,
             )

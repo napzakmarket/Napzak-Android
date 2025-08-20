@@ -24,7 +24,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.napzak.market.designsystem.R.drawable.ic_cancel_image_24
+import com.napzak.market.designsystem.R.drawable.ic_circle_gray_cancel
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.representative_tag
 import com.napzak.market.registration.model.Photo.PhotoStatus
@@ -95,7 +95,7 @@ internal fun PhotoContainer(
         }
 
         Icon(
-            imageVector = ImageVector.vectorResource(ic_cancel_image_24),
+            imageVector = ImageVector.vectorResource(ic_circle_gray_cancel),
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.TopEnd)

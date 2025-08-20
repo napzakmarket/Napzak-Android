@@ -22,7 +22,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_down_chevron
+import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_down
 import com.napzak.market.designsystem.R.string.genre_filter_genre
 import com.napzak.market.designsystem.R.string.genre_filter_genre_extra_count
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -88,7 +88,7 @@ fun GenreFilterChip(
         Spacer(Modifier.width(3.dp))
 
         Icon(
-            imageVector = ImageVector.vectorResource(ic_down_chevron),
+            imageVector = ImageVector.vectorResource(ic_gray_arrow_down),
             contentDescription = null,
             tint = textColor,
             modifier = Modifier.size(width = 7.dp, height = 4.dp),

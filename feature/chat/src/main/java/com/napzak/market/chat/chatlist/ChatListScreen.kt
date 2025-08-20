@@ -31,7 +31,7 @@ import com.napzak.market.chat.chatlist.component.ChatRoomItem
 import com.napzak.market.chat.chatlist.component.NotificationPermissionModal
 import com.napzak.market.chat.model.ChatRoom
 import com.napzak.market.common.state.UiState
-import com.napzak.market.designsystem.R.drawable.img_empty_chat_list
+import com.napzak.market.designsystem.R.drawable.ic_no_chatting_histroy
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.topbar.TitleTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -191,7 +191,7 @@ private fun EmptyChatListScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         Image(
-            imageVector = ImageVector.vectorResource(img_empty_chat_list),
+            imageVector = ImageVector.vectorResource(ic_no_chatting_histroy),
             contentDescription = null,
             modifier = Modifier.padding(end = 40.dp),
         )
