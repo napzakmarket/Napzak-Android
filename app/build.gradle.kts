@@ -19,7 +19,8 @@ android {
     val kakaoKey = "kakao$kakaoAppKey"
 
     defaultConfig {
-        resValue("string", "kakao_key", kakaoKey)
+        buildConfigField("String", "KAKAO_APP_KEY", "\"$kakaoKey\"")
+        manifestPlaceholders["kakaoScheme"] = "kakao$kakaoKey"
     }
 
     buildTypes {

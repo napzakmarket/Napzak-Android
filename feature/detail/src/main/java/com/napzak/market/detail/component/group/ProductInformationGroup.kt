@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -28,6 +29,8 @@ import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.ic_gray_heart
 import com.napzak.market.designsystem.R.drawable.ic_gray_review
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.feature.detail.R.string.detail_product_count_overflow
+import com.napzak.market.feature.detail.R.string.detail_product_price
 import com.napzak.market.feature.detail.R.string.detail_product_tag_is_price_negotiable
 
 @Composable
@@ -68,8 +71,8 @@ internal fun ProductInformationGroup(
                     isPriceNegotiable = isPriceNegotiable,
                 )
                 CommentLikeGroup(
-                    commentCount = commentCount.toString(),
-                    likeCount = likeCount.toString(),
+                    commentCount = commentCount,
+                    likeCount = likeCount,
                 )
             }
 
@@ -91,7 +94,7 @@ internal fun ProductInformationGroup(
 
             Spacer(Modifier.height(10.dp))
             Text(
-                text = price,
+                text = stringResource(detail_product_price, price),
                 style = NapzakMarketTheme.typography.title18b.copy(
                     color = NapzakMarketTheme.colors.black,
                 ),
@@ -105,7 +108,7 @@ internal fun ProductInformationGroup(
                 ),
             )
         }
-        
+
         Text(
             text = description,
             style = NapzakMarketTheme.typography.caption12r.copy(
@@ -123,7 +126,7 @@ private fun TradeTypeTagGroup(
     modifier: Modifier = Modifier,
 ) {
     val tradeTypeTagContainerColor =
-        if (tradeType == TradeType.SELL) NapzakMarketTheme.colors.purple500
+        if (tradeType == TradeType.SELL) NapzakMarketTheme.colors.transP500
         else NapzakMarketTheme.colors.transBlack
 
     Row(
@@ -167,8 +170,8 @@ private fun TradeTypeTag(
 
 @Composable
 private fun CommentLikeGroup(
-    commentCount: String,
-    likeCount: String,
+    commentCount: Int,
+    likeCount: Int,
     modifier: Modifier = Modifier,
     color: Color = NapzakMarketTheme.colors.gray100,
 ) {
@@ -179,7 +182,7 @@ private fun CommentLikeGroup(
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier,
     ) {
         views.forEach { (count, iconRes) ->
@@ -188,10 +191,13 @@ private fun CommentLikeGroup(
                     imageVector = ImageVector.vectorResource(id = iconRes),
                     contentDescription = null,
                     tint = color,
+                    modifier = Modifier.size(14.dp)
                 )
                 Text(
-                    text = count,
-                    style = NapzakMarketTheme.typography.caption10r,
+                    text =
+                        if (count > 999) stringResource(detail_product_count_overflow)
+                        else count.toString(),
+                    style = NapzakMarketTheme.typography.body14r,
                     color = color,
                     modifier = Modifier.padding(start = 3.dp),
                 )
@@ -205,13 +211,13 @@ private fun CommentLikeGroup(
 private fun ProductDetailGroupPreview() {
     NapzakMarketTheme {
         ProductInformationGroup(
-            tradeType = TradeType.BUY,
+            tradeType = TradeType.SELL,
             isPriceNegotiable = true,
             commentCount = 999,
-            likeCount = 999,
+            likeCount = 1000,
             genre = "은혼",
             title = "은혼 긴토키 히지카타 룩업은혼 긴토키 히지카",
-            price = "125,000원",
+            price = "125,000",
             updatedDate = "1일전",
             description = "은혼 긴토키 히지카타 룩업은혼 긴토키 히지카타 룩업은혼 긴토키 히지카타 룩업은혼 긴토키 히지카타 룩업은혼 긴토키 히지카타 룩업은혼 긴토키" +
                     " 히지카타 룩업은혼 긴토키 히지카타 룩업은혼 긴토키 히지카타 룩업은혼 긴토키 히지카타 룩업은혼 긴토키 히지카타 룩업은혼 긴토키 히지카타 룩업은혼 긴토키 " +

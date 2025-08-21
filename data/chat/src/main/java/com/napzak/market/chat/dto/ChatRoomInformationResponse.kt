@@ -26,7 +26,8 @@ data class ChatRoomInformationResponse(
     data class StoreInfo(
         @SerialName("storeId") val storeId: Long,
         @SerialName("nickname") val nickname: String,
-        @SerialName("isWithdrawn") val isWithdrawn: Boolean,
         @SerialName("storePhoto") val storePhoto: String,
+        @SerialName("isWithdrawn") val isWithdrawn: Boolean,
+        @SerialName("isReported") val isReported: Boolean,
     )
 }

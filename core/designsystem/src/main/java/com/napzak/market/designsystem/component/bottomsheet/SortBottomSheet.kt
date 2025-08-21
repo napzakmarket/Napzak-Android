@@ -16,18 +16,23 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.view.WindowInsetsControllerCompat
 import com.napzak.market.common.type.SortType
 import com.napzak.market.designsystem.R.drawable.ic_purple_check
 import com.napzak.market.designsystem.R.drawable.ic_dark_gray_cancel
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.ui_util.disableContrastEnforcement
 import com.napzak.market.ui_util.noRippleClickable
 import kotlinx.coroutines.launch
 
@@ -60,10 +65,22 @@ fun SortBottomSheet(
         scrimColor = NapzakMarketTheme.colors.transBlack,
         dragHandle = null,
     ) {
+        val view = LocalView.current
+        val dialogWindow = (view.parent as? DialogWindowProvider)?.window
+
+        SideEffect {
+            dialogWindow?.let { window ->
+                window.disableContrastEnforcement()
+                val controller = WindowInsetsControllerCompat(window, view)
+                controller.isAppearanceLightStatusBars = false
+                controller.isAppearanceLightNavigationBars = true
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 18.dp, bottom = 36.dp)
+                .padding(top = 18.dp, bottom = 12.dp)
                 .padding(horizontal = 20.dp),
             horizontalAlignment = Alignment.End,
         ) {

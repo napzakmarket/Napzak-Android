@@ -5,4 +5,5 @@ data class StoreBrief(
     val nickname: String,
     val storePhoto: String,
     val isWithdrawn: Boolean,
+    val isReported: Boolean,
 )

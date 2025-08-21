@@ -17,7 +17,8 @@
       "storeId": 2,
       "nickname": "납자기",
       "storePhoto": "https://napzak-dev-bucket.s3.ap-northeast-2.amazonaws.com/store/img_profile_lg.png",
-      "isWithdrawn": false
+      "isWithdrawn": false,
+      "isReported": false
     },
     "roomId": 5
   }

@@ -411,6 +411,8 @@ internal class ChatRoomViewModel @Inject constructor(
             productId
         }.getOrElse {
             Timber.tag(TAG).e(it)
+            _chatRoomState.update { it.copy(isUserExitChatRoom = true) }
+            _sideEffect.send(ChatRoomSideEffect.ShowToast(USER_EXIT_ERROR_MESSAGE))
             throw it
         }
 
@@ -449,5 +451,6 @@ internal class ChatRoomViewModel @Inject constructor(
         private const val TAG = "ChatRoom"
         private const val ROOM_ID_KEY = "chatRoomId"
         private const val PRODUCT_ID_KEY = "productId"
+        private const val USER_EXIT_ERROR_MESSAGE = "해당 채팅방을 나간 상태입니다."
     }
 }

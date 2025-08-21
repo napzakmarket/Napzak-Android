@@ -26,7 +26,6 @@ import com.napzak.market.mypage.mypage.state.MyPageUiState
 import com.napzak.market.ui_util.ScreenPreview
 import com.napzak.market.ui_util.openUrl
 
-
 @Composable
 internal fun MyPageRoute(
     onMyMarketClick: (Long) -> Unit,
@@ -74,7 +73,6 @@ private fun MyPageScreen(
     onHelpClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     if (uiState.loadState is UiState.Loading) NapzakLoadingOverlay()
 
     Column(

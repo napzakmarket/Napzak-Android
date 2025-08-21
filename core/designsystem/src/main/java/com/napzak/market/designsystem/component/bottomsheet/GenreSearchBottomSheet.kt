@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,11 +38,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_dark_gray_cancel
+import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.view.WindowInsetsControllerCompat
 import com.napzak.market.designsystem.R.string.genre_apply_button
 import com.napzak.market.designsystem.R.string.genre_search_genre_limit_notice
 import com.napzak.market.designsystem.R.string.genre_search_hint
@@ -55,6 +59,7 @@ import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.component.toast.WarningSnackBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.genre.model.Genre
+import com.napzak.market.ui_util.disableContrastEnforcement
 import com.napzak.market.ui_util.noRippleClickable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -108,11 +113,23 @@ fun GenreSearchBottomSheet(
             onDismissRequest()
         },
         sheetState = sheetState,
-        shape = RoundedCornerShape(topStart = 31.dp, topEnd = 31.dp),
+        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
         containerColor = NapzakMarketTheme.colors.white,
         scrimColor = NapzakMarketTheme.colors.transBlack,
         dragHandle = null,
     ) {
+        val view = LocalView.current
+        val dialogWindow = (view.parent as? DialogWindowProvider)?.window
+
+        SideEffect {
+            dialogWindow?.let { window ->
+                window.disableContrastEnforcement()
+                val controller = WindowInsetsControllerCompat(window, view)
+                controller.isAppearanceLightStatusBars = false
+                controller.isAppearanceLightNavigationBars = true
+            }
+        }
+
         Box(
             modifier = Modifier.fillMaxHeight(0.75f),
             contentAlignment = Alignment.BottomCenter,
@@ -319,7 +336,7 @@ private fun ButtonSection(
                 .fillMaxWidth(),
         )
 
-        Spacer(Modifier.height(64.dp))
+        Spacer(Modifier.height(40.dp))
     }
 }
 

@@ -20,7 +20,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.contentDescription
@@ -30,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.designsystem.R.drawable.ic_white_arrow_right
+import com.napzak.market.designsystem.R.drawable.ic_circle_purple_user
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.detail.R.drawable.ic_profile
 import com.napzak.market.feature.detail.R.string.detail_product_market_buy
 import com.napzak.market.feature.detail.R.string.detail_product_market_count
 import com.napzak.market.feature.detail.R.string.detail_product_market_group_title
@@ -93,14 +92,14 @@ private fun ProductMarketProfile(
             .padding(horizontal = 22.dp, vertical = 17.dp),
     ) {
         AsyncImage(
-            model = ImageRequest
-                .Builder(context)
+            model = ImageRequest.Builder(context)
+                .placeholder(ic_circle_purple_user)
+                .error(ic_circle_purple_user)
+                .fallback(ic_circle_purple_user)
                 .data(marketImage.ifBlank { null })
                 .crossfade(true)
                 .build(),
             contentDescription = null,
-            error = painterResource(ic_profile),
-            placeholder = painterResource(ic_profile),
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(60.dp)

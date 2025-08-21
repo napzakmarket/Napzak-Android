@@ -1,6 +1,6 @@
 package com.napzak.market.store.store.component
 
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -35,7 +35,8 @@ internal fun StoreReportBottomSheet(
     DragHandleBottomSheet(
         sheetState = sheetState,
         onDismissRequest = onDismissRequest,
-        modifier = modifier.height(140.dp),
+        modifier = modifier
+            .padding(bottom = 28.dp),
     ) {
         BottomSheetMenuItem(
             menuIcon = ImageVector.vectorResource(R.drawable.ic_circle_error),

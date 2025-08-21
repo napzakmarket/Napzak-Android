@@ -27,6 +27,7 @@ import com.napzak.market.chat.chatroom.component.chatitem.MyChatItemContainer
 import com.napzak.market.chat.chatroom.component.chatitem.OpponentChatItemContainer
 import com.napzak.market.chat.chatroom.preview.mockChats
 import com.napzak.market.chat.model.ReceiveMessage
+import com.napzak.market.designsystem.R.drawable.ic_profile
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -43,6 +44,9 @@ internal fun ChatRoomItemColumn(
     val opponentProfileImageRequest = remember(opponentImageUrl) {
         ImageRequest
             .Builder(context)
+            .placeholder(ic_profile)
+            .error(ic_profile)
+            .fallback(ic_profile)
             .data(opponentImageUrl)
             .build()
     }

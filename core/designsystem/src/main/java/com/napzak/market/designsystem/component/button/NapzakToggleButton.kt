@@ -48,7 +48,7 @@ fun NapzakToggleButton(
                 value = isToggleOn,
                 interactionSource = null,
                 indication = null,
-                onValueChange = { onToggleClick() }
+                onValueChange = { onToggleClick() },
             )
             .padding(padding),
         contentAlignment = Alignment.CenterStart,
@@ -57,7 +57,7 @@ fun NapzakToggleButton(
             modifier = Modifier
                 .size(thumbSize)
                 .offset(x = offsetX)
-                .background(NapzakMarketTheme.colors.white, RoundedCornerShape(50))
+                .background(NapzakMarketTheme.colors.white, RoundedCornerShape(50)),
         )
     }
 }
