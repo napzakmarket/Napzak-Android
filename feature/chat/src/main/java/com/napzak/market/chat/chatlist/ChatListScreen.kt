@@ -42,7 +42,6 @@ import com.napzak.market.ui_util.ScreenPreview
 import com.napzak.market.ui_util.openSystemNotificationSettings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import timber.log.Timber
 
 @Composable
 internal fun ChatListRoute(
@@ -52,7 +51,7 @@ internal fun ChatListRoute(
     viewModel: ChatListViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
-    val chatRoomsState by viewModel.chatRoomsState.collectAsStateWithLifecycle()
+    val uiState by viewModel.chatRoomsState.collectAsStateWithLifecycle()
     val notificationState by viewModel.notificationState.collectAsStateWithLifecycle()
     val systemPermission = NotificationManagerCompat.from(context).areNotificationsEnabled()
 
@@ -66,7 +65,7 @@ internal fun ChatListRoute(
     }
 
     ChatListScreen(
-        chatRoomsState = chatRoomsState,
+        uiState = uiState,
         onChatRoomClick = { chatRoom -> onChatRoomNavigate(chatRoom.roomId) },
         isNotificationModalOpen = notificationState.isNotificationModalOpen,
         isSystemPermissionGranted = systemPermission,
@@ -80,7 +79,7 @@ internal fun ChatListRoute(
 
 @Composable
 private fun ChatListScreen(
-    chatRoomsState: UiState<List<ChatRoom>>,
+    uiState: ChatListUiState,
     onChatRoomClick: (ChatRoom) -> Unit,
     isNotificationModalOpen: Boolean,
     isSystemPermissionGranted: Boolean,
@@ -97,13 +96,13 @@ private fun ChatListScreen(
     ) {
         ChatListTopBar()
 
-        when (chatRoomsState) {
+        when (uiState.loadState) {
             is UiState.Loading -> {
                 NapzakLoadingOverlay()
             }
 
             is UiState.Success -> {
-                val chatRooms = chatRoomsState.data
+                val chatRooms = uiState.loadState.data
 
                 ChatListColumn(
                     chatRooms = chatRooms.toImmutableList(),
@@ -218,7 +217,8 @@ private fun EmptyChatListScreen(
 @ScreenPreview
 @Composable
 private fun ChatListScreenPreview() {
-    val chatRoomsState = UiState.Success(
+    val uiState = ChatListUiState(
+        UiState.Success(
         buildList {
             repeat(20) { index ->
                 val randomHour = (0..12).random().toString()
@@ -238,9 +238,10 @@ private fun ChatListScreenPreview() {
             }
         }
     )
+    )
     NapzakMarketTheme {
         ChatListScreen(
-            chatRoomsState = chatRoomsState,
+            uiState = uiState,
             isNotificationModalOpen = true,
             isSystemPermissionGranted = false,
             isAppPermissionGranted = false,
@@ -257,7 +258,7 @@ private fun ChatListScreenPreview() {
 private fun ChatListEmptyScreenPreview() {
     NapzakMarketTheme {
         ChatListScreen(
-            chatRoomsState = UiState.Empty,
+            uiState = ChatListUiState(UiState.Empty),
             isNotificationModalOpen = true,
             isSystemPermissionGranted = false,
             isAppPermissionGranted = false,
