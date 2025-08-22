@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -163,6 +164,7 @@ internal fun ChatRoomScreen(
         }
 
         is UiState.Success -> {
+            val focusManager = LocalFocusManager.current
             val chatRoom = chatRoomState.chatRoomState.data
             var isBottomSheetVisible by remember { mutableStateOf(false) }
             var isWithdrawDialogVisible by remember { mutableStateOf(false) }
@@ -221,7 +223,10 @@ internal fun ChatRoomScreen(
                             onItemClick = { message ->
                                 when (message) {
                                     is ReceiveMessage.Product -> onProductDetailClick(message.product.productId)
-                                    is ReceiveMessage.Image -> selectedImageUrl = message.imageUrl
+                                    is ReceiveMessage.Image -> {
+                                        selectedImageUrl = message.imageUrl
+                                        focusManager.clearFocus()
+                                    }
                                     else -> {}
                                 }
                             },
