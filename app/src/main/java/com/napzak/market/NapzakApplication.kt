@@ -10,9 +10,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.kakao.sdk.common.KakaoSdk
 import com.napzak.market.notification.repository.FirebaseRepository
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
+
+private const val COMPRESSED = "compressed"
 
 @HiltAndroidApp
 class NapzakApplication : Application() {
@@ -29,6 +33,7 @@ class NapzakApplication : Application() {
         initTimber()
         setDayMode()
         getPushToken()
+        clearCacheDir()
     }
 
     private fun initTimber() {
@@ -43,6 +48,18 @@ class NapzakApplication : Application() {
         lifecycleOwner.lifecycleScope.launch {
             lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 firebaseRepository.getPushTokenFromFirebase()
+            }
+        }
+    }
+
+    private fun clearCacheDir() {
+        val dir = File(cacheDir, COMPRESSED)
+
+        lifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            runCatching {
+                if (dir.exists()) dir.deleteRecursively()
+            }.onFailure {
+                Timber.e(it, "Failed to clear compressed cache")
             }
         }
     }
