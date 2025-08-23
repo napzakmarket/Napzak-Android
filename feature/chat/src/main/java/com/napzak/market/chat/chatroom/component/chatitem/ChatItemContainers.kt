@@ -8,17 +8,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import com.napzak.market.designsystem.component.image.NapzakProfileImage
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_room_is_not_read
 
@@ -45,7 +41,7 @@ internal fun MyChatItemContainer(
 
 @Composable
 internal fun OpponentChatItemContainer(
-    imageRequest: ImageRequest,
+    imageUrl: String?,
     isProfileImageVisible: Boolean,
     isProduct: Boolean,
     isRead: Boolean,
@@ -62,7 +58,14 @@ internal fun OpponentChatItemContainer(
         modifier = modifier,
     ) {
         when {
-            !isProduct && isProfileImageVisible -> ProfileImage(imageRequest = imageRequest)
+            !isProduct && isProfileImageVisible -> {
+                NapzakProfileImage(
+                    imageUrl = imageUrl ?: "",
+                    contentDescription = null,
+                    modifier = Modifier.size(40.dp)
+                )
+            }
+
             !isProduct && !isProfileImageVisible -> Spacer(modifier = Modifier.size(40.dp))
         }
 
@@ -73,28 +76,12 @@ internal fun OpponentChatItemContainer(
         ) {
             content()
             ChatLabels(
-                isRead = isRead,
+                isRead = isRead || isProduct,
                 timeStamp = timeStamp,
                 alignment = Alignment.Start,
             )
         }
     }
-}
-
-@Composable
-private fun ProfileImage(
-    imageRequest: ImageRequest,
-    modifier: Modifier = Modifier,
-) {
-    val shape = CircleShape
-    AsyncImage(
-        model = imageRequest,
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-        modifier = modifier
-            .size(40.dp)
-            .clip(shape)
-    )
 }
 
 @Composable

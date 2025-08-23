@@ -13,11 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.request.ImageRequest
 import com.napzak.market.chat.chatroom.component.chatitem.ChatDate
 import com.napzak.market.chat.chatroom.component.chatitem.ChatImageItem
 import com.napzak.market.chat.chatroom.component.chatitem.ChatNotice
@@ -27,7 +25,6 @@ import com.napzak.market.chat.chatroom.component.chatitem.MyChatItemContainer
 import com.napzak.market.chat.chatroom.component.chatitem.OpponentChatItemContainer
 import com.napzak.market.chat.chatroom.preview.mockChats
 import com.napzak.market.chat.model.ReceiveMessage
-import com.napzak.market.designsystem.R.drawable.ic_profile
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -40,18 +37,7 @@ internal fun ChatRoomItemColumn(
     onItemClick: (ReceiveMessage<*>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-    val opponentProfileImageRequest = remember(opponentImageUrl) {
-        ImageRequest
-            .Builder(context)
-            .placeholder(ic_profile)
-            .error(ic_profile)
-            .fallback(ic_profile)
-            .data(opponentImageUrl)
-            .build()
-    }
     val reversedChatItem = chatItems.asReversed()
-
     LazyColumn(
         state = listState,
         reverseLayout = true,
@@ -61,23 +47,27 @@ internal fun ChatRoomItemColumn(
     ) {
         item { Spacer(Modifier.height(30.dp)) }
         itemsIndexed(reversedChatItem, key = { _, item -> item.messageId }) { index, chatItem ->
-            val nextChatItem =
-                if (index > 0) reversedChatItem[index - 1] else null
             val previousChatItem =
-                if (index < reversedChatItem.lastIndex) reversedChatItem[index + 1] else null
+                if (index < reversedChatItem.lastIndex) reversedChatItem[index + 1]
+                else null
+            val nextChatItem =
+                if (index > 0) reversedChatItem[index - 1]
+                else null
+            val isProfileVisible = isProfileVisible(chatItem, previousChatItem)
+            val timeStamp = getTimeStamp(chatItem, nextChatItem)
+            val contentAlignment = getChatItemAlignment(chatItem)
+            val spaceHeight = getChatItemSpace(chatItem, previousChatItem)
 
             ChatItemRenderer(
-                opponentImageRequest = opponentProfileImageRequest,
+                opponentImageUrl = opponentImageUrl,
                 chatItem = chatItem,
-                nextChatItem = nextChatItem,
-                previousChatItem = previousChatItem,
+                isProfileVisible = isProfileVisible,
+                timeStamp = timeStamp,
+                contentAlignment = contentAlignment,
                 onItemClick = { onItemClick(chatItem) },
             )
 
-            ChatItemSpacer(
-                currentChatItem = chatItem,
-                previousChatItem = previousChatItem,
-            )
+            Spacer(modifier = Modifier.height(spaceHeight))
         }
         item { Spacer(Modifier.height(30.dp)) }
     }
@@ -86,56 +76,50 @@ internal fun ChatRoomItemColumn(
 @Composable
 private fun ChatItemRenderer(
     chatItem: ReceiveMessage<*>,
-    opponentImageRequest: ImageRequest,
+    opponentImageUrl: String?,
+    isProfileVisible: Boolean,
+    timeStamp: String?,
+    contentAlignment: Alignment,
     onItemClick: () -> Unit,
     modifier: Modifier = Modifier,
-    nextChatItem: ReceiveMessage<*>? = null,
-    previousChatItem: ReceiveMessage<*>? = null,
 ) {
-    val isPreviousItemProduct = previousChatItem is ReceiveMessage.Product
-    val isChatDirectionEqualsPrevious = chatItem.isMessageOwner == previousChatItem?.isMessageOwner
-    val isChatDirectionEqualsNext = chatItem.isMessageOwner == nextChatItem?.isMessageOwner
-    val isTimeStampEqualsNext = chatItem.timeStamp == nextChatItem?.timeStamp
-    val timeStamp = chatItem.timeStamp.takeIf {
-        !isTimeStampEqualsNext || !isChatDirectionEqualsNext
-    }
-    val chatItemAlignment = when (chatItem.isMessageOwner) {
-        true -> Alignment.TopEnd
-        false -> Alignment.TopStart
-        null -> Alignment.Center
-    }
-
     Box(
         modifier = modifier.fillMaxWidth(),
-        contentAlignment = chatItemAlignment,
+        contentAlignment = contentAlignment,
     ) {
-        when (chatItem.isMessageOwner) {
-            true -> MyChatItemContainer(
-                timeStamp = timeStamp,
-                isRead = chatItem.isRead,
-                content = {
-                    ChatItemView(
-                        chatItem = chatItem,
-                        onItemClick = onItemClick
-                    )
-                },
-            )
+        when {
+            chatItem.isNeutralMessage -> ChatItemView(chatItem = chatItem)
 
-            false -> OpponentChatItemContainer(
-                imageRequest = opponentImageRequest,
-                isProfileImageVisible = !isChatDirectionEqualsPrevious || isPreviousItemProduct,
-                isProduct = chatItem is ReceiveMessage.Product,
-                timeStamp = timeStamp,
-                isRead = chatItem.isRead,
-                content = {
-                    ChatItemView(
-                        chatItem = chatItem,
-                        onItemClick = onItemClick
-                    )
-                },
-            )
+            chatItem.isMessageOwner -> {
+                MyChatItemContainer(
+                    timeStamp = timeStamp,
+                    isRead = chatItem.isRead || (chatItem is ReceiveMessage.Product),
+                    content = {
+                        ChatItemView(
+                            chatItem = chatItem,
+                            onItemClick = onItemClick
+                        )
+                    },
+                )
+            }
 
-            null -> ChatItemView(chatItem = chatItem) // ChatDate()가 표시된다.
+            !chatItem.isMessageOwner -> {
+                OpponentChatItemContainer(
+                    imageUrl = opponentImageUrl,
+                    isProfileImageVisible = isProfileVisible,
+                    isProduct = chatItem is ReceiveMessage.Product,
+                    timeStamp = timeStamp,
+                    isRead = chatItem.isRead,
+                    content = {
+                        ChatItemView(
+                            chatItem = chatItem,
+                            onItemClick = onItemClick
+                        )
+                    },
+                )
+            }
+
+            else -> {}
         }
     }
 }
@@ -191,17 +175,55 @@ private fun ChatItemView(
     }
 }
 
-@Composable
-private fun ChatItemSpacer(
-    currentChatItem: ReceiveMessage<*>? = null,
-    previousChatItem: ReceiveMessage<*>? = null,
-) {
-    val height: Dp = when {
-        currentChatItem is ReceiveMessage.Date || previousChatItem is ReceiveMessage.Date -> 20.dp
-        currentChatItem is ReceiveMessage.Notice || previousChatItem is ReceiveMessage.Notice -> 30.dp
+private fun isProfileVisible(
+    chatItem: ReceiveMessage<*>,
+    previousChatItem: ReceiveMessage<*>?,
+): Boolean {
+    val isPreviousItemProduct = previousChatItem is ReceiveMessage.Product
+    val isChatDirectionEqualsPrevious =
+        chatItem.isMessageOwner == previousChatItem?.isMessageOwner
+    val isPreviousItemNeutral = previousChatItem?.isNeutralMessage == true
+
+    return chatItem.isProfileNeeded
+            || isPreviousItemProduct
+            || isPreviousItemNeutral
+            || (!isChatDirectionEqualsPrevious && chatItem.isMessage)
+}
+
+private fun getChatItemAlignment(
+    chatItem: ReceiveMessage<*>,
+): Alignment {
+    return with(chatItem) {
+        val isProduct = this is ReceiveMessage.Product
+        when {
+            isNeutralMessage -> Alignment.Center
+            (isProduct || isMessage) && isMessageOwner -> Alignment.TopEnd
+            (isProduct || isMessage) && !isMessageOwner -> Alignment.TopStart
+            else -> Alignment.Center
+        }
+    }
+}
+
+private fun getTimeStamp(
+    chatItem: ReceiveMessage<*>,
+    nextChatItem: ReceiveMessage<*>?,
+): String? {
+    val isChatDirectionEqualsNext = chatItem.isMessageOwner == nextChatItem?.isMessageOwner
+    val isTimeStampEqualsNext = chatItem.timeStamp == nextChatItem?.timeStamp
+    return chatItem.timeStamp.takeIf {
+        !isTimeStampEqualsNext || !isChatDirectionEqualsNext
+    }
+}
+
+private fun getChatItemSpace(
+    chatItem: ReceiveMessage<*>,
+    previousChatItem: ReceiveMessage<*>?,
+): Dp {
+    return when {
+        chatItem is ReceiveMessage.Date || previousChatItem is ReceiveMessage.Date -> 20.dp
+        chatItem is ReceiveMessage.Notice || previousChatItem is ReceiveMessage.Notice -> 30.dp
         else -> 8.dp
     }
-    Spacer(modifier = Modifier.height(height))
 }
 
 @Preview(showBackground = true)
