@@ -203,25 +203,27 @@ internal class ChatRoomViewModel @Inject constructor(
         newMessages.forEach { message ->
             when (message) {
                 is ReceiveMessage.Join -> {
-                    chatMessageList.forEachIndexed { index, record ->
-                        if (with(record) { isMessage && isMessageOwner == true && isRead }) {
-                            return@forEachIndexed
+                    if (!message.isMessageOwner) {
+                        chatMessageList.forEachIndexed { index, record ->
+                            if (with(record) { isMessage && isMessageOwner && isRead }) {
+                                return@forEachIndexed
+                            }
+                            chatMessageList[index] =
+                                if (with(record) { isMessage && isMessageOwner && !isRead }) {
+                                    runCatching {
+                                        (record as ReceiveMessage.Text).copy(isRead = true)
+                                    }.recoverCatching {
+                                        (record as ReceiveMessage.Image).copy(isRead = true)
+                                    }.recoverCatching {
+                                        (record as ReceiveMessage.Product).copy(isRead = true)
+                                    }.getOrNull() ?: record
+                                } else record
+
                         }
-                        chatMessageList[index] =
-                            if (with(record) { isMessage && isMessageOwner == true && !isRead }) {
-                                runCatching {
-                                    (record as ReceiveMessage.Text).copy(isRead = true)
-                                }.recoverCatching {
-                                    (record as ReceiveMessage.Image).copy(isRead = true)
-                                }.recoverCatching {
-                                    (record as ReceiveMessage.Product).copy(isRead = true)
-                                }.getOrNull() ?: record
-                            } else record
 
+                        _chatRoomState.update { it.copy(isOpponentOnline = true) }
+                        _chatItems.update { chatMessageList.toList() }
                     }
-
-                    _chatRoomState.update { it.copy(isOpponentOnline = true) }
-                    _chatItems.update { chatMessageList.toList() }
                 }
 
                 is ReceiveMessage.Leave -> {

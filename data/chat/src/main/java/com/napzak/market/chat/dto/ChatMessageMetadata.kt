@@ -24,6 +24,7 @@ sealed class ChatMessageMetadata {
         @SerialName("genreName") val genreName: String,
         @SerialName("title") val title: String,
         @SerialName("price") val price: Int,
+        @SerialName("isProductDeleted") val isProductDeleted: Int? = null,
     ) : ChatMessageMetadata()
 
     @Serializable

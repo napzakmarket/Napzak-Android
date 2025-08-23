@@ -1,7 +1,7 @@
 package com.napzak.market.chat.service
 
 import com.napzak.market.chat.dto.ChatMessageRequest
-import com.napzak.market.chat.dto.ChatMessageResponse
+import com.napzak.market.chat.dto.ChatRealtimeMessage
 import com.napzak.market.remote.StompSocketClient
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.builtins.serializer
@@ -18,10 +18,10 @@ class ChatSocketService @Inject constructor(
         this.stompSocketClient.disconnect()
     }
 
-    suspend fun subscribeChatRoom(roomId: Long): Flow<ChatMessageResponse> {
+    suspend fun subscribeChatRoom(roomId: Long): Flow<ChatRealtimeMessage> {
         return stompSocketClient.subscribe(
             destination = Destination.SUBSCRIBE_CHAT_ROOM.format(roomId),
-            deserializer = ChatMessageResponse.serializer(),
+            deserializer = ChatRealtimeMessage.serializer(),
         )
     }
 
