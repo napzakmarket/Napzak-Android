@@ -164,7 +164,7 @@ internal class ChatRoomViewModel @Inject constructor(
         chatRepository.getChatRoomMessages(roomId)
             .onSuccess { messages ->
                 val reversedMessage = messages.asReversed()
-                if (reversedMessage.any { it is ReceiveMessage.Notice }) {
+                if (reversedMessage.lastOrNull() is ReceiveMessage.Notice) {
                     _chatRoomState.update { it.copy(isRoomWithdrawn = true) }
                 }
                 addMessages(reversedMessage)
@@ -183,6 +183,9 @@ internal class ChatRoomViewModel @Inject constructor(
             getChatFlowUseCase(roomId).collect { message ->
                 if (message.roomId == roomId) {
                     _sideEffect.send(ChatRoomSideEffect.OnReceiveChatMessage)
+                    if (message is ReceiveMessage.Notice) {
+                        _chatRoomState.update { it.copy(isRoomWithdrawn = true) }
+                    }
                     addMessages(listOf(message))
                 }
             }
@@ -231,10 +234,6 @@ internal class ChatRoomViewModel @Inject constructor(
                 }
 
                 else -> {
-                    if (message is ReceiveMessage.Notice) {
-                        _chatRoomState.update { it.copy(isRoomWithdrawn = true) }
-                    }
-
                     if (chatMessageIdSet.add(message.messageId)) {
                         chatMessageList.add(preprocessMessage(message))
                         added = true
