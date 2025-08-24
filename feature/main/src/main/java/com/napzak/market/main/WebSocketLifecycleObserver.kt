@@ -14,9 +14,11 @@ import com.napzak.market.util.android.TokenProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
@@ -32,13 +34,19 @@ class WebSocketLifecycleObserver @Inject constructor(
     private val disconnectChatSocketUseCase: DisconnectChatSocketUseCase,
     private val subscribeChatRoomUseCase: SubscribeChatRoomUseCase,
 ) : DefaultLifecycleObserver {
-    private val activityScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private lateinit var activityScope: CoroutineScope
+    private var loginStateCollectJob: Job? = null
     private val isLoggedIn = MutableStateFlow(false)
+
+    override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
+        activityScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    }
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
         try {
-            activityScope.launch {
+            loginStateCollectJob = activityScope.launch {
                 isLoggedIn.collectLatest { isLoggedIn ->
                     if (isLoggedIn && isTokenAvailable()) {
                         val storeInfo = fetchStoreInfo()
@@ -56,7 +64,13 @@ class WebSocketLifecycleObserver @Inject constructor(
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
+        loginStateCollectJob?.cancel()
         activityScope.launch { disconnectChatSocketUseCase() }
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
+        activityScope.cancel()
     }
 
     fun updateLoggedInState(isLoggedIn: Boolean) {
