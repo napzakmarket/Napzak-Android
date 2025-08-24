@@ -36,6 +36,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.designsystem.R.drawable.ic_edit_pencil
+import com.napzak.market.designsystem.R.drawable.ic_profile
+import com.napzak.market.designsystem.R.drawable.ic_cover_profile
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.store.R.string.store_edit_profile
 import com.napzak.market.store.model.StoreDetail
@@ -60,6 +62,9 @@ internal fun StoreInfoSection(
                     model = ImageRequest
                         .Builder(context)
                         .data(coverUrl)
+                        .placeholder(ic_cover_profile)
+                        .error(ic_cover_profile)
+                        .fallback(ic_cover_profile)
                         .build(),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
@@ -76,13 +81,15 @@ internal fun StoreInfoSection(
                 model = ImageRequest
                     .Builder(context)
                     .data(photoUrl)
+                    .placeholder(ic_profile)
+                    .error(ic_profile)
+                    .fallback(ic_profile)
                     .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(70.dp)
                     .clip(profileImageShape)
-                    .background(color = NapzakMarketTheme.colors.gray200)
                     .border(
                         width = 5.dp,
                         color = NapzakMarketTheme.colors.white,
