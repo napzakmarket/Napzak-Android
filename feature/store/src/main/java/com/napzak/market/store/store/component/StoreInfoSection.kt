@@ -138,7 +138,7 @@ internal fun StoreInfoSection(
                 enabled = isMyStore,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 10.dp, horizontal = 20.dp),
+                    .padding(horizontal = 20.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = NapzakMarketTheme.colors.gray50,
                     contentColor = NapzakMarketTheme.colors.gray400,
@@ -160,8 +160,7 @@ internal fun StoreInfoSection(
                         text = stringResource(store_edit_profile),
                         style = NapzakMarketTheme.typography.caption12m,
                         color = NapzakMarketTheme.colors.gray400,
-                        modifier = Modifier
-                            .padding(vertical = 8.dp),
+                        modifier = Modifier,
                     )
                 }
             }
