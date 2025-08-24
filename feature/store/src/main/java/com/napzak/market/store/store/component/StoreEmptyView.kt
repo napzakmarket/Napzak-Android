@@ -47,6 +47,8 @@ internal fun StoreEmptyView(
                 )
             )
 
+            Spacer(Modifier.height(6.dp))
+
             Text(
                 text = stringResource(store_empty_product_subtitle),
                 style = NapzakMarketTheme.typography.caption12sb.copy(
