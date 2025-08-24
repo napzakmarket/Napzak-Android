@@ -62,12 +62,12 @@ private fun MessageItem.toProduct(
             title = metadata.title,
             price = metadata.price,
             genreName = metadata.genreName,
+            isProductDeleted = metadata.isProductDeleted ?: false,
             // 사용되지 않는 속성들
             isPriceNegotiable = false,
             photo = "",
             productOwnerId = 0,
             isMyProduct = false,
-            isProductDeleted = false,
         ),
         timeStamp = requireNotNull(createdAt),
         isRead = isRead ?: false,
