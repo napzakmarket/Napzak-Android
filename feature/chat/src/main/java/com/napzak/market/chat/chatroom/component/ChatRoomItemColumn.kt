@@ -147,10 +147,7 @@ private fun ChatItemView(
         is ReceiveMessage.Product -> {
             with(chatItem) {
                 ChatProduct(
-                    tradeType = product.tradeType,
-                    genre = product.genreName,
-                    name = product.title,
-                    price = product.price.toString(),
+                    product = product,
                     isMessageOwner = isMessageOwner,
                     onNavigateClick = onItemClick,
                 )

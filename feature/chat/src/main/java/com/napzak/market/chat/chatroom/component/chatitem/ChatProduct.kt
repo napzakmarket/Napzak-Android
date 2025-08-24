@@ -24,25 +24,28 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.napzak.market.chat.chatroom.preview.mockProductBrief
+import com.napzak.market.chat.model.ProductBrief
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_room_product_button
+import com.napzak.market.feature.chat.R.string.chat_room_product_deleted_button
 import com.napzak.market.feature.chat.R.string.chat_room_product_price_won_format
 import com.napzak.market.feature.chat.R.string.chat_room_product_title_buy
 import com.napzak.market.feature.chat.R.string.chat_room_product_title_sell
 import com.napzak.market.ui_util.formatToPriceString
 import com.napzak.market.ui_util.noRippleClickable
+import timber.log.Timber
 
 @Composable
 internal fun ChatProduct(
-    tradeType: String,
-    genre: String,
-    name: String,
-    price: String,
+    product: ProductBrief,
     isMessageOwner: Boolean,
     onNavigateClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    Timber.d(product.toString())
+
     val containerColor = NapzakMarketTheme.colors.gray50
     val shape = if (isMessageOwner) {
         RoundedCornerShape(
@@ -68,21 +71,25 @@ internal fun ChatProduct(
                 .background(color = containerColor, shape = shape),
         ) {
             ChatProductHeader(
-                tradeType = tradeType,
+                tradeType = product.tradeType,
             )
             Spacer(
                 modifier = Modifier.height(16.dp),
             )
             ChatProductDetailView(
-                genre = genre,
-                name = name,
-                price = price,
+                genre = product.genreName,
+                name = product.title,
+                price = stringResource(
+                    chat_room_product_price_won_format,
+                    product.price.toString().formatToPriceString()
+                ),
                 modifier = Modifier.padding(horizontal = 20.dp),
             )
             Spacer(
                 modifier = Modifier.height(15.dp),
             )
             ChatProductButton(
+                isProductDeleted = product.isProductDeleted,
                 onClick = onNavigateClick,
                 modifier = Modifier.padding(horizontal = 20.dp),
             )
@@ -126,8 +133,6 @@ private fun ChatProductDetailView(
     modifier: Modifier = Modifier,
 ) {
     val textColor = NapzakMarketTheme.colors.black
-    val formattedPrice =
-        stringResource(chat_room_product_price_won_format, price.formatToPriceString())
     val commonText: @Composable (String, TextStyle) -> Unit = { text, style ->
         Text(
             text = text,
@@ -147,17 +152,24 @@ private fun ChatProductDetailView(
     ) {
         commonText(genre, NapzakMarketTheme.typography.caption10sb)
         commonText(name, NapzakMarketTheme.typography.caption12sb)
-        commonText(formattedPrice, NapzakMarketTheme.typography.body14b)
+        commonText(price, NapzakMarketTheme.typography.body14b)
     }
 }
 
 @Composable
 private fun ChatProductButton(
-    onClick: () -> Unit,
+    isProductDeleted: Boolean,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit,
 ) {
-    val buttonColor = NapzakMarketTheme.colors.black
+    val buttonColor =
+        if (isProductDeleted) NapzakMarketTheme.colors.gray200
+        else NapzakMarketTheme.colors.black
     val buttonShape = RoundedCornerShape(8.dp)
+
+    val text =
+        if (isProductDeleted) stringResource(chat_room_product_deleted_button)
+        else stringResource(chat_room_product_button)
     val textStyle = NapzakMarketTheme.typography.caption10sb
     val textColor = NapzakMarketTheme.colors.white
 
@@ -168,11 +180,11 @@ private fun ChatProductButton(
                 color = buttonColor,
                 shape = buttonShape,
             )
-            .noRippleClickable(onClick = onClick),
+            .noRippleClickable(enabled = !isProductDeleted, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = stringResource(chat_room_product_button),
+            text = text,
             style = textStyle,
             color = textColor,
             modifier = Modifier.padding(vertical = 8.dp),
@@ -186,10 +198,18 @@ private fun ChatProductPreview() {
     NapzakMarketTheme {
         Column(modifier = Modifier.fillMaxWidth()) {
             ChatProduct(
-                tradeType = "SELL",
-                genre = "식품",
-                name = "김치",
-                price = "1000",
+                product = mockProductBrief,
+                onNavigateClick = {},
+                isMessageOwner = true
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            ChatProduct(
+                product = mockProductBrief.copy(
+                    tradeType = "BUY",
+                    isProductDeleted = true
+                ),
                 onNavigateClick = {},
                 isMessageOwner = true
             )

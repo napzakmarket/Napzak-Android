@@ -35,6 +35,17 @@ inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier
     )
 }
 
+@SuppressLint("ModifierFactoryUnreferencedReceiver")
+inline fun Modifier.noRippleClickable(enabled: Boolean, crossinline onClick: () -> Unit): Modifier =
+    composed {
+        clickable(
+            indication = null,
+            interactionSource = remember { MutableInteractionSource() },
+            enabled = enabled,
+            onClick = { onClick() }
+        )
+    }
+
 /**
  * combineClick의 Ripple 효과를 제거하기 위한 함수입니다.
  */
