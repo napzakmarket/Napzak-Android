@@ -2,7 +2,6 @@ package com.napzak.market.chat.chatroom
 
 import android.app.NotificationManager
 import android.content.Context
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +38,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.napzak.market.chat.chatroom.component.ChatImageZoomScreen
 import com.napzak.market.chat.chatroom.component.ChatRoomBottomSheet
 import com.napzak.market.chat.chatroom.component.ChatRoomInputField
 import com.napzak.market.chat.chatroom.component.ChatRoomItemColumn
@@ -50,7 +50,6 @@ import com.napzak.market.chat.chatroom.preview.mockChats
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.img_empty_chat_room
-import com.napzak.market.designsystem.component.image.ZoomableImageScreen
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastFontType
@@ -168,13 +167,24 @@ internal fun ChatRoomScreen(
             val chatRoom = chatRoomState.chatRoomState.data
             var isBottomSheetVisible by remember { mutableStateOf(false) }
             var isWithdrawDialogVisible by remember { mutableStateOf(false) }
+            var isPreviewVisible by remember { mutableStateOf(false) }
             var selectedImageUrl: String? by remember { mutableStateOf(null) }
 
-            ChatImageZoomScreen(
-                selectedImageUrl = selectedImageUrl,
-                onBackClick = { selectedImageUrl = null },
-                modifier = modifier
-            )
+            selectedImageUrl?.let {
+                ChatImageZoomScreen(
+                    selectedImageUrl = it,
+                    isPreview = isPreviewVisible,
+                    onBackClick = {
+                        selectedImageUrl = null
+                        isPreviewVisible = false
+                    },
+                    onSendClick = {
+                        selectedImageUrl?.let(onPhotoSelect)
+                        selectedImageUrl = null
+                        isPreviewVisible = false
+                    },
+                )
+            }
 
             if (isWithdrawDialogVisible) {
                 NapzakWithdrawDialog(
@@ -227,6 +237,7 @@ internal fun ChatRoomScreen(
                                         selectedImageUrl = message.imageUrl
                                         focusManager.clearFocus()
                                     }
+
                                     else -> {}
                                 }
                             },
@@ -250,7 +261,10 @@ internal fun ChatRoomScreen(
                     enabled = !chatRoomState.isChatDisabled,
                     onSendClick = onSendChatClick,
                     onTextChange = onChatChange,
-                    onPhotoSelect = onPhotoSelect,
+                    onPhotoSelect = {
+                        selectedImageUrl = it
+                        isPreviewVisible = true
+                    },
                 )
             }
 
@@ -301,29 +315,6 @@ private fun EmptyChatScreen(
             color = NapzakMarketTheme.colors.gray200,
         )
         Spacer(modifier = Modifier.height(50.dp))
-    }
-}
-
-@Composable
-private fun ChatImageZoomScreen(
-    selectedImageUrl: String?,
-    onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    BackHandler(selectedImageUrl != null) {
-        onBackClick()
-    }
-
-    selectedImageUrl?.let {
-        ZoomableImageScreen(
-            imageUrls = listOf(it).toImmutableList(),
-            initialPage = 0,
-            contentDescription = null,
-            onBackClick = onBackClick,
-            modifier = modifier
-                .systemBarsPadding()
-                .fillMaxSize(),
-        )
     }
 }
 
