@@ -67,16 +67,21 @@ internal class ChatRoomViewModel @Inject constructor(
 
     /**
      * [SavedStateHandle]에 저장된 값들을 활용하여 채팅방 정보들을 준비합니다.
+     *
+     * 1. 채팅 탭에서 진입한 경우, `roomId` 값을 활용해 채팅방을 준비합니다.
+     * 2. 물품 상세 화면에서 진입한 경우, `productId` 값을 활용해 채팅방을 준비합니다.
+     * 3. 실패한 경우 UI 상태를 `Failure`로 설정합니다.
      */
     fun prepareChatRoom() = viewModelScope.launch {
         fetchStoreId()
         runCatching { prepareChatRoomWithRoomId(_roomId) }
+            .onFailure(Timber::e)
             .recoverCatching { prepareChatRoomWithProductId(_productId) }
             .onFailure { e ->
+                Timber.e(e)
                 _chatRoomState.update {
                     it.copy(chatRoomState = UiState.Failure(e.message.toString()))
                 }
-                Timber.e(e)
             }
     }
 
@@ -86,8 +91,9 @@ internal class ChatRoomViewModel @Inject constructor(
      * 불러온 상점 ID는 메시지의 방향을 설정하기 위해 사용합니다.
      */
     private fun fetchStoreId() = viewModelScope.launch {
+        val storeId = storeRepository.fetchStoreInfo().getOrNull()?.storeId
         _chatRoomState.update {
-            it.copy(storeId = storeRepository.fetchStoreInfo().getOrNull()?.storeId)
+            it.copy(storeId = storeId)
         }
     }
 
@@ -128,7 +134,6 @@ internal class ChatRoomViewModel @Inject constructor(
                 chatCondition.value = ChatCondition.PRODUCT_CHANGED
             }
         }
-
     }
 
     /**
@@ -149,16 +154,12 @@ internal class ChatRoomViewModel @Inject constructor(
                         )
                     )
                 }
-            }.getOrElse {
-                Timber.tag(TAG).e(it)
-                throw it
-            }
+            }.getOrThrow()
     }
 
+    // TODO: 페이징 처리
     /**
-     * TODO: 페이징 처리
-     *
-     * 과거 채팅 기록들을 불러옵니다.
+     * 채팅방의 과거 채팅 기록들을 불러옵니다.
      */
     private suspend fun fetchMessages(roomId: Long) {
         chatRepository.getChatRoomMessages(roomId)
@@ -168,34 +169,65 @@ internal class ChatRoomViewModel @Inject constructor(
                     _chatRoomState.update { it.copy(isRoomWithdrawn = true) }
                 }
                 addMessages(reversedMessage)
-            }
-            .getOrElse {
-                Timber.tag(TAG).e(it)
-                throw it
-            }
+            }.getOrThrow()
     }
 
     /**
      * 구독 중인 소켓 채널로부터 메시지를 수신합니다. 이 메서드가 호출되어야 수신이 시작됩니다.
      */
     private fun collectMessages(roomId: Long) = viewModelScope.launch {
-        try {
-            getChatFlowUseCase(roomId).collect { message ->
+        getChatFlowUseCase(roomId)
+            .collect { message ->
                 if (message.roomId == roomId) {
                     _sideEffect.send(ChatRoomSideEffect.OnReceiveChatMessage)
-                    if (message is ReceiveMessage.Notice) {
-                        _chatRoomState.update { it.copy(isRoomWithdrawn = true) }
+
+                    when (message) {
+                        is ReceiveMessage.Join -> {
+                            updateUserMessageReadState(message)
+                        }
+
+                        is ReceiveMessage.Leave -> {
+                            _chatRoomState.update { it.copy(isOpponentOnline = false) }
+                        }
+
+                        is ReceiveMessage.Notice -> {
+                            _chatRoomState.update { it.copy(isRoomWithdrawn = true) }
+                            addMessages(listOf(message))
+                        }
+
+                        else -> {
+                            addMessages(listOf(message))
+                        }
                     }
-                    addMessages(listOf(message))
                 }
             }
-        } catch (e: Exception) {
-            Timber.tag(TAG).e(e)
+    }
+
+    private fun updateUserMessageReadState(message: ReceiveMessage.Join) {
+        if (!message.isMessageOwner) {
+            chatMessageList.forEachIndexed { index, record ->
+                if (with(record) { isMessage && isMessageOwner && isRead }) {
+                    return@forEachIndexed
+                }
+                chatMessageList[index] =
+                    if (with(record) { isMessage && isMessageOwner && !isRead }) {
+                        runCatching {
+                            (record as ReceiveMessage.Text).copy(isRead = true)
+                        }.recoverCatching {
+                            (record as ReceiveMessage.Image).copy(isRead = true)
+                        }.recoverCatching {
+                            (record as ReceiveMessage.Product).copy(isRead = true)
+                        }.getOrNull() ?: record
+                    } else record
+            }
+
+            _chatRoomState.update { it.copy(isOpponentOnline = true) }
+            _chatItems.update { chatMessageList.toList() }
         }
     }
 
     /**
-     * 수신한 메시지를 화면에 출력할 메시지 리스트에 넣습니다. 다음과 같은 전처리 과정을 거칩니다.
+     * 수신한 메시지를 화면에 출력할 메시지 리스트에 넣습니다. 수신한 메시지의 타입에 따라
      *
      * - 넣고자하는 메시지의 id가 이미 존재한다면 메시지 리스트에 추가하지 않습니다.
      * - 메시지가 이미지인 경우, 이미지 url의 쿼리를 제거합니다.
@@ -204,41 +236,9 @@ internal class ChatRoomViewModel @Inject constructor(
     private fun addMessages(newMessages: List<ReceiveMessage<*>>) {
         var added = false
         newMessages.forEach { message ->
-            when (message) {
-                is ReceiveMessage.Join -> {
-                    if (!message.isMessageOwner) {
-                        chatMessageList.forEachIndexed { index, record ->
-                            if (with(record) { isMessage && isMessageOwner && isRead }) {
-                                return@forEachIndexed
-                            }
-                            chatMessageList[index] =
-                                if (with(record) { isMessage && isMessageOwner && !isRead }) {
-                                    runCatching {
-                                        (record as ReceiveMessage.Text).copy(isRead = true)
-                                    }.recoverCatching {
-                                        (record as ReceiveMessage.Image).copy(isRead = true)
-                                    }.recoverCatching {
-                                        (record as ReceiveMessage.Product).copy(isRead = true)
-                                    }.getOrNull() ?: record
-                                } else record
-
-                        }
-
-                        _chatRoomState.update { it.copy(isOpponentOnline = true) }
-                        _chatItems.update { chatMessageList.toList() }
-                    }
-                }
-
-                is ReceiveMessage.Leave -> {
-                    _chatRoomState.update { it.copy(isOpponentOnline = false) }
-                }
-
-                else -> {
-                    if (chatMessageIdSet.add(message.messageId)) {
-                        chatMessageList.add(preprocessMessage(message))
-                        added = true
-                    }
-                }
+            if (chatMessageIdSet.add(message.messageId)) {
+                chatMessageList.add(preprocessMessage(message))
+                added = true
             }
         }
 
@@ -256,12 +256,24 @@ internal class ChatRoomViewModel @Inject constructor(
     fun sendTextMessage(text: String) {
         viewModelScope.launch {
             try {
-                onProductChanged()
-                val roomId = _chatRoomStateAsSuccess.roomId ?: return@launch
+                when (chatCondition.value) {
+                    ChatCondition.NEW_CHAT_ROOM -> {
+                        createNewRoom(_productId)
+                        chatCondition.value = ChatCondition.PRODUCT_NOT_CHANGED
+                    }
+
+                    ChatCondition.PRODUCT_CHANGED -> {
+                        _chatRoomStateAsSuccess.roomId?.let { patchProduct(it, _productId) }
+                        chatCondition.value = ChatCondition.PRODUCT_NOT_CHANGED
+                    }
+
+                    ChatCondition.PRODUCT_NOT_CHANGED -> {} //no work to do
+                }
+                val roomId = requireNotNull(_chatRoomStateAsSuccess.roomId)
                 sendMessage(SendMessage.Text(roomId, text))
                 chat = ""
             } catch (e: Exception) {
-                Timber.tag(TAG).e(e)
+                Timber.e(e)
             }
         }
     }
@@ -273,15 +285,22 @@ internal class ChatRoomViewModel @Inject constructor(
     fun sendImageMessage(uri: String) {
         viewModelScope.launch {
             try {
-                onProductChanged()
-                /*TODO: PresignedURL 로직 삽입*/
+                when (chatCondition.value) {
+                    ChatCondition.NEW_CHAT_ROOM -> {
+                        createNewRoom(_productId)
+                        chatCondition.value = ChatCondition.PRODUCT_NOT_CHANGED
+                    }
+
+                    ChatCondition.PRODUCT_CHANGED -> {
+                        _chatRoomStateAsSuccess.roomId?.let { patchProduct(it, _productId) }
+                        chatCondition.value = ChatCondition.PRODUCT_NOT_CHANGED
+                    }
+
+                    ChatCondition.PRODUCT_NOT_CHANGED -> {} //no work to do
+                }
+
                 uploadImagesUseCase(
-                    listOf(
-                        UploadImage(
-                            imageType = UploadImage.ImageType.CHAT,
-                            uri = uri,
-                        )
-                    )
+                    listOf(UploadImage(UploadImage.ImageType.CHAT, uri))
                 ).onSuccess { response ->
                     val imageUrls = response.map {
                         it.value.toUri().toString().substringBefore("?")
@@ -290,7 +309,7 @@ internal class ChatRoomViewModel @Inject constructor(
                     sendMessage(SendMessage.Image(roomId, null, imageUrls))
                 }.getOrThrow()
             } catch (e: Exception) {
-                Timber.tag(TAG).e(e)
+                Timber.e(e)
             }
         }
     }
@@ -306,7 +325,7 @@ internal class ChatRoomViewModel @Inject constructor(
 
                 sendMessage(SendMessage.Product(roomId, null, productBrief))
             } catch (e: Exception) {
-                Timber.tag(TAG).e(e)
+                Timber.e(e)
             }
         }
     }
@@ -321,22 +340,6 @@ internal class ChatRoomViewModel @Inject constructor(
     }
 
     /**
-     * 대화 대상인 물품이 변경되었을 때, 채팅방 상태에 따라 올바른 로직을 매핑합니다.
-     */
-    private suspend fun onProductChanged() {
-        when (chatCondition.value) {
-            ChatCondition.NEW_CHAT_ROOM -> createNewRoom(_productId)
-
-            ChatCondition.PRODUCT_CHANGED -> {
-                _chatRoomStateAsSuccess.roomId?.let { patchProduct(it, _productId) }
-            }
-
-            ChatCondition.PRODUCT_NOT_CHANGED -> {} //no work to do
-        }
-        chatCondition.value = ChatCondition.PRODUCT_NOT_CHANGED
-    }
-
-    /**
      * 인식할 수 없는 이미지 링크에 대해서 전처리를 수행합니다.
      * 1. 쿼리 파라미터를 없앱니다.
      * 2. 메시지 읽음 처리를 수행합니다. 다음 상태일 때 메시지를 읽음 처리합니다:
@@ -346,7 +349,7 @@ internal class ChatRoomViewModel @Inject constructor(
      */
     private fun preprocessMessage(message: ReceiveMessage<*>): ReceiveMessage<*> {
         val isRead =
-            message.isRead || message.isMessageOwner == false || _chatRoomState.value.isOpponentOnline
+            message.isRead || !message.isMessageOwner || _chatRoomState.value.isOpponentOnline
 
         return when (message) {
             is ReceiveMessage.Text -> message.copy(isRead = isRead)
@@ -383,7 +386,7 @@ internal class ChatRoomViewModel @Inject constructor(
             subscribeChatRoomUseCase(roomId, storeId)
             sendProductMessage()
         } catch (e: Exception) {
-            Timber.tag(TAG).e(e, "채팅방 생성에 실패했습니다.")
+            Timber.e(e, "채팅방 생성에 실패했습니다.")
             throw e
         }
     }
@@ -403,18 +406,18 @@ internal class ChatRoomViewModel @Inject constructor(
 
     /**
      * 채팅방에 입장하여 서버에게 채팅방에 접속 중임을 알립니다.
-     * @return 채팅방 ID
+     * @return productId
      */
     private suspend fun enterChatRoom(roomId: Long): Long =
         chatRepository.enterChatRoom(roomId).mapCatching { (productId, isOnline) ->
-            Timber.tag(TAG).d("채팅방 입장 및 구독 시작함")
+            Timber.d("채팅방 입장 및 구독 시작함")
             _chatRoomState.update { it.copy(isOpponentOnline = isOnline) }
             productId
-        }.getOrElse {
-            Timber.tag(TAG).e(it)
+        }.getOrElse { e ->
+            Timber.e(e)
             _chatRoomState.update { it.copy(isUserExitChatRoom = true) }
             _sideEffect.send(ChatRoomSideEffect.ShowToast(USER_EXIT_ERROR_MESSAGE))
-            throw it
+            throw e
         }
 
 
@@ -425,9 +428,12 @@ internal class ChatRoomViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val roomId = requireNotNull(_chatRoomStateAsSuccess.roomId)
-                chatRepository.leaveChatRoom(roomId).getOrThrow()
+                chatRepository.leaveChatRoom(roomId)
             } catch (e: Exception) {
-                Timber.tag(TAG).e(e)
+                when (e) {
+                    is IllegalArgumentException -> Timber.w("채팅방이 생성되지 않았습니다.")
+                    else -> Timber.e(e)
+                }
             }
         }
     }
@@ -443,13 +449,15 @@ internal class ChatRoomViewModel @Inject constructor(
                     _sideEffect.trySend(ChatRoomSideEffect.OnWithdrawChatRoom)
                 }
             } catch (e: Exception) {
-                Timber.tag(TAG).e(e)
+                when (e) {
+                    is IllegalArgumentException -> Timber.w("채팅방이 생성되지 않았습니다.")
+                    else -> Timber.e(e)
+                }
             }
         }
     }
 
     companion object {
-        private const val TAG = "ChatRoom"
         private const val ROOM_ID_KEY = "chatRoomId"
         private const val PRODUCT_ID_KEY = "productId"
         private const val USER_EXIT_ERROR_MESSAGE = "해당 채팅방을 나간 상태입니다."
