@@ -169,16 +169,10 @@ private fun ChatListColumn(
     ) {
         items(chatRooms) { chatRoom ->
             ChatDivider()
-            with(chatRoom) {
-                ChatRoomItem(
-                    nickname = storeNickname,
-                    lastMessage = lastMessage,
-                    profileImageUrl = storePhoto,
-                    unReadMessageCount = unreadMessageCount,
-                    timeStamp = lastMessageAt,
-                    onClick = { onChatRoomClick(chatRoom) },
-                )
-            }
+            ChatRoomItem(
+                chatRoom = chatRoom,
+                onClick = { onChatRoomClick(chatRoom) },
+            )
         }
         item { ChatDivider() }
     }
@@ -219,25 +213,26 @@ private fun EmptyChatListScreen(
 private fun ChatListScreenPreview() {
     val uiState = ChatListUiState(
         UiState.Success(
-        buildList {
-            repeat(20) { index ->
-                val randomHour = (0..12).random().toString()
-                val randomMinute = (0..60).random().toString().padStart(2, '0')
-                val randomCount = (0..1000).random()
+            buildList {
+                repeat(20) { index ->
+                    val randomHour = (0..12).random().toString()
+                    val randomMinute = (0..60).random().toString().padStart(2, '0')
+                    val randomCount = (0..1000).random()
 
-                add(
-                    ChatRoom(
-                        roomId = index.toLong(),
-                        storeNickname = "납자기$index",
-                        storePhoto = "",
-                        lastMessage = "${index}번째로 메세지를 보냄 ",
-                        unreadMessageCount = randomCount,
-                        lastMessageAt = "오후 $randomHour:$randomMinute",
+                    add(
+                        ChatRoom(
+                            roomId = index.toLong(),
+                            storeNickname = "납자기$index",
+                            storePhoto = "",
+                            lastMessage = "${index}번째로 메세지를 보냄 ",
+                            unreadMessageCount = randomCount,
+                            lastMessageAt = "오후 $randomHour:$randomMinute",
+                            isOpponentWithdrawn = false
+                        )
                     )
-                )
+                }
             }
-        }
-    )
+        )
     )
     NapzakMarketTheme {
         ChatListScreen(
