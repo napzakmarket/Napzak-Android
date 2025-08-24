@@ -205,6 +205,7 @@ class StompSocketClientImpl @Inject constructor(
                     ?.collect { logSuccess("PONG", "Pong received") }
             }
             logSuccess("HEARTBEAT", "Pong subscribed")
+            heartBeatRetryCount.set(0)
         } catch (e: Exception) {
             handleSocketError(HeartBeatFailed(e))
         }
