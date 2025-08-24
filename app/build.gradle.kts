@@ -7,28 +7,33 @@ plugins {
     id("com.google.gms.google-services")
 }
 
-val localProperties = Properties().apply {
-    load(File(rootDir, "local.properties").inputStream())
+val localProps = Properties().apply {
+    val f = File(rootDir, "local.properties")
+    if (f.exists()) load(f.inputStream())
 }
 
-val kakaoAppKey = localProperties.getProperty("kakao.app.key")
+val kakaoNativeKey: String =
+    providers.gradleProperty("KAKAO_APP_KEY").orNull
+        ?: System.getenv("KAKAO_APP_KEY")
+        ?: localProps.getProperty("kakao.app.key")
+        ?: throw GradleException("KAKAO_APP_KEY (or local kakao.app.key) is missing")
 
 android {
     namespace = "com.napzak.market"
 
-    val kakaoKey = "kakao$kakaoAppKey"
-
     defaultConfig {
-        buildConfigField("String", "KAKAO_APP_KEY", "\"$kakaoKey\"")
-        manifestPlaceholders["kakaoScheme"] = "kakao$kakaoKey"
+        buildConfigField("String", "KAKAO_APP_KEY", "\"$kakaoNativeKey\"")
+        manifestPlaceholders["kakaoScheme"] = "kakao$kakaoNativeKey"
     }
 
     buildTypes {
-        getByName("debug") {
-            buildConfigField("String", "KAKAO_APP_KEY", "\"$kakaoAppKey\"")
+        debug {
+            isMinifyEnabled = false
+            isDebuggable = true
         }
-        getByName("release") {
-            buildConfigField("String", "KAKAO_APP_KEY", "\"$kakaoAppKey\"")
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
 }
@@ -69,4 +74,5 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.messaging.lifecycle.ktx)
+    implementation("androidx.browser:browser:1.8.0")
 }
