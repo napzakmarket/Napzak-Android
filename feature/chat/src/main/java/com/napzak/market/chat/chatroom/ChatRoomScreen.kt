@@ -116,6 +116,10 @@ internal fun ChatRoomRoute(
 
                     is ChatRoomSideEffect.OnWithdrawChatRoom -> onNavigateUp()
 
+                    is ChatRoomSideEffect.OnErrorOccurred -> {
+                        onNavigateUp()
+                    }
+
                     is ChatRoomSideEffect.ShowToast -> toast.makeText(
                         toastType = ToastType.COMMON,
                         message = sideEffect.message,

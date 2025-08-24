@@ -79,6 +79,10 @@ internal class ChatRoomViewModel @Inject constructor(
             .recoverCatching { prepareChatRoomWithProductId(_productId) }
             .onFailure { e ->
                 Timber.e(e)
+                with(_sideEffect) {
+                    send(ChatRoomSideEffect.ShowToast("채팅방 정보를 불러올 수 없습니다."))
+                    send(ChatRoomSideEffect.OnErrorOccurred)
+                }
                 _chatRoomState.update {
                     it.copy(chatRoomState = UiState.Failure(e.message.toString()))
                 }
