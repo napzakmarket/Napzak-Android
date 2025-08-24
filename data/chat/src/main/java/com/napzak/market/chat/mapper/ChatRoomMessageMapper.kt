@@ -67,6 +67,7 @@ private fun MessageItem.toProduct(
             photo = "",
             productOwnerId = 0,
             isMyProduct = false,
+            isProductDeleted = false,
         ),
         timeStamp = requireNotNull(createdAt),
         isRead = isRead ?: false,

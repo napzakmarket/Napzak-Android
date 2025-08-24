@@ -153,27 +153,20 @@ internal val mockProductBrief
         tradeType = "SELL",
         isPriceNegotiable = false,
         isMyProduct = false,
-        productOwnerId = 1
+        productOwnerId = 1,
+        isProductDeleted = false
     )
+
+internal val mockStoreBrief = StoreBrief(
+    storeId = 1,
+    nickname = "납자기",
+    storePhoto = "",
+    isWithdrawn = false,
+    isReported = false,
+)
 
 internal val mockChatRoom = ChatRoomState(
     roomId = 1,
-    productBrief = ProductBrief(
-        productId = 1,
-        photo = "",
-        tradeType = "",
-        title = "",
-        price = 10000,
-        genreName = "",
-        isPriceNegotiable = true,
-        productOwnerId = 1,
-        isMyProduct = true
-    ),
-    storeBrief = StoreBrief(
-        storeId = 1,
-        nickname = "",
-        storePhoto = "",
-        isWithdrawn = true,
-        isReported = true,
-    )
+    productBrief = mockProductBrief,
+    storeBrief = mockStoreBrief
 )
