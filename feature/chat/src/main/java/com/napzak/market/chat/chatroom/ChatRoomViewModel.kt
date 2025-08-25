@@ -14,6 +14,7 @@ import com.napzak.market.chat.repository.ChatRoomRepository
 import com.napzak.market.chat.usecase.GetChatFlowUseCase
 import com.napzak.market.chat.usecase.SendMessageUseCase
 import com.napzak.market.chat.usecase.SubscribeChatRoomUseCase
+import com.napzak.market.chat.usecase.UnsubscribeChatRoomUseCase
 import com.napzak.market.common.state.UiState
 import com.napzak.market.presigned_url.model.UploadImage
 import com.napzak.market.presigned_url.usecase.UploadImagesUseCase
@@ -36,7 +37,7 @@ internal class ChatRoomViewModel @Inject constructor(
     private val getChatFlowUseCase: GetChatFlowUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
     private val subscribeChatRoomUseCase: SubscribeChatRoomUseCase,
-
+    private val unsubscribeChatRoomUseCase: UnsubscribeChatRoomUseCase,
     private val storeRepository: StoreRepository,
     private val uploadImagesUseCase: UploadImagesUseCase
 ) : ViewModel() {
@@ -53,6 +54,9 @@ internal class ChatRoomViewModel @Inject constructor(
     val sideEffect = _sideEffect.receiveAsFlow()
 
     private val chatCondition = mutableStateOf(ChatCondition.PRODUCT_NOT_CHANGED)
+
+    var isWithdrawing by mutableStateOf(false)
+        private set
 
     var chat by mutableStateOf("")
 
@@ -182,6 +186,7 @@ internal class ChatRoomViewModel @Inject constructor(
     private fun collectMessages(roomId: Long) = viewModelScope.launch {
         getChatFlowUseCase(roomId)
             .collect { message ->
+                Timber.d("수신한 메시지: $message")
                 if (message.roomId == roomId) {
                     _sideEffect.send(ChatRoomSideEffect.OnReceiveChatMessage)
 
@@ -450,6 +455,7 @@ internal class ChatRoomViewModel @Inject constructor(
             try {
                 val roomId = requireNotNull(_chatRoomStateAsSuccess.roomId)
                 chatRepository.withdrawChatRoom(roomId).onSuccess {
+                    unsubscribeChatRoomUseCase(roomId)
                     _sideEffect.trySend(ChatRoomSideEffect.OnWithdrawChatRoom)
                 }
             } catch (e: Exception) {
