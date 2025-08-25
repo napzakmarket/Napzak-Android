@@ -172,22 +172,6 @@ internal fun ChatRoomScreen(
             var isPreviewVisible by remember { mutableStateOf(false) }
             var selectedImageUrl: String? by remember { mutableStateOf(null) }
 
-            selectedImageUrl?.let {
-                ChatImageZoomScreen(
-                    selectedImageUrl = it,
-                    isPreview = isPreviewVisible,
-                    onBackClick = {
-                        selectedImageUrl = null
-                        isPreviewVisible = false
-                    },
-                    onSendClick = {
-                        selectedImageUrl?.let(onPhotoSelect)
-                        selectedImageUrl = null
-                        isPreviewVisible = false
-                    },
-                )
-            }
-
             if (isWithdrawDialogVisible) {
                 NapzakWithdrawDialog(
                     onConfirmClick = { onExitChatRoomClick() },
@@ -195,78 +179,96 @@ internal fun ChatRoomScreen(
                 )
             }
 
-            Column(
+            Box(
                 modifier = modifier
                     .systemBarsPadding()
                     .fillMaxSize()
                     .background(NapzakMarketTheme.colors.white)
                     .imePadding(),
             ) {
-                ChatRoomTopBar(
-                    storeName = chatRoom.storeBrief?.nickname ?: "",
-                    onBackClick = onNavigateUp,
-                    onMenuClick = { isBottomSheetVisible = true },
-                )
+                Column(modifier = Modifier.fillMaxSize()) {
+                    ChatRoomTopBar(
+                        storeName = chatRoom.storeBrief?.nickname ?: "",
+                        onBackClick = onNavigateUp,
+                        onMenuClick = { isBottomSheetVisible = true },
+                    )
 
-                chatRoom.productBrief?.let { product ->
-                    ChatRoomProductSection(
-                        product = product,
-                        onClick = {
-                            if (chatRoomState.isOpponentWithdrawn.not()) {
-                                onProductDetailClick(product.productId)
+                    chatRoom.productBrief?.let { product ->
+                        ChatRoomProductSection(
+                            product = product,
+                            onClick = {
+                                if (chatRoomState.isOpponentWithdrawn.not()) {
+                                    onProductDetailClick(product.productId)
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (chatItems.isEmpty()) {
+                            EmptyChatScreen(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = 20.dp),
+                            )
+                        } else {
+                            ChatRoomItemColumn(
+                                listState = chatListState,
+                                chatItems = chatItems,
+                                opponentImageUrl = chatRoom.storeBrief?.storePhoto,
+                                onItemClick = { message ->
+                                    when (message) {
+                                        is ReceiveMessage.Product -> onProductDetailClick(message.product.productId)
+                                        is ReceiveMessage.Image -> {
+                                            selectedImageUrl = message.imageUrl
+                                        }
+
+                                        else -> {}
+                                    }
+                                },
+                                modifier = Modifier.fillMaxSize()
+                            )
+
+                            if (chatRoomState.isOpponentWithdrawn) {
+                                Image(
+                                    painter = painterResource(img_user_blocked_popup),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .align(Alignment.BottomCenter)
+                                        .padding(bottom = 23.dp),
+                                )
                             }
+                        }
+                    }
+
+                    ChatRoomInputField(
+                        text = chat,
+                        enabled = !chatRoomState.isChatDisabled,
+                        onSendClick = onSendChatClick,
+                        onTextChange = onChatChange,
+                        onPhotoSelect = {
+                            selectedImageUrl = it
+                            isPreviewVisible = true
                         },
-                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
 
-                Box(modifier = Modifier.weight(1f)) {
-                    if (chatItems.isEmpty()) {
-                        EmptyChatScreen(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = 20.dp),
-                        )
-                    } else {
-                        ChatRoomItemColumn(
-                            listState = chatListState,
-                            chatItems = chatItems,
-                            opponentImageUrl = chatRoom.storeBrief?.storePhoto,
-                            onItemClick = { message ->
-                                when (message) {
-                                    is ReceiveMessage.Product -> onProductDetailClick(message.product.productId)
-                                    is ReceiveMessage.Image -> {
-                                        selectedImageUrl = message.imageUrl
-                                    }
-
-                                    else -> {}
-                                }
-                            },
-                            modifier = Modifier.fillMaxSize()
-                        )
-
-                        if (chatRoomState.isOpponentWithdrawn) {
-                            Image(
-                                painter = painterResource(img_user_blocked_popup),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .padding(bottom = 23.dp),
-                            )
-                        }
-                    }
+                selectedImageUrl?.let {
+                    ChatImageZoomScreen(
+                        selectedImageUrl = it,
+                        isPreview = isPreviewVisible,
+                        onBackClick = {
+                            selectedImageUrl = null
+                            isPreviewVisible = false
+                        },
+                        onSendClick = {
+                            selectedImageUrl?.let(onPhotoSelect)
+                            selectedImageUrl = null
+                            isPreviewVisible = false
+                        },
+                    )
                 }
-
-                ChatRoomInputField(
-                    text = chat,
-                    enabled = !chatRoomState.isChatDisabled,
-                    onSendClick = onSendChatClick,
-                    onTextChange = onChatChange,
-                    onPhotoSelect = {
-                        selectedImageUrl = it
-                        isPreviewVisible = true
-                    },
-                )
             }
 
             if (isBottomSheetVisible) {

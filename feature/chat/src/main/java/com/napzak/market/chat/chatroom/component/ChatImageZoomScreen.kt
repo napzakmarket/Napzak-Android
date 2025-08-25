@@ -72,7 +72,6 @@ internal fun ChatImageZoomScreen(
         modifier = modifier
             .fillMaxSize()
             .background(color = NapzakMarketTheme.colors.black)
-            .zIndex(1f)
             .onGloballyPositioned { layoutSize = it.size }
     ) {
         ZoomableImage(
@@ -81,7 +80,6 @@ internal fun ChatImageZoomScreen(
             parentLayoutSize = layoutSize,
             modifier = Modifier
                 .fillMaxSize()
-                .zIndex(1f)
         )
 
         if (isPreview) {
