@@ -13,6 +13,8 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.notification.repository.NotificationRepository
 import com.napzak.market.notification.usecase.GetNotificationSettingsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -57,7 +59,7 @@ class ChatListViewModel @Inject constructor(
                 }
 
                 _chatRoomPair = map to list
-                updateUiState(UiState.Success(list))
+                updateUiState(UiState.Success(list.toImmutableList()))
             }
             .onFailure { e ->
                 Timber.tag(TAG).e(e)
@@ -112,7 +114,7 @@ class ChatListViewModel @Inject constructor(
 
                 _chatRoomPair = map to list
 
-                updateUiState(UiState.Success(list))
+                updateUiState(UiState.Success(list.toImmutableList()))
             }
         } catch (e: Exception) {
             Timber.tag(TAG).e(e)
@@ -128,7 +130,7 @@ class ChatListViewModel @Inject constructor(
         }
     }
 
-    private fun updateUiState(loadState: UiState<List<ChatRoom>>) {
+    private fun updateUiState(loadState: UiState<ImmutableList<ChatRoom>>) {
         _chatRoomsState.update { currentState ->
             currentState.copy(
                 loadState = loadState

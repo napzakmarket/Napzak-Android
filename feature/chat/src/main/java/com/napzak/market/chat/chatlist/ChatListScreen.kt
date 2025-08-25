@@ -105,7 +105,7 @@ private fun ChatListScreen(
                 val chatRooms = uiState.loadState.data
 
                 ChatListColumn(
-                    chatRooms = chatRooms.toImmutableList(),
+                    chatRooms = chatRooms,
                     onChatRoomClick = onChatRoomClick,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -231,7 +231,7 @@ private fun ChatListScreenPreview() {
                         )
                     )
                 }
-            }
+            }.toImmutableList()
         )
     )
     NapzakMarketTheme {
