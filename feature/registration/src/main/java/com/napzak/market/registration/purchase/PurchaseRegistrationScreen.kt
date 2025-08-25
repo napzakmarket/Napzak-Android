@@ -37,7 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.R.drawable.ic_check_snackbar_18
+import com.napzak.market.designsystem.R.drawable.ic_white_checked
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastFontType
@@ -85,7 +85,7 @@ fun PurchaseRegistrationRoute(
                     is ShowToast -> toast.makeText(
                         toastType = ToastType.COMMON,
                         message = sideEffect.message,
-                        icon = ic_check_snackbar_18,
+                        icon = ic_white_checked,
                         fontType = ToastFontType.LARGE,
                     )
                 }

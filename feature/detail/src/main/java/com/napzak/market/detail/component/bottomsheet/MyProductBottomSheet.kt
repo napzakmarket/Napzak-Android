@@ -33,9 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.R.drawable.ic_delete_24
-import com.napzak.market.designsystem.R.drawable.ic_edit_24
-import com.napzak.market.designsystem.R.drawable.ic_setting_24
+import com.napzak.market.designsystem.R.drawable.ic_circle_trash_bin
+import com.napzak.market.designsystem.R.drawable.ic_circle_edit
+import com.napzak.market.designsystem.R.drawable.ic_circle_gray_setting
 import com.napzak.market.designsystem.component.bottomsheet.BottomSheetMenuItem
 import com.napzak.market.designsystem.component.bottomsheet.DragHandleBottomSheet
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -69,7 +69,7 @@ internal fun MyProductBottomSheet(
         modifier = modifier.height(380.dp),
     ) {
         BottomSheetMenuItem(
-            menuIcon = ImageVector.vectorResource(ic_edit_24),
+            menuIcon = ImageVector.vectorResource(ic_circle_edit),
             menuName = stringResource(detail_bottom_sheet_edit),
             onItemClick = onModifyClick,
         )
@@ -77,7 +77,7 @@ internal fun MyProductBottomSheet(
         Spacer(Modifier.height(20.dp))
 
         BottomSheetMenuItem(
-            menuIcon = ImageVector.vectorResource(ic_setting_24),
+            menuIcon = ImageVector.vectorResource(ic_circle_gray_setting),
             menuName = stringResource(detail_bottom_sheet_setting),
             onItemClick = { isToggleOpen = !isToggleOpen },
             isToggleOption = true,
@@ -102,7 +102,7 @@ internal fun MyProductBottomSheet(
         Spacer(Modifier.height(20.dp))
 
         BottomSheetMenuItem(
-            menuIcon = ImageVector.vectorResource(ic_delete_24),
+            menuIcon = ImageVector.vectorResource(ic_circle_trash_bin),
             menuName = stringResource(detail_bottom_sheet_delete),
             onItemClick = onDeleteClick,
             textColor = NapzakMarketTheme.colors.red,

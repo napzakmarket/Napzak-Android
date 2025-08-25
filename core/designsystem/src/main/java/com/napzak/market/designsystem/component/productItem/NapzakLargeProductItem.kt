@@ -39,11 +39,11 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.designsystem.R
-import com.napzak.market.designsystem.R.drawable.ic_heart_filled_16
-import com.napzak.market.designsystem.R.drawable.ic_heart_unfilled_16
-import com.napzak.market.designsystem.R.drawable.ic_product_buy_complete
-import com.napzak.market.designsystem.R.drawable.ic_product_reservation
-import com.napzak.market.designsystem.R.drawable.ic_product_sell_complete
+import com.napzak.market.designsystem.R.drawable.ic_purple_cart
+import com.napzak.market.designsystem.R.drawable.ic_purple_reservation
+import com.napzak.market.designsystem.R.drawable.ic_purple_sell_complete
+import com.napzak.market.designsystem.R.drawable.ic_red_heart_large
+import com.napzak.market.designsystem.R.drawable.ic_transparent_heart_large
 import com.napzak.market.designsystem.R.string.production_item_buy
 import com.napzak.market.designsystem.R.string.production_item_price
 import com.napzak.market.designsystem.R.string.production_item_price_suggestion
@@ -150,12 +150,12 @@ fun NapzakLargeProductItem(
             Spacer(modifier = Modifier.weight(1f))
 
             IconText(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_review_11),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_gray_review),
                 text = reviewCount,
             )
 
             IconText(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_heart_11),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_gray_heart),
                 text = likeCount,
                 modifier = Modifier.padding(start = 2.dp),
             )
@@ -227,9 +227,9 @@ private fun TradeStatusImage(
 ) {
     if (tradeStatus != TradeStatusType.BEFORE_TRADE) {
         val image = when(tradeStatus) {
-            TradeStatusType.RESERVED -> ic_product_reservation
-            TradeStatusType.COMPLETED_SELL -> ic_product_sell_complete
-            TradeStatusType.COMPLETED_BUY -> ic_product_buy_complete
+            TradeStatusType.RESERVED -> ic_purple_reservation
+            TradeStatusType.COMPLETED_SELL -> ic_purple_sell_complete
+            TradeStatusType.COMPLETED_BUY -> ic_purple_cart
             else -> null
         }
 
@@ -317,8 +317,8 @@ private fun LikeButton(
     onLikeClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val imageVector = if (isLiked) ic_heart_filled_16
-    else ic_heart_unfilled_16
+    val imageVector = if (isLiked) ic_red_heart_large
+    else ic_transparent_heart_large
 
     Icon(
         imageVector = ImageVector.vectorResource(imageVector),
@@ -361,7 +361,7 @@ private fun IconText(
 private fun LargeProductItemPreview() {
     NapzakMarketTheme {
         var isLiked1 by remember { mutableStateOf(false) }
-        var isLiked2 by remember { mutableStateOf(true) }
+        var isLiked2 by remember { mutableStateOf(false) }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(20.dp)

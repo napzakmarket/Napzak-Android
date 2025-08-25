@@ -27,8 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.napzak.market.designsystem.R.drawable.ic_chevron_right
-import com.napzak.market.designsystem.R.drawable.ic_profile_60
+import com.napzak.market.designsystem.R.drawable.ic_white_arrow_right
+import com.napzak.market.designsystem.R.drawable.ic_circle_purple_user
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.mypage_buy_count
 import com.napzak.market.feature.mypage.R.string.mypage_buy_label
@@ -58,8 +58,8 @@ internal fun MyPageProfileSection(
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(profileImageUrl.takeIf { it.isNotBlank() })
-                .placeholder(ic_profile_60)
-                .error(ic_profile_60)
+                .placeholder(ic_circle_purple_user)
+                .error(ic_circle_purple_user)
                 .build(),
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -112,7 +112,7 @@ internal fun MyPageProfileSection(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(ic_chevron_right),
+                imageVector = ImageVector.vectorResource(ic_white_arrow_right),
                 contentDescription = null,
                 tint = NapzakMarketTheme.colors.gray300,
             )

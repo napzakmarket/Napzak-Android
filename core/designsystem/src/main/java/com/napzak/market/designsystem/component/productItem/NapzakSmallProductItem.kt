@@ -36,8 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.napzak.market.designsystem.R.drawable.ic_heart_filled_14
-import com.napzak.market.designsystem.R.drawable.ic_heart_unfilled_14
+import com.napzak.market.designsystem.R.drawable.ic_red_heart
+import com.napzak.market.designsystem.R.drawable.ic_transparent_heart
 import com.napzak.market.designsystem.R.string.production_item_buy
 import com.napzak.market.designsystem.R.string.production_item_price
 import com.napzak.market.designsystem.R.string.production_item_price_suggestion
@@ -231,8 +231,8 @@ private fun LikeButton(
     onLikeClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val imageVector = if (isLiked) ic_heart_filled_14
-    else ic_heart_unfilled_14
+    val imageVector = if (isLiked) ic_red_heart
+    else ic_transparent_heart
 
     Icon(
         imageVector = ImageVector.vectorResource(imageVector),

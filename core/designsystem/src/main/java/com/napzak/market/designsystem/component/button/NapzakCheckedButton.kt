@@ -22,8 +22,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R
-import com.napzak.market.designsystem.R.drawable.ic_checked_box
-import com.napzak.market.designsystem.R.drawable.ic_unchecked_box
+import com.napzak.market.designsystem.R.drawable.ic_square_purple_check
+import com.napzak.market.designsystem.R.drawable.ic_square_gray_unchecked
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
 
@@ -52,9 +52,9 @@ fun NapzakCheckedButton(
     onIconClick: (() -> Unit)? = null,
 ) {
     val checkIcon = if (checked) {
-        ImageVector.vectorResource(ic_checked_box)
+        ImageVector.vectorResource(ic_square_purple_check)
     } else {
-        ImageVector.vectorResource(ic_unchecked_box)
+        ImageVector.vectorResource(ic_square_gray_unchecked)
     }
 
     Surface(
@@ -112,7 +112,7 @@ private fun NapzakCheckItemPreview() {
             NapzakCheckedButton(
                 checked = true,
                 text = "약관 전체 동의",
-                icon = ImageVector.vectorResource(id = R.drawable.ic_arrow_right),
+                icon = ImageVector.vectorResource(id = R.drawable.ic_gray_arrow_right),
                 onCheckedChange = {},
                 backgroundColor = NapzakMarketTheme.colors.white,
             )

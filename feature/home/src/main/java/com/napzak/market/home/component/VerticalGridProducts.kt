@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.R.drawable.ic_home_forward
+import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_right
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.home.R.string.home_button_more
@@ -81,7 +81,7 @@ internal fun VerticalGridProducts(
                 )
 
                 Icon(
-                    imageVector = ImageVector.vectorResource(ic_home_forward),
+                    imageVector = ImageVector.vectorResource(ic_gray_arrow_right),
                     contentDescription = null,
                     tint = NapzakMarketTheme.colors.gray300,
                 )

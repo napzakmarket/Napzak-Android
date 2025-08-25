@@ -23,7 +23,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R
-import com.napzak.market.designsystem.R.drawable.ic_warning_snackbar_12
+import com.napzak.market.designsystem.R.drawable.ic_red_error
 import com.napzak.market.designsystem.R.string.warning_snackbar_icon_description
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
@@ -55,7 +55,7 @@ fun WarningSnackBar(
             horizontalArrangement = Arrangement.Center,
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(ic_warning_snackbar_12),
+                imageVector = ImageVector.vectorResource(ic_red_error),
                 contentDescription = stringResource(warning_snackbar_icon_description),
                 tint = Color.Unspecified,
                 modifier = Modifier.size(12.dp),
