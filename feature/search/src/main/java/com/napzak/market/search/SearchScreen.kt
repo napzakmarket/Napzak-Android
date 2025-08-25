@@ -41,11 +41,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.common.state.UiState
+import com.napzak.market.designsystem.R.drawable.ic_dark_gray_search
+import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_left
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_left
-import com.napzak.market.designsystem.R.drawable.ic_gray_search
 import com.napzak.market.feature.search.R.string.search_hint
 import com.napzak.market.feature.search.R.string.search_suggested_genre
 import com.napzak.market.feature.search.R.string.search_suggested_search_text
@@ -272,7 +272,7 @@ private fun BasicResultNavigationButton(
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(ic_gray_search),
+                imageVector = ImageVector.vectorResource(ic_dark_gray_search),
                 contentDescription = null,
                 tint = NapzakMarketTheme.colors.gray400,
             )
