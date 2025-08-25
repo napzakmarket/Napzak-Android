@@ -45,20 +45,23 @@ class WebSocketLifecycleObserver @Inject constructor(
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
-        try {
-            loginStateCollectJob = activityScope.launch {
-                isLoggedIn.collectLatest { isLoggedIn ->
-                    if (isLoggedIn && isTokenAvailable()) {
-                        val storeInfo = fetchStoreInfo()
-                        val storeId = requireNotNull(storeInfo?.storeId)
-
+        loginStateCollectJob = activityScope.launch {
+            isLoggedIn.collectLatest { isLoggedIn ->
+                if (isLoggedIn && isTokenAvailable()) {
+                    val storeId = fetchStoreInfo()?.storeId
+                    if (storeId == null) {
+                        showNetworkErrorToast()
+                        return@collectLatest
+                    }
+                    runCatching {
                         connectChatSocket(storeId)
                         subscribeChatRooms(storeId)
+                    }.onFailure {
+                        showNetworkErrorToast()
                     }
+
                 }
             }
-        } catch (e: Exception) {
-            showNetworkErrorToast()
         }
     }
 
@@ -98,5 +101,5 @@ class WebSocketLifecycleObserver @Inject constructor(
 
     // TODO: 소켓 에러 대응 세분화
     private fun showNetworkErrorToast() =
-        Toast.makeText(context, "네트워크가 불안정합니다.", Toast.LENGTH_SHORT)
+        Toast.makeText(context, "네트워크가 불안정합니다.", Toast.LENGTH_SHORT).show()
 }
