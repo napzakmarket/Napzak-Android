@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -22,6 +23,8 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 fun NapzakToggleButton(
     isToggleOn: Boolean,
     onToggleClick: () -> Unit,
+    isClickable: Boolean = true,
+    toggleButtonColor: Color = NapzakMarketTheme.colors.purple500,
     modifier: Modifier = Modifier,
 ) {
     val toggleWidth = 48.dp
@@ -35,7 +38,7 @@ fun NapzakToggleButton(
     )
 
     val backgroundColor by animateColorAsState(
-        targetValue = if (isToggleOn) NapzakMarketTheme.colors.purple500 else NapzakMarketTheme.colors.gray100,
+        targetValue = if (isToggleOn) toggleButtonColor else NapzakMarketTheme.colors.gray100,
         label = "bg_color"
     )
 
@@ -48,7 +51,9 @@ fun NapzakToggleButton(
                 value = isToggleOn,
                 interactionSource = null,
                 indication = null,
-                onValueChange = { onToggleClick() },
+                onValueChange = {
+                    if (isClickable) onToggleClick()
+                },
             )
             .padding(padding),
         contentAlignment = Alignment.CenterStart,
