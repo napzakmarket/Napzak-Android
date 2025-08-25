@@ -274,7 +274,7 @@ internal fun ChatRoomScreen(
 
             if (isBottomSheetVisible) {
                 ChatRoomBottomSheet(
-                    onReportClick = { onReportClick(1) }, //TODO: 스토어ID로 변경
+                    onReportClick = { chatRoom.storeBrief?.storeId?.let(onReportClick) },
                     onExitClick = { isWithdrawDialogVisible = true },
                     onDismissRequest = { isBottomSheetVisible = false },
                 )
