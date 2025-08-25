@@ -40,8 +40,8 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_cancel_genre_10
-import com.napzak.market.designsystem.R.drawable.ic_reset_genre_22
+import com.napzak.market.designsystem.R.drawable.ic_circle_purple_cancel
+import com.napzak.market.designsystem.R.drawable.ic_circle_purple_reset
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
 private const val MAX_TEXT_LENGTH = 5
@@ -94,7 +94,7 @@ fun GenreChipButtonGroup(
                     ) {
                         stickyHeader {
                             Icon(
-                                imageVector = ImageVector.vectorResource(ic_reset_genre_22),
+                                imageVector = ImageVector.vectorResource(ic_circle_purple_reset),
                                 contentDescription = null,
                                 tint = Color.Unspecified,
                                 modifier = Modifier
@@ -171,7 +171,7 @@ private fun RemovableGenreChip(
         )
 
         Icon(
-            imageVector = ImageVector.vectorResource(ic_cancel_genre_10),
+            imageVector = ImageVector.vectorResource(ic_circle_purple_cancel),
             contentDescription = null,
             tint = Color.Unspecified,
         )

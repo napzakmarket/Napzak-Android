@@ -20,7 +20,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.img_genre_not_found
+import com.napzak.market.designsystem.R.drawable.ic_no_searching_result
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.genre_search_error
 import com.napzak.market.feature.registration.R.string.genre_search_request
@@ -39,7 +39,7 @@ fun GenreSearchEmptyView(
         Spacer(modifier = Modifier.height(60.dp))
 
         Icon(
-            imageVector = ImageVector.vectorResource(img_genre_not_found),
+            imageVector = ImageVector.vectorResource(ic_no_searching_result),
             contentDescription = null,
             tint = Color.Unspecified,
         )

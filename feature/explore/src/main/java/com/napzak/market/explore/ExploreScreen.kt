@@ -42,8 +42,8 @@ import com.napzak.market.common.type.BottomSheetType
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.R.drawable.ic_down_chevron
-import com.napzak.market.designsystem.R.drawable.img_no_search_result
+import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_down
+import com.napzak.market.designsystem.R.drawable.ic_no_searching_result
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.GenreFilterChip
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
@@ -335,7 +335,7 @@ private fun EmptySearchResultView(modifier: Modifier = Modifier) {
         Row {
             Spacer(Modifier.weight(1.5f))
             Icon(
-                imageVector = ImageVector.vectorResource(img_no_search_result),
+                imageVector = ImageVector.vectorResource(ic_no_searching_result),
                 contentDescription = null,
                 tint = Color.Unspecified,
             )
@@ -443,7 +443,7 @@ private fun GenreAndProductList(
                         Spacer(Modifier.width(3.dp))
 
                         Icon(
-                            imageVector = ImageVector.vectorResource(ic_down_chevron),
+                            imageVector = ImageVector.vectorResource(ic_gray_arrow_down),
                             contentDescription = null,
                             tint = NapzakMarketTheme.colors.gray200,
                             modifier = Modifier.size(width = 7.dp, height = 4.dp),

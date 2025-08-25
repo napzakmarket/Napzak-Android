@@ -22,7 +22,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.napzak.market.designsystem.R.drawable.ic_arrow_right
+import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_right
 import com.napzak.market.designsystem.R.drawable.ic_first_step_indicator
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.button.NapzakCheckedButton
@@ -118,7 +118,7 @@ fun TermsAgreementScreen(
                     text = term.getDisplayLabel(),
                     onCheckedChange = { onAgreementClick(term) },
                     onIconClick = { context.openUrl(term.detailContentUrl) },
-                    icon = ImageVector.vectorResource(ic_arrow_right),
+                    icon = ImageVector.vectorResource(ic_gray_arrow_right),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp),
