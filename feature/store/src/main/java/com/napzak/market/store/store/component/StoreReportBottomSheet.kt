@@ -39,7 +39,7 @@ internal fun StoreReportBottomSheet(
             .padding(bottom = 28.dp),
     ) {
         BottomSheetMenuItem(
-            menuIcon = ImageVector.vectorResource(R.drawable.ic_error_24),
+            menuIcon = ImageVector.vectorResource(R.drawable.ic_circle_error),
             menuName = stringResource(store_report),
             onItemClick = {
                 coroutineScope

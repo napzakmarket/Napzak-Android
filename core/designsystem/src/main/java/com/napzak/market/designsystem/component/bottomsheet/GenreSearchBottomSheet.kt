@@ -43,9 +43,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.napzak.market.designsystem.R.drawable.ic_dark_gray_cancel
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.view.WindowInsetsControllerCompat
-import com.napzak.market.designsystem.R.drawable.ic_x_button_24
 import com.napzak.market.designsystem.R.string.genre_apply_button
 import com.napzak.market.designsystem.R.string.genre_search_genre_limit_notice
 import com.napzak.market.designsystem.R.string.genre_search_hint
@@ -145,7 +145,7 @@ fun GenreSearchBottomSheet(
                     horizontalAlignment = Alignment.End,
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(ic_x_button_24),
+                        imageVector = ImageVector.vectorResource(ic_dark_gray_cancel),
                         contentDescription = null,
                         tint = Color.Unspecified,
                         modifier = Modifier

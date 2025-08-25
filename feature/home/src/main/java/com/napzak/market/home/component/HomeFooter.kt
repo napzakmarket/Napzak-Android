@@ -22,8 +22,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_footer_instagram
-import com.napzak.market.designsystem.R.drawable.ic_footer_mail
+import com.napzak.market.designsystem.R.drawable.ic_circle_instagram
+import com.napzak.market.designsystem.R.drawable.ic_circle_mail
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.home.R.string.home_footer_email
 import com.napzak.market.feature.home.R.string.home_footer_instagram
@@ -61,7 +61,7 @@ internal fun HomeFooter(
 
         IconText(
             stringId = home_footer_email,
-            drawableId = ic_footer_mail,
+            drawableId = ic_circle_mail,
             textStyle = typography.caption10r,
             color = colors.gray300,
         )
@@ -70,7 +70,7 @@ internal fun HomeFooter(
 
         IconText(
             stringId = home_footer_instagram,
-            drawableId = ic_footer_instagram,
+            drawableId = ic_circle_instagram,
             textStyle = typography.caption10r,
             color = colors.gray300,
         )

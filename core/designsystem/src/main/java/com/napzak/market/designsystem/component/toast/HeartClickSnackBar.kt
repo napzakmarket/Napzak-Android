@@ -20,7 +20,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R
-import com.napzak.market.designsystem.R.drawable.ic_heartclick_snackbar_12
+import com.napzak.market.designsystem.R.drawable.ic_white_small_heart
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_icon_description
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
@@ -47,7 +47,7 @@ fun HeartClickSnackBar(
             horizontalArrangement = Arrangement.Center,
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(ic_heartclick_snackbar_12),
+                imageVector = ImageVector.vectorResource(ic_white_small_heart),
                 contentDescription = stringResource(heart_click_snackbar_icon_description),
                 tint = Color.Unspecified,
             )

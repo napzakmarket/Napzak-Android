@@ -2,8 +2,8 @@ package com.napzak.market.detail.type
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.napzak.market.designsystem.R.drawable.ic_check_snackbar_18
-import com.napzak.market.designsystem.R.drawable.ic_delete_snackbar_16
+import com.napzak.market.designsystem.R.drawable.ic_white_checked
+import com.napzak.market.designsystem.R.drawable.ic_gray_trash_bin
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.toast.ToastFontType
 import com.napzak.market.designsystem.component.toast.ToastType
@@ -19,13 +19,13 @@ enum class ProductDetailToastType(
         toastType = ToastType.COMMON,
         fontType = ToastFontType.LARGE,
         stringRes = detail_toast_trade_status,
-        iconRes = ic_delete_snackbar_16,
+        iconRes = ic_gray_trash_bin,
     ),
     STATUS_CHANGE(
         toastType = ToastType.COMMON,
         fontType = ToastFontType.LARGE,
         stringRes = detail_toast_trade_status,
-        iconRes = ic_check_snackbar_18
+        iconRes = ic_white_checked
     ),
     LIKE(
         toastType = ToastType.HEART,

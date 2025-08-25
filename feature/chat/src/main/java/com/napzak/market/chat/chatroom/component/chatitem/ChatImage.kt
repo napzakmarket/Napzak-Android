@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.napzak.market.designsystem.R.drawable.ic_image_zoom
+import com.napzak.market.designsystem.R.drawable.ic_circle_zoom
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
 
@@ -61,7 +61,7 @@ internal fun ChatImageItem(
         )
 
         Icon(
-            imageVector = ImageVector.vectorResource(ic_image_zoom),
+            imageVector = ImageVector.vectorResource(ic_circle_zoom),
             contentDescription = null,
             tint = Color.Unspecified,
             modifier = Modifier

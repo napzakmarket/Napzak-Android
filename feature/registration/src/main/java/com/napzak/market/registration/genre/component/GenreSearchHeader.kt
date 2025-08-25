@@ -47,7 +47,7 @@ fun GenreSearchHeader(
         Spacer(modifier = Modifier.height(18.dp))
 
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_gray_arrow_left),
             contentDescription = null,
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 4.dp)

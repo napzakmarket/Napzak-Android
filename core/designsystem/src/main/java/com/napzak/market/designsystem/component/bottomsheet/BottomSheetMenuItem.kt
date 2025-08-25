@@ -16,8 +16,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R
-import com.napzak.market.designsystem.R.drawable.ic_down_chevron
-import com.napzak.market.designsystem.R.drawable.ic_up_chevron
+import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_down
+import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_up
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
 
@@ -43,8 +43,8 @@ fun BottomSheetMenuItem(
     isToggleOption: Boolean = false,
     isToggleOpen: Boolean = false,
 ) {
-    val chevronIcon = if (isToggleOpen) ImageVector.vectorResource(ic_up_chevron)
-    else ImageVector.vectorResource(ic_down_chevron)
+    val chevronIcon = if (isToggleOpen) ImageVector.vectorResource(ic_gray_arrow_up)
+    else ImageVector.vectorResource(ic_gray_arrow_down)
 
     Row(
         modifier = Modifier
@@ -83,7 +83,7 @@ fun BottomSheetMenuItem(
 private fun BottomSheetMenuItemPreview() {
     NapzakMarketTheme {
         BottomSheetMenuItem(
-            menuIcon = ImageVector.vectorResource(R.drawable.ic_delete_24),
+            menuIcon = ImageVector.vectorResource(R.drawable.ic_circle_trash_bin),
             menuName = "삭제하기",
             onItemClick = { },
         )

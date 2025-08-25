@@ -24,7 +24,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.napzak.market.designsystem.R.drawable.ic_heart
+import com.napzak.market.designsystem.R.drawable.ic_white_heart
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.ellipsis
 
@@ -64,7 +64,7 @@ fun GenreItem(
                 )
 
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = ic_heart),
+                    imageVector = ImageVector.vectorResource(id = ic_white_heart),
                     contentDescription = null,
                     tint = Color.White,
                     modifier = Modifier
