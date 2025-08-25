@@ -130,8 +130,8 @@ private fun ChatRoomMetaData(
     val unReadMessageCountShape = RoundedCornerShape(16.dp)
 
     val (unReadMessageCountText, unReadMessageCountColor) = when {
-        unReadMessageCount > 99 -> "99+" to NapzakMarketTheme.colors.red
-        unReadMessageCount > 0 -> unReadMessageCount.toString() to NapzakMarketTheme.colors.red
+        unReadMessageCount > 99 -> "99+" to NapzakMarketTheme.colors.pink
+        unReadMessageCount > 0 -> unReadMessageCount.toString() to NapzakMarketTheme.colors.pink
         else -> "" to NapzakMarketTheme.colors.white
     }
 

@@ -25,6 +25,7 @@ val white = Color(0xFFFFFFFF)
 // State
 val red = Color(0xFFEF4849)
 val green = Color(0xFF1BD368)
+val pink = Color(0xFFFF44A5)
 
 // Transparency
 val transP500 = Color(0xB37534FF)
@@ -56,6 +57,7 @@ class NapzakMarketColors(
     white: Color,
     red: Color,
     green: Color,
+    pink: Color,
     transP500: Color,
     transBlack: Color,
     transP100: Color,
@@ -94,6 +96,8 @@ class NapzakMarketColors(
         private set
     var green by mutableStateOf(green)
         private set
+    var pink by mutableStateOf(pink)
+        private set
     var transP500 by mutableStateOf(transP500)
         private set
     var transBlack by mutableStateOf(transBlack)
@@ -127,6 +131,7 @@ class NapzakMarketColors(
         white,
         red,
         green,
+        pink,
         transP500,
         transBlack,
         transP100,
@@ -153,6 +158,7 @@ class NapzakMarketColors(
         white = other.white
         red = other.red
         green = other.green
+        pink = other.pink
         transP500 = other.transP500
         transBlack = other.transBlack
         transP100 = other.transP100
@@ -180,6 +186,7 @@ fun NapzakMarketLightColors(
     White: Color = white,
     Red: Color = red,
     Green: Color = green,
+    Pink: Color = pink,
     TransP500: Color = transP500,
     TransBlack: Color = transBlack,
     TransP100: Color = transP100,
@@ -203,6 +210,7 @@ fun NapzakMarketLightColors(
     White,
     Red,
     Green,
+    Pink,
     TransP500,
     TransBlack,
     TransP100,
