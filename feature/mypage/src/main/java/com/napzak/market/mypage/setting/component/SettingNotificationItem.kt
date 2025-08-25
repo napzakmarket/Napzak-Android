@@ -27,9 +27,6 @@ fun SettingNotificationItem(
     val textColor =
         if (isAppNotificationOn && isSystemPermissionOn) NapzakMarketTheme.colors.gray400
         else NapzakMarketTheme.colors.red
-    val toggleColor =
-        if (isSystemPermissionOn) NapzakMarketTheme.colors.purple500
-        else NapzakMarketTheme.colors.purple200
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -44,7 +41,6 @@ fun SettingNotificationItem(
         NapzakToggleButton(
             isToggleOn = isAppNotificationOn,
             onToggleClick = onToggleClick,
-            toggleButtonColor = toggleColor,
             isClickable = !(isAppNotificationOn && !isSystemPermissionOn),
         )
     }
