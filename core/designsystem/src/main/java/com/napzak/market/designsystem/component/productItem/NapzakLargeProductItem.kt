@@ -238,6 +238,7 @@ private fun TradeStatusImage(
         Box(
             modifier = modifier
                 .fillMaxSize()
+                .clip(shape)
                 .background(NapzakMarketTheme.colors.transBlack),
             contentAlignment = Alignment.Center
         ) {
