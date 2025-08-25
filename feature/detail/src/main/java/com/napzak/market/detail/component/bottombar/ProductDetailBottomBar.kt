@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -16,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -25,11 +25,11 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.napzak.market.designsystem.R.drawable.ic_red_heart
 import com.napzak.market.designsystem.R.drawable.ic_white_arrow_right
+import com.napzak.market.designsystem.R.drawable.ic_white_heart
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.detail.R.drawable.ic_heart_filled_large
-import com.napzak.market.feature.detail.R.drawable.ic_heart_unfilled_large
 import com.napzak.market.feature.detail.R.string.detail_product_button_chat
 
 @Composable
@@ -70,7 +70,8 @@ private fun LikeButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val likeIcon = if (isLiked) ic_heart_filled_large else ic_heart_unfilled_large
+    val likeIcon = if (isLiked) ic_red_heart else ic_white_heart
+    val iconTint = if (isLiked) NapzakMarketTheme.colors.red else NapzakMarketTheme.colors.gray100
     val shape = RoundedCornerShape(14.dp)
     Box(
         contentAlignment = Alignment.Center,
@@ -79,6 +80,7 @@ private fun LikeButton(
                 mergeDescendants = true,
                 properties = { role = Role.Button },
             )
+            .size(50.dp)
             .clip(shape)
             .border(
                 width = 1.dp,
@@ -89,9 +91,9 @@ private fun LikeButton(
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(likeIcon),
-            tint = Color.Unspecified,
+            tint = iconTint,
             contentDescription = null,
-            modifier = Modifier.padding(14.dp),
+            modifier = Modifier.size(width = 21.dp, height = 19.dp),
         )
     }
 }

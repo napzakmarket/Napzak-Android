@@ -33,9 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.R.drawable.ic_circle_trash_bin
 import com.napzak.market.designsystem.R.drawable.ic_circle_edit
 import com.napzak.market.designsystem.R.drawable.ic_circle_gray_setting
+import com.napzak.market.designsystem.R.drawable.ic_circle_trash_bin
 import com.napzak.market.designsystem.component.bottomsheet.BottomSheetMenuItem
 import com.napzak.market.designsystem.component.bottomsheet.DragHandleBottomSheet
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -174,13 +174,13 @@ private fun rememberRadioButtonGroup(
 ) = remember(tradeType) {
     when (tradeType) {
         TradeType.BUY -> listOf(
-            TradeStatusType.BEFORE_TRADE to detail_bottom_sheet_radio_button_before_trade_buy,
+            TradeStatusType.BEFORE_TRADE_BUY to detail_bottom_sheet_radio_button_before_trade_buy,
             TradeStatusType.RESERVED to detail_bottom_sheet_radio_button_reserved,
             TradeStatusType.COMPLETED_BUY to detail_bottom_sheet_radio_button_complete_trade_buy,
         )
 
         TradeType.SELL -> listOf(
-            TradeStatusType.BEFORE_TRADE to detail_bottom_sheet_radio_button_before_trade_sell,
+            TradeStatusType.BEFORE_TRADE_SELL to detail_bottom_sheet_radio_button_before_trade_sell,
             TradeStatusType.RESERVED to detail_bottom_sheet_radio_button_reserved,
             TradeStatusType.COMPLETED_SELL to detail_bottom_sheet_radio_button_complete_trade_sell,
         )
@@ -190,7 +190,7 @@ private fun rememberRadioButtonGroup(
 @Preview(showBackground = true)
 @Composable
 private fun MyProductBottomSheetPreview() {
-    var tradeStatus by remember { mutableStateOf(TradeStatusType.BEFORE_TRADE) }
+    var tradeStatus by remember { mutableStateOf(TradeStatusType.BEFORE_TRADE_SELL) }
 
     NapzakMarketTheme {
         MyProductBottomSheet(

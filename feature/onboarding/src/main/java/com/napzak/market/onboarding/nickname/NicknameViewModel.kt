@@ -26,8 +26,10 @@ class NicknameViewModel @Inject constructor(
 
     fun onNicknameChanged(nickname: String) {
         val limitedNickname = nickname.take(MAX_LENGTH)
+        val result =
+            if (nickname.length <= MAX_LENGTH) validateNicknameUseCase(limitedNickname)
+            else validateNicknameUseCase(nickname)
 
-        val result = validateNicknameUseCase(limitedNickname)
         _uiState.value = _uiState.value.copy(
             nickname = limitedNickname,
             validationResult = result,

@@ -28,6 +28,7 @@ import com.napzak.market.feature.store.R.string.store_edit_button_name_check
 import com.napzak.market.feature.store.R.string.store_edit_error_empty
 import com.napzak.market.feature.store.R.string.store_edit_error_only_consonants
 import com.napzak.market.feature.store.R.string.store_edit_error_only_numbers
+import com.napzak.market.feature.store.R.string.store_edit_error_overflow
 import com.napzak.market.feature.store.R.string.store_edit_error_special_char
 import com.napzak.market.feature.store.R.string.store_edit_error_whitespace
 import com.napzak.market.feature.store.R.string.store_edit_hint_name
@@ -38,6 +39,7 @@ import com.napzak.market.store.model.NicknameValidationResult.Error.CONTAINS_CON
 import com.napzak.market.store.model.NicknameValidationResult.Error.EMPTY
 import com.napzak.market.store.model.NicknameValidationResult.Error.ONLY_CONSONANTS
 import com.napzak.market.store.model.NicknameValidationResult.Error.ONLY_NUMBERS
+import com.napzak.market.store.model.NicknameValidationResult.Error.OVERFLOW
 import com.napzak.market.store.model.NicknameValidationResult.Error.SPECIAL_CHAR
 import com.napzak.market.store.model.NicknameValidationResult.Error.WHITESPACE
 import com.napzak.market.ui_util.bringIntoView
@@ -197,6 +199,7 @@ fun NicknameValidationResult.Error.toMessage(): String {
     val stringRes = when (this) {
         EMPTY -> store_edit_error_empty
         WHITESPACE -> store_edit_error_whitespace
+        OVERFLOW -> store_edit_error_overflow
         SPECIAL_CHAR -> store_edit_error_special_char
         ONLY_NUMBERS -> store_edit_error_only_numbers
         ONLY_CONSONANTS -> store_edit_error_only_consonants

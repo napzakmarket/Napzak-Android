@@ -240,6 +240,7 @@ private fun LikeButton(
         tint = Color.Unspecified,
         modifier = modifier
             .clearAndSetSemantics { role = Role.Button }
+            .size(14.dp)
             .noRippleClickable(onClick = onLikeClick),
     )
 }

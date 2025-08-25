@@ -152,7 +152,12 @@ internal class EditStoreViewModel @Inject constructor(
 
     fun updateNickname(value: String) {
         val nickname = value.take(NICKNAME_MAX_LENGTH)
-        val nicknameValidationResult = validateNicknameUseCase(nickname)
+
+        val nicknameValidationResult =
+            if (value.length <= NICKNAME_MAX_LENGTH) validateNicknameUseCase(nickname)
+            else validateNicknameUseCase(value)
+
+
         updateUiState(
             name = nickname,
             nickNameValidationState = nicknameValidationResult,
