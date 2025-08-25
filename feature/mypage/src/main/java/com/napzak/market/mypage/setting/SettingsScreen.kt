@@ -59,8 +59,6 @@ internal fun SettingsRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val uiState by viewModel.settingUiState.collectAsStateWithLifecycle()
-//    val state by viewModel.settingInfo.collectAsStateWithLifecycle()
-//    val isAppNotificationOn by viewModel.isAppNotificationOn.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect {
