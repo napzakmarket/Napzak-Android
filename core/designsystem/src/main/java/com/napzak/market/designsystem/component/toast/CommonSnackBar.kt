@@ -98,25 +98,25 @@ private fun CommonSnackBarPreview() {
 
             CommonSnackBar(
                 message = stringResource(id = R.string.snackbar_reserve_message),
-                icon = ImageVector.vectorResource(id = R.drawable.ic_check_snackbar_18),
+                icon = ImageVector.vectorResource(id = R.drawable.ic_white_checked),
                 modifier = snackBarModifier,
             )
 
             CommonSnackBar(
                 message = stringResource(id = R.string.snackbar_sell_message),
-                icon = ImageVector.vectorResource(id = R.drawable.ic_check_snackbar_18),
+                icon = ImageVector.vectorResource(id = R.drawable.ic_white_checked),
                 modifier = snackBarModifier,
             )
 
             CommonSnackBar(
                 message = stringResource(id = R.string.snackbar_soldout_message),
-                icon = ImageVector.vectorResource(id = R.drawable.ic_check_snackbar_18),
+                icon = ImageVector.vectorResource(id = R.drawable.ic_white_checked),
                 modifier = snackBarModifier,
             )
 
             CommonSnackBar(
                 message = stringResource(id = R.string.snackbar_deleted_message),
-                icon = ImageVector.vectorResource(id = R.drawable.ic_delete_snackbar_16),
+                icon = ImageVector.vectorResource(id = R.drawable.ic_gray_trash_bin),
                 modifier = snackBarModifier,
             )
         }

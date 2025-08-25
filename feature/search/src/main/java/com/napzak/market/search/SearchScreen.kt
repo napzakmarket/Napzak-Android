@@ -44,8 +44,8 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.search.R.drawable.ic_left_chevron
-import com.napzak.market.feature.search.R.drawable.ic_search_12
+import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_left
+import com.napzak.market.designsystem.R.drawable.ic_gray_search
 import com.napzak.market.feature.search.R.string.search_hint
 import com.napzak.market.feature.search.R.string.search_suggested_genre
 import com.napzak.market.feature.search.R.string.search_suggested_search_text
@@ -170,7 +170,7 @@ private fun SearchSuccessScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(ic_left_chevron),
+                imageVector = ImageVector.vectorResource(ic_gray_arrow_left),
                 contentDescription = null,
                 tint = NapzakMarketTheme.colors.gray200,
                 modifier = Modifier.noRippleClickable(onBackButtonClick),
@@ -272,7 +272,7 @@ private fun BasicResultNavigationButton(
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(ic_search_12),
+                imageVector = ImageVector.vectorResource(ic_gray_search),
                 contentDescription = null,
                 tint = NapzakMarketTheme.colors.gray400,
             )

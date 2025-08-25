@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_arrow_left_9
+import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_left
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.settings_topbar_back_button_description
 import com.napzak.market.feature.mypage.R.string.settings_topbar_title
@@ -51,7 +51,7 @@ internal fun SettingsTopBar(
                 modifier = Modifier.size(24.dp),
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(ic_arrow_left_9),
+                    imageVector = ImageVector.vectorResource(ic_gray_arrow_left),
                     contentDescription = stringResource(id = settings_topbar_back_button_description),
                     modifier = Modifier
                         .noRippleClickable(onBackClick),

@@ -94,7 +94,7 @@ private fun NapzakButtonPreview() {
             NapzakButton(
                 text = "다음으로",
                 onClick = {},
-                icon = ImageVector.vectorResource(id = R.drawable.ic_arrow_right),
+                icon = ImageVector.vectorResource(id = R.drawable.ic_gray_arrow_right),
                 enabled = true,
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -103,7 +103,7 @@ private fun NapzakButtonPreview() {
             NapzakButton(
                 text = "다음으로",
                 onClick = {},
-                icon = ImageVector.vectorResource(id = R.drawable.ic_arrow_right),
+                icon = ImageVector.vectorResource(id = R.drawable.ic_gray_arrow_right),
                 enabled = false,
                 modifier = Modifier
                     .fillMaxWidth(),

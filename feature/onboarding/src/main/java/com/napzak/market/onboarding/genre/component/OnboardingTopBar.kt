@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_chevron_left_24
+import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_left
 import com.napzak.market.designsystem.component.topbar.NapzakBasicTopBar
 import com.napzak.market.designsystem.component.topbar.NapzakTopBarAction
 import com.napzak.market.designsystem.component.topbar.NapzakTopBarColor
@@ -17,7 +17,7 @@ internal fun OnboardingTopBar(
     @DrawableRes indicatorIcon: Int,
     modifier: Modifier = Modifier,
 ) {
-    val navigators = listOf(NapzakTopBarAction(ic_chevron_left_24, onBackClick))
+    val navigators = listOf(NapzakTopBarAction(ic_gray_arrow_left, onBackClick))
     val actions = listOf(NapzakTopBarAction(indicatorIcon, onClick = {}))
     val topBarColor = NapzakTopBarColor(
         iconColor = Color.Unspecified,

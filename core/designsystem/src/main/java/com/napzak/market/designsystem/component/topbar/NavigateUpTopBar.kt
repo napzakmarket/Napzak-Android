@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.napzak.market.designsystem.R.drawable.ic_chevron_left_24
+import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_left
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
 @Composable
@@ -19,7 +19,7 @@ fun NavigateUpTopBar(
 ) {
     val navigators = listOf(
         NapzakTopBarAction(
-            iconRes = ic_chevron_left_24,
+            iconRes = ic_gray_arrow_left,
             onClick = onNavigateUp,
         )
     )
