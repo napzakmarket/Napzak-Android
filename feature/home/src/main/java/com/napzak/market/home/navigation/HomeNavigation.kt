@@ -18,6 +18,7 @@ fun NavGraphBuilder.homeGraph(
     navigateToProductDetail: (Long) -> Unit,
     navigateToExploreSell: () -> Unit,
     navigateToExploreBuy: () -> Unit,
+    checkSessionManager: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<Home> {
@@ -30,6 +31,7 @@ fun NavGraphBuilder.homeGraph(
             onProductDetailNavigate = navigateToProductDetail,
             onMostInterestedSellNavigate = navigateToExploreSell,
             onMostInterestedBuyNavigate = navigateToExploreBuy,
+            checkSessionManager = checkSessionManager,
             modifier = modifier,
         )
     }

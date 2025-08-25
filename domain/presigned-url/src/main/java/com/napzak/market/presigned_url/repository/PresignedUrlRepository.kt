@@ -15,5 +15,5 @@ interface PresignedUrlRepository {
         image: String,
     ): Result<String>
 
-    fun clearCachedImage(): Result<Unit>
+    suspend fun clearCachedImage(): Result<Unit>
 }

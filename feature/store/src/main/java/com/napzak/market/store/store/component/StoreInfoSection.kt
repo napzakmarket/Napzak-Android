@@ -35,7 +35,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.napzak.market.designsystem.R.drawable.ic_edit_pencil
+import com.napzak.market.designsystem.R.drawable.ic_gray_edit
+import com.napzak.market.designsystem.R.drawable.ic_cover_profile
+import com.napzak.market.designsystem.component.image.NapzakProfileImage
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.store.R.string.store_edit_profile
 import com.napzak.market.store.model.StoreDetail
@@ -60,6 +62,9 @@ internal fun StoreInfoSection(
                     model = ImageRequest
                         .Builder(context)
                         .data(coverUrl)
+                        .placeholder(ic_cover_profile)
+                        .error(ic_cover_profile)
+                        .fallback(ic_cover_profile)
                         .build(),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
@@ -72,17 +77,12 @@ internal fun StoreInfoSection(
                 Spacer(Modifier.height(35.dp))
             }
 
-            AsyncImage(
-                model = ImageRequest
-                    .Builder(context)
-                    .data(photoUrl)
-                    .build(),
+            NapzakProfileImage(
+                imageUrl = photoUrl,
                 contentDescription = null,
-                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(70.dp)
                     .clip(profileImageShape)
-                    .background(color = NapzakMarketTheme.colors.gray200)
                     .border(
                         width = 5.dp,
                         color = NapzakMarketTheme.colors.white,
@@ -138,7 +138,7 @@ internal fun StoreInfoSection(
                 enabled = isMyStore,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 10.dp, horizontal = 20.dp),
+                    .padding(horizontal = 20.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = NapzakMarketTheme.colors.gray50,
                     contentColor = NapzakMarketTheme.colors.gray400,
@@ -150,7 +150,7 @@ internal fun StoreInfoSection(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(ic_edit_pencil),
+                        imageVector = ImageVector.vectorResource(ic_gray_edit),
                         contentDescription = null,
                         tint = Color.Unspecified,
                         modifier = Modifier.size(12.dp),
@@ -160,8 +160,7 @@ internal fun StoreInfoSection(
                         text = stringResource(store_edit_profile),
                         style = NapzakMarketTheme.typography.caption12m,
                         color = NapzakMarketTheme.colors.gray400,
-                        modifier = Modifier
-                            .padding(vertical = 8.dp),
+                        modifier = Modifier,
                     )
                 }
             }

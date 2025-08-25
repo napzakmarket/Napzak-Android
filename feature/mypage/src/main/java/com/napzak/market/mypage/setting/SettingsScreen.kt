@@ -22,7 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -59,8 +61,12 @@ internal fun SettingsRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val uiState by viewModel.settingUiState.collectAsStateWithLifecycle()
-//    val state by viewModel.settingInfo.collectAsStateWithLifecycle()
-//    val isAppNotificationOn by viewModel.isAppNotificationOn.collectAsStateWithLifecycle()
+    var systemPermission by remember { mutableStateOf(NotificationManagerCompat.from(context).areNotificationsEnabled()) }
+
+    LifecycleResumeEffect(Unit) {
+        systemPermission = NotificationManagerCompat.from(context).areNotificationsEnabled()
+        onPauseOrDispose {  }
+    }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect {
@@ -73,6 +79,7 @@ internal fun SettingsRoute(
     with(uiState.settingInfoState) {
         SettingsScreen(
             uiState = uiState,
+            isSystemPermissionOn = systemPermission,
             onBackClick = onBackClick,
             onNotificationToggleClick = viewModel::updateAppNotificationSetting,
             onNoticeClick = context::openUrl,
@@ -87,6 +94,7 @@ internal fun SettingsRoute(
 @Composable
 private fun SettingsScreen(
     uiState: SettingUiState,
+    isSystemPermissionOn: Boolean,
     onBackClick: () -> Unit,
     onNotificationToggleClick: (Boolean) -> Unit,
     onNoticeClick: (String) -> Unit,
@@ -107,6 +115,7 @@ private fun SettingsScreen(
 
             SettingSuccessScreen(
                 isAppNotificationOn = (uiState.appNotificationState as UiState.Success<Boolean>).data,
+                isSystemPermissionOn = isSystemPermissionOn,
                 onBackClick = onBackClick,
                 onNotificationToggleClick = onNotificationToggleClick,
                 onLogoutConfirm = onLogoutConfirm,
@@ -126,6 +135,7 @@ private fun SettingsScreen(
 @Composable
 private fun SettingSuccessScreen(
     isAppNotificationOn: Boolean,
+    isSystemPermissionOn: Boolean,
     onBackClick: () -> Unit,
     onNotificationToggleClick: (Boolean) -> Unit,
     onNoticeClick: () -> Unit,
@@ -167,6 +177,7 @@ private fun SettingSuccessScreen(
 
                 SettingNotificationItem(
                     isAppNotificationOn = isAppNotificationOn,
+                    isSystemPermissionOn = isSystemPermissionOn,
                     onToggleClick = { onNotificationToggleClick(!isAppNotificationOn) },
                 )
 
@@ -294,6 +305,7 @@ private fun SettingsScreenPreview() {
     NapzakMarketTheme {
         SettingSuccessScreen(
             isAppNotificationOn = true,
+            isSystemPermissionOn = true,
             onBackClick = {},
             onNotificationToggleClick = {},
             onNoticeClick = {},

@@ -110,6 +110,7 @@ internal class ProductDetailViewModel @Inject constructor(
                     val tradeType = TradeType.fromName(
                         (_productDetail.value as UiState.Success<ProductDetail>).data.tradeType
                     )
+                    Timber.d("tradeStatus: $tradeStatus")
                     _sideEffect.send(
                         ProductDetailSideEffect.ShowToast(
                             productDetailToastType = ProductDetailToastType.STATUS_CHANGE,

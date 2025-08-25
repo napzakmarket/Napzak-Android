@@ -6,18 +6,24 @@ import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.presigned_url.model.PresignedUrl
+import com.napzak.market.presigned_url.usecase.ClearCacheUseCase
+import com.napzak.market.presigned_url.usecase.CompressImageUseCase
 import com.napzak.market.presigned_url.usecase.GetProductPresignedUrlUseCase
 import com.napzak.market.presigned_url.usecase.UploadImageUseCase
+import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect
+import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect.NavigateToDetail
 import com.napzak.market.registration.RegistrationContract.RegistrationUiState
 import com.napzak.market.registration.model.Photo
 import com.napzak.market.registration.model.Photo.PhotoStatus
-import com.napzak.market.presigned_url.usecase.ClearCacheUseCase
-import com.napzak.market.presigned_url.usecase.CompressImageUseCase
+import com.napzak.market.util.android.suspendFlatMap
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 abstract class RegistrationViewModel(
     protected val getProductPresignedUrlUseCase: GetProductPresignedUrlUseCase,
@@ -27,6 +33,9 @@ abstract class RegistrationViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(RegistrationUiState())
     val registrationUiState = _uiState.asStateFlow()
+
+    protected val _sideEffect = MutableSharedFlow<RegistrationSideEffect>()
+    val sideEffect = _sideEffect.asSharedFlow()
 
     fun updatePhotos(newPhotos: List<Photo>) = viewModelScope.launch {
         _uiState.update { currentState ->
@@ -111,13 +120,21 @@ abstract class RegistrationViewModel(
         presignedUrls: List<PresignedUrl>,
     ) {
         val indexedImages = registrationUiState.value.imageUris.toIndexedImageList()
+        val result = uploadImageUseCase(presignedUrls, indexedImages)
+            .suspendFlatMap { newPresigned -> uploadProduct(newPresigned) }
 
-        uploadImageUseCase(presignedUrls, indexedImages)
-            .onSuccess { newPresignedUrls ->
-                uploadProduct(newPresignedUrls)
-            }.onFailure {
-                updateLoadState(UiState.Failure(it.message ?: UNKNOWN_ERROR))
+        result.onSuccess { id ->
+            try {
+                clearCacheUseCase().getOrThrow()
+            } catch (e: Exception) {
+                Timber.tag(TAG).e(e)
             }
+
+            updateLoadState(UiState.Success(Unit))
+            _sideEffect.emit(NavigateToDetail(id))
+        }.onFailure {
+            updateLoadState(UiState.Failure(it.message ?: UNKNOWN_ERROR))
+        }
     }
 
     private fun List<Photo>.toIndexedImageList(): List<Pair<Int, String>> =
@@ -126,19 +143,15 @@ abstract class RegistrationViewModel(
             index to uri
         }
 
-    protected abstract suspend fun uploadProduct(presignedUrls: List<PresignedUrl>)
-
-    override fun onCleared() {
-        super.onCleared()
-        clearCacheUseCase()
-    }
+    protected abstract suspend fun uploadProduct(presignedUrls: List<PresignedUrl>): Result<Long>
 
     companion object {
         internal const val PRODUCT_ID_KEY = "productId"
         internal const val KEY_DELIMITER = "image_"
         internal const val VALUE_DELIMITER = "?"
         internal const val UPLOADING_PRODUCT_ERROR_MESSAGE = "failed to register product."
-        internal const val UNKNOWN_ERROR = "unknown error."
+        private const val UNKNOWN_ERROR = "unknown error."
         internal const val EDIT_SUCCESS = "수정이 완료되었습니다."
+        private const val TAG = "Registration"
     }
 }

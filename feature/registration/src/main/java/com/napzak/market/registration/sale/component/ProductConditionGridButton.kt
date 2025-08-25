@@ -22,7 +22,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.common.type.ProductConditionType
-import com.napzak.market.designsystem.R.drawable.ic_check_purple
+import com.napzak.market.designsystem.R.drawable.ic_purple_check
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
 
@@ -77,7 +77,7 @@ private fun ProductConditionItem(
 ) {
     val contentColor = if (isSelected) NapzakMarketTheme.colors.purple500 else NapzakMarketTheme.colors.gray200
     val borderColor = if (isSelected) NapzakMarketTheme.colors.purple500 else NapzakMarketTheme.colors.gray100
-    val icon = if (isSelected) ic_check_purple else null
+    val icon = if (isSelected) ic_purple_check else null
 
     Row(
         modifier = modifier

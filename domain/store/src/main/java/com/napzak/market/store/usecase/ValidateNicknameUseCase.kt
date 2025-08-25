@@ -10,6 +10,10 @@ class ValidateNicknameUseCase @Inject constructor() {
             return NicknameValidationResult.Invalid(NicknameValidationResult.Error.EMPTY)
         }
 
+        if (input.length > MAX_LENGTH) {
+            return NicknameValidationResult.Invalid(NicknameValidationResult.Error.OVERFLOW)
+        }
+
         if (input.contains(" ")) {
             return NicknameValidationResult.Invalid(NicknameValidationResult.Error.WHITESPACE)
         }
@@ -35,6 +39,7 @@ class ValidateNicknameUseCase @Inject constructor() {
 
     companion object {
         private const val MIN_LENGTH = 2
+        private const val MAX_LENGTH = 20
         private val VALID_CHAR_REGEX = Regex("^[가-힣a-zA-Z0-9]*$")
         private val ONLY_NUMBER_REGEX = Regex("^[0-9]+$")
         private val ONLY_CONSONANT_REGEX = Regex("^[ㄱ-ㅎ]+$")

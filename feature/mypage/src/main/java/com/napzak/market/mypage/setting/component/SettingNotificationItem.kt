@@ -17,14 +17,15 @@ import com.napzak.market.feature.mypage.R.string.settings_section_app_notificati
 @Composable
 fun SettingNotificationItem(
     isAppNotificationOn: Boolean,
+    isSystemPermissionOn: Boolean,
     onToggleClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val text =
-        if (isAppNotificationOn) stringResource(settings_section_app_notification_title)
+        if (isAppNotificationOn && isSystemPermissionOn) stringResource(settings_section_app_notification_title)
         else stringResource(settings_section_app_notification_off_title)
     val textColor =
-        if (isAppNotificationOn) NapzakMarketTheme.colors.gray400
+        if (isAppNotificationOn && isSystemPermissionOn) NapzakMarketTheme.colors.gray400
         else NapzakMarketTheme.colors.red
 
     Row(
@@ -40,6 +41,7 @@ fun SettingNotificationItem(
         NapzakToggleButton(
             isToggleOn = isAppNotificationOn,
             onToggleClick = onToggleClick,
+            isClickable = !(isAppNotificationOn && !isSystemPermissionOn),
         )
     }
 
@@ -50,6 +52,7 @@ fun SettingNotificationItem(
 fun SettingNotificationItemPreview(modifier: Modifier = Modifier) {
     SettingNotificationItem(
         isAppNotificationOn = false,
+        isSystemPermissionOn = true,
         onToggleClick = {},
         modifier = modifier,
     )

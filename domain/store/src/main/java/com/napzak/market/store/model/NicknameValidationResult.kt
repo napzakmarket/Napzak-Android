@@ -7,6 +7,7 @@ sealed class NicknameValidationResult {
 
     enum class Error {
         EMPTY,
+        OVERFLOW,
         WHITESPACE,
         SPECIAL_CHAR,
         ONLY_NUMBERS,

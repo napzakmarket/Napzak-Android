@@ -70,7 +70,7 @@ internal fun StoreScrollSection(
     val filterChipName = when (selectedTab) {
         MarketTab.BUY -> stringResource(store_filter_buying)
         MarketTab.SELL -> stringResource(store_filter_selling)
-        MarketTab.REVIEW -> stringResource(store_empty_text)
+//        MarketTab.REVIEW -> stringResource(store_empty_text)
     }
 
     LazyColumn(
@@ -93,7 +93,7 @@ internal fun StoreScrollSection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(color = NapzakMarketTheme.colors.white)
-                    .padding(horizontal = 20.dp)
+//                    .padding(horizontal = 20.dp)
                     .napzakGradientShadow(
                         height = 4.dp,
                         startColor = NapzakMarketTheme.colors.shadowBlack,
@@ -102,7 +102,8 @@ internal fun StoreScrollSection(
                     ),
             )
 
-            if (selectedTab != MarketTab.REVIEW && productCount != 0) {
+//            if (selectedTab != MarketTab.REVIEW && productCount != 0) {
+            if (productCount != 0) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -125,7 +126,7 @@ internal fun StoreScrollSection(
             }
         }
 
-        if (selectedTab != MarketTab.REVIEW) {
+//        if (selectedTab != MarketTab.REVIEW) {
             if (productCount == 0) {
                 item {
                     StoreEmptyView(
@@ -221,6 +222,6 @@ internal fun StoreScrollSection(
                     Spacer(Modifier.padding(bottom = 32.dp))
                 }
             }
-        }
+//        }
     }
 }

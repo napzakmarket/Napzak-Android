@@ -37,6 +37,8 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+
+        handleIntent(intent)
     }
 
     private fun restartApplication() {
@@ -50,13 +52,18 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        handleIntent(intent)
+    }
 
+    private fun handleIntent(intent: Intent) {
         val notifyType = intent.getStringExtra("type")
         val chatRoomId = intent.getStringExtra("roomId")
 
         CoroutineScope(Dispatchers.Main).launch {
-            if (notifyType == NOTIFY_CHAT && chatRoomId != null)
+            if (notifyType == NOTIFY_CHAT && chatRoomId != null) {
                 ChatDeepLinkEventBus.send(ChatDeepLinkEvent.ChatRoom(chatRoomId))
+                SessionManager.chatRoomId = chatRoomId.toLong()
+            }
         }
     }
 

@@ -15,6 +15,7 @@
     <string name="onboarding_genre_done">납작마켓 시작하기</string>
     <string name="onboarding_genre_skip">건너뛰기</string>
     <string name="onboarding_error_empty">최소 2자 이상 입력할 수 있어요.</string>
+    <string name="onboarding_error_overflow">최대 20자까지 입력할 수 있어요.</string>
     <string name="onboarding_error_whitespace">공백은 사용할 수 없어요.</string>
     <string name="onboarding_error_special_char">특수문자는 사용할 수 없어요.</string>
     <string name="onboarding_error_only_numbers">숫자만으로는 이름을 만들 수 없어요.</string>

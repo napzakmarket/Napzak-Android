@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.view.WindowInsetsControllerCompat
 import com.napzak.market.common.type.SortType
-import com.napzak.market.designsystem.R.drawable.ic_check_purple
-import com.napzak.market.designsystem.R.drawable.ic_x_button_24
+import com.napzak.market.designsystem.R.drawable.ic_purple_check
+import com.napzak.market.designsystem.R.drawable.ic_dark_gray_cancel
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.disableContrastEnforcement
 import com.napzak.market.ui_util.noRippleClickable
@@ -85,7 +85,7 @@ fun SortBottomSheet(
             horizontalAlignment = Alignment.End,
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(ic_x_button_24),
+                imageVector = ImageVector.vectorResource(ic_dark_gray_cancel),
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier
@@ -141,7 +141,7 @@ private fun SortItem(
             Spacer(Modifier.width(8.dp))
 
             Icon(
-                imageVector = ImageVector.vectorResource(ic_check_purple),
+                imageVector = ImageVector.vectorResource(ic_purple_check),
                 contentDescription = null,
                 tint = Color.Unspecified,
             )

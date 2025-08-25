@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.chat.model.ChatRoom
-import com.napzak.market.designsystem.R.drawable.ic_profile
+import com.napzak.market.designsystem.R.drawable.ic_circle_purple_user
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
 
@@ -74,10 +74,10 @@ private fun ProfileImage(
 
     AsyncImage(
         model = ImageRequest.Builder(context)
-            .placeholder(ic_profile)
-            .error(ic_profile)
-            .fallback(ic_profile)
             .data(imageUrl)
+            .placeholder(ic_circle_purple_user)
+            .error(ic_circle_purple_user)
+            .fallback(ic_circle_purple_user)
             .crossfade(true)
             .build(),
         contentDescription = null,

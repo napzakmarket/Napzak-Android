@@ -6,6 +6,6 @@ import javax.inject.Inject
 class ClearCacheUseCase @Inject constructor(
     private val presignedUrlRepository: PresignedUrlRepository,
 ) {
-    operator fun invoke(): Result<Unit> =
+    suspend operator fun invoke(): Result<Unit> =
         presignedUrlRepository.clearCachedImage()
 }

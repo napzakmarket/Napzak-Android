@@ -2,9 +2,7 @@ package com.napzak.market.detail.component.group
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,20 +15,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.common.type.TradeStatusType
+import com.napzak.market.designsystem.R.drawable.img_product_complete_buy
+import com.napzak.market.designsystem.R.drawable.img_product_complete_sell
+import com.napzak.market.designsystem.R.drawable.img_product_reservation
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.feature.detail.R.drawable.ic_product_buy_complete_large
-import com.napzak.market.feature.detail.R.drawable.ic_product_reservation_large
-import com.napzak.market.feature.detail.R.drawable.ic_product_sell_complete_large
 import com.napzak.market.feature.detail.R.string.detail_product_image_indicator
 import com.napzak.market.ui_util.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
@@ -113,29 +110,23 @@ private fun TradeStatusCoverImage(
     tradeStatusType: TradeStatusType,
     modifier: Modifier = Modifier,
 ) {
-    val iconRes = when (tradeStatusType) {
-        TradeStatusType.BEFORE_TRADE -> null
-        TradeStatusType.RESERVED -> ic_product_reservation_large
-        TradeStatusType.COMPLETED_SELL -> ic_product_sell_complete_large
-        TradeStatusType.COMPLETED_BUY -> ic_product_buy_complete_large
+    val imageRes = when (tradeStatusType) {
+        TradeStatusType.RESERVED -> img_product_reservation
+        TradeStatusType.COMPLETED_SELL -> img_product_complete_sell
+        TradeStatusType.COMPLETED_BUY -> img_product_complete_buy
+        else -> null
     }
 
-    if (iconRes != null) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally,
+    if (imageRes != null) {
+        Box(
             modifier = modifier
                 .fillMaxSize()
                 .background(NapzakMarketTheme.colors.transBlack),
+            contentAlignment = Alignment.Center
         ) {
             Image(
-                imageVector = ImageVector.vectorResource(iconRes),
+                painter = painterResource(imageRes),
                 contentDescription = tradeStatusType.label,
-            )
-            Text(
-                text = tradeStatusType.label,
-                style = NapzakMarketTheme.typography.title20sb,
-                color = NapzakMarketTheme.colors.white,
             )
         }
     }
@@ -152,7 +143,7 @@ private fun ProductImageGroupPreview() {
                 "",
             ).toImmutableList(),
             contentDescription = "",
-            tradeStatusType = TradeStatusType.BEFORE_TRADE,
+            tradeStatusType = TradeStatusType.COMPLETED_BUY,
             onClick = {},
         )
     }

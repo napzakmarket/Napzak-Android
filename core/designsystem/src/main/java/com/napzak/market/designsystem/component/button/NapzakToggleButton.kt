@@ -18,11 +18,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
+/**
+ * 납작 Toggle Button
+ *
+ * @param isToggleOn 토글의 On, OFF 상태
+ * @param onToggleClick 토글이 클릭 될 때 호출되는 콜백함수
+ * @param modifier 수정자
+ * @param isClickable 토글 활성화 상태 여부
+ */
 @Composable
 fun NapzakToggleButton(
     isToggleOn: Boolean,
     onToggleClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isClickable: Boolean = true,
+    toggleButtonColor: NapzakToggleButtonColor = NapzakToggleButtonDefault.color,
 ) {
     val toggleWidth = 48.dp
     val toggleHeight = 28.dp
@@ -35,7 +45,11 @@ fun NapzakToggleButton(
     )
 
     val backgroundColor by animateColorAsState(
-        targetValue = if (isToggleOn) NapzakMarketTheme.colors.purple500 else NapzakMarketTheme.colors.gray100,
+        targetValue = when {
+            isToggleOn && isClickable -> toggleButtonColor.toggleOnColor
+            isToggleOn && !isClickable -> toggleButtonColor.toggleDisableColor
+            else -> toggleButtonColor.toggleOffColor
+        },
         label = "bg_color"
     )
 
@@ -48,7 +62,9 @@ fun NapzakToggleButton(
                 value = isToggleOn,
                 interactionSource = null,
                 indication = null,
-                onValueChange = { onToggleClick() },
+                onValueChange = {
+                    if (isClickable) onToggleClick()
+                },
             )
             .padding(padding),
         contentAlignment = Alignment.CenterStart,

@@ -30,8 +30,8 @@ import androidx.compose.ui.zIndex
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.napzak.market.designsystem.R.drawable.ic_arrow_left
-import com.napzak.market.designsystem.R.drawable.ic_close_24
+import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_left
+import com.napzak.market.designsystem.R.drawable.ic_gray_cancel
 import com.napzak.market.designsystem.component.image.ZoomableImage
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
@@ -117,7 +117,7 @@ private fun PreviewImageZoomTopBar(
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(ic_arrow_left),
+                imageVector = ImageVector.vectorResource(ic_gray_arrow_left),
                 contentDescription = null,
                 tint = NapzakMarketTheme.colors.gray200,
             )
@@ -141,7 +141,7 @@ private fun ImageZoomCloseButton(
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(ic_close_24),
+            imageVector = ImageVector.vectorResource(ic_gray_cancel),
             contentDescription = null,
             tint = NapzakMarketTheme.colors.gray200,
         )

@@ -8,17 +8,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -83,27 +83,30 @@ fun NapzakDialog(
                 .background(
                     color = dialogColor.containerColor,
                     shape = RoundedCornerShape(14.dp),
-                ),
+                )
+                .padding(26.dp),
         ) {
+            if (subTitle == null) Spacer(Modifier.height(20.dp))
+            else Spacer(Modifier.height(10.dp))
 
-            Spacer(Modifier.height(38.dp))
             Text(
                 text = title,
-                style = NapzakMarketTheme.typography.title18b.copy(
+                style = NapzakMarketTheme.typography.body16b.copy(
                     color = dialogColor.titleColor,
                 ),
             )
-            Spacer(Modifier.height(6.dp))
+
             if (subTitle != null) {
                 Text(
                     text = subTitle,
                     style = NapzakMarketTheme.typography.caption12sb.copy(
                         color = dialogColor.subTitleColor,
+                        textAlign = TextAlign.Center,
                     ),
+                    modifier = Modifier.padding(top = 10.dp, bottom = 20.dp)
                 )
-                Spacer(Modifier.height(24.dp))
             } else {
-                Spacer(Modifier.height(38.dp))
+                Spacer(Modifier.height(35.dp))
             }
             DialogButtons(
                 confirmText = confirmText,
@@ -127,30 +130,21 @@ private fun DialogButtons(
 ) {
     Row(
         modifier = modifier
-            .drawBehind {
-                drawLine(
-                    color = dialogColor.lineColor,
-                    start = Offset(0f, 0f),
-                    end = Offset(size.width, 0f),
-                    strokeWidth = Dp.Hairline.toPx(),
-                )
-                drawLine(
-                    color = dialogColor.lineColor,
-                    start = Offset(size.width / 2, 0f),
-                    end = Offset(size.width / 2, size.height),
-                    strokeWidth = Dp.Hairline.toPx(),
-                )
-            }
     ) {
         DialogButton(
             text = confirmText,
-            textColor = dialogColor.confirmColor,
+            textColor = dialogColor.confirmTextColor,
+            backgroundColor = dialogColor.confirmColor,
             onClick = onConfirmClick,
             modifier = Modifier.weight(1f),
         )
+
+        Spacer(Modifier.width(10.dp))
+
         DialogButton(
             text = dismissText,
-            textColor = dialogColor.dismissColor,
+            textColor = dialogColor.dismissTextColor,
+            backgroundColor = dialogColor.dismissColor,
             onClick = onDismissClick,
             modifier = Modifier.weight(1f),
         )
@@ -161,20 +155,28 @@ private fun DialogButtons(
 private fun DialogButton(
     text: String,
     textColor: Color,
+    backgroundColor: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .clickable(onClick = onClick),
+            .background(
+                color = backgroundColor,
+                shape = RoundedCornerShape(12.dp),
+            )
+            .clickable(
+                role = Role.Button,
+                onClick = onClick,
+            ),
     ) {
         Text(
             text = text,
             style = NapzakMarketTheme.typography.body14sb.copy(
                 color = textColor,
             ),
-            modifier = Modifier.padding(vertical = 18.dp),
+            modifier = Modifier.padding(vertical = 10.dp),
         )
     }
 }

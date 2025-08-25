@@ -98,9 +98,13 @@ fun MainScreen(
         ChatDeepLinkEventBus.events.collect { event ->
             when (event) {
                 is ChatDeepLinkEvent.ChatRoom -> {
-                    navigator.navigate(MainTab.CHAT)
-                    val id = event.chatRoomId
-                    id?.let { navigator.navController.navigateToChatRoom(id.toLong()) }
+                    val currentRoute = navigator.navController.currentBackStackEntry?.destination
+
+                    if (currentRoute != Login) {
+                        navigator.navigate(MainTab.CHAT)
+                        val id = event.chatRoomId
+                        id?.let { navigator.navController.navigateToChatRoom(id.toLong()) }
+                    }
                 }
             }
         }
@@ -188,7 +192,7 @@ private fun MainNavHost(
                     }
                 )
             },
-            onNavigateToOnboarding = {
+            onNavigateToLogin = {
                 navigator.navController.navigateToLogin(
                     navOptions {
                         popUpTo<Splash> { inclusive = true }
@@ -238,6 +242,13 @@ private fun MainNavHost(
                     tradeType = TradeType.BUY,
                     sortType = SortType.POPULAR,
                 )
+            },
+            checkSessionManager = {
+                if (SessionManager.chatRoomId != null) {
+                    navigator.navigate(MainTab.CHAT)
+                    navigator.navController.navigateToChatRoom(SessionManager.chatRoomId)
+                    SessionManager.clearChatRoomId()
+                }
             },
             modifier = modifier
                 .padding(bottom = bottomPadding),

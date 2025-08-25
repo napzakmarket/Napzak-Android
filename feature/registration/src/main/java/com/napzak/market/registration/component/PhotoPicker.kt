@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_import_24
+import com.napzak.market.designsystem.R.drawable.ic_circle_purple_plus
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.photo_count
 import com.napzak.market.registration.model.Photo
@@ -141,7 +141,7 @@ private fun PhotoRegisterButton(
             verticalArrangement = Arrangement.spacedBy(5.dp),
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(ic_import_24),
+                imageVector = ImageVector.vectorResource(ic_circle_purple_plus),
                 contentDescription = null,
                 tint = Color.Unspecified,
             )

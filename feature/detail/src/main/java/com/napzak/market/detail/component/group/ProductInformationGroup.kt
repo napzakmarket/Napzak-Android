@@ -26,8 +26,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.R.drawable.ic_heart_11
-import com.napzak.market.designsystem.R.drawable.ic_review_11
+import com.napzak.market.designsystem.R.drawable.ic_gray_heart
+import com.napzak.market.designsystem.R.drawable.ic_gray_review
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.detail.R.string.detail_product_count_overflow
 import com.napzak.market.feature.detail.R.string.detail_product_price
@@ -176,8 +176,8 @@ private fun CommentLikeGroup(
     color: Color = NapzakMarketTheme.colors.gray100,
 ) {
     val views = listOf(
-        commentCount to ic_review_11,
-        likeCount to ic_heart_11,
+        commentCount to ic_gray_review,
+        likeCount to ic_gray_heart,
     )
 
     Row(

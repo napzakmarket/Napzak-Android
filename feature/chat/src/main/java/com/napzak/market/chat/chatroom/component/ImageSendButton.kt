@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_send
+import com.napzak.market.designsystem.R.drawable.ic_gray_send
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_room_input_field_send
 import com.napzak.market.ui_util.noRippleClickable
@@ -44,7 +44,7 @@ internal fun ImageSendButton(
         )
 
         Icon(
-            imageVector = ImageVector.vectorResource(ic_send),
+            imageVector = ImageVector.vectorResource(ic_gray_send),
             contentDescription = null,
             tint = contentColor,
             modifier = Modifier.size(16.dp),

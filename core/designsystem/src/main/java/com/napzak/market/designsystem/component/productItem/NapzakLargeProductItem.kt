@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
@@ -39,11 +41,11 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.designsystem.R
-import com.napzak.market.designsystem.R.drawable.ic_heart_filled_14
-import com.napzak.market.designsystem.R.drawable.ic_heart_unfilled_16
-import com.napzak.market.designsystem.R.drawable.ic_product_buy_complete
-import com.napzak.market.designsystem.R.drawable.ic_product_reservation
-import com.napzak.market.designsystem.R.drawable.ic_product_sell_complete
+import com.napzak.market.designsystem.R.drawable.ic_red_heart_large
+import com.napzak.market.designsystem.R.drawable.ic_transparent_heart_large
+import com.napzak.market.designsystem.R.drawable.img_thumbnail_complete_buy
+import com.napzak.market.designsystem.R.drawable.img_thumbnail_complete_sell
+import com.napzak.market.designsystem.R.drawable.img_thumbnail_reservation
 import com.napzak.market.designsystem.R.string.production_item_buy
 import com.napzak.market.designsystem.R.string.production_item_price
 import com.napzak.market.designsystem.R.string.production_item_price_suggestion
@@ -150,12 +152,12 @@ fun NapzakLargeProductItem(
             Spacer(modifier = Modifier.weight(1f))
 
             IconText(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_review_11),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_gray_review),
                 text = reviewCount,
             )
 
             IconText(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_heart_11),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_gray_heart),
                 text = likeCount,
                 modifier = Modifier.padding(start = 2.dp),
             )
@@ -225,30 +227,24 @@ private fun TradeStatusImage(
     shape: RoundedCornerShape,
     modifier: Modifier = Modifier,
 ) {
-    if (tradeStatus != TradeStatusType.BEFORE_TRADE) {
-        val image = when(tradeStatus) {
-            TradeStatusType.RESERVED -> ic_product_reservation
-            TradeStatusType.COMPLETED_SELL -> ic_product_sell_complete
-            TradeStatusType.COMPLETED_BUY -> ic_product_buy_complete
-            else -> null
-        }
+    val imageRes = when (tradeStatus) {
+        TradeStatusType.RESERVED -> img_thumbnail_reservation
+        TradeStatusType.COMPLETED_SELL -> img_thumbnail_complete_sell
+        TradeStatusType.COMPLETED_BUY -> img_thumbnail_complete_buy
+        else -> null
+    }
 
-        Column(
-            modifier.background(color = NapzakMarketTheme.colors.transBlack, shape = shape),
-            verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally,
+    if (imageRes != null) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .clip(shape)
+                .background(NapzakMarketTheme.colors.transBlack),
+            contentAlignment = Alignment.Center
         ) {
-            if(image != null) {
-                Image(
-                    imageVector = ImageVector.vectorResource(id = image),
-                    contentDescription = null,
-                )
-            }
-
-            Text(
-                text = tradeStatus.label,
-                style = NapzakMarketTheme.typography.body14b,
-                color = NapzakMarketTheme.colors.white,
+            Image(
+                painter = painterResource(imageRes),
+                contentDescription = tradeStatus.label,
             )
         }
     }
@@ -317,8 +313,8 @@ private fun LikeButton(
     onLikeClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val imageVector = if (isLiked) ic_heart_filled_14
-    else ic_heart_unfilled_16
+    val imageVector = if (isLiked) ic_red_heart_large
+    else ic_transparent_heart_large
 
     Icon(
         imageVector = ImageVector.vectorResource(imageVector),
@@ -384,7 +380,7 @@ private fun LargeProductItemPreview() {
                     isMyItem = false,
                     isSellElseBuy = true,
                     isSuggestionAllowed = false,
-                    tradeStatus = TradeStatusType.BEFORE_TRADE,
+                    tradeStatus = TradeStatusType.BEFORE_TRADE_SELL,
                     onLikeClick = { isLiked1 = !isLiked1 },
                     modifier = Modifier.weight(1f),
                 )
@@ -401,7 +397,7 @@ private fun LargeProductItemPreview() {
                     isMyItem = false,
                     isSellElseBuy = false,
                     isSuggestionAllowed = true,
-                    tradeStatus = TradeStatusType.COMPLETED_SELL,
+                    tradeStatus = TradeStatusType.COMPLETED_BUY,
                     onLikeClick = { isLiked2 = !isLiked2 },
                     modifier = Modifier.weight(1f),
                 )
