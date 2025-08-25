@@ -116,7 +116,6 @@ private fun ProfileImageSection(
                     color = NapzakMarketTheme.colors.white,
                     shape = CircleShape
                 )
-                .padding(4.dp)
                 .size(110.dp)
         )
 
