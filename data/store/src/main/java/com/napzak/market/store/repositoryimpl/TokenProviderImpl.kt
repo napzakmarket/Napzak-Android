@@ -2,13 +2,18 @@ package com.napzak.market.store.repositoryimpl
 
 import com.napzak.market.local.datastore.TokenDataStore
 import com.napzak.market.store.repository.AuthRepository
+import com.napzak.market.ui_util.JwtInspector
 import com.napzak.market.util.android.TokenProvider
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 class TokenProviderImpl @Inject constructor(
     private val tokenDataStore: TokenDataStore,
     private val authRepository: AuthRepository,
 ) : TokenProvider {
+
+    private val mutex = Mutex()
 
     override suspend fun getAccessToken(): String? =
         tokenDataStore.getAccessToken()
@@ -32,12 +37,24 @@ class TokenProviderImpl @Inject constructor(
         tokenDataStore.clearTokens()
     }
 
-    override suspend fun reissueAccessToken(): String? {
-        val refreshToken = getRefreshToken() ?: return null
+    override suspend fun getAccessTokenRole(): String? =
+        JwtInspector.extractRoleString(getAccessToken())
 
-        return authRepository.reissueAccessToken(refreshToken)
-            .onSuccess { newAccessToken ->
-                updateAccessToken(newAccessToken)
-            }.getOrNull()
+    override suspend fun reissueAccessToken(): String = mutex.withLock {
+        val refresh = tokenDataStore.getRefreshToken()
+        if (refresh.isNullOrBlank()) return@withLock null.toString()
+
+        val newAccess = authRepository.reissueAccessToken(refresh).getOrNull()
+        if (newAccess.isNullOrBlank()) return@withLock null.toString()
+
+        val role = JwtInspector.extractRoleString(newAccess)
+
+        (if (role == "STORE") {
+            tokenDataStore.updateAccessToken(newAccess)
+            newAccess
+        } else {
+            tokenDataStore.clearTokens()
+            null
+        }).toString()
     }
 }
