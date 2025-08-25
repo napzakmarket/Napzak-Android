@@ -188,7 +188,7 @@ private fun MainNavHost(
                     }
                 )
             },
-            onNavigateToOnboarding = {
+            onNavigateToLogin = {
                 navigator.navController.navigateToLogin(
                     navOptions {
                         popUpTo<Splash> { inclusive = true }
