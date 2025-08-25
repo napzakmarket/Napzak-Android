@@ -55,9 +55,6 @@ internal class ChatRoomViewModel @Inject constructor(
 
     private val chatCondition = mutableStateOf(ChatCondition.PRODUCT_NOT_CHANGED)
 
-    var isWithdrawing by mutableStateOf(false)
-        private set
-
     var chat by mutableStateOf("")
 
     private val _roomId
@@ -172,11 +169,11 @@ internal class ChatRoomViewModel @Inject constructor(
     private suspend fun fetchMessages(roomId: Long) {
         chatRepository.getChatRoomMessages(roomId)
             .onSuccess { messages ->
-                val reversedMessage = messages.asReversed()
-                if (reversedMessage.lastOrNull() is ReceiveMessage.Notice) {
+                if (messages.firstOrNull() is ReceiveMessage.Notice) {
                     _chatRoomState.update { it.copy(isRoomWithdrawn = true) }
                 }
-                addMessages(reversedMessage)
+
+                addMessages(messages.asReversed())
             }.getOrThrow()
     }
 
