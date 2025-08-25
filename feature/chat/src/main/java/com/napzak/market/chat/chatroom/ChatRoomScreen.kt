@@ -48,8 +48,7 @@ import com.napzak.market.chat.chatroom.preview.mockChatRoom
 import com.napzak.market.chat.chatroom.preview.mockChats
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.common.state.UiState
-import com.napzak.market.designsystem.R.drawable.ic_no_chatting_histroy
-import com.napzak.market.designsystem.component.image.ZoomableImageScreen
+import com.napzak.market.designsystem.R.drawable.ic_no_chatting_history
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastFontType
@@ -179,98 +178,110 @@ internal fun ChatRoomScreen(
                     onDismissClick = { isWithdrawDialogVisible = false },
                 )
             }
-
-            Box(
+            Column(
                 modifier = modifier
-                    .systemBarsPadding()
                     .fillMaxSize()
-                    .background(NapzakMarketTheme.colors.white)
-                    .imePadding(),
+                    .systemBarsPadding(),
             ) {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    ChatRoomTopBar(
-                        storeName = chatRoom.storeBrief?.nickname ?: "",
-                        onBackClick = onNavigateUp,
-                        onMenuClick = { isBottomSheetVisible = true },
-                    )
+                ChatRoomTopBar(
+                    storeName = chatRoom.storeBrief?.nickname ?: "",
+                    onBackClick = onNavigateUp,
+                    onMenuClick = { isBottomSheetVisible = true },
+                )
 
-                    chatRoom.productBrief?.let { product ->
-                        ChatRoomProductSection(
-                            product = product,
-                            onClick = {
-                                if (chatRoomState.isOpponentWithdrawn.not()) {
-                                    onProductDetailClick(product.productId)
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                        )
+                chatRoom.productBrief?.let { product ->
+                    ChatRoomProductSection(
+                        product = product,
+                        onClick = {
+                            if (chatRoomState.isOpponentWithdrawn.not()) {
+                                onProductDetailClick(product.productId)
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+
+                Box(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    if (chatItems.isEmpty()) {
+                        EmptyChatScreen()
                     }
 
-                    Box(modifier = Modifier.weight(1f)) {
-                        if (chatItems.isEmpty()) {
-                            EmptyChatScreen(
+                    Column(
+                        verticalArrangement = Arrangement.Bottom,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .imePadding(),
+                    ) {
+                        if (chatItems.isNotEmpty()) {
+                            Box(
                                 modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(horizontal = 20.dp),
-                            )
-                        } else {
-                            ChatRoomItemColumn(
-                                listState = chatListState,
-                                chatItems = chatItems,
-                                opponentImageUrl = chatRoom.storeBrief?.storePhoto,
-                                onItemClick = { message ->
-                                    when (message) {
-                                        is ReceiveMessage.Product -> onProductDetailClick(message.product.productId)
-                                        is ReceiveMessage.Image -> {
-                                            selectedImageUrl = message.imageUrl
+                                    .weight(1f)
+                                    .background(NapzakMarketTheme.colors.white),
+                            ) {
+                                ChatRoomItemColumn(
+                                    listState = chatListState,
+                                    chatItems = chatItems,
+                                    opponentImageUrl = chatRoom.storeBrief?.storePhoto,
+                                    onItemClick = { message ->
+                                        when (message) {
+                                            is ReceiveMessage.Product -> onProductDetailClick(
+                                                message.product.productId
+                                            )
+
+                                            is ReceiveMessage.Image -> {
+                                                selectedImageUrl = message.imageUrl
+                                            }
+
+                                            else -> {}
                                         }
-
-                                        else -> {}
-                                    }
-                                },
-                                modifier = Modifier.fillMaxSize(),
-                            )
-
-                            if (chatRoomState.isOpponentWithdrawn) {
-                                Image(
-                                    painter = painterResource(img_user_blocked_popup),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .align(Alignment.BottomCenter)
-                                        .padding(bottom = 23.dp),
+                                    },
+                                    modifier = Modifier.fillMaxSize(),
                                 )
+
+                                if (chatRoomState.isOpponentWithdrawn) {
+                                    Image(
+                                        painter = painterResource(img_user_blocked_popup),
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .align(Alignment.BottomCenter)
+                                            .padding(bottom = 23.dp),
+                                    )
+                                }
                             }
                         }
+                        ChatRoomInputField(
+                            text = chat,
+                            enabled = !chatRoomState.isChatDisabled,
+                            onSendClick = onSendChatClick,
+                            onTextChange = onChatChange,
+                            onPhotoSelect = {
+                                selectedImageUrl = it
+                                isPreviewVisible = true
+                            },
+                        )
                     }
-
-                    ChatRoomInputField(
-                        text = chat,
-                        enabled = !chatRoomState.isChatDisabled,
-                        onSendClick = onSendChatClick,
-                        onTextChange = onChatChange,
-                        onPhotoSelect = {
-                            selectedImageUrl = it
-                            isPreviewVisible = true
-                        },
-                    )
                 }
 
-                selectedImageUrl?.let {
-                    ChatImageZoomScreen(
-                        selectedImageUrl = it,
-                        isPreview = isPreviewVisible,
-                        onBackClick = {
-                            selectedImageUrl = null
-                            isPreviewVisible = false
-                        },
-                        onSendClick = {
-                            selectedImageUrl?.let(onPhotoSelect)
-                            selectedImageUrl = null
-                            isPreviewVisible = false
-                        },
-                    )
-                }
             }
+
+            selectedImageUrl?.let {
+                ChatImageZoomScreen(
+                    selectedImageUrl = it,
+                    isPreview = isPreviewVisible,
+                    onBackClick = {
+                        selectedImageUrl = null
+                        isPreviewVisible = false
+                    },
+                    onSendClick = {
+                        selectedImageUrl?.let(onPhotoSelect)
+                        selectedImageUrl = null
+                        isPreviewVisible = false
+                    },
+                )
+            }
+
 
             if (isBottomSheetVisible) {
                 ChatRoomBottomSheet(
@@ -298,12 +309,14 @@ private fun EmptyChatScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Image(
-            imageVector = ImageVector.vectorResource(ic_no_chatting_histroy),
+            imageVector = ImageVector.vectorResource(ic_no_chatting_history),
             contentDescription = null,
             modifier = Modifier.padding(end = 80.dp)
         )

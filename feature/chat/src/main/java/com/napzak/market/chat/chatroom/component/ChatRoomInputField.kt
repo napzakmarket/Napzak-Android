@@ -60,10 +60,11 @@ internal fun ChatRoomInputField(
             .fillMaxWidth()
             .napzakGradientShadow(
                 height = 4.dp,
-                startColor = NapzakMarketTheme.colors.transWhite,
+                startColor = NapzakMarketTheme.colors.gradWhite,
                 endColor = NapzakMarketTheme.colors.shadowBlack,
                 direction = ShadowDirection.Top,
             )
+            .background(color = NapzakMarketTheme.colors.white)
             .padding(
                 top = 8.dp,
                 bottom = 14.dp,
