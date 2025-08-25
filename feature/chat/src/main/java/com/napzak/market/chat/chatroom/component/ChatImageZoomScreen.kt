@@ -30,6 +30,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.napzak.market.designsystem.R.drawable.ic_arrow_left
+import com.napzak.market.designsystem.R.drawable.ic_close_24
 import com.napzak.market.designsystem.component.image.ZoomableImage
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
@@ -81,19 +82,24 @@ internal fun ChatImageZoomScreen(
                 .zIndex(1f)
         )
 
-        ImageZoomTopBar(
-            onSendClick = onSendClick,
-            onBackClick = onBackClick,
-            isPreview = isPreview,
-        )
+        if (isPreview) {
+            PreviewImageZoomTopBar(
+                onSendClick = onSendClick,
+                onBackClick = onBackClick,
+            )
+        } else {
+            ImageZoomCloseButton(
+                onBackClick = onBackClick,
+                modifier = Modifier.align(Alignment.TopEnd)
+            )
+        }
     }
 }
 
 @Composable
-private fun ImageZoomTopBar(
+private fun PreviewImageZoomTopBar(
     onSendClick: () -> Unit,
     onBackClick: () -> Unit,
-    isPreview: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -117,8 +123,27 @@ private fun ImageZoomTopBar(
             )
         }
 
-        if (isPreview) {
-            ImageSendButton(onClick = onSendClick)
-        }
+        ImageSendButton(onClick = onSendClick)
+    }
+}
+
+@Composable
+private fun ImageZoomCloseButton(
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .padding(end = 20.dp, top = 58.dp)
+            .size(24.dp)
+            .noRippleClickable(onClick = onBackClick)
+            .zIndex(1f),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(ic_close_24),
+            contentDescription = null,
+            tint = NapzakMarketTheme.colors.gray200,
+        )
     }
 }
