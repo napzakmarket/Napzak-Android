@@ -39,9 +39,4 @@ abstract class RepositoryModule {
     abstract fun bindTokenProvider(
         impl: TokenProviderImpl
     ): TokenProvider
-
-    @Binds
-    abstract fun bindAuthRepository(
-        impl: AuthRepositoryImpl
-    ): AuthRepository
 }
