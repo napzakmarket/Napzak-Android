@@ -116,9 +116,9 @@ private fun MyPageScreen(
         ) {
             Spacer(modifier = Modifier.height(20.dp))
             MyPageMenuCard(
-                onSalesClick = onSalesClick,
+                /*onSalesClick = onSalesClick,
                 onPurchaseClick = onPurchaseClick,
-                onRecentClick = onRecentClick,
+                onRecentClick = onRecentClick,*/
                 onFavoriteClick = onFavoriteClick,
                 onSettingsClick = onSettingsClick,
                 onHelpClick = onHelpClick,

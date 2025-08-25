@@ -4,10 +4,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -34,6 +33,72 @@ private const val COLUMN_COUNT = 3
 
 @Composable
 internal fun MyPageMenuCard(
+    onFavoriteClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onHelpClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+
+    val menus = remember {
+        listOf(
+            MyPageMenu.FAVORITE to onFavoriteClick,
+            MyPageMenu.SETTINGS to onSettingsClick,
+            MyPageMenu.HELP to onHelpClick,
+        )
+    }
+
+    val dividerColor = NapzakMarketTheme.colors.gray50
+
+    Card(
+        modifier = modifier
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = NapzakMarketTheme.colors.gray10),
+    ) {
+        Row(modifier = Modifier) {
+            menus.forEachIndexed { index, (menu, onClick) ->
+                val showRightBorder = index < COLUMN_COUNT - 1
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .noRippleClickable(onClick)
+                        .drawBehind {
+                            val strokeWidth = 4.dp.toPx()
+                            if (showRightBorder) {
+                                drawLine(
+                                    color = dividerColor,
+                                    start = Offset(size.width, 0f),
+                                    end = Offset(size.width, size.height),
+                                    strokeWidth = strokeWidth,
+                                )
+                            }
+                        }
+                        .padding(vertical = 12.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(menu.iconRes),
+                            contentDescription = stringResource(menu.titleRes),
+                            tint = Color.Unspecified,
+                        )
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Text(
+                            text = stringResource(menu.titleRes),
+                            style = NapzakMarketTheme.typography.caption12sb,
+                            color = NapzakMarketTheme.colors.gray400,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+// TODO: 추가 예정인 기능
+/*@Composable
+internal fun MyPageMenuCard(
     onSalesClick: () -> Unit,
     onPurchaseClick: () -> Unit,
     onRecentClick: () -> Unit,
@@ -45,12 +110,12 @@ internal fun MyPageMenuCard(
 
     val menus = remember {
         listOf(
-                MyPageMenu.SALES to onSalesClick,
-        MyPageMenu.PURCHASE to onPurchaseClick,
-        MyPageMenu.RECENT to onRecentClick,
-        MyPageMenu.FAVORITE to onFavoriteClick,
-        MyPageMenu.SETTINGS to onSettingsClick,
-        MyPageMenu.HELP to onHelpClick,
+            MyPageMenu.SALES to onSalesClick,
+            MyPageMenu.PURCHASE to onPurchaseClick,
+            MyPageMenu.RECENT to onRecentClick,
+            MyPageMenu.FAVORITE to onFavoriteClick,
+            MyPageMenu.SETTINGS to onSettingsClick,
+            MyPageMenu.HELP to onHelpClick,
         )
     }
 
@@ -117,16 +182,13 @@ internal fun MyPageMenuCard(
             }
         }
     }
-}
+}*/
 
 @Preview(showBackground = true)
 @Composable
 private fun MyPageMenuCardPreview() {
     NapzakMarketTheme {
         MyPageMenuCard(
-            onSalesClick = {},
-            onPurchaseClick = {},
-            onRecentClick = {},
             onFavoriteClick = {},
             onSettingsClick = {},
             onHelpClick = {},
