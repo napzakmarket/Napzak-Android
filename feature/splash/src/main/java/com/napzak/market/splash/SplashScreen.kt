@@ -29,11 +29,10 @@ import kotlinx.coroutines.delay
 @Composable
 internal fun SplashRoute(
     onNavigateToMain: () -> Unit,
-    onNavigateToOnboarding: () -> Unit,
+    onNavigateToLogin: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SplashViewModel = hiltViewModel(),
 ) {
-    var isSuccess by remember { mutableStateOf(false) }
     val view = LocalView.current
 
     DisposableEffect(Unit) {
@@ -45,15 +44,14 @@ internal fun SplashRoute(
         }
     }
 
-    LaunchedEffect(Unit) {
-        val result = viewModel.tryAutoLogin()
-        isSuccess = result.isSuccess
+    val navigated = remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit) {
+        val success = viewModel.tryAutoLogin().isSuccess
         delay(2500)
-        if (isSuccess) {
-            onNavigateToMain()
-        } else {
-            onNavigateToOnboarding()
+        if (!navigated.value) {
+            navigated.value = true
+            if (success) onNavigateToMain() else onNavigateToLogin()
         }
     }
 
