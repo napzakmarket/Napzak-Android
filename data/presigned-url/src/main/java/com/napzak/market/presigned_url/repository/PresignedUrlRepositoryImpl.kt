@@ -45,7 +45,7 @@ class PresignedUrlRepositoryImpl @Inject constructor(
         uri.toString()
     }
 
-    override fun clearCachedImage(): Result<Unit> = runCatching {
+    override suspend fun clearCachedImage(): Result<Unit> = runCatching {
         imageCompressor.clearCachedImage()
     }
 }
