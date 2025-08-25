@@ -22,6 +22,7 @@ import com.napzak.market.feature.detail.R.string.detail_product_delivery_include
 import com.napzak.market.feature.detail.R.string.detail_product_delivery_normal
 import com.napzak.market.feature.detail.R.string.detail_product_title_delivery
 import com.napzak.market.feature.detail.R.string.detail_product_title_product_condition
+import com.napzak.market.ui_util.formatToPriceString
 
 @Composable
 internal fun ProductInformationSellGroup(
@@ -86,15 +87,18 @@ private fun ProductDeliverySection(
     halfDeliveryFee: Int,
     modifier: Modifier = Modifier,
 ) {
+
     val deliveryTypes = mutableListOf<String>().apply {
         if (isDeliveryIncluded) {
             add(stringResource(detail_product_delivery_included))
         }
-        if (halfDeliveryFee != 0) {
-            add(stringResource(detail_product_delivery_half, halfDeliveryFee))
-        }
         if (standardDeliveryFee != 0) {
-            add(stringResource(detail_product_delivery_normal, standardDeliveryFee))
+            val formattedStandardDeliveryFee = standardDeliveryFee.toString().formatToPriceString()
+            add(stringResource(detail_product_delivery_normal, formattedStandardDeliveryFee))
+        }
+        if (halfDeliveryFee != 0) {
+            val formattedHalfDeliveryFee = halfDeliveryFee.toString().formatToPriceString()
+            add(stringResource(detail_product_delivery_half, formattedHalfDeliveryFee))
         }
     }.toList()
 
@@ -135,7 +139,7 @@ private fun ProductInformationSellGroupPreview() {
             productCondition = ProductConditionType.NEW,
             isDeliveryIncluded = true,
             standardDeliveryFee = 2500,
-            halfDeliveryFee = 0,
+            halfDeliveryFee = 1250,
         )
     }
 }
