@@ -30,7 +30,7 @@ internal fun GenreChip(
                 color = contentColor,
                 shape = RoundedCornerShape(size = 50.dp),
             )
-            .padding(horizontal = 10.dp, vertical = 6.dp),
+            .padding(horizontal = 10.dp, vertical = 8.dp),
     ) {
         Text(
             text = genre,
