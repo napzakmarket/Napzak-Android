@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_arrow_right_7
+import com.napzak.market.designsystem.R.drawable.ic_dark_gray_right
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.mypage_my_market
 import com.napzak.market.ui_util.noRippleClickable
@@ -47,7 +47,7 @@ internal fun MyMarketButton(
         )
         Spacer(modifier = Modifier.width(6.dp))
         Icon(
-            imageVector = ImageVector.vectorResource(ic_arrow_right_7),
+            imageVector = ImageVector.vectorResource(ic_dark_gray_right),
             contentDescription = null,
             tint = Color.Unspecified,
         )

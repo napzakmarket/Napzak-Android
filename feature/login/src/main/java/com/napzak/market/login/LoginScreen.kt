@@ -2,16 +2,14 @@ package com.napzak.market.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -26,6 +24,7 @@ import com.napzak.market.designsystem.R.raw.lottie_login
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.login.component.KakaoLoginButton
 import com.napzak.market.login.model.LoginFlowRoute
+import com.napzak.market.ui_util.findActivity
 
 @Composable
 fun LoginRoute(
@@ -36,20 +35,24 @@ fun LoginRoute(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
+    val kakaoLauncher = remember {
+        LoginKakaoLauncher(
+            activityProvider = { context.findActivity() },
+            onTokenReceived = { accessToken -> viewModel.loginWithKakao(accessToken) },
+            onError = { t -> viewModel.onKakaoLoginFailed(t) },
+            onGuide = { viewModel.onRequireBrowserGuide() },
+        )
+    }
+
     LaunchedEffect(uiState.route) {
-        uiState.route?.let { onRouteChanged(it) }
+        uiState.route?.let {
+            onRouteChanged(it)
+            viewModel.consumeRoute()
+        }
     }
 
     LoginScreen(
-        onKakaoLoginClick = {
-            LoginKakaoLauncher(
-                context = context,
-                onTokenReceived = { token -> viewModel.loginWithKakao(token) },
-                onError = {
-                    //TODO 추후 구현
-                }
-            ).startKakaoLogin()
-        },
+        onKakaoLoginClick = { kakaoLauncher.startKakaoLogin() },
         modifier = modifier,
     )
 }

@@ -27,8 +27,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_register_buy
-import com.napzak.market.designsystem.R.drawable.ic_register_sell
+import com.napzak.market.designsystem.R.drawable.ic_purple_register_buy
+import com.napzak.market.designsystem.R.drawable.ic_purple_register_sell
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.main.R.string.dialog_register_buy
 import com.napzak.market.main.R.string.dialog_register_sell
@@ -73,14 +73,14 @@ internal fun MainRegisterDialog(
                     }
             ) {
                 RegisterNavigationButton(
-                    image = ImageVector.vectorResource(ic_register_sell),
+                    image = ImageVector.vectorResource(ic_purple_register_sell),
                     label = stringResource(dialog_register_sell),
                     onClick = onSellRegisterClick,
                     modifier = Modifier.padding(5.dp),
                 )
 
                 RegisterNavigationButton(
-                    image = ImageVector.vectorResource(ic_register_buy),
+                    image = ImageVector.vectorResource(ic_purple_register_buy),
                     label = stringResource(dialog_register_buy),
                     onClick = onBuyRegisterClick,
                     modifier = Modifier.padding(5.dp),

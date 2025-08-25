@@ -31,8 +31,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_checked_box
-import com.napzak.market.designsystem.R.drawable.ic_unchecked_box
+import com.napzak.market.designsystem.R.drawable.ic_square_purple_check
+import com.napzak.market.designsystem.R.drawable.ic_square_gray_unchecked
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.registration.R.string.half_priced_shipping
 import com.napzak.market.feature.registration.R.string.half_priced_shipping_hint
@@ -149,7 +149,7 @@ private fun SelectorButton(
     onCheckChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val checkIcon = if (isChecked) ic_checked_box else ic_unchecked_box
+    val checkIcon = if (isChecked) ic_square_purple_check else ic_square_gray_unchecked
 
     Row(
         modifier = modifier
@@ -189,7 +189,7 @@ private fun ExpandedShippingFee(
     hint: String,
     modifier: Modifier = Modifier,
 ) {
-    val checkIcon = if (isChecked) ic_checked_box else ic_unchecked_box
+    val checkIcon = if (isChecked) ic_square_purple_check else ic_square_gray_unchecked
     val focusRequester = remember { FocusRequester() }
 
     Row(

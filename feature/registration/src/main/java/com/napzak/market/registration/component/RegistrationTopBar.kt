@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_close_24
+import com.napzak.market.designsystem.R.drawable.ic_gray_cancel
 import com.napzak.market.designsystem.component.topbar.NapzakBasicTopBar
 import com.napzak.market.designsystem.component.topbar.NapzakTopBarAction
 import com.napzak.market.designsystem.component.topbar.NapzakTopBarColor
@@ -20,7 +20,7 @@ internal fun RegistrationTopBar(
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val actions = listOf(NapzakTopBarAction(ic_close_24, onCloseClick))
+    val actions = listOf(NapzakTopBarAction(ic_gray_cancel, onCloseClick))
     val topBarColor = NapzakTopBarColor(
         containerColor = NapzakMarketTheme.colors.white,
         contentColor = NapzakMarketTheme.colors.gray500,

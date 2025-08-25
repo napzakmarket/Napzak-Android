@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.napzak.market.designsystem.R.drawable.ic_arrow_right_9
+import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_right
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
 
@@ -31,7 +31,7 @@ internal fun SettingItem(title: String, onClick: () -> Unit) {
             color = NapzakMarketTheme.colors.gray400,
         )
         Icon(
-            imageVector = ImageVector.vectorResource(ic_arrow_right_9),
+            imageVector = ImageVector.vectorResource(ic_gray_arrow_right),
             contentDescription = null,
             tint = Color.Unspecified,
         )

@@ -2,9 +2,7 @@ package com.napzak.market.registration.sale
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,9 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -43,7 +38,7 @@ import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.ProductConditionType
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.R.drawable.ic_check_snackbar_18
+import com.napzak.market.designsystem.R.drawable.ic_white_checked
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastFontType
@@ -94,7 +89,7 @@ fun SaleRegistrationRoute(
                     is ShowToast -> toast.makeText(
                         toastType = ToastType.COMMON,
                         message = sideEffect.message,
-                        icon = ic_check_snackbar_18,
+                        icon = ic_white_checked,
                         fontType = ToastFontType.LARGE,
                     )
                 }

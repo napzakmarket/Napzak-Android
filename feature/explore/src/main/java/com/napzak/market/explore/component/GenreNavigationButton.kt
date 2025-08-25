@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_right_chevron
+import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_right
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
 import com.napzak.market.ui_util.ellipsis
@@ -49,7 +49,7 @@ internal fun GenreNavigationButton(
         Spacer(Modifier.weight(1f))
 
         Icon(
-            imageVector = ImageVector.vectorResource(ic_right_chevron),
+            imageVector = ImageVector.vectorResource(ic_gray_arrow_right),
             contentDescription = null,
             tint = NapzakMarketTheme.colors.gray200,
         )

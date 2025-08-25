@@ -16,6 +16,7 @@ dependencies {
     implementation(projects.domain.store)
     implementation(projects.data.local)
     implementation(projects.core.util)
+    implementation(projects.core.uiUtil)
 
     implementation(libs.timber)
 }

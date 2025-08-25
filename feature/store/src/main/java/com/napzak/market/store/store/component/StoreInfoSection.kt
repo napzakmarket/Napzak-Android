@@ -35,7 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.napzak.market.designsystem.R.drawable.ic_edit_pencil
+import com.napzak.market.designsystem.R.drawable.ic_gray_edit
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.store.R.string.store_edit_profile
 import com.napzak.market.store.model.StoreDetail
@@ -150,7 +150,7 @@ internal fun StoreInfoSection(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(ic_edit_pencil),
+                        imageVector = ImageVector.vectorResource(ic_gray_edit),
                         contentDescription = null,
                         tint = Color.Unspecified,
                         modifier = Modifier.size(12.dp),
