@@ -16,4 +16,4 @@ annotation class NoAuth
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class Chat
+annotation class Socket

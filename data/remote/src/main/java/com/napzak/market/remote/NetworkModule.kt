@@ -5,6 +5,7 @@ import com.napzak.market.local.datastore.TokenDataStore
 import com.napzak.market.remote.qualifier.JWT
 import com.napzak.market.remote.qualifier.NoAuth
 import com.napzak.market.remote.qualifier.S3
+import com.napzak.market.remote.qualifier.Socket
 import com.napzak.market.util.android.StoreStateManager
 import com.napzak.market.util.android.TokenProvider
 import dagger.Module
@@ -22,6 +23,7 @@ import org.json.JSONObject
 import retrofit2.Converter
 import retrofit2.Retrofit
 import timber.log.Timber
+import java.time.Duration
 import javax.inject.Singleton
 
 @Module
@@ -102,6 +104,18 @@ object NetworkModule {
         .addInterceptor(headerInterceptor)
         .build()
 
+    @Socket
+    @Provides
+    @Singleton
+    fun provideSocketOkHttpClient(
+        loggingInterceptor: Interceptor,
+    ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(loggingInterceptor)
+        .callTimeout(Duration.ofMinutes(10))
+        .pingInterval(Duration.ofSeconds(30))
+        .retryOnConnectionFailure(true)
+        .build()
+
     @Provides
     @Singleton
     fun provideNoTokenOkHttpClient(
@@ -113,7 +127,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideWebSocketClient(
-        @JWT client: OkHttpClient,
+        @Socket client: OkHttpClient,
     ): OkHttpWebSocketClient = OkHttpWebSocketClient(client)
 
     @Provides
