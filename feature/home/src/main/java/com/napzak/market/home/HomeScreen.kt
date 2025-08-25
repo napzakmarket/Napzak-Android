@@ -75,6 +75,7 @@ internal fun HomeRoute(
     onProductDetailNavigate: (Long) -> Unit,
     onMostInterestedSellNavigate: () -> Unit,
     onMostInterestedBuyNavigate: () -> Unit,
+    checkSessionManager: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -91,6 +92,7 @@ internal fun HomeRoute(
 
     LaunchedEffect(Unit) {
         viewModel.fetchHomeData()
+        checkSessionManager()
 
         val isRequested = viewModel.getNotificationPermissionRequested()
         checkNotificationPermission(
