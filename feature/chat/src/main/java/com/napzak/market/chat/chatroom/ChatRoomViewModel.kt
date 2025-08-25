@@ -20,6 +20,7 @@ import com.napzak.market.presigned_url.model.UploadImage
 import com.napzak.market.presigned_url.usecase.UploadImagesUseCase
 import com.napzak.market.store.repository.StoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,6 +44,7 @@ internal class ChatRoomViewModel @Inject constructor(
 ) : ViewModel() {
     private val chatMessageIdSet = mutableSetOf<Long>()
     private val chatMessageList = mutableListOf<ReceiveMessage<*>>()
+    private var collectJob: Job? = null
 
     private val _chatItems = MutableStateFlow<List<ReceiveMessage<*>>>(emptyList())
     val chatItems: StateFlow<List<ReceiveMessage<*>>> = _chatItems.asStateFlow()
@@ -180,33 +182,36 @@ internal class ChatRoomViewModel @Inject constructor(
     /**
      * 구독 중인 소켓 채널로부터 메시지를 수신합니다. 이 메서드가 호출되어야 수신이 시작됩니다.
      */
-    private fun collectMessages(roomId: Long) = viewModelScope.launch {
-        getChatFlowUseCase(roomId)
-            .collect { message ->
-                Timber.d("수신한 메시지: $message")
-                if (message.roomId == roomId) {
-                    _sideEffect.send(ChatRoomSideEffect.OnReceiveChatMessage)
+    private fun collectMessages(roomId: Long) {
+        collectJob?.cancel()
+        collectJob = viewModelScope.launch {
+            getChatFlowUseCase(roomId)
+                .collect { message ->
+                    Timber.d("수신한 메시지: $message")
+                    if (message.roomId == roomId) {
+                        _sideEffect.send(ChatRoomSideEffect.OnReceiveChatMessage)
 
-                    when (message) {
-                        is ReceiveMessage.Join -> {
-                            updateUserMessageReadState(message)
-                        }
+                        when (message) {
+                            is ReceiveMessage.Join -> {
+                                updateUserMessageReadState(message)
+                            }
 
-                        is ReceiveMessage.Leave -> {
-                            _chatRoomState.update { it.copy(isOpponentOnline = false) }
-                        }
+                            is ReceiveMessage.Leave -> {
+                                _chatRoomState.update { it.copy(isOpponentOnline = false) }
+                            }
 
-                        is ReceiveMessage.Notice -> {
-                            _chatRoomState.update { it.copy(isRoomWithdrawn = true) }
-                            addMessages(listOf(message))
-                        }
+                            is ReceiveMessage.Notice -> {
+                                _chatRoomState.update { it.copy(isRoomWithdrawn = true) }
+                                addMessages(listOf(message))
+                            }
 
-                        else -> {
-                            addMessages(listOf(message))
+                            else -> {
+                                addMessages(listOf(message))
+                            }
                         }
                     }
                 }
-            }
+        }
     }
 
     private fun updateUserMessageReadState(message: ReceiveMessage.Join) {
