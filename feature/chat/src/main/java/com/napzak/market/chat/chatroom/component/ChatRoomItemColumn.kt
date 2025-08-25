@@ -113,7 +113,7 @@ private fun ChatItemRenderer(
                     content = {
                         ChatItemView(
                             chatItem = chatItem,
-                            onItemClick = onItemClick
+                            onItemClick = onItemClick,
                         )
                     },
                 )

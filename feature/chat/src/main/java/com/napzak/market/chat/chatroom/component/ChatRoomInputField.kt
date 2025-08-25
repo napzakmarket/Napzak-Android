@@ -146,7 +146,7 @@ private fun GalleryButton(
         imageVector = ImageVector.vectorResource(ic_gallery),
         contentDescription = stringResource(chat_room_input_field_gallery),
         tint = tint,
-        modifier = clickableModifier
+        modifier = clickableModifier,
     )
 }
 

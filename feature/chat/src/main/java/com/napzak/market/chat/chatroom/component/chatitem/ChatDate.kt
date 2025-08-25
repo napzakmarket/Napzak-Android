@@ -28,14 +28,14 @@ internal fun ChatDate(
         contentAlignment = Alignment.Center,
         modifier = modifier.paint(
             painter = painterResource(img_chat_date_box),
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.FillBounds,
         ),
     ) {
         Text(
             text = date,
             style = textStyle,
             color = color,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         )
     }
 }

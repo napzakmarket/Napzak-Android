@@ -227,7 +227,7 @@ internal fun ChatRoomScreen(
                                         else -> {}
                                     }
                                 },
-                                modifier = Modifier.fillMaxSize()
+                                modifier = Modifier.fillMaxSize(),
                             )
 
                             if (chatRoomState.isOpponentWithdrawn) {

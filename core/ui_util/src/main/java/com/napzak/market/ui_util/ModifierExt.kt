@@ -31,7 +31,7 @@ inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier
     clickable(
         indication = null,
         interactionSource = remember { MutableInteractionSource() },
-        onClick = { onClick() }
+        onClick = { onClick() },
     )
 }
 
@@ -42,7 +42,7 @@ inline fun Modifier.noRippleClickable(enabled: Boolean, crossinline onClick: () 
             indication = null,
             interactionSource = remember { MutableInteractionSource() },
             enabled = enabled,
-            onClick = { onClick() }
+            onClick = { onClick() },
         )
     }
 

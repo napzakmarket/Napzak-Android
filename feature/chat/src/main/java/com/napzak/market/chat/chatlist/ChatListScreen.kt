@@ -227,7 +227,7 @@ private fun ChatListScreenPreview() {
                             lastMessage = "${index}번째로 메세지를 보냄 ",
                             unreadMessageCount = randomCount,
                             lastMessageAt = "오후 $randomHour:$randomMinute",
-                            isOpponentWithdrawn = false
+                            isOpponentWithdrawn = false,
                         )
                     )
                 }

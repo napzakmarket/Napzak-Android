@@ -47,7 +47,7 @@ internal fun ImageSendButton(
             imageVector = ImageVector.vectorResource(ic_send),
             contentDescription = null,
             tint = contentColor,
-            modifier = Modifier.size(16.dp)
+            modifier = Modifier.size(16.dp),
         )
     }
 }

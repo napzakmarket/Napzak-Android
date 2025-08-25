@@ -62,7 +62,7 @@ internal fun OpponentChatItemContainer(
                 NapzakProfileImage(
                     imageUrl = imageUrl ?: "",
                     contentDescription = null,
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(40.dp),
                 )
             }
 

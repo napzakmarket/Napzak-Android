@@ -81,7 +81,7 @@ internal fun ChatProduct(
                 name = product.title,
                 price = stringResource(
                     chat_room_product_price_won_format,
-                    product.price.toString().formatToPriceString()
+                    product.price.toString().formatToPriceString(),
                 ),
                 modifier = Modifier.padding(horizontal = 20.dp),
             )

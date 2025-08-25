@@ -72,14 +72,14 @@ internal fun ChatImageZoomScreen(
         modifier = modifier
             .fillMaxSize()
             .background(color = NapzakMarketTheme.colors.black)
-            .onGloballyPositioned { layoutSize = it.size }
+            .onGloballyPositioned { layoutSize = it.size },
     ) {
         ZoomableImage(
             imageUrl = selectedImageUrl,
             contentDescription = null,
             parentLayoutSize = layoutSize,
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
         )
 
         if (isPreview) {
@@ -90,7 +90,7 @@ internal fun ChatImageZoomScreen(
         } else {
             ImageZoomCloseButton(
                 onBackClick = onBackClick,
-                modifier = Modifier.align(Alignment.TopEnd)
+                modifier = Modifier.align(Alignment.TopEnd),
             )
         }
     }

@@ -133,7 +133,7 @@ class ChatListViewModel @Inject constructor(
     private fun updateUiState(loadState: UiState<ImmutableList<ChatRoom>>) {
         _chatRoomsState.update { currentState ->
             currentState.copy(
-                loadState = loadState
+                loadState = loadState,
             )
         }
     }

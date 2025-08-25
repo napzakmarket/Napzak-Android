@@ -10,5 +10,5 @@ data class ProductBrief(
     val genreName: String,
     val productOwnerId: Long,
     val isMyProduct: Boolean,
-    val isProductDeleted: Boolean
+    val isProductDeleted: Boolean,
 )

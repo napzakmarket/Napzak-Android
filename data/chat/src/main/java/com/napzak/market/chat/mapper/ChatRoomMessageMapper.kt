@@ -30,7 +30,7 @@ private fun MessageItem.toText(roomId: Long): ReceiveMessage.Text =
         timeStamp = requireNotNull(createdAt),
         isRead = isRead ?: false,
         isMessageOwner = isMessageOwner ?: false,
-        isProfileNeeded = isProfileNeeded ?: false
+        isProfileNeeded = isProfileNeeded ?: false,
     )
 
 private fun MessageItem.toImage(
@@ -45,7 +45,7 @@ private fun MessageItem.toImage(
         timeStamp = requireNotNull(createdAt),
         isRead = isRead ?: false,
         isMessageOwner = isMessageOwner ?: false,
-        isProfileNeeded = isProfileNeeded ?: false
+        isProfileNeeded = isProfileNeeded ?: false,
     )
 
 private fun MessageItem.toProduct(
