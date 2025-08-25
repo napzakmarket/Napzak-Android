@@ -39,7 +39,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.designsystem.R
-import com.napzak.market.designsystem.R.drawable.ic_heart_filled_14
+import com.napzak.market.designsystem.R.drawable.ic_heart_filled_16
 import com.napzak.market.designsystem.R.drawable.ic_heart_unfilled_16
 import com.napzak.market.designsystem.R.drawable.ic_product_buy_complete
 import com.napzak.market.designsystem.R.drawable.ic_product_reservation
@@ -317,7 +317,7 @@ private fun LikeButton(
     onLikeClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val imageVector = if (isLiked) ic_heart_filled_14
+    val imageVector = if (isLiked) ic_heart_filled_16
     else ic_heart_unfilled_16
 
     Icon(
@@ -361,7 +361,7 @@ private fun IconText(
 private fun LargeProductItemPreview() {
     NapzakMarketTheme {
         var isLiked1 by remember { mutableStateOf(false) }
-        var isLiked2 by remember { mutableStateOf(false) }
+        var isLiked2 by remember { mutableStateOf(true) }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(20.dp)
