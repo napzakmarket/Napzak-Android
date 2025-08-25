@@ -12,6 +12,7 @@ class CheckAutoLoginUseCase @Inject constructor(
         require(!access.isNullOrBlank()) { "No access token" }
 
         val role = tokenProvider.getAccessTokenRole()
+            ?.removePrefix("ROLE_")
             ?.uppercase()
 
         if (role == "STORE") {
