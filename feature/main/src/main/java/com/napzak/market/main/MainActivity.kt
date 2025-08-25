@@ -23,6 +23,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(webSocketLifecycleObserver)
+        handleIntent(intent)
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
@@ -50,13 +51,18 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        handleIntent(intent)
+    }
 
+    private fun handleIntent(intent: Intent) {
         val notifyType = intent.getStringExtra("type")
         val chatRoomId = intent.getStringExtra("roomId")
 
         CoroutineScope(Dispatchers.Main).launch {
-            if (notifyType == NOTIFY_CHAT && chatRoomId != null)
+            if (notifyType == NOTIFY_CHAT && chatRoomId != null) {
                 ChatDeepLinkEventBus.send(ChatDeepLinkEvent.ChatRoom(chatRoomId))
+                SessionManager.chatRoomId = chatRoomId.toLong()
+            }
         }
     }
 
