@@ -38,6 +38,7 @@ import coil.request.ImageRequest
 import com.napzak.market.designsystem.R.drawable.ic_edit_pencil
 import com.napzak.market.designsystem.R.drawable.ic_profile
 import com.napzak.market.designsystem.R.drawable.ic_cover_profile
+import com.napzak.market.designsystem.component.image.NapzakProfileImage
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.store.R.string.store_edit_profile
 import com.napzak.market.store.model.StoreDetail
@@ -77,16 +78,9 @@ internal fun StoreInfoSection(
                 Spacer(Modifier.height(35.dp))
             }
 
-            AsyncImage(
-                model = ImageRequest
-                    .Builder(context)
-                    .data(photoUrl)
-                    .placeholder(ic_profile)
-                    .error(ic_profile)
-                    .fallback(ic_profile)
-                    .build(),
+            NapzakProfileImage(
+                imageUrl = photoUrl,
                 contentDescription = null,
-                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(70.dp)
                     .clip(profileImageShape)
