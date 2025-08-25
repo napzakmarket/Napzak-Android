@@ -10,8 +10,6 @@ import com.napzak.market.presigned_url.usecase.ClearCacheUseCase
 import com.napzak.market.presigned_url.usecase.CompressImageUseCase
 import com.napzak.market.presigned_url.usecase.GetProductPresignedUrlUseCase
 import com.napzak.market.presigned_url.usecase.UploadImageUseCase
-import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect
-import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect.NavigateToDetail
 import com.napzak.market.registration.RegistrationContract.RegistrationSideEffect.ShowToast
 import com.napzak.market.registration.RegistrationViewModel
 import com.napzak.market.registration.model.Photo
@@ -22,9 +20,7 @@ import com.napzak.market.registration.usecase.EditRegisteredProductUseCase
 import com.napzak.market.registration.usecase.GetRegisteredPurchaseProductUseCase
 import com.napzak.market.registration.usecase.RegisterProductUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.take
@@ -53,8 +49,6 @@ class PurchaseRegistrationViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(PurchaseUiState())
     val purchaseUiState = _uiState.asStateFlow()
 
-    private val _sideEffect = MutableSharedFlow<RegistrationSideEffect>()
-    val sideEffect = _sideEffect.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -77,7 +71,7 @@ class PurchaseRegistrationViewModel @Inject constructor(
                 || price.isEmpty() || price.toIntOrNull()?.rem(1000) != 0)
     }
 
-    override suspend fun uploadProduct(presignedUrls: List<PresignedUrl>) {
+    override suspend fun uploadProduct(presignedUrls: List<PresignedUrl>): Result<Long> = runCatching {
         val purchaseState = _uiState.value
         val registrationState = registrationUiState.value
         val product = PurchaseRegistrationProduct(
@@ -97,20 +91,11 @@ class PurchaseRegistrationViewModel @Inject constructor(
         )
 
         productId?.let { id ->
-            editRegisteredProductUseCase(id, product).onSuccess {
-                updateLoadState(UiState.Success(Unit))
-                _sideEffect.emit(ShowToast(EDIT_SUCCESS))
-                _sideEffect.emit(NavigateToDetail(id))
-            }.onFailure {
-                updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
-            }
+            editRegisteredProductUseCase(id, product).getOrThrow()
+            _sideEffect.emit(ShowToast(EDIT_SUCCESS))
+            id
         } ?: run {
-            registerProductUseCase(product).onSuccess { id ->
-                updateLoadState(UiState.Success(Unit))
-                _sideEffect.emit(NavigateToDetail(id))
-            }.onFailure {
-                updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
-            }
+            registerProductUseCase(product).getOrThrow()
         }
     }
 
