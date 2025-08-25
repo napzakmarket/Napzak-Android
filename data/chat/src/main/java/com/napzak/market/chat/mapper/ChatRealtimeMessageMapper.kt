@@ -72,7 +72,7 @@ private fun ChatRealtimeMessage.toProduct(
             photo = "",
             productOwnerId = 0,
             isMyProduct = false,
-            isProductDeleted = false,
+            isProductDeleted = metadata.isProductDeleted ?: false,
         ),
         timeStamp = requireNotNull(createdAt),
         isRead = isRead ?: false,

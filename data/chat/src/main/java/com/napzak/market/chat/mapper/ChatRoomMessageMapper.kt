@@ -41,8 +41,8 @@ private fun MessageItem.toImage(
         messageId = requireNotNull(messageId),
         roomId = roomId,
         senderId = requireNotNull(senderId),
-        imageUrl = requireNotNull(metadata.imageUrls.firstOrNull()),
-        timeStamp = createdAt ?: "",
+        imageUrl = requireNotNull(metadata.imageUrls.firstOrNull { !it.isNullOrBlank() }),
+        timeStamp = requireNotNull(createdAt),
         isRead = isRead ?: false,
         isMessageOwner = isMessageOwner ?: false,
         isProfileNeeded = isProfileNeeded ?: false
