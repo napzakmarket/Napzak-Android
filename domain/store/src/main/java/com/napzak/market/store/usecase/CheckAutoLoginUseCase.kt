@@ -5,15 +5,20 @@ import com.napzak.market.util.android.TokenProvider
 import javax.inject.Inject
 
 class CheckAutoLoginUseCase @Inject constructor(
-    private val authRepository: AuthRepository,
     private val tokenProvider: TokenProvider,
 ) {
     suspend operator fun invoke(): Result<Unit> = runCatching {
-        val refreshToken = tokenProvider.getRefreshToken()
-            ?: throw IllegalStateException("refreshToken 없음")
+        val access = tokenProvider.getAccessToken()
+        require(!access.isNullOrBlank()) { "No access token" }
 
-        val newAccessToken = authRepository.reissue(refreshToken)
+        val role = tokenProvider.getAccessTokenRole()
+            ?.uppercase()
 
-        tokenProvider.updateAccessToken(newAccessToken)
+        if (role == "STORE") {
+            Unit
+        } else {
+            tokenProvider.clearTokens()
+            error("Not active role: $role")
+        }
     }
 }
