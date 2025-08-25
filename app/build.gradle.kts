@@ -9,7 +9,7 @@ plugins {
 
 val localProps = Properties().apply {
     val f = File(rootDir, "local.properties")
-    if (f.exists()) load(f.inputStream())
+    if (f.exists()) f.inputStream().use { load(it) }
 }
 
 val kakaoNativeKey: String =
