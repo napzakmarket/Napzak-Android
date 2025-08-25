@@ -40,21 +40,18 @@ class TokenProviderImpl @Inject constructor(
     override suspend fun getAccessTokenRole(): String? =
         JwtInspector.extractRoleString(getAccessToken())
 
-    override suspend fun reissueAccessToken(): String = mutex.withLock {
+    override suspend fun reissueAccessToken(): String? = mutex.withLock {
         val refresh = tokenDataStore.getRefreshToken()
-        if (refresh.isNullOrBlank()) return@withLock null.toString()
-
+        if (refresh.isNullOrBlank()) return@withLock null
         val newAccess = authRepository.reissueAccessToken(refresh).getOrNull()
-        if (newAccess.isNullOrBlank()) return@withLock null.toString()
-
+        if (newAccess.isNullOrBlank()) return@withLock null
         val role = JwtInspector.extractRoleString(newAccess)
-
-        (if (role == "STORE") {
+        return@withLock if (role == "STORE") {
             tokenDataStore.updateAccessToken(newAccess)
             newAccess
         } else {
             tokenDataStore.clearTokens()
             null
-        }).toString()
+        }
     }
 }
