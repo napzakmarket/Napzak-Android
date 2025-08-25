@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -34,7 +35,6 @@ import com.napzak.market.designsystem.R.drawable.ic_close_24
 import com.napzak.market.designsystem.component.image.ZoomableImage
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
-import timber.log.Timber
 
 @Composable
 internal fun ChatImageZoomScreen(
@@ -44,7 +44,7 @@ internal fun ChatImageZoomScreen(
     onSendClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Timber.d("Zoom Called with $selectedImageUrl and $isPreview")
+    val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     var layoutSize by remember { mutableStateOf(IntSize.Zero) }
 
@@ -53,6 +53,8 @@ internal fun ChatImageZoomScreen(
     }
 
     DisposableEffect(selectedImageUrl) {
+        focusManager.clearFocus()
+
         val window = (context as? Activity)?.window
         val windowInsetsController =
             window?.let { WindowCompat.getInsetsController(window, window.decorView) }
