@@ -1,6 +1,5 @@
 package com.napzak.market.store.usecase
 
-import com.napzak.market.store.repository.AuthRepository
 import com.napzak.market.util.android.TokenProvider
 import javax.inject.Inject
 
