@@ -7,5 +7,6 @@ interface TokenProvider {
     suspend fun updateAccessToken(token: String?)
     suspend fun updateRefreshToken(token: String?)
     suspend fun reissueAccessToken(): String?
+    suspend fun getAccessTokenRole(): String?
     suspend fun clearTokens()
 }
