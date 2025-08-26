@@ -109,8 +109,10 @@ object NetworkModule {
     @Singleton
     fun provideSocketOkHttpClient(
         loggingInterceptor: Interceptor,
+        @JWT headerInterceptor: Interceptor
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
+        .addInterceptor(headerInterceptor)
         .callTimeout(Duration.ofMinutes(10))
         .pingInterval(Duration.ofSeconds(30))
         .retryOnConnectionFailure(true)
