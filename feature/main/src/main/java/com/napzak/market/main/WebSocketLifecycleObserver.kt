@@ -1,7 +1,6 @@
 package com.napzak.market.main
 
 import android.content.Context
-import android.widget.Toast
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.napzak.market.chat.repository.ChatRepository
@@ -48,18 +47,11 @@ class WebSocketLifecycleObserver @Inject constructor(
         loginStateCollectJob = activityScope.launch {
             isLoggedIn.collectLatest { isLoggedIn ->
                 if (isLoggedIn && isTokenAvailable()) {
-                    val storeId = fetchStoreInfo()?.storeId
-                    if (storeId == null) {
-                        showNetworkErrorToast()
-                        return@collectLatest
-                    }
+                    val storeId = fetchStoreInfo()?.storeId ?: return@collectLatest
                     runCatching {
                         connectChatSocket(storeId)
                         subscribeChatRooms(storeId)
-                    }.onFailure {
-                        showNetworkErrorToast()
                     }
-
                 }
             }
         }
@@ -98,8 +90,4 @@ class WebSocketLifecycleObserver @Inject constructor(
     }
 
     private suspend fun isTokenAvailable() = tokenProvider.getAccessToken() != null
-
-    // TODO: 소켓 에러 대응 세분화
-    private fun showNetworkErrorToast() =
-        Toast.makeText(context, "네트워크가 불안정합니다.", Toast.LENGTH_SHORT).show()
 }
