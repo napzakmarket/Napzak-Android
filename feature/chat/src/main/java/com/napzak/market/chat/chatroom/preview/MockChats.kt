@@ -13,6 +13,7 @@ internal val mockChats
                 messageId = 14,
                 notice = "채팅방을 나갔습니다",
                 timeStamp = "오후 9:01",
+                senderId = 0,
             ),
             ReceiveMessage.Text(
                 roomId = 1,
@@ -21,6 +22,8 @@ internal val mockChats
                 timeStamp = "오후 9:00",
                 isRead = false,
                 isMessageOwner = false,
+                senderId = 0,
+                isProfileNeeded = false,
             ),
             ReceiveMessage.Text(
                 roomId = 1,
@@ -29,6 +32,8 @@ internal val mockChats
                 timeStamp = "오후 8:00",
                 isRead = true,
                 isMessageOwner = false,
+                senderId = 0,
+                isProfileNeeded = false,
             ),
             ReceiveMessage.Text(
                 roomId = 1,
@@ -37,6 +42,8 @@ internal val mockChats
                 timeStamp = "오후 7:30",
                 isRead = true,
                 isMessageOwner = true,
+                senderId = 0,
+                isProfileNeeded = false,
             ),
             ReceiveMessage.Text(
                 roomId = 1,
@@ -45,6 +52,8 @@ internal val mockChats
                 timeStamp = "오후 7:30",
                 isRead = true,
                 isMessageOwner = false,
+                senderId = 0,
+                isProfileNeeded = false,
             ),
             ReceiveMessage.Text(
                 roomId = 1,
@@ -53,6 +62,8 @@ internal val mockChats
                 timeStamp = "오후 7:30",
                 isRead = true,
                 isMessageOwner = false,
+                senderId = 0,
+                isProfileNeeded = false,
             ),
             ReceiveMessage.Date(
                 roomId = 1,
@@ -66,7 +77,9 @@ internal val mockChats
                 text = "사죄드립니다.",
                 timeStamp = "오후 7:40",
                 isRead = true,
-                isMessageOwner = false
+                isMessageOwner = false,
+                senderId = 0,
+                isProfileNeeded = false,
             ),
             ReceiveMessage.Image(
                 roomId = 1,
@@ -74,7 +87,9 @@ internal val mockChats
                 imageUrl = "",
                 timeStamp = "오후 7:37",
                 isRead = true,
-                isMessageOwner = true
+                isMessageOwner = true,
+                senderId = 0,
+                isProfileNeeded = false,
             ),
             ReceiveMessage.Text(
                 roomId = 1,
@@ -82,7 +97,9 @@ internal val mockChats
                 text = "뭐야 가세요",
                 timeStamp = "오후 7:35",
                 isRead = true,
-                isMessageOwner = true
+                isMessageOwner = true,
+                senderId = 0,
+                isProfileNeeded = false,
             ),
             ReceiveMessage.Text(
                 roomId = 1,
@@ -91,6 +108,8 @@ internal val mockChats
                 timeStamp = "오후 7:35",
                 isRead = true,
                 isMessageOwner = true,
+                senderId = 0,
+                isProfileNeeded = false,
             ),
             ReceiveMessage.Text(
                 roomId = 1,
@@ -99,6 +118,8 @@ internal val mockChats
                 timeStamp = "오후 7:30",
                 isRead = true,
                 isMessageOwner = false,
+                senderId = 0,
+                isProfileNeeded = false,
             ),
             ReceiveMessage.Text(
                 roomId = 1,
@@ -107,6 +128,8 @@ internal val mockChats
                 timeStamp = "오후 7:30",
                 isRead = true,
                 isMessageOwner = false,
+                senderId = 0,
+                isProfileNeeded = false,
             ),
             ReceiveMessage.Product(
                 product = mockProductBrief,
@@ -115,6 +138,8 @@ internal val mockChats
                 timeStamp = "오후 7:30",
                 isRead = true,
                 isMessageOwner = false,
+                senderId = 0,
+                isProfileNeeded = false,
             )
         )
 
@@ -128,27 +153,20 @@ internal val mockProductBrief
         tradeType = "SELL",
         isPriceNegotiable = false,
         isMyProduct = false,
-        productOwnerId = 1
+        productOwnerId = 1,
+        isProductDeleted = false
     )
+
+internal val mockStoreBrief = StoreBrief(
+    storeId = 1,
+    nickname = "납자기",
+    storePhoto = "",
+    isWithdrawn = false,
+    isReported = false,
+)
 
 internal val mockChatRoom = ChatRoomState(
     roomId = 1,
-    productBrief = ProductBrief(
-        productId = 1,
-        photo = "",
-        tradeType = "",
-        title = "",
-        price = 10000,
-        genreName = "",
-        isPriceNegotiable = true,
-        productOwnerId = 1,
-        isMyProduct = true
-    ),
-    storeBrief = StoreBrief(
-        storeId = 1,
-        nickname = "",
-        storePhoto = "",
-        isWithdrawn = true,
-        isReported = true,
-    )
+    productBrief = mockProductBrief,
+    storeBrief = mockStoreBrief
 )

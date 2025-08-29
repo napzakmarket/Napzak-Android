@@ -25,8 +25,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.napzak.market.designsystem.R.drawable.ic_dark_gray_search
 import com.napzak.market.designsystem.R.drawable.ic_square_gray_cancel
-import com.napzak.market.designsystem.R.drawable.ic_gray_search
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
 
@@ -78,7 +78,7 @@ fun SearchTextField(
                 Row(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
-                        .padding(start = 10.dp, end = 16.dp),
+                        .padding(end = 15.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     if (text.isNotEmpty() && !readOnly) {
@@ -91,11 +91,9 @@ fun SearchTextField(
                         )
                     }
                     Icon(
-                        imageVector = ImageVector.vectorResource(ic_gray_search),
+                        imageVector = ImageVector.vectorResource(ic_dark_gray_search),
                         contentDescription = null,
-                        modifier = Modifier
-                            .padding(start = 10.dp)
-                            .noRippleClickable(onSearchClick),
+                        modifier = Modifier.noRippleClickable(onSearchClick),
                         tint = Color.Unspecified,
                     )
                 }

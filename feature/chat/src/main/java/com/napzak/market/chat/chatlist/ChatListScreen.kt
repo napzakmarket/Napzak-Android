@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,12 +25,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.chat.chatlist.component.ChatRoomItem
 import com.napzak.market.chat.chatlist.component.NotificationPermissionModal
 import com.napzak.market.chat.model.ChatRoom
 import com.napzak.market.common.state.UiState
-import com.napzak.market.designsystem.R.drawable.ic_no_chatting_histroy
+import com.napzak.market.designsystem.R.drawable.ic_no_chatting_room
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.topbar.TitleTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -51,17 +51,21 @@ internal fun ChatListRoute(
     viewModel: ChatListViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
-    val chatRoomsState by viewModel.chatRoomsState.collectAsStateWithLifecycle()
+    val uiState by viewModel.chatRoomsState.collectAsStateWithLifecycle()
     val notificationState by viewModel.notificationState.collectAsStateWithLifecycle()
     val systemPermission = NotificationManagerCompat.from(context).areNotificationsEnabled()
 
-    LaunchedEffect(Unit) {
+    LifecycleResumeEffect(Unit) {
         viewModel.prepareChatRooms()
         viewModel.checkAndSetNotificationModal(systemPermission)
+
+        onPauseOrDispose {
+            // No resource to close
+        }
     }
 
     ChatListScreen(
-        chatRoomsState = chatRoomsState,
+        uiState = uiState,
         onChatRoomClick = { chatRoom -> onChatRoomNavigate(chatRoom.roomId) },
         isNotificationModalOpen = notificationState.isNotificationModalOpen,
         isSystemPermissionGranted = systemPermission,
@@ -75,7 +79,7 @@ internal fun ChatListRoute(
 
 @Composable
 private fun ChatListScreen(
-    chatRoomsState: UiState<List<ChatRoom>>,
+    uiState: ChatListUiState,
     onChatRoomClick: (ChatRoom) -> Unit,
     isNotificationModalOpen: Boolean,
     isSystemPermissionGranted: Boolean,
@@ -92,16 +96,16 @@ private fun ChatListScreen(
     ) {
         ChatListTopBar()
 
-        when (chatRoomsState) {
+        when (uiState.loadState) {
             is UiState.Loading -> {
                 NapzakLoadingOverlay()
             }
 
             is UiState.Success -> {
-                val chatRooms = chatRoomsState.data
+                val chatRooms = uiState.loadState.data
 
                 ChatListColumn(
-                    chatRooms = chatRooms.toImmutableList(),
+                    chatRooms = chatRooms,
                     onChatRoomClick = onChatRoomClick,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -165,16 +169,10 @@ private fun ChatListColumn(
     ) {
         items(chatRooms) { chatRoom ->
             ChatDivider()
-            with(chatRoom) {
-                ChatRoomItem(
-                    nickname = storeNickname,
-                    lastMessage = lastMessage,
-                    profileImageUrl = storePhoto,
-                    unReadMessageCount = unreadMessageCount,
-                    timeStamp = lastMessageAt,
-                    onClick = { onChatRoomClick(chatRoom) },
-                )
-            }
+            ChatRoomItem(
+                chatRoom = chatRoom,
+                onClick = { onChatRoomClick(chatRoom) },
+            )
         }
         item { ChatDivider() }
     }
@@ -190,7 +188,7 @@ private fun EmptyChatListScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         Image(
-            imageVector = ImageVector.vectorResource(ic_no_chatting_histroy),
+            imageVector = ImageVector.vectorResource(ic_no_chatting_room),
             contentDescription = null,
             modifier = Modifier.padding(end = 40.dp),
         )
@@ -213,29 +211,32 @@ private fun EmptyChatListScreen(
 @ScreenPreview
 @Composable
 private fun ChatListScreenPreview() {
-    val chatRoomsState = UiState.Success(
-        buildList {
-            repeat(20) { index ->
-                val randomHour = (0..12).random().toString()
-                val randomMinute = (0..60).random().toString().padStart(2, '0')
-                val randomCount = (0..1000).random()
+    val uiState = ChatListUiState(
+        UiState.Success(
+            buildList {
+                repeat(20) { index ->
+                    val randomHour = (0..12).random().toString()
+                    val randomMinute = (0..60).random().toString().padStart(2, '0')
+                    val randomCount = (0..1000).random()
 
-                add(
-                    ChatRoom(
-                        roomId = index.toLong(),
-                        storeNickname = "납자기$index",
-                        storePhoto = "",
-                        lastMessage = "${index}번째로 메세지를 보냄 ",
-                        unreadMessageCount = randomCount,
-                        lastMessageAt = "오후 $randomHour:$randomMinute",
+                    add(
+                        ChatRoom(
+                            roomId = index.toLong(),
+                            storeNickname = "납자기$index",
+                            storePhoto = "",
+                            lastMessage = "${index}번째로 메세지를 보냄 ",
+                            unreadMessageCount = randomCount,
+                            lastMessageAt = "오후 $randomHour:$randomMinute",
+                            isOpponentWithdrawn = false,
+                        )
                     )
-                )
-            }
-        }
+                }
+            }.toImmutableList()
+        )
     )
     NapzakMarketTheme {
         ChatListScreen(
-            chatRoomsState = chatRoomsState,
+            uiState = uiState,
             isNotificationModalOpen = true,
             isSystemPermissionGranted = false,
             isAppPermissionGranted = false,
@@ -252,7 +253,7 @@ private fun ChatListScreenPreview() {
 private fun ChatListEmptyScreenPreview() {
     NapzakMarketTheme {
         ChatListScreen(
-            chatRoomsState = UiState.Empty,
+            uiState = ChatListUiState(UiState.Empty),
             isNotificationModalOpen = true,
             isSystemPermissionGranted = false,
             isAppPermissionGranted = false,

@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -31,6 +32,7 @@ import coil.request.ImageRequest
 import com.napzak.market.chat.model.ProductBrief
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.feature.chat.R.string.chat_room_product_deleted
 import com.napzak.market.feature.chat.R.string.chat_room_product_negotiable
 import com.napzak.market.feature.chat.R.string.chat_room_product_price_won_format
 import com.napzak.market.ui_util.ShadowDirection
@@ -45,6 +47,7 @@ internal fun ChatRoomProductSection(
     modifier: Modifier = Modifier,
 ) {
     val innerPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
+    val alpha = if (product.isProductDeleted) 0.6f else 1f
 
     Row(
         modifier = modifier
@@ -54,11 +57,17 @@ internal fun ChatRoomProductSection(
                 endColor = NapzakMarketTheme.colors.transWhite,
                 direction = ShadowDirection.Bottom,
             )
-            .noRippleClickable(onClick)
-            .padding(innerPadding),
+            .noRippleClickable(
+                enabled = !product.isProductDeleted,
+                onClick = onClick,
+            )
+            .padding(innerPadding)
+            .alpha(alpha),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        ProductImage(imageUrl = product.photo)
+        ProductImage(
+            imageUrl = product.photo,
+        )
         Spacer(modifier = Modifier.width(12.dp))
         Column {
             ProductTagRow(
@@ -67,7 +76,11 @@ internal fun ChatRoomProductSection(
             )
             Spacer(modifier = Modifier.height(5.dp))
             ProductText(
-                text = product.title,
+                text =
+                    if (product.isProductDeleted)
+                        stringResource(chat_room_product_deleted, product.title)
+                    else
+                        product.title,
                 style = NapzakMarketTheme.typography.body14sb,
             )
             ProductText(
@@ -99,7 +112,7 @@ private fun ProductImage(
         contentScale = ContentScale.Crop,
         modifier = modifier
             .size(imageSize)
-            .clip(imageShape),
+            .clip(imageShape)
     )
 }
 
@@ -107,6 +120,7 @@ private fun ProductImage(
 private fun ProductTagRow(
     tradeType: String,
     isPriceNegotiable: Boolean,
+
     modifier: Modifier = Modifier,
 ) {
     Row {
@@ -191,7 +205,8 @@ private fun ChatRoomProductSellPreview() {
                 tradeType = "SELL",
                 isPriceNegotiable = false,
                 isMyProduct = false,
-                productOwnerId = 1
+                productOwnerId = 1,
+                isProductDeleted = false
             ),
             onClick = {},
             modifier = Modifier.fillMaxWidth(),
@@ -213,7 +228,8 @@ private fun ChatRoomProductBuyPreview() {
                 tradeType = "BUY",
                 isPriceNegotiable = true,
                 isMyProduct = false,
-                productOwnerId = 1
+                productOwnerId = 1,
+                isProductDeleted = true
             ),
             onClick = {},
             modifier = Modifier.fillMaxWidth(),

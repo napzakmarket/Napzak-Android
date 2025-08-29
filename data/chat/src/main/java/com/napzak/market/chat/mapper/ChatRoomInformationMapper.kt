@@ -21,6 +21,7 @@ private fun ChatRoomInformationResponse.ProductInfo.toDomain(): ProductBrief = P
     genreName = genreName,
     productOwnerId = productOwnerId,
     isMyProduct = isMyProduct,
+    isProductDeleted = isProductDeleted,
 )
 
 private fun ChatRoomInformationResponse.StoreInfo.toDomain(): StoreBrief = StoreBrief(

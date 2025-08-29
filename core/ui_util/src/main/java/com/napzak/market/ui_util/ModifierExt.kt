@@ -9,6 +9,7 @@ import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,9 +32,20 @@ inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier
     clickable(
         indication = null,
         interactionSource = remember { MutableInteractionSource() },
-        onClick = { onClick() }
+        onClick = { onClick() },
     )
 }
+
+@SuppressLint("ModifierFactoryUnreferencedReceiver")
+inline fun Modifier.noRippleClickable(enabled: Boolean, crossinline onClick: () -> Unit): Modifier =
+    composed {
+        clickable(
+            indication = null,
+            interactionSource = remember { MutableInteractionSource() },
+            enabled = enabled,
+            onClick = { onClick() },
+        )
+    }
 
 /**
  * combineClick의 Ripple 효과를 제거하기 위한 함수입니다.
@@ -85,6 +97,20 @@ inline fun Modifier.throttledNoRippleClickable(
                 onClick()
                 isClickable = true
             }
+        }
+    }
+}
+
+inline fun Modifier.throttledNoRippleClickable(
+    throttleTime: Long = 2000L,
+    crossinline onClick: () -> Unit,
+) = composed {
+    var lastClickTime by remember { mutableLongStateOf(0L) }
+    Modifier.noRippleClickable {
+        val now = System.currentTimeMillis()
+        if (now - lastClickTime > throttleTime) {
+            lastClickTime = now
+            onClick()
         }
     }
 }

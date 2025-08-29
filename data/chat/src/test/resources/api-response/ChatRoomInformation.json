@@ -3,23 +3,24 @@
   "message": "채팅 관련 상품 정보가 조회되었습니다.",
   "data": {
     "productInfo": {
-      "productId": 2,
-      "photo": "https://napzak-dev-bucket.s3.ap-northeast-2.amazonaws.com/product/2.jpg",
-      "tradeType": "BUY",
-      "title": "슈가슈가룬 쇼콜라 브라이스 인형",
-      "price": 450000,
-      "isPriceNegotiable": true,
-      "genreName": "브라이스",
+      "productId": 3,
+      "photo": "https://napzak-dev-bucket.s3.ap-northeast-2.amazonaws.com/product/3.jpeg",
+      "tradeType": "SELL",
+      "title": "레고 아키텍처 21061 파리 노트르담 [레고공식]",
+      "price": 278000,
+      "isPriceNegotiable": false,
+      "genreName": "레고/블럭",
       "productOwnerId": 3,
-      "isMyProduct": false
+      "isMyProduct": false,
+      "isProductDeleted": false
     },
     "storeInfo": {
-      "storeId": 2,
-      "nickname": "납자기",
+      "storeId": 3,
+      "nickname": "납작한 시나모롤",
       "storePhoto": "https://napzak-dev-bucket.s3.ap-northeast-2.amazonaws.com/store/img_profile_lg.png",
       "isWithdrawn": false,
       "isReported": false
     },
-    "roomId": 5
+    "roomId": 6
   }
 }

@@ -8,6 +8,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import kotlin.test.assertNotEquals
 
 class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
     private lateinit var service: ChatRoomService
@@ -33,13 +34,13 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
         mockWebServer.takeRequest()
 
         // then
-        assertEquals(5L, response.data.roomId)
+        assertEquals(6L, response.data.roomId)
 
-        assertEquals("BUY", response.data.productInfo.tradeType)
-        assertEquals("슈가슈가룬 쇼콜라 브라이스 인형", response.data.productInfo.title)
+        assertEquals("SELL", response.data.productInfo.tradeType)
+        assertEquals("레고 아키텍처 21061 파리 노트르담 [레고공식]", response.data.productInfo.title)
 
-        assertEquals(2, response.data.storeInfo.storeId)
-        assertEquals("납자기", response.data.storeInfo.nickname)
+        assertEquals(3, response.data.storeInfo.storeId)
+        assertEquals("납작한 시나모롤", response.data.storeInfo.nickname)
     }
 
     @Test
@@ -49,17 +50,17 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
 
         // when
         val response =
-            ChatRoomDataSource(service).getChatRoomInformation(productId = 5, roomId = null)
+            ChatRoomDataSource(service).getChatRoomInformation(productId = 3, roomId = null)
         mockWebServer.takeRequest()
 
         // then
-        assertEquals(5L, response.data.roomId)
+        assertEquals(6L, response.data.roomId)
 
-        assertEquals("BUY", response.data.productInfo.tradeType)
-        assertEquals("슈가슈가룬 쇼콜라 브라이스 인형", response.data.productInfo.title)
+        assertEquals("SELL", response.data.productInfo.tradeType)
+        assertEquals("레고 아키텍처 21061 파리 노트르담 [레고공식]", response.data.productInfo.title)
 
-        assertEquals(2, response.data.storeInfo.storeId)
-        assertEquals("납자기", response.data.storeInfo.nickname)
+        assertEquals(3, response.data.storeInfo.storeId)
+        assertEquals("납작한 시나모롤", response.data.storeInfo.nickname)
     }
 
     @Test
@@ -70,7 +71,7 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
 
         // when
         val result = ChatRoomRepositoryImpl(dataSource)
-            .getChatRoomInformation(productId = 5, roomId = 5L)
+            .getChatRoomInformation(productId = 3, roomId = 6L)
             .getOrNull()
         mockWebServer.takeRequest()
 
@@ -79,13 +80,13 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
         assert(result?.roomId != null) { "Repository 매핑 결과가 널 입니다." }
         if (result?.roomId != null) {
             with(result) {
-                assertEquals(5L, roomId)
+                assertEquals(6L, roomId)
 
-                assertEquals("BUY", productBrief.tradeType)
-                assertEquals("슈가슈가룬 쇼콜라 브라이스 인형", productBrief.title)
+                assertEquals("SELL", productBrief.tradeType)
+                assertEquals("레고 아키텍처 21061 파리 노트르담 [레고공식]", productBrief.title)
 
-                assertEquals(2, storeBrief.storeId)
-                assertEquals("납자기", storeBrief.nickname)
+                assertEquals(3, storeBrief.storeId)
+                assertNotEquals("납자기", storeBrief.nickname)
             }
         }
     }

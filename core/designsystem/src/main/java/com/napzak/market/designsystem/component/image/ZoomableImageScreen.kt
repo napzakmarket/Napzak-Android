@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
@@ -92,7 +91,7 @@ fun ZoomableImageScreen(
 }
 
 @Composable
-private fun ZoomableImage(
+fun ZoomableImage(
     imageUrl: String,
     contentDescription: String?,
     parentLayoutSize: IntSize,

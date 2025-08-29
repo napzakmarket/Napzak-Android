@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,8 +30,8 @@ import com.napzak.market.designsystem.component.productItem.NapzakLargeProductIt
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.home.R.string.home_button_more
 import com.napzak.market.product.model.Product
-import com.napzak.market.ui_util.noRippleClickable
 import com.napzak.market.ui_util.formatToPriceString
+import com.napzak.market.ui_util.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -84,6 +86,9 @@ internal fun VerticalGridProducts(
                     imageVector = ImageVector.vectorResource(ic_gray_arrow_right),
                     contentDescription = null,
                     tint = NapzakMarketTheme.colors.gray300,
+                    modifier = Modifier
+                        .width(8.dp)
+                        .aspectRatio(1f),
                 )
             }
         }

@@ -60,10 +60,11 @@ internal fun ChatRoomInputField(
             .fillMaxWidth()
             .napzakGradientShadow(
                 height = 4.dp,
-                startColor = NapzakMarketTheme.colors.transWhite,
+                startColor = NapzakMarketTheme.colors.gradWhite,
                 endColor = NapzakMarketTheme.colors.shadowBlack,
                 direction = ShadowDirection.Top,
             )
+            .background(color = NapzakMarketTheme.colors.white)
             .padding(
                 top = 8.dp,
                 bottom = 14.dp,
@@ -134,16 +135,19 @@ private fun GalleryButton(
     enabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val tint =
+        if (enabled) NapzakMarketTheme.colors.gray400
+        else NapzakMarketTheme.colors.gray200
+
+    val clickableModifier =
+        if (enabled) modifier.noRippleClickable(onClick = onClick)
+        else modifier
+
     Icon(
         imageVector = ImageVector.vectorResource(ic_gallery),
         contentDescription = stringResource(chat_room_input_field_gallery),
-        tint = NapzakMarketTheme.colors.gray200,
-        modifier = modifier
-            .then(
-                if (enabled) Modifier.noRippleClickable(onClick = onClick)
-                else Modifier
-            )
-
+        tint = tint,
+        modifier = clickableModifier,
     )
 }
 

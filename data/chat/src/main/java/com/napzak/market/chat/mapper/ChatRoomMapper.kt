@@ -10,4 +10,5 @@ fun ChatRoomListResponse.ChatRoom.toDomain() = ChatRoom(
     lastMessage = lastMessage,
     unreadMessageCount = unreadCount,
     lastMessageAt = lastMessageAt,
+    isOpponentWithdrawn = isOpponentWithdrawn,
 )

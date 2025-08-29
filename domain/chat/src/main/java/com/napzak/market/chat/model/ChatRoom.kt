@@ -7,4 +7,5 @@ data class ChatRoom(
     val lastMessage: String,
     val unreadMessageCount: Int,
     val lastMessageAt: String,
+    val isOpponentWithdrawn: Boolean,
 )

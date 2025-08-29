@@ -205,6 +205,7 @@ class StompSocketClientImpl @Inject constructor(
                     ?.collect { logSuccess("PONG", "Pong received") }
             }
             logSuccess("HEARTBEAT", "Pong subscribed")
+            heartBeatRetryCount.set(0)
         } catch (e: Exception) {
             handleSocketError(HeartBeatFailed(e))
         }
@@ -254,7 +255,7 @@ class StompSocketClientImpl @Inject constructor(
     }
 
     private fun logError(header: String, error: Throwable) {
-        Timber.tag(TAG).e("❌ $header: 오류가 발생했습니다.\n${error.message}")
+        Timber.tag(TAG).e("❌ $header: 오류가 발생했습니다.\n$error")
     }
 
     companion object {

@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
-import com.napzak.market.designsystem.component.button.NapzakButton
+import com.napzak.market.designsystem.component.button.NapzakThrottleButton
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastFontType
@@ -216,7 +216,7 @@ private fun ReportSubmitButton(
             .padding(horizontal = 20.dp)
             .padding(bottom = 20.dp, top = 6.dp),
     ) {
-        NapzakButton(
+        NapzakThrottleButton(
             text = stringResource(report_button_submit),
             onClick = onClick,
             enabled = enabled,

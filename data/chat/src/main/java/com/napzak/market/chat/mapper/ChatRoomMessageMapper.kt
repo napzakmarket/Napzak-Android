@@ -5,6 +5,10 @@ import com.napzak.market.chat.dto.MessageItem
 import com.napzak.market.chat.model.ProductBrief
 import com.napzak.market.chat.model.ReceiveMessage
 
+/**
+ * 채팅 메시지를 도메인 모델로 변환합니다.
+ * @throws IllegalArgumentException 필수 인자들이 null인 경우
+ */
 fun MessageItem.toDomain(roomId: Long): ReceiveMessage<*> {
     return when (metadata) {
         null -> toText(roomId)
@@ -19,12 +23,14 @@ fun MessageItem.toDomain(roomId: Long): ReceiveMessage<*> {
 
 private fun MessageItem.toText(roomId: Long): ReceiveMessage.Text =
     ReceiveMessage.Text(
+        messageId = requireNotNull(messageId),
         roomId = roomId,
-        messageId = messageId ?: throw IllegalArgumentException(),
+        senderId = requireNotNull(senderId),
         text = content ?: "",
-        timeStamp = createdAt ?: "",
+        timeStamp = requireNotNull(createdAt),
         isRead = isRead ?: false,
         isMessageOwner = isMessageOwner ?: false,
+        isProfileNeeded = isProfileNeeded ?: false,
     )
 
 private fun MessageItem.toImage(
@@ -32,12 +38,14 @@ private fun MessageItem.toImage(
     metadata: ChatMessageMetadata.Image
 ): ReceiveMessage.Image =
     ReceiveMessage.Image(
+        messageId = requireNotNull(messageId),
         roomId = roomId,
-        messageId = messageId ?: throw IllegalArgumentException(),
-        imageUrl = metadata.imageUrls.firstOrNull() ?: "",
-        timeStamp = createdAt ?: "",
+        senderId = requireNotNull(senderId),
+        imageUrl = requireNotNull(metadata.imageUrls.firstOrNull { !it.isNullOrBlank() }),
+        timeStamp = requireNotNull(createdAt),
         isRead = isRead ?: false,
         isMessageOwner = isMessageOwner ?: false,
+        isProfileNeeded = isProfileNeeded ?: false,
     )
 
 private fun MessageItem.toProduct(
@@ -47,20 +55,24 @@ private fun MessageItem.toProduct(
     ReceiveMessage.Product(
         roomId = roomId,
         messageId = messageId ?: throw IllegalArgumentException(),
+        senderId = requireNotNull(senderId),
         product = ProductBrief(
             productId = metadata.productId,
-            photo = "",
             tradeType = metadata.tradeType,
             title = metadata.title,
             price = metadata.price,
-            isPriceNegotiable = false, // 미사용
             genreName = metadata.genreName,
-            productOwnerId = senderId ?: 0,
-            isMyProduct = false, // 미사용
+            isProductDeleted = metadata.isProductDeleted ?: false,
+            // 사용되지 않는 속성들
+            isPriceNegotiable = false,
+            photo = "",
+            productOwnerId = 0,
+            isMyProduct = false,
         ),
-        timeStamp = createdAt ?: "",
+        timeStamp = requireNotNull(createdAt),
         isRead = isRead ?: false,
         isMessageOwner = isMessageOwner ?: false,
+        isProfileNeeded = isProfileNeeded ?: false,
     )
 
 private fun MessageItem.toNotice(
@@ -68,10 +80,11 @@ private fun MessageItem.toNotice(
     content: String,
 ): ReceiveMessage.Notice =
     ReceiveMessage.Notice(
+        messageId = requireNotNull(messageId),
         roomId = roomId,
-        messageId = messageId ?: throw IllegalArgumentException(),
+        senderId = senderId,
         notice = content,
-        timeStamp = "",
+        timeStamp = requireNotNull(createdAt),
     )
 
 private fun MessageItem.toDate(
@@ -79,8 +92,8 @@ private fun MessageItem.toDate(
     metadata: ChatMessageMetadata.Date
 ): ReceiveMessage.Date =
     ReceiveMessage.Date(
+        messageId = requireNotNull(messageId),
         roomId = roomId,
-        messageId = messageId ?: throw IllegalArgumentException(),
         date = metadata.date,
-        timeStamp = "",
+        timeStamp = requireNotNull(createdAt),
     )

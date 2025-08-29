@@ -26,17 +26,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.napzak.market.chat.model.ChatRoom
 import com.napzak.market.designsystem.R.drawable.ic_circle_purple_user
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun ChatRoomItem(
-    nickname: String,
-    lastMessage: String,
-    profileImageUrl: String,
-    unReadMessageCount: Int,
-    timeStamp: String,
+    chatRoom: ChatRoom,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -50,17 +47,18 @@ internal fun ChatRoomItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ProfileImage(
-            imageUrl = profileImageUrl,
+            imageUrl = chatRoom.storePhoto,
         )
         Spacer(modifier = Modifier.width(12.dp))
         ChatRoomDetail(
-            nickname = nickname,
-            lastMessage = lastMessage,
+            nickname = chatRoom.storeNickname,
+            lastMessage = chatRoom.lastMessage,
+            isOpponentWithdrawn = chatRoom.isOpponentWithdrawn,
             modifier = Modifier.weight(1f),
         )
         ChatRoomMetaData(
-            unReadMessageCount = unReadMessageCount,
-            timeStamp = timeStamp,
+            unReadMessageCount = chatRoom.unreadMessageCount,
+            timeStamp = chatRoom.lastMessageAt,
         )
     }
 }
@@ -94,23 +92,29 @@ private fun ProfileImage(
 private fun ChatRoomDetail(
     nickname: String,
     lastMessage: String,
+    isOpponentWithdrawn: Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val colorScheme = NapzakMarketTheme.colors
+    val typography = NapzakMarketTheme.typography
+
     Column(
         modifier = modifier,
     ) {
         Text(
             text = nickname,
-            style = NapzakMarketTheme.typography.body16b,
-            color = NapzakMarketTheme.colors.purple500,
+            style = typography.body16b,
+            color =
+                if (isOpponentWithdrawn) colorScheme.gray300
+                else colorScheme.purple500,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = lastMessage,
-            style = NapzakMarketTheme.typography.body14r,
-            color = NapzakMarketTheme.colors.gray300,
+            style = typography.body14r,
+            color = colorScheme.gray300,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -126,8 +130,8 @@ private fun ChatRoomMetaData(
     val unReadMessageCountShape = RoundedCornerShape(16.dp)
 
     val (unReadMessageCountText, unReadMessageCountColor) = when {
-        unReadMessageCount > 99 -> "99+" to NapzakMarketTheme.colors.red
-        unReadMessageCount > 0 -> unReadMessageCount.toString() to NapzakMarketTheme.colors.red
+        unReadMessageCount > 99 -> "99+" to NapzakMarketTheme.colors.pink
+        unReadMessageCount > 0 -> unReadMessageCount.toString() to NapzakMarketTheme.colors.pink
         else -> "" to NapzakMarketTheme.colors.white
     }
 
@@ -168,20 +172,28 @@ private fun ChatRoomItemPreview() {
     NapzakMarketTheme {
         Column {
             ChatRoomItem(
-                nickname = "정재현1",
-                lastMessage = "구매?",
-                profileImageUrl = "",
-                unReadMessageCount = 11,
-                timeStamp = "오전 11:01",
+                chatRoom = ChatRoom(
+                    roomId = 1,
+                    storeNickname = "정재현1",
+                    lastMessage = "구매?",
+                    storePhoto = "",
+                    unreadMessageCount = 11,
+                    lastMessageAt = "오전 11:01",
+                    isOpponentWithdrawn = false
+                ),
                 onClick = {},
             )
             HorizontalDivider(thickness = 1.dp, color = NapzakMarketTheme.colors.gray50)
             ChatRoomItem(
-                nickname = "토도로키",
-                lastMessage = "사용자가 채팅방을 나갔습니다.",
-                profileImageUrl = "",
-                unReadMessageCount = 1000,
-                timeStamp = "오전 1:38",
+                chatRoom = ChatRoom(
+                    roomId = 2,
+                    storeNickname = "토도로키",
+                    lastMessage = "사용자가 채팅방을 나갔습니다.",
+                    storePhoto = "",
+                    unreadMessageCount = 1000,
+                    lastMessageAt = "오전 1:38",
+                    isOpponentWithdrawn = false
+                ),
                 onClick = {},
             )
         }

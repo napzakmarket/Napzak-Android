@@ -20,6 +20,7 @@ data class ChatRoomInformationResponse(
         @SerialName("genreName") val genreName: String,
         @SerialName("productOwnerId") val productOwnerId: Long,
         @SerialName("isMyProduct") val isMyProduct: Boolean,
+        @SerialName("isProductDeleted") val isProductDeleted: Boolean,
     )
 
     @Serializable

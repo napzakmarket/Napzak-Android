@@ -20,7 +20,9 @@ class ChatSocketRepositoryImpl @Inject constructor(
     }
 
     override suspend fun subscribeChatRoom(roomId: Long, storeId: Long) = runCatching {
-        chatSocketDataSource.subscribeChatRoom(roomId).map { it.toDomain(storeId) }
+        chatSocketDataSource.subscribeChatRoom(roomId).map {
+            it.toDomain(storeId)
+        }
     }
 
     override suspend fun subscribeCreateChatRoom(storeId: Long) = runCatching {

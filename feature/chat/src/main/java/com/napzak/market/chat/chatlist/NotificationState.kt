@@ -4,6 +4,13 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 data class NotificationState(
-    val isNotificationModalOpen: Boolean = false,
-    val isAppPermissionGranted: Boolean = false,
-)
+    val isNotificationModalOpen: Boolean,
+    val isAppPermissionGranted: Boolean,
+) {
+    companion object {
+        val Empty = NotificationState(
+            isNotificationModalOpen = false,
+            isAppPermissionGranted = false,
+        )
+    }
+}
