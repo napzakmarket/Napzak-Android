@@ -1,42 +1,54 @@
 package com.napzak.market.chat.service
 
 import com.napzak.market.chat.dto.ChatMessageRequest
-import com.napzak.market.chat.dto.ChatRealtimeMessage
-import com.napzak.market.remote.StompSocketClient
+import com.napzak.market.remote.socket.StompWebSocketClient
+import com.napzak.market.remote.socket.type.SocketConnectionState
 import kotlinx.coroutines.flow.Flow
-import kotlinx.serialization.builtins.serializer
+import kotlinx.coroutines.flow.SharedFlow
 import javax.inject.Inject
 
-class ChatSocketService @Inject constructor(
-    private val stompSocketClient: StompSocketClient,
-) {
-    suspend fun connect() {
-        this.stompSocketClient.connect(BASE_HOST)
+interface ChatSocketService {
+    val messageFlow: SharedFlow<String>
+    val connectionState: Flow<SocketConnectionState>
+    suspend fun connect()
+    suspend fun disconnect()
+    suspend fun subscribeChatRoom(roomId: Long)
+    suspend fun sendMessage(request: ChatMessageRequest)
+    suspend fun subscribeCreateChatRoom(storeId: Long)
+}
+
+class ChatSocketServiceImpl @Inject constructor(
+    private val webSocketClient: StompWebSocketClient,
+) : ChatSocketService {
+    override val messageFlow: SharedFlow<String> = webSocketClient.messageFlow
+
+    override val connectionState: Flow<SocketConnectionState> = webSocketClient.connectionState
+
+    override suspend fun connect() {
+        webSocketClient.connect(BASE_HOST)
     }
 
-    suspend fun disconnect() {
-        this.stompSocketClient.disconnect()
+    override suspend fun disconnect() {
+        webSocketClient.disconnect()
     }
 
-    suspend fun subscribeChatRoom(roomId: Long): Flow<ChatRealtimeMessage> {
-        return stompSocketClient.subscribe(
+    override suspend fun subscribeChatRoom(roomId: Long) {
+        webSocketClient.subscribe(
             destination = Destination.SUBSCRIBE_CHAT_ROOM.format(roomId),
-            deserializer = ChatRealtimeMessage.serializer(),
         )
     }
 
-    suspend fun sendMessage(request: ChatMessageRequest) {
-        stompSocketClient.send(
+    override suspend fun sendMessage(request: ChatMessageRequest) {
+        webSocketClient.send(
             destination = Destination.SEND_CHAT,
             request = request,
             serializer = ChatMessageRequest.serializer(),
         )
     }
 
-    suspend fun subscribeCreateChatRoom(storeId: Long): Flow<Long> {
-        return stompSocketClient.subscribe(
+    override suspend fun subscribeCreateChatRoom(storeId: Long) {
+        webSocketClient.subscribe(
             destination = Destination.SUBS_CREATE_CHAT_ROOMS.format(storeId),
-            deserializer = Long.serializer()
         )
     }
 
