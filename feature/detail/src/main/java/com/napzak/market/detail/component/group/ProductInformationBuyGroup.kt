@@ -66,7 +66,7 @@ private fun ProductConditionSection(
 
         Text(
             text = productCondition.label,
-            style = NapzakMarketTheme.typography.body14b.copy(
+            style = NapzakMarketTheme.typography.caption12sb.copy(
                 color = NapzakMarketTheme.colors.gray300,
             ),
             modifier = Modifier
@@ -74,7 +74,7 @@ private fun ProductConditionSection(
                     color = NapzakMarketTheme.colors.gray50,
                     shape = RoundedCornerShape(4.dp),
                 )
-                .padding(vertical = 6.dp, horizontal = 16.dp),
+                .padding(vertical = 6.dp, horizontal = 12.dp),
 
         )
     }
