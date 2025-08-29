@@ -9,11 +9,13 @@ import com.napzak.market.remote.socket.type.StompHeaderType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -34,7 +36,7 @@ import kotlin.math.pow
 
 interface StompWebSocketClient {
     val messageFlow: SharedFlow<String>
-    val connectionState: StateFlow<SocketConnectionState>
+    val connectionState: Flow<SocketConnectionState>
     suspend fun connect(host: String? = null)
     suspend fun disconnect()
     suspend fun subscribe(destination: String)
@@ -54,6 +56,7 @@ class StompWebSocketClientImpl @Inject constructor(
         private const val MAX_RETRY_COUNT = 5
     }
 
+    private var coroutineScope: CoroutineScope? = null
     private var webSocket: WebSocket? = null
     private var pingJob: Job? = null
     private val connectionRetryCount = AtomicInteger(0)
@@ -66,6 +69,8 @@ class StompWebSocketClientImpl @Inject constructor(
 
     override suspend fun connect(host: String?) {
         connectionMutex.withLock {
+            coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
             if (_connectionState.value == DISCONNECTED) {
                 updateConnectionState(CONNECTING)
                 val webSocketListener = StompSocketListener(host)
@@ -87,6 +92,8 @@ class StompWebSocketClientImpl @Inject constructor(
                 }
             }.onSuccess {
                 updateConnectionState(DISCONNECTED)
+                webSocket = null
+                coroutineScope?.cancel()
                 logSuccess("DISCONNECT", "소켓 연결을 해제했습니다.")
             }.onFailure {
                 logError("DISCONNECT", Throwable("소켓 연결을 해제하는데 실패했습니다."))
@@ -95,14 +102,9 @@ class StompWebSocketClientImpl @Inject constructor(
     }
 
     override suspend fun subscribe(destination: String) {
-        runCatching {
-            val stompFrame = stompFrameManager.subscribeFrame(destination, null)
-            webSocket?.send(stompFrame)
-        }.onSuccess {
-            logSuccess("SUBSCRIBE", "구독에 성공했습니다 [$destination]")
-        }.onFailure {
-            logError("SUBSCRIBE", Throwable("구독에 실패했습니다 [$destination]"))
-        }
+        val stompFrame = stompFrameManager.subscribeFrame(destination, null)
+        webSocket?.send(stompFrame)
+        logSuccess("SUBSCRIBE", destination)
     }
 
     override suspend fun <T : Any> send(
@@ -129,7 +131,7 @@ class StompWebSocketClientImpl @Inject constructor(
             stompFrameManager.sendFrame(destination = destination, message = "[object Object]")
 
         pingJob?.cancel()
-        pingJob = CoroutineScope(Dispatchers.IO).launch {
+        pingJob = coroutineScope?.launch {
             while (webSocket != null && _connectionState.value == CONNECTED) {
                 webSocket?.send(pingFrame)
                 logSuccess("HEARTBEAT", "PING!")
@@ -183,7 +185,7 @@ class StompWebSocketClientImpl @Inject constructor(
                 val messageType = SocketMessageType.from(text)
                 when (messageType) {
                     SocketMessageType.CONNECTED -> {
-                        logSuccess("CONNECTED", text)
+                        logSuccess("CONNECTED", "소켓이 연결되었습니다.")
                         updateConnectionState(CONNECTED)
                         sendPing()
                         subscribePong()
@@ -200,7 +202,7 @@ class StompWebSocketClientImpl @Inject constructor(
                             body == "pong" -> logSuccess("HEARTBEAT", "PONG!")
 
                             else -> {
-                                CoroutineScope(Dispatchers.Default).launch {
+                                coroutineScope?.launch {
                                     _messageFlow.emit(body)
                                 }
                             }
