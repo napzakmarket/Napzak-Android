@@ -38,7 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.component.bottomsheet.GenreSearchBottomSheet
-import com.napzak.market.designsystem.component.button.NapzakButton
+import com.napzak.market.designsystem.component.button.NapzakThrottleButton
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.topbar.NavigateUpTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -264,7 +264,7 @@ private fun EditStoreProceedButton(
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 13.dp),
     ) {
-        NapzakButton(
+        NapzakThrottleButton(
             text = stringResource(store_edit_button_proceed),
             onClick = onClick,
             enabled = enabled,
