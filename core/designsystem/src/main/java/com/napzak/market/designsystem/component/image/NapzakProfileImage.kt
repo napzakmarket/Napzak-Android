@@ -32,6 +32,7 @@ fun NapzakProfileImage(
             .placeholder(ic_profile)
             .error(ic_profile)
             .fallback(ic_profile)
+            .crossfade(true)
             .build(),
         contentDescription = contentDescription,
         contentScale = ContentScale.Crop,
