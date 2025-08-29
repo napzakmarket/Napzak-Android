@@ -46,18 +46,12 @@ object SocketModule {
         .retryOnConnectionFailure(true)
         .build()
 
-
-    @Provides
-    @Singleton
-    fun provideStompFrameManager(): StompFrameManager = StompFrameManagerImpl()
-
     @Provides
     @Singleton
     fun provideStompWebSocketClient(
         @Socket json: Json,
         @Socket request: Request,
         @Socket client: OkHttpClient,
-        stompFrameManager: StompFrameManager
-    ): StompWebSocketClient = StompWebSocketClientImpl(json, request, client, stompFrameManager)
+    ): StompWebSocketClient = StompWebSocketClientImpl(json, request, client)
 
 }

@@ -5,7 +5,6 @@ import com.napzak.market.remote.socket.type.SocketConnectionState.CONNECTED
 import com.napzak.market.remote.socket.type.SocketConnectionState.CONNECTING
 import com.napzak.market.remote.socket.type.SocketConnectionState.DISCONNECTED
 import com.napzak.market.remote.socket.type.SocketMessageType
-import com.napzak.market.remote.socket.type.StompHeaderType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -47,7 +46,6 @@ class StompWebSocketClientImpl @Inject constructor(
     private val json: Json,
     private val request: Request,
     private val okHttpClient: OkHttpClient,
-    private val stompFrameManager: StompFrameManager
 ) : StompWebSocketClient {
     companion object {
         const val TAG = "WebSocketClient"
@@ -84,7 +82,7 @@ class StompWebSocketClientImpl @Inject constructor(
             runCatching {
                 if (_connectionState.value in setOf(CONNECTED, CONNECTING)) {
                     webSocket?.run {
-                        val stompFrame = stompFrameManager.disconnectFrame()
+                        val stompFrame = stompFrame { disconnect() }
                         send(stompFrame)
                         close(1000, null)
                     }
@@ -102,8 +100,12 @@ class StompWebSocketClientImpl @Inject constructor(
     }
 
     override suspend fun subscribe(destination: String) {
-        val stompFrame = stompFrameManager.subscribeFrame(destination, null)
-        webSocket?.send(stompFrame)
+        val frame = stompFrame {
+            subscribe {
+                this.destination = destination
+            }
+        }
+        webSocket?.send(frame)
         logSuccess("SUBSCRIBE", destination)
     }
 
@@ -114,12 +116,14 @@ class StompWebSocketClientImpl @Inject constructor(
     ) {
         runCatching {
             val message = json.encodeToString(serializer, request)
-            val stompFrame = stompFrameManager.sendFrame(
-                message,
-                destination,
-                mapOf(StompHeaderType.CONTENT_TYPE to APPLICATION_JSON)
-            )
-            webSocket?.send(stompFrame)
+            val frame = stompFrame {
+                send {
+                    this.destination = destination
+                    contentType = APPLICATION_JSON
+                    body = message
+                }
+            }
+            webSocket?.send(frame)
         }.onFailure {
             logError("SEND", Throwable("메시지 전송에 실패했습니다 [$destination]"))
         }
@@ -127,8 +131,12 @@ class StompWebSocketClientImpl @Inject constructor(
 
     private fun sendPing(destination: String = "/pub/ping") {
         val pingDelay = 25000L
-        val pingFrame =
-            stompFrameManager.sendFrame(destination = destination, message = "[object Object]")
+        val pingFrame = stompFrame {
+            send {
+                this.destination = destination
+                body = "[object Object]"
+            }
+        }
 
         pingJob?.cancel()
         pingJob = coroutineScope?.launch {
@@ -142,7 +150,11 @@ class StompWebSocketClientImpl @Inject constructor(
 
     private fun subscribePong(destination: String = "/topic/pong") {
         runCatching {
-            val pongFrame = stompFrameManager.subscribeFrame(destination, null)
+            val pongFrame = stompFrame {
+                subscribe {
+                    this.destination = destination
+                }
+            }
             webSocket?.send(pongFrame)
         }.onSuccess {
             logSuccess("HEARTBEAT", "Pong subscribed")
@@ -175,8 +187,12 @@ class StompWebSocketClientImpl @Inject constructor(
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
-            val connectFrame = stompFrameManager.connectFrame(stompHost)
-            webSocket.send(connectFrame)
+            val frame = stompFrame {
+                connect {
+                    host = stompHost
+                }
+            }
+            webSocket.send(frame)
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
@@ -197,7 +213,7 @@ class StompWebSocketClientImpl @Inject constructor(
                     }
 
                     SocketMessageType.MESSAGE -> {
-                        val body = stompFrameManager.decodeMessage(text)
+                        val body = decodeMessage(text)
                         when {
                             body == "pong" -> logSuccess("HEARTBEAT", "PONG!")
 
