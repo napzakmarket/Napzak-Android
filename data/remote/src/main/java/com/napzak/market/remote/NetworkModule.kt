@@ -5,7 +5,6 @@ import com.napzak.market.local.datastore.TokenDataStore
 import com.napzak.market.remote.qualifier.JWT
 import com.napzak.market.remote.qualifier.NoAuth
 import com.napzak.market.remote.qualifier.S3
-import com.napzak.market.remote.qualifier.Socket
 import com.napzak.market.util.android.StoreStateManager
 import com.napzak.market.util.android.TokenProvider
 import dagger.Module
@@ -18,12 +17,10 @@ import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.hildan.krossbow.websocket.okhttp.OkHttpWebSocketClient
 import org.json.JSONObject
 import retrofit2.Converter
 import retrofit2.Retrofit
 import timber.log.Timber
-import java.time.Duration
 import javax.inject.Singleton
 
 @Module
@@ -104,20 +101,6 @@ object NetworkModule {
         .addInterceptor(headerInterceptor)
         .build()
 
-    @Socket
-    @Provides
-    @Singleton
-    fun provideSocketOkHttpClient(
-        loggingInterceptor: Interceptor,
-        @JWT headerInterceptor: Interceptor
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
-        .addInterceptor(headerInterceptor)
-        .callTimeout(Duration.ofMinutes(10))
-        .pingInterval(Duration.ofSeconds(30))
-        .retryOnConnectionFailure(true)
-        .build()
-
     @Provides
     @Singleton
     fun provideNoTokenOkHttpClient(
@@ -125,12 +108,6 @@ object NetworkModule {
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .build()
-
-    @Provides
-    @Singleton
-    fun provideWebSocketClient(
-        @Socket client: OkHttpClient,
-    ): OkHttpWebSocketClient = OkHttpWebSocketClient(client)
 
     @Provides
     @Singleton
@@ -166,11 +143,4 @@ object NetworkModule {
         .client(client)
         .addConverterFactory(factory)
         .build()
-
-    @Provides
-    @Singleton
-    fun provideSocketClient(
-        webSocketClient: OkHttpWebSocketClient,
-        json: Json
-    ): StompSocketClient = StompSocketClientImpl(webSocketClient, json)
 }
