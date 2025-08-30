@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -390,7 +391,14 @@ private fun GenreAndProductList(
     onProductClick: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
 ) {
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(productList) {
+        listState.scrollToItem(0)
+    }
+
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxSize()
             .background(color = NapzakMarketTheme.colors.white),

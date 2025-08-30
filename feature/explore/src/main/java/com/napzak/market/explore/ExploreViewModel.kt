@@ -190,11 +190,7 @@ internal class ExploreViewModel @Inject constructor(
 
 
     fun updateTradeType(newTradeType: TradeType) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                selectedTab = newTradeType,
-            )
-        }
+        _uiState.update { currentState -> currentState.copy(selectedTab = newTradeType) }
     }
 
     fun updateBottomSheetVisibility(type: BottomSheetType) {
