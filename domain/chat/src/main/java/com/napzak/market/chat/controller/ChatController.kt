@@ -3,6 +3,7 @@ package com.napzak.market.chat.controller
 import com.napzak.market.chat.model.ChatSocketException
 import com.napzak.market.chat.model.ChatSocketException.ConnectionFailureException
 import com.napzak.market.chat.model.ChatSocketException.SendFailureException
+import com.napzak.market.chat.model.ChatSocketException.SubscriptionFailureException
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.chat.model.SendMessage
 import com.napzak.market.chat.repository.ChatSocketRepository
@@ -40,7 +41,7 @@ class ChatController @Inject constructor(
 
         return chatSocketRepository.connect()
             .onSuccess { subscribeCreateChatRoom(storeId) }
-            .onFailure { _errorFlow.emit(ConnectionFailureException(it)) }
+            .onFailure { _errorFlow.emit(ConnectionFailureException()) }
     }
 
     suspend fun disconnect(): Result<Unit> {
@@ -52,17 +53,20 @@ class ChatController @Inject constructor(
     }
 
     suspend fun sendMessage(message: SendMessage<*>) {
-        try {
-            if (awaitConnected()) {
-                chatSocketRepository.sendChat(message)
-            }
-        } catch (e: Exception) {
-            _errorFlow.emit(SendFailureException(e))
+        if (!awaitConnected()) {
+            _errorFlow.emit(ConnectionFailureException())
+            return
         }
+
+        chatSocketRepository.sendChat(message)
+            .onFailure { _errorFlow.emit(SendFailureException(it)) }
     }
 
     suspend fun subscribeChatRoom(roomId: Long, storeId: Long): Result<Unit> {
-        return if (awaitConnected() && roomIdSet.add(roomId)) {
+        if (!awaitConnected()) {
+            return Result.failure(ConnectionFailureException())
+        }
+        return if (roomIdSet.add(roomId)) {
             chatSocketRepository.subscribeChatRoom(roomId, storeId)
         } else {
             Result.success(Unit)
@@ -94,7 +98,8 @@ class ChatController @Inject constructor(
 
         val job = CoroutineScope(Dispatchers.Default).launch {
             flow.collect { roomId ->
-                chatSocketRepository.subscribeChatRoom(roomId, storeId).getOrThrow()
+                chatSocketRepository.subscribeChatRoom(roomId, storeId)
+                    .onFailure { _errorFlow.emit(SubscriptionFailureException(it)) }
             }
         }
 
