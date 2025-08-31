@@ -8,13 +8,10 @@ class SubscribeChatRoomsUseCase @Inject constructor(
     private val chatController: ChatController,
     private val chatRepository: ChatRepository,
 ) {
-    suspend operator fun invoke(storeId: Long): Result<Unit> {
-        return runCatching {
-            chatRepository.getChatRoomIds().onSuccess { roomIds ->
-                roomIds.forEach { roomId ->
-                    chatController.subscribeChatRoom(roomId, storeId)
-                }
+    suspend operator fun invoke(storeId: Long): Result<Unit> =
+        chatRepository.getChatRoomIds().mapCatching { roomIds ->
+            roomIds.forEach { roomId ->
+                chatController.subscribeChatRoom(roomId, storeId)
             }
         }
-    }
 }
