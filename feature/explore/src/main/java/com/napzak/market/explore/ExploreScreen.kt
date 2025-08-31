@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -247,6 +248,11 @@ private fun ExploreSuccessScreen(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(selectedTab) {
+        listState.animateScrollToItem(0)
+    }
 
     Column(
         modifier = modifier
@@ -300,6 +306,7 @@ private fun ExploreSuccessScreen(
 
             GenreAndProductList(
                 genreList = filteredGenres,
+                productListState = listState,
                 productCount = productCount,
                 productList = products,
                 sortType = sortOption,
@@ -383,6 +390,7 @@ private fun ExploreSearchTextField(
 @Composable
 private fun GenreAndProductList(
     genreList: List<Genre>,
+    productListState: LazyListState,
     productCount: Int,
     productList: List<Product>,
     sortType: SortType,
@@ -391,14 +399,8 @@ private fun GenreAndProductList(
     onProductClick: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
 ) {
-    val listState = rememberLazyListState()
-
-    LaunchedEffect(productList) {
-        listState.scrollToItem(0)
-    }
-
     LazyColumn(
-        state = listState,
+        state = productListState,
         modifier = Modifier
             .fillMaxSize()
             .background(color = NapzakMarketTheme.colors.white),
