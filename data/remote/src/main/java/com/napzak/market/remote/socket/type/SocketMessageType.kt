@@ -5,7 +5,11 @@ enum class SocketMessageType {
 
     companion object {
         fun from(text: String): SocketMessageType {
-            return when (val header = text.split("\n").firstOrNull()) {
+            val header = text
+                .lineSequence()
+                .firstOrNull()
+
+            return when (header) {
                 "CONNECTED" -> CONNECTED
                 "MESSAGE" -> MESSAGE
                 "ERROR" -> ERROR

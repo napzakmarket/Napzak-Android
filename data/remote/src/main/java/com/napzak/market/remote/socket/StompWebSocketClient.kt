@@ -67,6 +67,9 @@ class StompWebSocketClientImpl @Inject constructor(
 
     override suspend fun connect(host: String?) {
         connectionMutex.withLock {
+            if (webSocket != null) return
+
+            coroutineScope?.cancel()
             coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
             if (_connectionState.value == DISCONNECTED) {
@@ -79,6 +82,7 @@ class StompWebSocketClientImpl @Inject constructor(
 
     override suspend fun disconnect() {
         connectionMutex.withLock {
+            if (webSocket == null) return
             runCatching {
                 if (_connectionState.value in setOf(CONNECTED, CONNECTING)) {
                     webSocket?.run {
@@ -92,9 +96,9 @@ class StompWebSocketClientImpl @Inject constructor(
                 updateConnectionState(DISCONNECTED)
                 webSocket = null
                 coroutineScope?.cancel()
-                logSuccess("DISCONNECT", "소켓 연결을 해제했습니다.")
+                logSuccess("DISCONNECT", "STOMP 소켓 연결을 해제했습니다.")
             }.onFailure {
-                logError("DISCONNECT", Throwable("소켓 연결을 해제하는데 실패했습니다."))
+                logError("DISCONNECT", Throwable("STOMP 소켓 연결을 해제하는데 실패했습니다."))
             }
         }
     }
@@ -134,7 +138,7 @@ class StompWebSocketClientImpl @Inject constructor(
         val pingFrame = stompFrame {
             send {
                 this.destination = destination
-                body = "[object Object]"
+                body = "ping"
             }
         }
 
@@ -157,7 +161,7 @@ class StompWebSocketClientImpl @Inject constructor(
             }
             webSocket?.send(pongFrame)
         }.onSuccess {
-            logSuccess("HEARTBEAT", "Pong subscribed")
+            logSuccess("HEARTBEAT", "Pong을 구독합니다.")
         }
     }
 
@@ -187,6 +191,7 @@ class StompWebSocketClientImpl @Inject constructor(
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
+            logSuccess("CONNECTED", "웹소켓이 연결되었습니다.")
             val frame = stompFrame {
                 connect {
                     host = stompHost
@@ -201,7 +206,7 @@ class StompWebSocketClientImpl @Inject constructor(
                 val messageType = SocketMessageType.from(text)
                 when (messageType) {
                     SocketMessageType.CONNECTED -> {
-                        logSuccess("CONNECTED", "소켓이 연결되었습니다.")
+                        logSuccess("CONNECTED", "STOMP 소켓이 연결되었습니다.")
                         updateConnectionState(CONNECTED)
                         sendPing()
                         subscribePong()
@@ -231,7 +236,7 @@ class StompWebSocketClientImpl @Inject constructor(
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             super.onClosed(webSocket, code, reason)
             CoroutineScope(Dispatchers.IO).launch { disconnect() }
-            logSuccess("DISCONNECT", "소켓 연결이 해제되었습니다.")
+            logSuccess("DISCONNECT", "웹소켓 연결이 해제되었습니다.")
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
@@ -241,7 +246,7 @@ class StompWebSocketClientImpl @Inject constructor(
             if (connectionRetryCount.incrementAndGet() < MAX_RETRY_COUNT) {
                 handleConnectionFailure(stompHost)
             } else {
-                logError("CONNECTION", Throwable("소켓 연결에 실패했습니다.", t))
+                logError("CONNECTION", Throwable("웹소켓 연결에 실패했습니다.", t))
             }
         }
     }
