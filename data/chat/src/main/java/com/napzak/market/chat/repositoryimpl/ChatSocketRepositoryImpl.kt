@@ -35,7 +35,7 @@ class ChatSocketRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getConnectState(): Flow<Boolean> {
+    override fun getIsConnectedFlow(): Flow<Boolean> {
         return chatSocketDataSource.socketConnectionState.map {
             it == SocketConnectionState.CONNECTED
         }

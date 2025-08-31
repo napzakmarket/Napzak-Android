@@ -115,7 +115,7 @@ class ChatController @Inject constructor(
 
     private suspend fun awaitConnected(timeoutMs: Long = 7_000): Boolean {
         return withTimeoutOrNull(timeoutMs) {
-            chatSocketRepository.getConnectState()
+            chatSocketRepository.getIsConnectedFlow()
                 .distinctUntilChanged()
                 .filter { it }
                 .first()

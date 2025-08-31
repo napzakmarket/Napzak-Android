@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface ChatSocketRepository {
     fun getMessageFlow(storeId: Long): Flow<ReceiveMessage<*>>
     fun getChatRoomCreationFlow(): Flow<Long>
-    fun getConnectState(): Flow<Boolean>
+    fun getIsConnectedFlow(): Flow<Boolean>
     suspend fun connect(): Result<Unit>
     suspend fun disconnect(): Result<Unit>
     suspend fun subscribeChatRoom(roomId: Long, storeId: Long): Result<Unit>
