@@ -69,7 +69,7 @@ internal class SubscribeBuilder {
     val headers = mutableMapOf<String, String>()
 
     fun build(): String {
-        require(destination.isNotBlank()) { "destination required" }
+        require(destination.isNotBlank()) { "destination은 필수로 입력해야 합니다." }
         val subId = id.ifBlank { "sub-${System.nanoTime()}" }
         val h = linkedMapOf(
             "id" to subId,
