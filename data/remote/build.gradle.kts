@@ -19,12 +19,12 @@ android {
         }
 
         debug {
+            buildConfigField("String", "BASE_URL", properties.getProperty("test.base.url"))
             buildConfigField(
                 "String",
-                "BASE_URL",
-                properties.getProperty("test.base.url")
-            ) // TODO: 테스트 서버로 변경
-            buildConfigField("String", "WEBSOCKET_URL", properties.getProperty("websocket.url"))
+                "WEBSOCKET_URL",
+                properties.getProperty("test.websocket.url")
+            )
         }
 
         release {
