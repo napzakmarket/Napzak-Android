@@ -3,7 +3,6 @@ import java.util.Properties
 plugins {
     id("com.napzak.market.buildlogic.convention.application")
     id("com.napzak.market.buildlogic.primitive.hilt")
-    id("com.android.application")
     id("com.google.gms.google-services")
 }
 
@@ -30,10 +29,15 @@ android {
         debug {
             isMinifyEnabled = false
             isDebuggable = true
+            applicationIdSuffix = ".debug"
+            manifestPlaceholders["appName"] = "@string/app_name_dev"
+            manifestPlaceholders["appIcon"] = "@mipmap/ic_app_dev"
         }
         release {
             isMinifyEnabled = false
             isShrinkResources = false
+            manifestPlaceholders["appName"] = "@string/app_name"
+            manifestPlaceholders["appIcon"] = "@drawable/ic_app"
         }
     }
 }
