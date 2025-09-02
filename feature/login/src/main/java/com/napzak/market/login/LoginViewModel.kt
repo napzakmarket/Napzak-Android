@@ -41,13 +41,18 @@ class LoginViewModel @Inject constructor(
                     val nextRoute = when (response.role) {
                         "ONBOARDING", "WITHDRAWN" -> LoginFlowRoute.Terms
                         "STORE" -> LoginFlowRoute.Main
+                        "REPORTED" -> LoginFlowRoute.Reported
                         else -> null
                     }
 
                     _uiState.update { it.copy(loading = false, route = nextRoute) }
                 }
                 .onFailure { e ->
-                    _uiState.update { it.copy(loading = false) }
+                    if (e.message?.contains(REPORTED_ERROR_CODE) == true ) {
+                        _uiState.update { it.copy(loading = false, route = LoginFlowRoute.Reported) }
+                    } else {
+                        _uiState.update { it.copy(loading = false) }
+                    }
                 }
         }
     }
@@ -64,5 +69,9 @@ class LoginViewModel @Inject constructor(
 
     fun onKakaoLoginFailed(t: Throwable) {
         _uiState.update { it.copy(loading = false) }
+    }
+
+    companion object {
+        private const val REPORTED_ERROR_CODE = "403"
     }
 }

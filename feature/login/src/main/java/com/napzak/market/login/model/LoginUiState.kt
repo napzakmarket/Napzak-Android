@@ -9,4 +9,5 @@ data class LoginUiState(
 sealed class LoginFlowRoute {
     object Terms : LoginFlowRoute()
     object Main : LoginFlowRoute()
+    object Reported : LoginFlowRoute()
 }
