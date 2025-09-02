@@ -87,7 +87,7 @@ internal fun ProductInformationGroup(
             Spacer(Modifier.height(10.dp))
             Text(
                 text = title,
-                style = NapzakMarketTheme.typography.title18m.copy(
+                style = NapzakMarketTheme.typography.title20sb.copy(
                     color = NapzakMarketTheme.colors.black,
                 ),
             )
@@ -95,7 +95,7 @@ internal fun ProductInformationGroup(
             Spacer(Modifier.height(10.dp))
             Text(
                 text = stringResource(detail_product_price, price),
-                style = NapzakMarketTheme.typography.title18b.copy(
+                style = NapzakMarketTheme.typography.title22b.copy(
                     color = NapzakMarketTheme.colors.black,
                 ),
             )
@@ -111,7 +111,7 @@ internal fun ProductInformationGroup(
 
         Text(
             text = description,
-            style = NapzakMarketTheme.typography.caption12r.copy(
+            style = NapzakMarketTheme.typography.body14r.copy(
                 color = NapzakMarketTheme.colors.black,
             ),
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
@@ -158,7 +158,7 @@ private fun TradeTypeTag(
 ) {
     Text(
         text = text,
-        style = NapzakMarketTheme.typography.caption10r.copy(
+        style = NapzakMarketTheme.typography.caption12sb.copy(
             color = contentColor,
         ),
         modifier = modifier
