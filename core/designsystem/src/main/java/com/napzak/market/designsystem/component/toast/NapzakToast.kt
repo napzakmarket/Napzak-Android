@@ -97,9 +97,7 @@ class NapzakToast(
         message: String,
         yOffset: Int,
     ) = setView(yOffset = yOffset) {
-        HeartClickSnackBar(
-            message = message,
-        )
+        HeartClickSnackBar()
     }
 
     private fun showWarningToast(
