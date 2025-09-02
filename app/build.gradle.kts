@@ -86,8 +86,8 @@ dependencies {
 
     implementation(libs.androidx.appcompat)
     implementation(libs.timber)
-    implementation(libs.v2.user)
-    implementation(libs.v2.common)
+    implementation(libs.kakao.v2.user)
+    implementation(libs.kakao.v2.common)
     implementation(libs.androidx.room.compiler)
     implementation(libs.androidx.multidex)
     implementation(libs.androidx.multidex)
