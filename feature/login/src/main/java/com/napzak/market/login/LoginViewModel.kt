@@ -41,7 +41,6 @@ class LoginViewModel @Inject constructor(
                     val nextRoute = when (response.role) {
                         "ONBOARDING", "WITHDRAWN" -> LoginFlowRoute.Terms
                         "STORE" -> LoginFlowRoute.Main
-                        "REPORTED" -> LoginFlowRoute.Reported
                         else -> null
                     }
 
