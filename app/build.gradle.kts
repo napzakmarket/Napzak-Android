@@ -11,6 +11,11 @@ val localProps = Properties().apply {
     if (f.exists()) f.inputStream().use { load(it) }
 }
 
+val keystoreProperties = Properties().apply {
+    val f = File(rootDir, "app/signing/keystore.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+
 val kakaoNativeKey: String =
     providers.gradleProperty("KAKAO_APP_KEY").orNull
         ?: System.getenv("KAKAO_APP_KEY")
@@ -19,6 +24,15 @@ val kakaoNativeKey: String =
 
 android {
     namespace = "com.napzak.market"
+
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file(keystoreProperties.getProperty("keystorePath"))
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            storePassword = keystoreProperties.getProperty("storePassword")
+        }
+    }
 
     defaultConfig {
         buildConfigField("String", "KAKAO_APP_KEY", "\"$kakaoNativeKey\"")
@@ -34,6 +48,7 @@ android {
             manifestPlaceholders["appIcon"] = "@mipmap/ic_app_dev"
         }
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
