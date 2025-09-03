@@ -90,12 +90,11 @@ dependencies {
     implementation(libs.kakao.v2.common)
     implementation(libs.androidx.room.compiler)
     implementation(libs.androidx.multidex)
-    implementation(libs.androidx.multidex)
     implementation(libs.lottie.compose)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.messaging.lifecycle.ktx)
-    implementation("androidx.browser:browser:1.8.0")
+    implementation(libs.androidx.browser)
 }
