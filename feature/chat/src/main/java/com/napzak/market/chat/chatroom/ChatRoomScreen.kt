@@ -240,7 +240,7 @@ internal fun ChatRoomScreen(
                                     modifier = Modifier.fillMaxSize(),
                                 )
 
-                                if (chatRoomState.isOpponentWithdrawn) {
+                                if (chatRoomState.isOpponentWithdrawn || chatRoomState.isOpponentReported) {
                                     Image(
                                         painter = painterResource(img_user_blocked_popup),
                                         contentDescription = null,

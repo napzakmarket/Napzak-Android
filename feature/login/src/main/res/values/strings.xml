@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">NapzakMarket</string>
     <string name="login_kakao">카카오 로그인하기</string>
+
+    <string name="reported_popup_title">접근이 불가합니다.</string>
+    <string name="reported_popup_subtitle">해당 계정은 정책 위반으로 인해\n앱 서비스 접근이 불가합니다.</string>
+    <string name="reported_popup_confirm_button">확인</string>
 </resources>

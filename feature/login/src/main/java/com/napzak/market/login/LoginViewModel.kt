@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.net.HttpURLConnection.HTTP_FORBIDDEN
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,7 +49,11 @@ class LoginViewModel @Inject constructor(
                     _uiState.update { it.copy(loading = false, route = nextRoute) }
                 }
                 .onFailure { e ->
-                    _uiState.update { it.copy(loading = false) }
+                    val isReported = (e as? HttpException)?.code() == HTTP_FORBIDDEN
+                    _uiState.update {
+                        if (isReported) it.copy(loading = false, route = LoginFlowRoute.Reported)
+                        else it.copy(loading = false)
+                    }
                 }
         }
     }
