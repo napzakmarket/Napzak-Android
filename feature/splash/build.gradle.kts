@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.core.uiUtil)
     implementation(projects.feature.onboarding)
     implementation(projects.domain.store)
+    implementation(projects.domain.update)
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
