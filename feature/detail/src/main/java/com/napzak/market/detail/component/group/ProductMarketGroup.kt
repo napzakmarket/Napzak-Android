@@ -9,16 +9,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -26,10 +23,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.napzak.market.designsystem.R.drawable.ic_white_arrow_right
-import com.napzak.market.designsystem.R.drawable.ic_circle_purple_user
+import com.napzak.market.designsystem.component.image.NapzakProfileImage
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.detail.R.string.detail_product_market_buy
 import com.napzak.market.feature.detail.R.string.detail_product_market_count
@@ -91,19 +86,10 @@ private fun ProductMarketProfile(
             .background(color = NapzakMarketTheme.colors.gray10, shape = RoundedCornerShape(25.dp))
             .padding(horizontal = 22.dp, vertical = 17.dp),
     ) {
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .placeholder(ic_circle_purple_user)
-                .error(ic_circle_purple_user)
-                .fallback(ic_circle_purple_user)
-                .data(marketImage.ifBlank { null })
-                .crossfade(true)
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(60.dp)
-                .clip(shape = CircleShape),
+        NapzakProfileImage(
+            imageUrl = marketImage,
+            contentDescription = marketName,
+            modifier = Modifier.size(60.dp),
         )
 
         Spacer(Modifier.width(14.dp))

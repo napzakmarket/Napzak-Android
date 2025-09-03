@@ -2,11 +2,12 @@ package com.napzak.market.detail.type
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.napzak.market.designsystem.R.drawable.ic_white_checked
 import com.napzak.market.designsystem.R.drawable.ic_gray_trash_bin
+import com.napzak.market.designsystem.R.drawable.ic_white_checked
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.toast.ToastFontType
 import com.napzak.market.designsystem.component.toast.ToastType
+import com.napzak.market.feature.detail.R.string.detail_toast_delete
 import com.napzak.market.feature.detail.R.string.detail_toast_trade_status
 
 enum class ProductDetailToastType(
@@ -18,7 +19,7 @@ enum class ProductDetailToastType(
     DELETE(
         toastType = ToastType.COMMON,
         fontType = ToastFontType.LARGE,
-        stringRes = detail_toast_trade_status,
+        stringRes = detail_toast_delete,
         iconRes = ic_gray_trash_bin,
     ),
     STATUS_CHANGE(

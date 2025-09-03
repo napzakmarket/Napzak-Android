@@ -42,7 +42,7 @@ import coil.request.ImageRequest
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.designsystem.R
 import com.napzak.market.designsystem.R.drawable.ic_red_heart_large
-import com.napzak.market.designsystem.R.drawable.ic_transparent_heart_large
+import com.napzak.market.designsystem.R.drawable.ic_transparent_heart
 import com.napzak.market.designsystem.R.drawable.img_thumbnail_complete_buy
 import com.napzak.market.designsystem.R.drawable.img_thumbnail_complete_sell
 import com.napzak.market.designsystem.R.drawable.img_thumbnail_reservation
@@ -314,7 +314,7 @@ private fun LikeButton(
     modifier: Modifier = Modifier,
 ) {
     val imageVector = if (isLiked) ic_red_heart_large
-    else ic_transparent_heart_large
+    else ic_transparent_heart
 
     Icon(
         imageVector = ImageVector.vectorResource(imageVector),

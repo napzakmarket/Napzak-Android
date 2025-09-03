@@ -65,7 +65,7 @@ fun SearchTextField(
                 .focusRequester(focusRequester)
                 .clip(RoundedCornerShape(14.dp))
                 .background(NapzakMarketTheme.colors.gray50)
-                .padding(16.dp, 13.dp, 0.dp, 13.dp),
+                .padding(16.dp, 7.dp, 10.dp, 7.dp),
             enabled = enabled,
             readOnly = readOnly,
             keyboardActions = KeyboardActions(
@@ -77,8 +77,7 @@ fun SearchTextField(
             suffix = {
                 Row(
                     modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(end = 15.dp),
+                        .align(Alignment.CenterEnd),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     if (text.isNotEmpty() && !readOnly) {
@@ -106,7 +105,7 @@ fun SearchTextField(
 @Composable
 private fun SearchTextFieldPreview() {
     NapzakMarketTheme {
-        var searchText by remember { mutableStateOf("") }
+        var searchText by remember { mutableStateOf("1234") }
         SearchTextField(
             text = searchText,
             onTextChange = { searchText = it },

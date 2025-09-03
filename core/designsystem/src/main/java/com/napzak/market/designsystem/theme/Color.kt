@@ -32,6 +32,7 @@ val transP500 = Color(0xB37534FF)
 val transBlack = Color(0xB31A1A1A)
 val transP100 = Color(0xB3F1EAFF)
 val transWhite = Color(0x80FFFFFF)
+val transRed = Color(0x80EF4849)
 
 // Gradient
 val gradWhite = Color(0x00FFFFFF)
@@ -62,6 +63,7 @@ class NapzakMarketColors(
     transBlack: Color,
     transP100: Color,
     transWhite: Color,
+    transRed: Color,
     gradWhite: Color,
     kakaoYellow: Color,
     kakaoBlack: Color,
@@ -106,6 +108,8 @@ class NapzakMarketColors(
         private set
     var transWhite by mutableStateOf(transWhite)
         private set
+    var transRed by mutableStateOf(transRed)
+        private set
     var gradWhite by mutableStateOf(gradWhite)
         private set
     var kakaoYellow by mutableStateOf(kakaoYellow)
@@ -136,6 +140,7 @@ class NapzakMarketColors(
         transBlack,
         transP100,
         transWhite,
+        transRed,
         gradWhite,
         kakaoYellow,
         kakaoBlack,
@@ -163,6 +168,7 @@ class NapzakMarketColors(
         transBlack = other.transBlack
         transP100 = other.transP100
         transWhite = other.transWhite
+        transRed = other.transRed
         gradWhite = other.gradWhite
         kakaoYellow = other.kakaoYellow
         kakaoBlack = other.kakaoBlack
@@ -191,6 +197,7 @@ fun NapzakMarketLightColors(
     TransBlack: Color = transBlack,
     TransP100: Color = transP100,
     TransWhite: Color = transWhite,
+    TransRed: Color = transRed,
     GradWhite: Color = gradWhite,
     KakaoYellow: Color = kakaoYellow,
     KakaoBlack: Color = kakaoBlack,
@@ -215,6 +222,7 @@ fun NapzakMarketLightColors(
     TransBlack,
     TransP100,
     TransWhite,
+    TransRed,
     GradWhite,
     KakaoYellow,
     KakaoBlack,

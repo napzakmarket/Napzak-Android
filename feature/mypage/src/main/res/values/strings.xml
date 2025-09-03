@@ -17,7 +17,7 @@
 
     <!--SignOutScreen-->
     <string name="sign_out_top_bar">탈퇴하기</string>
-    <string name="sign_out_button_proceed">제출하기</string>
+    <string name="sign_out_button_proceed">계속하기</string>
     <string name="sign_out_button_skip">건너뛰기</string>
     <string name="sign_out_reason_title">정말 떠나시나요?</string>
     <string name="sign_out_reason_description">
