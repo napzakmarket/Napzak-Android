@@ -23,6 +23,7 @@ fun NavGraphBuilder.loginGraph(
                 when (route) {
                     LoginFlowRoute.Terms -> onNavigateToTerms()
                     LoginFlowRoute.Main -> onNavigateToHome()
+                    LoginFlowRoute.Reported -> { } /* 화면 이동 없이 팝업만 동작 */
                 }
             },
             modifier = modifier,

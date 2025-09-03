@@ -9,7 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -23,6 +26,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.napzak.market.designsystem.R.raw.lottie_login
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.login.component.KakaoLoginButton
+import com.napzak.market.login.component.UserReportedPopup
 import com.napzak.market.login.model.LoginFlowRoute
 import com.napzak.market.ui_util.findActivity
 
@@ -34,6 +38,7 @@ fun LoginRoute(
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
+    var isReportedPopupVisible by rememberSaveable { mutableStateOf(false) }
 
     val kakaoLauncher = remember {
         LoginKakaoLauncher(
@@ -46,22 +51,27 @@ fun LoginRoute(
 
     LaunchedEffect(uiState.route) {
         uiState.route?.let {
-            onRouteChanged(it)
+            if (it == LoginFlowRoute.Reported) isReportedPopupVisible = true
+            else onRouteChanged(it)
             viewModel.consumeRoute()
         }
     }
 
     LoginScreen(
+        isReportedPopupVisible = isReportedPopupVisible,
         onKakaoLoginClick = { kakaoLauncher.startKakaoLogin() },
+        onReportedPopupButtonClick = { isReportedPopupVisible = false },
         modifier = modifier,
     )
 }
 
 @Composable
 private fun LoginScreen(
+    isReportedPopupVisible: Boolean,
     onKakaoLoginClick: () -> Unit,
+    onReportedPopupButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
-){
+) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(lottie_login)
     )
@@ -90,5 +100,11 @@ private fun LoginScreen(
         )
 
         KakaoLoginButton(onClick = onKakaoLoginClick)
+    }
+
+    if (isReportedPopupVisible) {
+        UserReportedPopup(
+            onButtonClick = onReportedPopupButtonClick,
+        )
     }
 }
