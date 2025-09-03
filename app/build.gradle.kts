@@ -74,5 +74,6 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.messaging.lifecycle.ktx)
+    implementation(libs.firebase.config.ktx)
     implementation("androidx.browser:browser:1.8.0")
 }

@@ -59,6 +59,7 @@ multidex = "2.0.1"
 googleServices = "4.4.2"
 firebaseBom = "33.15.0"
 firebaseMessagingLifecycleKtx = "0.3.0"
+firebase-config-ktx = "21.6.0"
 
 [libraries]
 ## android
@@ -145,6 +146,7 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 firebase-messaging-lifecycle-ktx = { module = "com.github.skydoves:firebase-messaging-lifecycle-ktx", version.ref = "firebaseMessagingLifecycleKtx" }
+firebase-config-ktx = { group = "com.google.firebase", name = "firebase-config-ktx", version.ref = "firebase-config-ktx" }
 
 [bundles]
 coroutine = [
