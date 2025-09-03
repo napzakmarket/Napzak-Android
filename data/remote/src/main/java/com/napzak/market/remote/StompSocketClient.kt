@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 import kotlin.math.pow
 
+@Deprecated("더 이상 사용되지 않는 소켓 클라이언트입니다. 삭제될 예정입니다.")
 interface StompSocketClient {
     val session: StompSessionWithKxSerialization?
     val connectionState: StateFlow<StompSocketConnectionState>
@@ -65,7 +66,7 @@ class StompSocketClientImpl @Inject constructor(
 
     /**
      * 기본 URL과 [host]로 소켓 연결을 시도합니다.
-     * - 연결에 성공하면 [StompSocketState.CONNECTED]로 상태가 변경됩니다. 그리고 곧바로 하트비트가 실행됩니다.
+     * - 연결에 성공하면 [CONNECTED]로 상태가 변경됩니다. 그리고 곧바로 하트비트가 실행됩니다.
      * - 연결에 실패하면 최대 5번까지 재연결을 시도합니다.
      *
      * @throws Exception 5번 이상 재연결에 실패한 경우
@@ -105,7 +106,7 @@ class StompSocketClientImpl @Inject constructor(
      *
      * - 하트비트 작업 취소가 선행됩니다.
      * - 세션 연결 해제 및 자원 해제가 이루어집니다.
-     * - [StompSocketState.DISCONNECTED]로 상태가 변경됩니다.
+     * - [DISCONNECTED]로 상태가 변경됩니다.
      */
     override suspend fun disconnect(): Unit = connectMutex.withLock {
         if (connectionState.value == DISCONNECTED) {

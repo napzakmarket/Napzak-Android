@@ -10,12 +10,14 @@ import com.napzak.market.chat.repository.ChatSocketRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,9 +25,9 @@ import javax.inject.Singleton
 class ChatController @Inject constructor(
     private val chatSocketRepository: ChatSocketRepository,
 ) {
-    private var coroutineScope: CoroutineScope? = null
     private val roomIdSet = mutableSetOf<Long>()
-    private val jobMap = mutableMapOf<Long, Job>()
+    private val jobMap = mutableMapOf<Int, Job>()
+    private val flowMap = mutableMapOf<Int, Flow<Any>>()
 
     private val _messageFlow = MutableSharedFlow<ReceiveMessage<*>>()
     val messageFlow = _messageFlow.asSharedFlow()
@@ -34,65 +36,95 @@ class ChatController @Inject constructor(
     val errorFlow = _errorFlow.asSharedFlow()
 
     suspend fun connect(storeId: Long): Result<Unit> {
-        coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        collectMessage(storeId)
+        collectNewChatRoom(storeId)
+
         return chatSocketRepository.connect()
-            .onSuccess { createChatRoom(storeId) }
-            .onFailure { _errorFlow.emit(ConnectionFailureException(it)) }
+            .onSuccess { subscribeCreateChatRoom(storeId) }
+            .onFailure { _errorFlow.emit(ConnectionFailureException()) }
     }
 
     suspend fun disconnect(): Result<Unit> {
         jobMap.forEach { (_, job) -> job.cancel() }
         jobMap.clear()
+        flowMap.clear()
         roomIdSet.clear()
-        coroutineScope?.cancel()
         return chatSocketRepository.disconnect()
     }
 
+    suspend fun sendMessage(message: SendMessage<*>) {
+        if (!awaitConnected()) {
+            _errorFlow.emit(ConnectionFailureException())
+            return
+        }
+
+        chatSocketRepository.sendChat(message)
+            .onFailure { _errorFlow.emit(SendFailureException(it)) }
+    }
+
     suspend fun subscribeChatRoom(roomId: Long, storeId: Long): Result<Unit> {
+        if (!awaitConnected()) {
+            return Result.failure(ConnectionFailureException())
+        }
         return if (roomIdSet.add(roomId)) {
-            chatSocketRepository.subscribeChatRoom(roomId, storeId).mapCatching { flow ->
-                val job = coroutineScope?.launch {
-                    flow
-                        .catch { _errorFlow.emit(SubscriptionFailureException(it)) }
-                        .collect { message ->
-                            _messageFlow.emit(message)
-                        }
-                }
-                job?.let { jobMap[roomId] = it } ?: Unit
-            }
+            chatSocketRepository.subscribeChatRoom(roomId, storeId)
         } else {
             Result.success(Unit)
         }
     }
 
     fun unsubscribeChatRoom(roomId: Long) {
-        jobMap[roomId]?.cancel()
-        jobMap.remove(roomId)
         roomIdSet.remove(roomId)
     }
 
-    private suspend fun createChatRoom(storeId: Long): Result<Unit> {
-        return chatSocketRepository.subscribeCreateChatRoom(storeId).mapCatching { flow ->
-            val job = coroutineScope?.launch {
-                flow
-                    .catch { _errorFlow.emit(SubscriptionFailureException(it)) }
-                    .collect { roomId ->
-                        subscribeChatRoom(roomId, storeId)
-                    }
+    private fun collectMessage(storeId: Long) {
+        if (jobMap.containsKey(ID_COLLECT_MSG) && flowMap.containsKey(ID_COLLECT_MSG)) return
+
+        val flow = chatSocketRepository.getMessageFlow(storeId)
+        val job = CoroutineScope(Dispatchers.Default).launch {
+            flow.collect { message ->
+                _messageFlow.emit(message)
             }
-            job?.let { jobMap[CREATE_JOB_ID] = it } ?: Unit
+        }
+
+        flowMap[ID_COLLECT_MSG] = flow
+        jobMap[ID_COLLECT_MSG] = job
+    }
+
+    private fun collectNewChatRoom(storeId: Long) {
+        if (jobMap.containsKey(ID_CREATE_ROOM) && flowMap.containsKey(ID_CREATE_ROOM)) return
+
+        val flow = chatSocketRepository.getChatRoomCreationFlow()
+
+        val job = CoroutineScope(Dispatchers.Default).launch {
+            flow.collect { roomId ->
+                chatSocketRepository.subscribeChatRoom(roomId, storeId)
+                    .onFailure { _errorFlow.emit(SubscriptionFailureException(it)) }
+            }
+        }
+
+        flowMap[ID_CREATE_ROOM] = flow
+        jobMap[ID_CREATE_ROOM] = job
+    }
+
+    private suspend fun subscribeCreateChatRoom(storeId: Long) {
+        if (awaitConnected()) {
+            chatSocketRepository.subscribeCreateChatRoom(storeId)
         }
     }
 
-    suspend fun sendMessage(message: SendMessage<*>) {
-        try {
-            chatSocketRepository.sendChat(message)
-        } catch (e: Exception) {
-            _errorFlow.emit(SendFailureException(e))
-        }
+    private suspend fun awaitConnected(timeoutMs: Long = 7_000): Boolean {
+        return withTimeoutOrNull(timeoutMs) {
+            chatSocketRepository.getIsConnectedFlow()
+                .distinctUntilChanged()
+                .filter { it }
+                .first()
+            true
+        } ?: false
     }
 
     companion object {
-        private const val CREATE_JOB_ID = 0L
+        private const val ID_COLLECT_MSG = 0
+        private const val ID_CREATE_ROOM = 1
     }
 }

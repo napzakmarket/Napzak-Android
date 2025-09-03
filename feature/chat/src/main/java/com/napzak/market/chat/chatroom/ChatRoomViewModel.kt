@@ -13,7 +13,6 @@ import com.napzak.market.chat.model.SendMessage
 import com.napzak.market.chat.repository.ChatRoomRepository
 import com.napzak.market.chat.usecase.GetChatFlowUseCase
 import com.napzak.market.chat.usecase.SendMessageUseCase
-import com.napzak.market.chat.usecase.SubscribeChatRoomUseCase
 import com.napzak.market.chat.usecase.UnsubscribeChatRoomUseCase
 import com.napzak.market.common.state.UiState
 import com.napzak.market.presigned_url.model.UploadImage
@@ -37,7 +36,6 @@ internal class ChatRoomViewModel @Inject constructor(
     private val chatRepository: ChatRoomRepository,
     private val getChatFlowUseCase: GetChatFlowUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
-    private val subscribeChatRoomUseCase: SubscribeChatRoomUseCase,
     private val unsubscribeChatRoomUseCase: UnsubscribeChatRoomUseCase,
     private val storeRepository: StoreRepository,
     private val uploadImagesUseCase: UploadImagesUseCase
@@ -394,7 +392,6 @@ internal class ChatRoomViewModel @Inject constructor(
             enterChatRoom(roomId)
             collectMessages(roomId)
             fetchChatRoomDetail(productId, roomId)
-            subscribeChatRoomUseCase(roomId, storeId)
             sendProductMessage()
         } catch (e: Exception) {
             Timber.e(e, "채팅방 생성에 실패했습니다.")
