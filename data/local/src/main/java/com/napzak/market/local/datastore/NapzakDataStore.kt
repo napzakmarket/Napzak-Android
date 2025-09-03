@@ -15,7 +15,7 @@ class NapzakDataStore @Inject constructor(
         .map { it[preferencesAppVersionKey] }
         .firstOrNull()
 
-    suspend fun getFirebaseVersion(version: String) = preferenceDataStore.data
+    suspend fun getFirebaseVersion(): String? = preferenceDataStore.data
         .map { it[preferencesFirebaseVersionKey] }
         .firstOrNull()
 
