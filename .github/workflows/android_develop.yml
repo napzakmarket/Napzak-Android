@@ -34,6 +34,12 @@ jobs:
       - name: Create local.properties
         run: echo '${{ secrets.LOCAL_PROPERTIES }}' > ./local.properties
 
+      - name: Create keystore.properties
+        run: echo '${{ secrets.KEYSTORE_PROPERTIES }}' > ./app/signing/keystore.properties
+
+      - name: Create keystore.jks
+        run: echo '${{ secrets.KEYSTORE_JKS }}' > ./app/signing/napzak-keystore.jks
+
       - name: Build with Gradle
         run: ./gradlew :app:assembleDebug
 
