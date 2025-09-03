@@ -11,8 +11,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.google.firebase.remoteconfig.remoteConfig
 import com.kakao.sdk.common.KakaoSdk
-import com.napzak.market.local.datastore.NapzakDataStore
 import com.napzak.market.notification.repository.FirebaseRepository
+import com.napzak.market.update.repository.AppVersionRepository
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,7 +30,7 @@ class NapzakApplication : Application() {
     lateinit var firebaseRepository: FirebaseRepository
 
     @Inject
-    lateinit var napzakDataStore: NapzakDataStore
+    lateinit var appVersionRepository: AppVersionRepository
 
     private val lifecycleOwner: LifecycleOwner
         get() = ProcessLifecycleOwner.get()
@@ -39,11 +39,11 @@ class NapzakApplication : Application() {
         super.onCreate()
         KakaoSdk.init(this, BuildConfig.KAKAO_APP_KEY)
 
+        getAppVersion()
         initTimber()
         setDayMode()
         getPushToken()
         clearCacheDir()
-        getAppVersion()
     }
 
     private fun initTimber() {
@@ -86,7 +86,7 @@ class NapzakApplication : Application() {
             if (it.isSuccessful) {
                 lifecycleOwner.lifecycleScope.launch {
                     val appVersion = remoteConfig.getString(ANDROID_APP_VERSION)
-                    napzakDataStore.setFirebaseVersion(appVersion)
+                    appVersionRepository.setFirebaseLatestVersion(appVersion)
                 }
             }
         }

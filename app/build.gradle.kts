@@ -58,8 +58,10 @@ dependencies {
     implementation(projects.data.store)
     implementation(projects.data.chat)
     implementation(projects.data.notification)
+    implementation(projects.data.update)
 
     implementation(projects.domain.notification)
+    implementation(projects.domain.update)
 
     implementation(libs.androidx.appcompat)
     implementation(libs.timber)

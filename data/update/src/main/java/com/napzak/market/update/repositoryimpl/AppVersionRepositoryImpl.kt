@@ -18,4 +18,10 @@ class AppVersionRepositoryImpl @Inject constructor(
             napzakDataStore.setAppVersion(version)
         }
     }
+
+    override suspend fun setFirebaseLatestVersion(version: String) {
+        runCatching {
+            napzakDataStore.setFirebaseVersion(version)
+        }
+    }
 }
