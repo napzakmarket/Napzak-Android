@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -54,13 +55,17 @@ class StompWebSocketClientImpl @Inject constructor(
         private const val MAX_RETRY_COUNT = 5
     }
 
-    private var coroutineScope: CoroutineScope? = null
+    private var coroutineScope: CoroutineScope =
+        CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private var webSocket: WebSocket? = null
     private var pingJob: Job? = null
     private val connectionRetryCount = AtomicInteger(0)
     private val connectionMutex = Mutex()
 
-    private val _messageFlow = MutableSharedFlow<String>()
+    private val _messageFlow = MutableSharedFlow<String>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     private val _connectionState = MutableStateFlow<SocketConnectionState>(DISCONNECTED)
     override val messageFlow = _messageFlow.asSharedFlow()
     override val connectionState = _connectionState.asStateFlow()
@@ -68,9 +73,6 @@ class StompWebSocketClientImpl @Inject constructor(
     override suspend fun connect(host: String?) {
         connectionMutex.withLock {
             if (webSocket != null) return
-
-            coroutineScope?.cancel()
-            coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
             if (_connectionState.value == DISCONNECTED) {
                 updateConnectionState(CONNECTING)
@@ -95,7 +97,7 @@ class StompWebSocketClientImpl @Inject constructor(
             }.onSuccess {
                 updateConnectionState(DISCONNECTED)
                 webSocket = null
-                coroutineScope?.cancel()
+                coroutineScope.cancel()
                 logSuccess("DISCONNECT", "STOMP 소켓 연결을 해제했습니다.")
             }.onFailure {
                 logError("DISCONNECT", Throwable("STOMP 소켓 연결을 해제하는데 실패했습니다."))
@@ -143,7 +145,7 @@ class StompWebSocketClientImpl @Inject constructor(
         }
 
         pingJob?.cancel()
-        pingJob = coroutineScope?.launch {
+        pingJob = coroutineScope.launch {
             while (webSocket != null && _connectionState.value == CONNECTED) {
                 webSocket?.send(pingFrame)
                 logSuccess("HEARTBEAT", "PING!")
@@ -168,7 +170,7 @@ class StompWebSocketClientImpl @Inject constructor(
     private fun handleConnectionFailure(host: String) {
         val delay = 2 * 2.0.pow((connectionRetryCount.get() - 1).toDouble()).toLong()
         val jitterMillis = (0..delay).random() * 1000
-        CoroutineScope(Dispatchers.Default).launch {
+        coroutineScope.launch {
             delay(timeMillis = jitterMillis)
             connect(host)
         }
@@ -219,13 +221,12 @@ class StompWebSocketClientImpl @Inject constructor(
 
                     SocketMessageType.MESSAGE -> {
                         val body = decodeMessage(text)
+                        logSuccess("MESSAGE", "메시지를 수신했습니다\n$body")
                         when {
                             body == "pong" -> logSuccess("HEARTBEAT", "PONG!")
 
                             else -> {
-                                coroutineScope?.launch {
-                                    _messageFlow.emit(body)
-                                }
+                                _messageFlow.tryEmit(body)
                             }
                         }
                     }
@@ -235,13 +236,13 @@ class StompWebSocketClientImpl @Inject constructor(
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             super.onClosed(webSocket, code, reason)
-            CoroutineScope(Dispatchers.IO).launch { disconnect() }
+            coroutineScope.launch { disconnect() }
             logSuccess("DISCONNECT", "웹소켓 연결이 해제되었습니다.")
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
-            CoroutineScope(Dispatchers.IO).launch { disconnect() }
+            coroutineScope.launch { disconnect() }
 
             if (connectionRetryCount.incrementAndGet() < MAX_RETRY_COUNT) {
                 handleConnectionFailure(stompHost)
