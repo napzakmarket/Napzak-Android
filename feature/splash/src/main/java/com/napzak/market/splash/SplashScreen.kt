@@ -1,6 +1,7 @@
 package com.napzak.market.splash
 
 import android.app.Activity
+import android.window.SplashScreen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -10,8 +11,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -32,6 +35,7 @@ internal fun SplashRoute(
     viewModel: SplashViewModel = hiltViewModel(),
 ) {
     val view = LocalView.current
+    var isUpdatePopupVisible by remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
         val window = (view.context as Activity).window
@@ -46,20 +50,27 @@ internal fun SplashRoute(
 
     LaunchedEffect(Unit) {
         val success = viewModel.tryAutoLogin().isSuccess
+        val isUpdateNeeded = viewModel.checkAppVersion()
         delay(2500)
         if (!navigated.value) {
             navigated.value = true
-            if (success) onNavigateToMain() else onNavigateToLogin()
+            if (isUpdateNeeded) isUpdatePopupVisible = true
+            else if (success) onNavigateToMain()
+            else onNavigateToLogin()
         }
     }
 
     SplashScreen(
+        isUpdatePopupVisible = isUpdatePopupVisible,
+        onUpdateButtonClick = {},
         modifier = modifier,
     )
 }
 
 @Composable
 private fun SplashScreen(
+    isUpdatePopupVisible: Boolean,
+    onUpdateButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -76,12 +87,24 @@ private fun SplashScreen(
                 .aspectRatio(1.7f),
         )
     }
+
+    if (isUpdatePopupVisible) {
+
+    }
+}
+
+@Composable
+private fun UpdatePopup(modifier: Modifier = Modifier) {
+
 }
 
 @Preview
 @Composable
 private fun SplashScreenPreview() {
     NapzakMarketTheme {
-        SplashScreen()
+        SplashScreen(
+            isUpdatePopupVisible = false,
+            onUpdateButtonClick = {},
+        )
     }
 }
