@@ -7,6 +7,10 @@ import javax.inject.Inject
 class ChatSocketDataSource @Inject constructor(
     private val chatSocketService: ChatSocketService,
 ) {
+    val messageFlow = chatSocketService.messageFlow
+
+    val socketConnectionState = chatSocketService.connectionState
+
     suspend fun connect() = chatSocketService.connect()
 
     suspend fun disconnect() = chatSocketService.disconnect()

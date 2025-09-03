@@ -1,22 +1,17 @@
 package com.napzak.market.main
 
-import android.content.Context
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import com.napzak.market.chat.repository.ChatRepository
 import com.napzak.market.chat.usecase.ConnectChatSocketUseCase
 import com.napzak.market.chat.usecase.DisconnectChatSocketUseCase
-import com.napzak.market.chat.usecase.SubscribeChatRoomUseCase
+import com.napzak.market.chat.usecase.SubscribeChatRoomsUseCase
 import com.napzak.market.store.model.StoreInfo
 import com.napzak.market.store.repository.StoreRepository
 import com.napzak.market.util.android.TokenProvider
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -25,13 +20,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class WebSocketLifecycleObserver @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val chatRepository: ChatRepository,
     private val storeRepository: StoreRepository,
     private val tokenProvider: TokenProvider,
     private val connectChatSocketUseCase: ConnectChatSocketUseCase,
     private val disconnectChatSocketUseCase: DisconnectChatSocketUseCase,
-    private val subscribeChatRoomUseCase: SubscribeChatRoomUseCase,
+    private val subscribeChatRoomsUseCase: SubscribeChatRoomsUseCase,
 ) : DefaultLifecycleObserver {
     private lateinit var activityScope: CoroutineScope
     private var loginStateCollectJob: Job? = null
@@ -72,21 +65,16 @@ class WebSocketLifecycleObserver @Inject constructor(
         this.isLoggedIn.update { isLoggedIn }
     }
 
-    private suspend fun fetchStoreInfo(): StoreInfo? = storeRepository.fetchStoreInfo().getOrNull()
+    private suspend fun fetchStoreInfo(): StoreInfo? {
+        return storeRepository.fetchStoreInfo().getOrNull()
+    }
 
-    private suspend fun connectChatSocket(storeId: Long) =
-        connectChatSocketUseCase(storeId).getOrThrow()
+    private suspend fun connectChatSocket(storeId: Long) {
+        connectChatSocketUseCase(storeId)
+    }
 
     private suspend fun subscribeChatRooms(storeId: Long) {
-        chatRepository.getChatRoomIds().onSuccess { roomIds ->
-            activityScope.launch {
-                roomIds.map { roomId ->
-                    async {
-                        subscribeChatRoomUseCase(roomId = roomId, storeId = storeId)
-                    }
-                }.awaitAll()
-            }
-        }
+        subscribeChatRoomsUseCase(storeId = storeId)
     }
 
     private suspend fun isTokenAvailable() = tokenProvider.getAccessToken() != null
