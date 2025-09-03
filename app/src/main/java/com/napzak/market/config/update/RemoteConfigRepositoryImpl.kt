@@ -1,13 +1,12 @@
 package com.napzak.market.config.update
 
-import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.google.firebase.remoteconfig.remoteConfig
-import kotlin.coroutines.resume
 import com.napzak.market.update.repository.RemoteConfigRepository
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
+import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 private const val ANDROID_APP_VERSION = "android_app_version"

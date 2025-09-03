@@ -2,7 +2,6 @@ package com.napzak.market.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import coil.util.CoilUtils.result
 import com.napzak.market.store.usecase.CheckAutoLoginUseCase
 import com.napzak.market.update.repository.RemoteConfigRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
