@@ -1,7 +1,6 @@
 package com.napzak.market.splash
 
 import android.app.Activity
-import android.window.SplashScreen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,13 +18,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.napzak.market.designsystem.R.drawable.ic_logo
+import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_right
+import com.napzak.market.designsystem.R.drawable.ic_purple_change
+import com.napzak.market.designsystem.component.popup.NapzakPopup
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import kotlinx.coroutines.delay
+import com.napzak.market.feature.splash.R.string.update_popup_title
+import com.napzak.market.feature.splash.R.string.update_popup_subtitle
+import com.napzak.market.feature.splash.R.string.update_popup_button
 
 @Composable
 internal fun SplashRoute(
@@ -62,7 +68,10 @@ internal fun SplashRoute(
 
     SplashScreen(
         isUpdatePopupVisible = isUpdatePopupVisible,
-        onUpdateButtonClick = {},
+        onUpdateButtonClick = {
+            isUpdatePopupVisible = false
+            viewModel.moveToPlayStore()
+        },
         modifier = modifier,
     )
 }
@@ -89,13 +98,32 @@ private fun SplashScreen(
     }
 
     if (isUpdatePopupVisible) {
-
+        UpdatePopup(
+            onUpdateButtonClick = onUpdateButtonClick,
+        )
     }
 }
 
 @Composable
-private fun UpdatePopup(modifier: Modifier = Modifier) {
-
+private fun UpdatePopup(
+    onUpdateButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(NapzakMarketTheme.colors.white)
+    ) {
+        NapzakPopup(
+            title = stringResource(update_popup_title),
+            subTitle = stringResource(update_popup_subtitle),
+            icon = ImageVector.vectorResource(ic_purple_change),
+            buttonColor = NapzakMarketTheme.colors.purple500,
+            buttonText = stringResource(update_popup_button),
+            buttonIcon = ImageVector.vectorResource(ic_gray_arrow_right),
+            onButtonClick = onUpdateButtonClick,
+        )
+    }
 }
 
 @Preview
