@@ -15,23 +15,27 @@ class NapzakDataStore @Inject constructor(
         .map { it[preferencesAppVersionKey] }
         .firstOrNull()
 
+    suspend fun getFirebaseVersion(version: String) = preferenceDataStore.data
+        .map { it[preferencesFirebaseVersionKey] }
+        .firstOrNull()
+
     suspend fun setAppVersion(version: String) {
         preferenceDataStore.edit { preferences ->
             preferences[preferencesAppVersionKey] = version
         }
     }
 
-    suspend fun setFirebaseAppVersion(version: String) {
+    suspend fun setFirebaseVersion(version: String) {
         preferenceDataStore.edit { preferences ->
-            preferences[preferencesFirebaseAppVersionKey] = version
+            preferences[preferencesFirebaseVersionKey] = version
         }
     }
 
     companion object {
         private const val APP_VERSION_KEY = "app_version"
-        private const val FIREBASE_APP_VERSION_KEY = "firebase_app_version"
+        private const val FIREBASE_VERSION_KEY = "firebase_version"
 
         val preferencesAppVersionKey = stringPreferencesKey(APP_VERSION_KEY)
-        val preferencesFirebaseAppVersionKey = stringPreferencesKey(FIREBASE_APP_VERSION_KEY)
+        val preferencesFirebaseVersionKey = stringPreferencesKey(FIREBASE_VERSION_KEY)
     }
 }

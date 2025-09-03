@@ -86,7 +86,7 @@ class NapzakApplication : Application() {
             if (it.isSuccessful) {
                 lifecycleOwner.lifecycleScope.launch {
                     val appVersion = remoteConfig.getString(ANDROID_APP_VERSION)
-                    napzakDataStore.setFirebaseAppVersion(appVersion)
+                    napzakDataStore.setFirebaseVersion(appVersion)
                 }
             }
         }
