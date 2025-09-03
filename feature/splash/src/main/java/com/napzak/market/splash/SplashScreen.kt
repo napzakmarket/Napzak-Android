@@ -13,16 +13,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.designsystem.R.drawable.ic_logo
 import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_right
 import com.napzak.market.designsystem.R.drawable.ic_purple_change
@@ -32,6 +33,7 @@ import kotlinx.coroutines.delay
 import com.napzak.market.feature.splash.R.string.update_popup_title
 import com.napzak.market.feature.splash.R.string.update_popup_subtitle
 import com.napzak.market.feature.splash.R.string.update_popup_button
+import com.napzak.market.ui_util.getVersionName
 
 @Composable
 internal fun SplashRoute(
@@ -41,7 +43,8 @@ internal fun SplashRoute(
     viewModel: SplashViewModel = hiltViewModel(),
 ) {
     val view = LocalView.current
-    var isUpdatePopupVisible by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val isUpdatePopupVisible by viewModel.isUpdatePopupVisible.collectAsStateWithLifecycle()
 
     DisposableEffect(Unit) {
         val window = (view.context as Activity).window
@@ -56,21 +59,22 @@ internal fun SplashRoute(
 
     LaunchedEffect(Unit) {
         val success = viewModel.tryAutoLogin().isSuccess
-        val isUpdateNeeded = viewModel.checkAppVersion()
+        val appVersion = context.getVersionName()
+        if (appVersion != null) viewModel.checkAppVersion(appVersion)
+        else viewModel.updatePopupVisible(false)
         delay(2500)
-        if (!navigated.value) {
+
+        if (!navigated.value && isUpdatePopupVisible == false) {
             navigated.value = true
-            if (isUpdateNeeded) isUpdatePopupVisible = true
-            else if (success) onNavigateToMain()
-            else onNavigateToLogin()
+            if (success) onNavigateToMain() else onNavigateToLogin()
         }
     }
 
     SplashScreen(
         isUpdatePopupVisible = isUpdatePopupVisible,
         onUpdateButtonClick = {
-            isUpdatePopupVisible = false
             viewModel.moveToPlayStore()
+            viewModel.updatePopupVisible(false)
         },
         modifier = modifier,
     )
@@ -78,7 +82,7 @@ internal fun SplashRoute(
 
 @Composable
 private fun SplashScreen(
-    isUpdatePopupVisible: Boolean,
+    isUpdatePopupVisible: Boolean?,
     onUpdateButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -97,7 +101,7 @@ private fun SplashScreen(
         )
     }
 
-    if (isUpdatePopupVisible) {
+    if (isUpdatePopupVisible == true) {
         UpdatePopup(
             onUpdateButtonClick = onUpdateButtonClick,
         )
