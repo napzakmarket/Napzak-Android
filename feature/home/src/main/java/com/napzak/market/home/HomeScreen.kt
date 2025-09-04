@@ -227,7 +227,7 @@ private fun HomeSuccessScreen(
                     images = topBanners.map { it.imageUrl }.toImmutableList(),
                     onImageClick = { index ->
                         runCatching {
-                            onTrackBannerClick(topBanners[index].id, HomeBannerType.TOP, index)
+                            onTrackBannerClick(topBanners[index].id, HomeBannerType.TOP, index + 1)
                             context.openUrl(topBanners[index].linkUrl)
                         }
                     },
@@ -245,7 +245,7 @@ private fun HomeSuccessScreen(
                 title = stringResource(home_list_customized_title, nickname),
                 subTitle = stringResource(home_list_customized_sub_title, nickname),
                 onProductClick = { productId, index ->
-                    onTrackRecommendProductClick(index)
+                    onTrackRecommendProductClick(index + 1)
                     onProductClick(productId)
                 },
                 onLikeClick = { productId, isInterest ->
