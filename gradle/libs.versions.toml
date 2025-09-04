@@ -45,9 +45,11 @@ kakaoCommon = "2.20.1"
 googleServices = "4.4.3"
 firebaseBom = "34.0.0"
 firebaseMessagingLifecycleKtx = "0.3.0"
+firebase-config-ktx = "21.6.0"
 phoenix = "3.0.0"
 lottie = "6.6.7"
 browser = "1.8.0"
+semver = "2.0.0"
 
 [libraries]
 ## androidx
@@ -129,10 +131,14 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 firebase-messaging-lifecycle-ktx = { module = "com.github.skydoves:firebase-messaging-lifecycle-ktx", version.ref = "firebaseMessagingLifecycleKtx" }
+firebase-config-ktx = { group = "com.google.firebase", name = "firebase-config-ktx", version.ref = "firebase-config-ktx" }
 
 ## Kakao
 kakao-v2-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakaoUser" }
 kakao-v2-common = { group = "com.kakao.sdk", name = "v2-common", version.ref = "kakaoCommon" }
+
+## Semver
+semver = { group = "net.swiftzer.semver", name = "semver", version.ref = "semver" }
 
 [bundles]
 coroutine = [

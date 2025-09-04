@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_popup_title">업데이트가 필요해요!</string>
+    <string name="update_popup_subtitle">원활한 서비스 이용을 위해\n최신 버전으로 업데이트해주세요.</string>
+    <string name="update_popup_button">납작마켓 업데이트</string>
+    <string name="market_url">market://details?id=%1$s</string>
+</resources>

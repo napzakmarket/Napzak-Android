@@ -21,3 +21,7 @@ fun Context.openSystemNotificationSettings() {
     }
     startActivity(intent)
 }
+
+fun Context.getVersionName(): String? = runCatching {
+    packageManager.getPackageInfo(packageName, 0).versionName
+}.getOrNull()
