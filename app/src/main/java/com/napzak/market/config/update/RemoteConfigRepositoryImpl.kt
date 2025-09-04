@@ -1,8 +1,8 @@
 package com.napzak.market.config.update
 
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.ktx.remoteConfig
-import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.remoteConfig
+import com.google.firebase.remoteconfig.remoteConfigSettings
 import com.napzak.market.update.repository.RemoteConfigRepository
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
