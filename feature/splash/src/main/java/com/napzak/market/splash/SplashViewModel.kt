@@ -6,6 +6,7 @@ import com.napzak.market.store.usecase.CheckAutoLoginUseCase
 import com.napzak.market.update.repository.RemoteConfigRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
@@ -15,14 +16,15 @@ class SplashViewModel @Inject constructor(
     private val checkAutoLoginUseCase: CheckAutoLoginUseCase,
     private val remoteConfigRepository: RemoteConfigRepository,
 ) : ViewModel() {
-    val isUpdatePopupVisible: MutableStateFlow<Boolean?> = MutableStateFlow(null)
+    private val _isUpdatePopupVisible = MutableStateFlow<Boolean?>(null)
+    val isUpdatePopupVisible = _isUpdatePopupVisible.asStateFlow()
 
     suspend fun tryAutoLogin(): Result<Unit> {
         return checkAutoLoginUseCase()
     }
 
     fun updatePopupVisible(isVisible: Boolean) {
-        isUpdatePopupVisible.value = isVisible
+        _isUpdatePopupVisible.value = isVisible
     }
 
     fun checkAppVersion(appVersion: String) = viewModelScope.launch {
