@@ -15,6 +15,7 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.util)
     implementation(projects.core.uiUtil)
+    implementation(projects.core.mixpanel)
 
     implementation(projects.domain.registration)
     implementation(projects.domain.presignedUrl)
@@ -23,4 +24,5 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
     implementation(libs.timber)
+    implementation(libs.mixpanel)
 }

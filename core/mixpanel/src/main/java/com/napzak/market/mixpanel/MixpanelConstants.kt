@@ -7,6 +7,7 @@ object MixpanelConstants {
     const val APPLIED_ARRAY_FILTER = "Applied array Filter"
     const val VIEWED_PRODUCT = "Viewed Product"
     const val STARTED_CHAT = "Started Chat"
+    const val CREATED_POST = "Created Post"
 
     // Property Keys
     const val TAB = "tab"
@@ -15,6 +16,7 @@ object MixpanelConstants {
     const val POST_ID = "post_id"
     const val POST_TYPE = "post_type"
     const val USER_ROLE = "user_role"
+    const val GENRES_CATEGORY = "genres_category"
 
     // Property Values
     const val FOR_SALE = "for_sale"
