@@ -1,18 +1,18 @@
 package com.napzak.market.config.update
 
-import com.google.firebase.Firebase
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
-import com.google.firebase.remoteconfig.remoteConfig
 import com.napzak.market.update.repository.RemoteConfigRepository
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
+private const val TAG = "RemoteConfigRepositoryImpl"
 private const val ANDROID_APP_VERSION = "android_app_version"
 
 class RemoteConfigRepositoryImpl @Inject constructor() : RemoteConfigRepository {
-    override suspend fun getFirebaseRemoteConfig() : String {
+    override suspend fun getFirebaseRemoteConfig(): String {
         val remoteConfig = Firebase.remoteConfig
         val configSettings = remoteConfigSettings {
             minimumFetchIntervalInSeconds = 0 // TODO : 시간 바꾸기
@@ -20,17 +20,12 @@ class RemoteConfigRepositoryImpl @Inject constructor() : RemoteConfigRepository 
         remoteConfig.setConfigSettingsAsync(configSettings)
         remoteConfig.setDefaultsAsync(mapOf(ANDROID_APP_VERSION to "0.0.0"))
 
-        val appVersion = suspendCancellableCoroutine<String> { cont ->
-            remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val version = remoteConfig.getString(ANDROID_APP_VERSION)
-                    cont.resume(version)
-                } else {
-                    cont.resumeWithException(Exception("RemoteConfig fetch failed"))
-                }
-            }
+        return try {
+            remoteConfig.fetchAndActivate().await()
+            remoteConfig.getString(ANDROID_APP_VERSION)
+        } catch (t: Throwable) {
+            Timber.tag(TAG).d("Failed to get App Latest Version : $t")
+            remoteConfig.getString(ANDROID_APP_VERSION)
         }
-
-        return appVersion
     }
 }
