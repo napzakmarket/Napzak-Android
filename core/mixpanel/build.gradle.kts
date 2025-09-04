@@ -8,7 +8,7 @@ plugins {
 }
 
 val properties = Properties().apply {
-    val f = File(rootDir, "local.properties")
+    val f = rootProject.file("local.properties")
     if (f.exists()) f.inputStream().use { load(it) }
 }
 
