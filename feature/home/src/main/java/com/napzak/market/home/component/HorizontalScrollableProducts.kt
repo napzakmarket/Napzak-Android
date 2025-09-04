@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -20,8 +20,8 @@ import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.component.productItem.NapzakSmallProductItem
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.product.model.Product
-import com.napzak.market.ui_util.noRippleClickable
 import com.napzak.market.ui_util.formatToPriceString
+import com.napzak.market.ui_util.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -34,7 +34,7 @@ internal fun HorizontalScrollableProducts(
     subTitle: String,
     products: ImmutableList<Product>,
     onLikeClick: (Long, Boolean) -> Unit,
-    onProductClick: (Long) -> Unit,
+    onProductClick: (Long, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -69,7 +69,7 @@ internal fun HorizontalScrollableProducts(
 private fun ProductsRow(
     products: ImmutableList<Product>,
     onLikeClick: (Long, Boolean) -> Unit,
-    onItemClick: (Long) -> Unit,
+    onItemClick: (Long, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val configuration = LocalConfiguration.current
@@ -83,10 +83,13 @@ private fun ProductsRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 20.dp),
     ) {
-        items(products) { product ->
+        itemsIndexed(
+            items = products,
+            key = { _, item -> item.productId },
+        ) { index, product ->
             with(product) {
                 val isSellElseBuy = TradeType.fromName(tradeType) == TradeType.SELL
-                
+
                 NapzakSmallProductItem(
                     title = productName,
                     genre = genreName,
@@ -100,7 +103,9 @@ private fun ProductsRow(
                     modifier = Modifier
                         .width(productWidth.dp)
                         .aspectRatio(PRODUCT_HEIGHT_RATIO)
-                        .noRippleClickable { onItemClick(productId) },
+                        .noRippleClickable {
+                            onItemClick(productId, index)
+                        },
                 )
             }
         }
@@ -117,7 +122,7 @@ private fun HorizontalScrollableProductsPreview() {
                 title = "납자기님을 위한 맞춤 PICK!",
                 subTitle = "납자기님의 취향에 딱 맞는 아이템들을 모아봤어요.",
                 onLikeClick = { _, _ -> },
-                onProductClick = { },
+                onProductClick = { _, _ -> },
             )
         }
     }
