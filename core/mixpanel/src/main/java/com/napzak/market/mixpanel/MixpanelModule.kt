@@ -19,7 +19,7 @@ object MixpanelModule {
     fun provideMixpanelApi(
         @ApplicationContext context: Context,
     ): MixpanelAPI? {
-        return if (BuildConfig.DEBUG) {
+        return if (!BuildConfig.DEBUG) {
             MixpanelAPI.getInstance(
                 context,
                 BuildConfig.MIXPANEL_TOKEN,
