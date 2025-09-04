@@ -1,3 +1,4 @@
+import com.napzak.market.buildlogic.dsl.implementation
 import com.napzak.market.buildlogic.dsl.setNameSpace
 
 plugins {
@@ -15,6 +16,7 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.util)
     implementation(projects.core.uiUtil)
+    implementation(projects.core.mixpanel)
     implementation(projects.domain.store)
     implementation(projects.feature.onboarding)
     implementation(projects.feature.home)
@@ -23,4 +25,5 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.lottie.compose)
     implementation(libs.kakao.v2.user)
+    implementation(libs.mixpanel)
 }

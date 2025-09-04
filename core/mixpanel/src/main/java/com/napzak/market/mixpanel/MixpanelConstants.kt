@@ -2,23 +2,38 @@ package com.napzak.market.mixpanel
 
 object MixpanelConstants {
     // Event Name
+    const val COMPLETED_ONBOARDING = "Completed Onboarding"
+    const val SIGNED_UP = "Signed Up"
+    const val SKIPPED_GENRES = "Skipped Genres"
     const val VIEWED_EXPLORE = "Viewed Explore"
     const val APPLIED_GENRE_FILTER = "Applied Genre Filter"
     const val APPLIED_ARRAY_FILTER = "Applied array Filter"
     const val VIEWED_PRODUCT = "Viewed Product"
     const val STARTED_CHAT = "Started Chat"
     const val CREATED_POST = "Created Post"
+    const val TOGGLED_WISHLIST = "Toggled Wishlist"
+    const val OPENED_REPORT = "Opened Report Overlay_product"
+    const val SUBMITTED_REPORT = "Submitted Report_product"
 
     // Property Keys
+    const val METHOD = "method"
+    const val PLATFORM = "platform"
+    const val GENRES_COUNT = "genres_selected_count"
+    const val GENRES_CATEGORY = "genres_category"
     const val TAB = "tab"
     const val FILTER_COUNT = "filter_count"
     const val SORT = "sort"
     const val POST_ID = "post_id"
     const val POST_TYPE = "post_type"
     const val USER_ROLE = "user_role"
-    const val GENRES_CATEGORY = "genres_category"
+    const val ACTION = "action"
+    const val TARGET_TYPE = "target_type"
+    const val TARGET_ID = "target_id"
+    const val REASON_SELECTED = "reason_selected"
 
     // Property Values
+    const val KAKAO = "kakao"
+    const val ANDROID = "android"
     const val FOR_SALE = "for_sale"
     const val WANTED = "wanted"
     const val LATEST = "for_sale"
