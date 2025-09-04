@@ -1,10 +1,8 @@
 package com.napzak.market.remote
 
 import com.napzak.market.local.datastore.TokenDataStore
-import data.remote.BuildConfig.ACCESS_TOKEN
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
-import okhttp3.Request
 import okhttp3.Response
 import javax.inject.Inject
 

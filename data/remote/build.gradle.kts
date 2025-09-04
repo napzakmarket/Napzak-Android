@@ -14,10 +14,22 @@ android {
     namespace = "data.remote"
 
     buildTypes {
+        defaultConfig {
+            //consumerProguardFile("consumer-rules.pro")
+        }
+
         debug {
+            buildConfigField("String", "BASE_URL", properties.getProperty("test.base.url"))
+            buildConfigField(
+                "String",
+                "WEBSOCKET_URL",
+                properties.getProperty("test.websocket.url")
+            )
+        }
+
+        release {
             buildConfigField("String", "BASE_URL", properties.getProperty("base.url"))
             buildConfigField("String", "WEBSOCKET_URL", properties.getProperty("websocket.url"))
-            buildConfigField("String", "ACCESS_TOKEN", properties.getProperty("test.access.token"))
         }
     }
 }

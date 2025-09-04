@@ -35,16 +35,6 @@ class ApplicationPlugin : Plugin<Project> {
                     versionCode = libs.version("versionCode").toInt()
                     versionName = libs.version("versionName")
                 }
-
-                buildTypes {
-                    release {
-                        isMinifyEnabled = false
-                        proguardFiles(
-                            getDefaultProguardFile("proguard-android-optimize.txt"),
-                            "proguard-rules.pro"
-                        )
-                    }
-                }
             }
         }
     }

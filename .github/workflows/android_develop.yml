@@ -29,10 +29,18 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Create google-services.json
-        run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ./app/google-services.json
+        run: |
+          mkdir ./app/src/debug
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ./app/src/debug/google-services.json
 
       - name: Create local.properties
         run: echo '${{ secrets.LOCAL_PROPERTIES }}' > ./local.properties
+
+      - name: Create keystore.properties
+        run: |
+          mkdir ./app/signing
+          echo '${{ secrets.KEYSTORE_JKS }}' | base64 -d > ./app/signing/napzak-keystore.jks
+          echo '${{ secrets.KEYSTORE_PROPERTIES }}' > ./app/signing/keystore.properties
 
       - name: Build with Gradle
         run: ./gradlew :app:assembleDebug
