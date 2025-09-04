@@ -23,6 +23,7 @@ class NapzakApplication : Application() {
 
     @Inject
     lateinit var firebaseRepository: FirebaseRepository
+
     private val lifecycleOwner: LifecycleOwner
         get() = ProcessLifecycleOwner.get()
 

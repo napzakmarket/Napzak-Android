@@ -61,6 +61,7 @@ include(
     ":domain:presigned-url",
     ":domain:chat",
     ":domain:notification",
+    ":domain:update",
 )
 
 include(

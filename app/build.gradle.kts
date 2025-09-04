@@ -83,6 +83,7 @@ dependencies {
     implementation(projects.data.notification)
 
     implementation(projects.domain.notification)
+    implementation(projects.domain.update)
 
     implementation(libs.androidx.appcompat)
     implementation(libs.timber)
@@ -96,5 +97,6 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.messaging.lifecycle.ktx)
+    implementation(libs.firebase.config.ktx)
     implementation(libs.androidx.browser)
 }
