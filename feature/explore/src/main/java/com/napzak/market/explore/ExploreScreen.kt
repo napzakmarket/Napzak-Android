@@ -145,7 +145,10 @@ internal fun ExploreRoute(
             viewModel.updateSortOption(newSortOption)
             viewModel.updateBottomSheetVisibility(BottomSheetType.SORT)
         },
-        onProductDetailNavigate = onProductDetailNavigate,
+        onProductDetailNavigate = { productId ->
+            viewModel.trackViewedProduct(productId)
+            onProductDetailNavigate(productId)
+        },
         onLikeButtonClick = { id, value ->
             viewModel.updateProductIsInterested(productId = id, isInterested = value)
         },
