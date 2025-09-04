@@ -16,12 +16,14 @@ object MixpanelConstants {
     const val STARTED_CHAT = "Started Chat"
     const val CREATED_POST = "Created Post"
     const val TOGGLED_WISHLIST = "Toggled Wishlist"
-    const val OPENED_REPORT = "Opened Report Overlay_product"
-    const val SUBMITTED_REPORT = "Submitted Report_product"
     const val TOGGLED_ALARM = "Toggled Alarm"
     const val LOGGED_OUT = "Logged Out"
     const val STARTED_WITHDRAWAL = "Started Withdrawal"
     const val COMPLETED_WITHDRAWAL = "Completed Withdrawal"
+    const val OPENED_REPORT_PRODUCT = "Opened Report Overlay_product"
+    const val SUBMITTED_REPORT_PRODUCT = "Submitted Report_product"
+    const val OPENED_REPORT_MARKET = "Opened Report Overlay_market"
+    const val SUBMITTED_REPORT_MARKET = "Submitted Report_market"
 
     // Property Keys
     const val METHOD = "method"

@@ -14,6 +14,7 @@ import com.napzak.market.detail.type.ProductDetailToastType
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.mixpanel.MixpanelConstants.BUYER
 import com.napzak.market.mixpanel.MixpanelConstants.FOR_SALE
+import com.napzak.market.mixpanel.MixpanelConstants.OPENED_REPORT_PRODUCT
 import com.napzak.market.mixpanel.MixpanelConstants.POST_ID
 import com.napzak.market.mixpanel.MixpanelConstants.POST_TYPE
 import com.napzak.market.mixpanel.MixpanelConstants.SELLER
@@ -174,6 +175,8 @@ internal class ProductDetailViewModel @Inject constructor(
             mixpanel?.trackEvent(STARTED_CHAT, props)
         }
     }
+
+    internal fun trackReportProduct() = mixpanel?.track(OPENED_REPORT_PRODUCT)
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L

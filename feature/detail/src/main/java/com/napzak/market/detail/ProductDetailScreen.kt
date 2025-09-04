@@ -116,7 +116,10 @@ internal fun ProductDetailRoute(
         onBackButtonClick = onNavigateUp,
         onModifyProductClick = onModifyNavigate,
         onDeleteProductClick = viewModel::deleteProduct,
-        onReportProductClick = onReportNavigate,
+        onReportProductClick = { productId ->
+            viewModel.trackReportProduct()
+            onReportNavigate(productId)
+        },
         onTradeStatusChange = viewModel::updateTradeStatus,
         modifier = modifier,
     )
