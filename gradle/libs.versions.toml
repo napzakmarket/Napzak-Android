@@ -49,6 +49,7 @@ firebase-config-ktx = "21.6.0"
 phoenix = "3.0.0"
 lottie = "6.6.7"
 browser = "1.8.0"
+semver = "2.0.0"
 
 [libraries]
 ## androidx
@@ -135,6 +136,9 @@ firebase-config-ktx = { group = "com.google.firebase", name = "firebase-config-k
 ## Kakao
 kakao-v2-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakaoUser" }
 kakao-v2-common = { group = "com.kakao.sdk", name = "v2-common", version.ref = "kakaoCommon" }
+
+## Semver
+semver = { group = "net.swiftzer.semver", name = "semver", version.ref = "semver" }
 
 [bundles]
 coroutine = [

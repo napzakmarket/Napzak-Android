@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.store.usecase.CheckAutoLoginUseCase
 import com.napzak.market.update.repository.RemoteConfigRepository
+import com.napzak.market.update.usecase.CheckAppVersionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val checkAutoLoginUseCase: CheckAutoLoginUseCase,
-    private val remoteConfigRepository: RemoteConfigRepository,
+    private val checkAppVersionUseCase: CheckAppVersionUseCase,
 ) : ViewModel() {
     private val _isUpdatePopupVisible = MutableStateFlow<Boolean?>(null)
     val isUpdatePopupVisible = _isUpdatePopupVisible.asStateFlow()
@@ -28,10 +29,7 @@ class SplashViewModel @Inject constructor(
     }
 
     fun checkAppVersion(appVersion: String) = viewModelScope.launch {
-        val latestVersion = runCatching {
-            withTimeoutOrNull(2_000) { remoteConfigRepository.getFirebaseRemoteConfig() }
-        }.getOrNull()
-        val shouldShow = latestVersion?.let { appVersion.trim() != it.trim() } == true //TODO: 정책 확정 후 비교문 수정
+        val shouldShow = checkAppVersionUseCase(appVersion)
         updatePopupVisible(shouldShow)
     }
 }
