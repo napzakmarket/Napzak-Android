@@ -8,7 +8,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import org.json.JSONObject
 import javax.inject.Singleton
 
 @Module
@@ -24,15 +23,7 @@ object MixpanelModule {
                 context,
                 BuildConfig.MIXPANEL_TOKEN,
                 false,
-            ).apply {
-                registerSuperProperties(
-                    JSONObject(
-                        mapOf(
-                            "os" to "Android",
-                        )
-                    )
-                )
-            }
+            )
         } else null
     }
 }
