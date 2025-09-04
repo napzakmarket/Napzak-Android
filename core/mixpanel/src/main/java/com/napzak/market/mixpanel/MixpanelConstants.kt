@@ -16,7 +16,6 @@ object MixpanelConstants {
     const val VIEWED_PRODUCT = "Viewed Product"
     const val STARTED_CHAT = "Started Chat"
     const val CREATED_POST = "Created Post"
-    const val TOGGLED_WISHLIST = "Toggled Wishlist"
     const val VIEWED_MYPAGE = "Viewed MyPage"
     const val VIEWED_SETTING = "Viewed Settings"
     const val TOGGLED_ALARM = "Toggled Alarm"
@@ -24,9 +23,7 @@ object MixpanelConstants {
     const val STARTED_WITHDRAWAL = "Started Withdrawal"
     const val COMPLETED_WITHDRAWAL = "Completed Withdrawal"
     const val OPENED_REPORT_PRODUCT = "Opened Report Overlay_product"
-    const val SUBMITTED_REPORT_PRODUCT = "Submitted Report_product"
     const val OPENED_REPORT_MARKET = "Opened Report Overlay_market"
-    const val SUBMITTED_REPORT_MARKET = "Submitted Report_market"
 
     // Property Keys
     const val METHOD = "method"
@@ -43,11 +40,8 @@ object MixpanelConstants {
     const val POST_ID = "post_id"
     const val POST_TYPE = "post_type"
     const val USER_ROLE = "user_role"
-    const val ACTION = "action"
     const val STATUS = "status"
-    const val TARGET_TYPE = "target_type"
-    const val TARGET_ID = "target_id"
-    const val REASON_SELECTED = "reason_selected"
+    const val PRODUCT_STATUS = "product_status"
 
     // Property Values
     const val KAKAO = "kakao"
@@ -64,6 +58,4 @@ object MixpanelConstants {
     const val SELLER = "seller"
     const val ON = "on"
     const val OFF = "off"
-    const val PRODUCT = "product"
-    const val MARKET = "market"
 }
