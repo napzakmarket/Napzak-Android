@@ -61,4 +61,6 @@ object MixpanelConstants {
     const val SELLER = "seller"
     const val ON = "on"
     const val OFF = "off"
+    const val PRODUCT = "product"
+    const val MARKET = "market"
 }

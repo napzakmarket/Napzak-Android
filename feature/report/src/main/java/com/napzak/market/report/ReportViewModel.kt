@@ -6,6 +6,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mixpanel.android.mpmetrics.MixpanelAPI
+import com.napzak.market.mixpanel.MixpanelConstants.MARKET
+import com.napzak.market.mixpanel.MixpanelConstants.PRODUCT
+import com.napzak.market.mixpanel.MixpanelConstants.REASON_SELECTED
+import com.napzak.market.mixpanel.MixpanelConstants.SUBMITTED_REPORT_MARKET
+import com.napzak.market.mixpanel.MixpanelConstants.SUBMITTED_REPORT_PRODUCT
+import com.napzak.market.mixpanel.MixpanelConstants.TARGET_ID
+import com.napzak.market.mixpanel.MixpanelConstants.TARGET_TYPE
+import com.napzak.market.mixpanel.trackEvent
 import com.napzak.market.report.model.ReportParameters
 import com.napzak.market.report.repository.ReportRepository
 import com.napzak.market.report.type.ReportType
@@ -20,6 +29,7 @@ import javax.inject.Inject
 internal class ReportViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val reportRepository: ReportRepository,
+    private val mixpanel: MixpanelAPI?,
 ) : ViewModel() {
     private val _sideEffect = Channel<ReportSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
@@ -32,6 +42,7 @@ internal class ReportViewModel @Inject constructor(
     fun sendReport(
         reportType: ReportType,
         reason: String,
+        reasonIndex: Int,
         detail: String,
         contact: String,
     ) = viewModelScope.launch {
@@ -55,6 +66,7 @@ internal class ReportViewModel @Inject constructor(
                 )
             }
         }.onSuccess {
+            trackSubmittedReport(reportType, id!!, reasonIndex)
             _sideEffect.send(ReportSideEffect.NavigateUp)
             _sideEffect.send(ReportSideEffect.ShowToast(REPORT_SNACK_BAR_MESSAGE))
         }.onFailure(Timber::e)
@@ -81,6 +93,18 @@ internal class ReportViewModel @Inject constructor(
             storeId = userId,
             reportParameters = reportParameters,
         )
+    }
+
+    private fun trackSubmittedReport(reportType: ReportType, targetId: Long, reasonSelected: Int) {
+        val isReportProduct = reportType == ReportType.PRODUCT
+        val eventName = if (isReportProduct) SUBMITTED_REPORT_PRODUCT else SUBMITTED_REPORT_MARKET
+        val props = mapOf(
+            TARGET_TYPE to if (isReportProduct) PRODUCT else MARKET,
+            TARGET_ID to targetId,
+            REASON_SELECTED to reasonSelected,
+        )
+
+        mixpanel?.trackEvent(eventName, props)
     }
 
     companion object {

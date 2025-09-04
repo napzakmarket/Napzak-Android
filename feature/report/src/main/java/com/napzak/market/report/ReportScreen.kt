@@ -97,6 +97,7 @@ internal fun ReportRoute(
             viewModel.sendReport(
                 reportType = reportState.reportType,
                 reason = context.getString(reportState.reason),
+                reasonIndex = reportState.reasons.indexOf(reportState.reason),
                 detail = reportState.detail,
                 contact = reportState.contact,
             )
