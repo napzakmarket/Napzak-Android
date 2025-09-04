@@ -136,7 +136,10 @@ internal fun ChatRoomRoute(
         chatListState = chatListState,
         onChatChange = { viewModel.chat = it },
         onProductDetailClick = onProductDetailNavigate,
-        onReportClick = onStoreReportNavigate,
+        onReportClick = { productId ->
+            viewModel.trackReportMarket()
+            onStoreReportNavigate(productId)
+        },
         onExitChatRoomClick = viewModel::withdrawChatRoom,
         onNavigateUp = onNavigateUp,
         onSendChatClick = viewModel::sendTextMessage,
