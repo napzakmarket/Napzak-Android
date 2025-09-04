@@ -46,7 +46,7 @@ object MixpanelConstants {
     const val BANNER_MINI = "mini"
     const val FOR_SALE = "for_sale"
     const val WANTED = "wanted"
-    const val LATEST = "for_sale"
+    const val LATEST = "latest"
     const val POPULAR = "popular"
     const val HIGH_PRICE = "high_price"
     const val LOW_PRICE = "low_price"
