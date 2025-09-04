@@ -22,5 +22,5 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
     implementation(libs.lottie.compose)
-    implementation(libs.v2.user)
+    implementation(libs.kakao.v2.user)
 }

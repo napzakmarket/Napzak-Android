@@ -3,12 +3,16 @@ import java.util.Properties
 plugins {
     id("com.napzak.market.buildlogic.convention.application")
     id("com.napzak.market.buildlogic.primitive.hilt")
-    id("com.android.application")
     id("com.google.gms.google-services")
 }
 
 val localProps = Properties().apply {
     val f = File(rootDir, "local.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+
+val keystoreProperties = Properties().apply {
+    val f = File(rootDir, "app/signing/keystore.properties")
     if (f.exists()) f.inputStream().use { load(it) }
 }
 
@@ -21,6 +25,15 @@ val kakaoNativeKey: String =
 android {
     namespace = "com.napzak.market"
 
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file(keystoreProperties.getProperty("keystorePath"))
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            storePassword = keystoreProperties.getProperty("storePassword")
+        }
+    }
+
     defaultConfig {
         buildConfigField("String", "KAKAO_APP_KEY", "\"$kakaoNativeKey\"")
         manifestPlaceholders["kakaoScheme"] = "kakao$kakaoNativeKey"
@@ -30,10 +43,20 @@ android {
         debug {
             isMinifyEnabled = false
             isDebuggable = true
+            applicationIdSuffix = ".debug"
+            manifestPlaceholders["appName"] = "@string/app_name_dev"
+            manifestPlaceholders["appIcon"] = "@mipmap/ic_app_dev"
         }
         release {
-            isMinifyEnabled = false
-            isShrinkResources = false
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            manifestPlaceholders["appName"] = "@string/app_name"
+            manifestPlaceholders["appIcon"] = "@drawable/ic_app"
         }
     }
 }
@@ -64,10 +87,9 @@ dependencies {
 
     implementation(libs.androidx.appcompat)
     implementation(libs.timber)
-    implementation(libs.v2.user)
-    implementation(libs.v2.common)
+    implementation(libs.kakao.v2.user)
+    implementation(libs.kakao.v2.common)
     implementation(libs.androidx.room.compiler)
-    implementation(libs.androidx.multidex)
     implementation(libs.androidx.multidex)
     implementation(libs.lottie.compose)
 
@@ -76,5 +98,5 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.messaging.lifecycle.ktx)
     implementation(libs.firebase.config.ktx)
-    implementation("androidx.browser:browser:1.8.0")
+    implementation(libs.androidx.browser)
 }
