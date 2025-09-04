@@ -7,6 +7,7 @@ import com.napzak.market.update.repository.RemoteConfigRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 
 @HiltViewModel
@@ -14,7 +15,7 @@ class SplashViewModel @Inject constructor(
     private val checkAutoLoginUseCase: CheckAutoLoginUseCase,
     private val remoteConfigRepository: RemoteConfigRepository,
 ) : ViewModel() {
-    var isUpdatePopupVisible: MutableStateFlow<Boolean?> = MutableStateFlow(null)
+    val isUpdatePopupVisible: MutableStateFlow<Boolean?> = MutableStateFlow(null)
 
     suspend fun tryAutoLogin(): Result<Unit> {
         return checkAutoLoginUseCase()
@@ -25,12 +26,10 @@ class SplashViewModel @Inject constructor(
     }
 
     fun checkAppVersion(appVersion: String) = viewModelScope.launch {
-        val latestVersion = remoteConfigRepository.getFirebaseRemoteConfig()
-        val isVersionIdentical = appVersion == latestVersion
-        updatePopupVisible(!isVersionIdentical)
-    }
-
-    fun moveToPlayStore() {
-        // TODO: 구글 플레이 스토어로 이동
+        val latestVersion = runCatching {
+            withTimeoutOrNull(2_000) { remoteConfigRepository.getFirebaseRemoteConfig() }
+        }.getOrNull()
+        val shouldShow = latestVersion?.let { appVersion.trim() != it.trim() } == true //TODO: 정책 확정 후 비교문 수정
+        updatePopupVisible(shouldShow)
     }
 }
