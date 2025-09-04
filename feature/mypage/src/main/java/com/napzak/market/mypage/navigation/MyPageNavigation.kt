@@ -119,7 +119,10 @@ fun NavGraphBuilder.mypageGraph(
             WithdrawReasonScreen(
                 onNavigateUpClick = navigateToUp,
                 onProceedClick = navController::navigateToWithdrawDetail,
-                onReasonSelect = { viewModel.withdrawReason = it },
+                onReasonSelect = { reason, index ->
+                    viewModel.withdrawReason = reason
+                    viewModel.withdrawReasonIndex = index
+                },
                 modifier = systemBarPaddingModifier,
             )
         }

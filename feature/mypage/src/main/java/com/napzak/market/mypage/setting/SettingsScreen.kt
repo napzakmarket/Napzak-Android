@@ -67,6 +67,10 @@ internal fun SettingsRoute(
         )
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.trackViewedMyPage()
+    }
+
     LifecycleResumeEffect(Unit) {
         systemPermission = NotificationManagerCompat.from(context).areNotificationsEnabled()
         onPauseOrDispose { }

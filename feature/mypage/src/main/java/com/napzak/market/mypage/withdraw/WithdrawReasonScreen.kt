@@ -37,7 +37,7 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 internal fun WithdrawReasonScreen(
-    onReasonSelect: (String) -> Unit,
+    onReasonSelect: (String, Int) -> Unit,
     onProceedClick: () -> Unit,
     onNavigateUpClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -47,7 +47,7 @@ internal fun WithdrawReasonScreen(
     val paddingModifier = Modifier.padding(horizontal = 20.dp)
 
     LaunchedEffect(Unit) {
-        onReasonSelect(withdrawReasons.first())
+        onReasonSelect(withdrawReasons.first(), 1)
     }
 
     Scaffold(
@@ -124,7 +124,9 @@ internal fun WithdrawReasonScreen(
             NapzakSpinner(
                 options = withdrawReasons.toImmutableList(),
                 initialOption = withdrawReasons.first(),
-                onOptionSelect = onReasonSelect,
+                onOptionSelect = {
+                    onReasonSelect(it, withdrawReasons.indexOf(it) + 1)
+                },
                 modifier = paddingModifier,
             )
         }
@@ -138,7 +140,7 @@ private fun WithdrawReasonScreenPreview() {
         var withdrawReason by remember { mutableStateOf("") }
 
         WithdrawReasonScreen(
-            onReasonSelect = { withdrawReason = it },
+            onReasonSelect = { it, _ -> withdrawReason = it },
             onProceedClick = {},
             onNavigateUpClick = {},
         )

@@ -10,6 +10,7 @@ import com.napzak.market.mixpanel.MixpanelConstants.ON
 import com.napzak.market.mixpanel.MixpanelConstants.STARTED_WITHDRAWAL
 import com.napzak.market.mixpanel.MixpanelConstants.STATUS
 import com.napzak.market.mixpanel.MixpanelConstants.TOGGLED_ALARM
+import com.napzak.market.mixpanel.MixpanelConstants.VIEWED_SETTING
 import com.napzak.market.mixpanel.trackEvent
 import com.napzak.market.mypage.setting.state.SettingUiState
 import com.napzak.market.notification.repository.NotificationRepository
@@ -106,6 +107,8 @@ internal class SettingViewModel @Inject constructor(
             }
             .onFailure(Timber::e)
     }
+
+    internal fun trackViewedMyPage() = mixpanel?.track(VIEWED_SETTING)
 
     internal fun trackStartedWithdrawal() = mixpanel?.track(STARTED_WITHDRAWAL)
 

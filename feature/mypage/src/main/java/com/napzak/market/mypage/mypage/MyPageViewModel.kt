@@ -2,7 +2,9 @@ package com.napzak.market.mypage.mypage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mixpanel.android.mpmetrics.MixpanelAPI
 import com.napzak.market.common.state.UiState
+import com.napzak.market.mixpanel.MixpanelConstants.VIEWED_MYPAGE
 import com.napzak.market.mypage.mypage.state.MyPageUiState
 import com.napzak.market.store.repository.StoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class MyPageViewModel @Inject constructor(
     private val storeRepository: StoreRepository,
+    private val mixpanel: MixpanelAPI?,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MyPageUiState())
@@ -44,4 +47,6 @@ internal class MyPageViewModel @Inject constructor(
                 // Timber.e(throwable, "Store 정보 가져오기 실패")
             }
     }
+
+    internal fun trackViewedMyPage() = mixpanel?.track(VIEWED_MYPAGE)
 }

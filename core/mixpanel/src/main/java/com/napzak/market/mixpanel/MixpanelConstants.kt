@@ -16,6 +16,8 @@ object MixpanelConstants {
     const val STARTED_CHAT = "Started Chat"
     const val CREATED_POST = "Created Post"
     const val TOGGLED_WISHLIST = "Toggled Wishlist"
+    const val VIEWED_MYPAGE = "Viewed MyPage"
+    const val VIEWED_SETTING = "Viewed Settings"
     const val TOGGLED_ALARM = "Toggled Alarm"
     const val LOGGED_OUT = "Logged Out"
     const val STARTED_WITHDRAWAL = "Started Withdrawal"

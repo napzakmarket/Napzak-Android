@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mixpanel.android.mpmetrics.MixpanelAPI
 import com.napzak.market.mixpanel.MixpanelConstants.COMPLETED_WITHDRAWAL
+import com.napzak.market.mixpanel.MixpanelConstants.REASON_SELECTED
+import com.napzak.market.mixpanel.trackEvent
 import com.napzak.market.notification.repository.FirebaseRepository
 import com.napzak.market.notification.repository.NotificationRepository
 import com.napzak.market.notification.usecase.DeletePushTokenUseCase
@@ -30,6 +32,7 @@ internal class WithdrawViewModel @Inject constructor(
     val sideEffect = _sideEffect.asSharedFlow()
 
     var withdrawReason by mutableStateOf("")
+    var withdrawReasonIndex by mutableStateOf(1)
     var withdrawDescription by mutableStateOf("")
     var isWithdrawing by mutableStateOf(false)
         private set
@@ -51,7 +54,7 @@ internal class WithdrawViewModel @Inject constructor(
             isWithdrawing = true
             withdrawUseCase(withdrawReason, withdrawDescription)
                 .onSuccess {
-                    mixpanel?.track(COMPLETED_WITHDRAWAL)
+                    trackWithdraw()
                     _sideEffect.emit(WithdrawSideEffect.WithdrawComplete)
                 }
                 .onFailure {
@@ -59,5 +62,13 @@ internal class WithdrawViewModel @Inject constructor(
                     isWithdrawing = false
                 }
         }
+    }
+
+    private fun trackWithdraw() {
+        val props = mapOf(
+            REASON_SELECTED to withdrawReasonIndex,
+        )
+
+        mixpanel?.trackEvent(COMPLETED_WITHDRAWAL, props)
     }
 }
