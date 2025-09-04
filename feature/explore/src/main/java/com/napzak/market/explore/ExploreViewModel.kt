@@ -22,6 +22,7 @@ import com.napzak.market.mixpanel.MixpanelConstants.FOR_SALE
 import com.napzak.market.mixpanel.MixpanelConstants.HIGH_PRICE
 import com.napzak.market.mixpanel.MixpanelConstants.LATEST
 import com.napzak.market.mixpanel.MixpanelConstants.LOW_PRICE
+import com.napzak.market.mixpanel.MixpanelConstants.OPENED_SEARCH
 import com.napzak.market.mixpanel.MixpanelConstants.POPULAR
 import com.napzak.market.mixpanel.MixpanelConstants.POST_ID
 import com.napzak.market.mixpanel.MixpanelConstants.POST_TYPE
@@ -208,8 +209,7 @@ internal class ExploreViewModel @Inject constructor(
 
 
     fun updateTradeType(newTradeType: TradeType) {
-        val props = mapOf(TAB to if (newTradeType == TradeType.SELL) FOR_SALE else WANTED)
-        mixpanel?.trackEvent(VIEWED_EXPLORE, props)
+        trackViewedExplore(newTradeType)
 
         _uiState.update { currentState -> currentState.copy(selectedTab = newTradeType) }
     }
@@ -274,11 +274,7 @@ internal class ExploreViewModel @Inject constructor(
     }
 
     fun updateSelectedGenres(newGenres: List<Genre>) {
-        val props = mapOf(
-            FILTER_COUNT to newGenres.size,
-            TAB to if (uiState.value.selectedTab == TradeType.SELL) FOR_SALE else WANTED,
-        )
-        mixpanel?.trackEvent(APPLIED_GENRE_FILTER, props)
+        trackFilteredGenre(newGenres.size)
 
         _uiState.update { currentState ->
             currentState.copy(
@@ -304,16 +300,7 @@ internal class ExploreViewModel @Inject constructor(
     }
 
     fun updateSortOption(newSortOption: SortType) {
-        val props = mapOf(
-            SORT to when (uiState.value.sortOption) {
-                SortType.RECENT -> LATEST
-                SortType.POPULAR -> POPULAR
-                SortType.HIGH_PRICE -> HIGH_PRICE
-                SortType.LOW_PRICE -> LOW_PRICE
-            },
-            TAB to if (uiState.value.selectedTab == TradeType.SELL) FOR_SALE else WANTED,
-        )
-        mixpanel?.trackEvent(APPLIED_ARRAY_FILTER, props)
+        trackFilteredArray()
 
         _uiState.update { currentState ->
             currentState.copy(
@@ -353,6 +340,44 @@ internal class ExploreViewModel @Inject constructor(
                 loadState = loadState,
             )
         }
+
+    internal fun trackViewedExplore(tradeType: TradeType) {
+        val props = mapOf(TAB to if (tradeType == TradeType.SELL) FOR_SALE else WANTED)
+
+        mixpanel?.trackEvent(VIEWED_EXPLORE, props)
+    }
+
+    private fun trackFilteredGenre(genreSize: Int) {
+        val props = mapOf(
+            FILTER_COUNT to genreSize,
+            TAB to if (uiState.value.selectedTab == TradeType.SELL) FOR_SALE else WANTED,
+        )
+        mixpanel?.trackEvent(APPLIED_GENRE_FILTER, props)
+    }
+
+    private fun trackFilteredArray() {
+        val props = mapOf(
+            SORT to when (uiState.value.sortOption) {
+                SortType.RECENT -> LATEST
+                SortType.POPULAR -> POPULAR
+                SortType.HIGH_PRICE -> HIGH_PRICE
+                SortType.LOW_PRICE -> LOW_PRICE
+            },
+            TAB to if (uiState.value.selectedTab == TradeType.SELL) FOR_SALE else WANTED,
+        )
+        mixpanel?.trackEvent(APPLIED_ARRAY_FILTER, props)
+    }
+
+    internal fun trackViewedProduct(productId: Long, postType: String) {
+        val props = mapOf(
+            POST_ID to productId,
+            POST_TYPE to postType,
+        )
+
+        mixpanel?.trackEvent(VIEWED_PRODUCT, props)
+    }
+
+    internal fun trackSearchOpened() = mixpanel?.track(OPENED_SEARCH)
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L

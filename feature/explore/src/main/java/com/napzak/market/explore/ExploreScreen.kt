@@ -125,7 +125,10 @@ internal fun ExploreRoute(
         uiState = uiState,
         bottomSheetState = bottomSheetState,
         onDismissRequest = viewModel::updateBottomSheetVisibility,
-        onSearchNavigate = onSearchNavigate,
+        onSearchNavigate = {
+            viewModel.trackSearchOpened()
+            onSearchNavigate()
+        },
         onTabClick = viewModel::updateTradeType,
         onGenreFilterClick = {
             viewModel.updateBottomSheetVisibility(BottomSheetType.GENRE_SEARCHING)
@@ -145,7 +148,10 @@ internal fun ExploreRoute(
             viewModel.updateSortOption(newSortOption)
             viewModel.updateBottomSheetVisibility(BottomSheetType.SORT)
         },
-        onProductDetailNavigate = onProductDetailNavigate,
+        onProductDetailNavigate = { id, type ->
+            viewModel.trackViewedProduct(id, type)
+            onProductDetailNavigate(id)
+        },
         onLikeButtonClick = { id, value ->
             viewModel.updateProductIsInterested(productId = id, isInterested = value)
         },
@@ -169,7 +175,7 @@ private fun ExploreScreen(
     onSortOptionClick: (SortType) -> Unit,
     onSortItemClick: (SortType) -> Unit,
     onGenreDetailNavigate: (Long) -> Unit,
-    onProductDetailNavigate: (Long) -> Unit,
+    onProductDetailNavigate: (Long, String) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -241,7 +247,7 @@ private fun ExploreSuccessScreen(
     onSortOptionClick: (SortType) -> Unit,
     onSortItemClick: (SortType) -> Unit,
     onGenreDetailNavigate: (Long) -> Unit,
-    onProductDetailNavigate: (Long) -> Unit,
+    onProductDetailNavigate: (Long, String) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -396,7 +402,7 @@ private fun GenreAndProductList(
     sortType: SortType,
     onGenreButtonClick: (Long) -> Unit,
     onSortOptionClick: () -> Unit,
-    onProductClick: (Long) -> Unit,
+    onProductClick: (Long, String) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
 ) {
     LazyColumn(
@@ -491,7 +497,7 @@ private fun GenreAndProductList(
                             onLikeClick = { onLikeButtonClick(productId, isInterested) },
                             modifier = Modifier
                                 .weight(1f)
-                                .noRippleClickable { onProductClick(productId) },
+                                .noRippleClickable { onProductClick(productId, tradeType) },
                         )
                     }
                 }
@@ -528,7 +534,7 @@ private fun ExploreScreenPreview(modifier: Modifier = Modifier) {
             onSortOptionClick = { },
             onSortItemClick = { },
             onGenreDetailNavigate = { },
-            onProductDetailNavigate = { },
+            onProductDetailNavigate = { _, _ -> },
             onLikeButtonClick = { id, value -> },
             modifier = modifier
         )

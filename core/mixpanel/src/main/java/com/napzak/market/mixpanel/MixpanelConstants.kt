@@ -9,6 +9,7 @@ object MixpanelConstants {
     const val CLICKED_BANNER = "Clicked Banner"
     const val VIEWED_POPULAR_SALE = "Viewed Popular For Sale"
     const val VIEWED_POPULAR_WANTED = "Viewed Popular Wanted"
+    const val OPENED_SEARCH = "Opened Search"
     const val VIEWED_EXPLORE = "Viewed Explore"
     const val APPLIED_GENRE_FILTER = "Applied Genre Filter"
     const val APPLIED_ARRAY_FILTER = "Applied array Filter"
