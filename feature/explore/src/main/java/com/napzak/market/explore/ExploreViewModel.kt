@@ -354,14 +354,6 @@ internal class ExploreViewModel @Inject constructor(
             )
         }
 
-    internal fun trackViewedProduct(productId: Long) {
-        val props = mapOf(
-            POST_ID to productId.toString(),
-            POST_TYPE to if (uiState.value.selectedTab == TradeType.SELL) FOR_SALE else WANTED,
-        )
-        mixpanel?.trackEvent(VIEWED_PRODUCT, props)
-    }
-
     companion object {
         private const val DEBOUNCE_DELAY = 500L
         private const val INIT_GENRE_LIST_SIZE = 39
