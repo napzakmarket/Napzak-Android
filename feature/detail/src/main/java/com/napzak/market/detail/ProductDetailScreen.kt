@@ -1,5 +1,6 @@
 package com.napzak.market.detail
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -107,7 +108,10 @@ internal fun ProductDetailRoute(
         uiState = uiState,
         isInterested = isInterested,
         onMarketClick = onMarketNavigate,
-        onChatButtonClick = onChatNavigate,
+        onChatButtonClick = {
+            viewModel.trackStartedChat(it)
+            onChatNavigate(it)
+        },
         onLikeButtonClick = { viewModel.updateIsInterested(!isInterested) },
         onBackButtonClick = onNavigateUp,
         onModifyProductClick = onModifyNavigate,
