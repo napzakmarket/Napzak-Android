@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mixpanel.android.mpmetrics.MixpanelAPI
+import com.napzak.market.mixpanel.MixpanelConstants.COMPLETED_WITHDRAWAL
 import com.napzak.market.notification.repository.FirebaseRepository
 import com.napzak.market.notification.repository.NotificationRepository
 import com.napzak.market.notification.usecase.DeletePushTokenUseCase
@@ -22,6 +24,7 @@ internal class WithdrawViewModel @Inject constructor(
     private val deletePushTokenUseCase: DeletePushTokenUseCase,
     private val notificationRepository: NotificationRepository,
     private val firebaseRepository: FirebaseRepository,
+    private val mixpanel: MixpanelAPI?,
 ) : ViewModel() {
     private val _sideEffect = MutableSharedFlow<WithdrawSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
@@ -48,6 +51,7 @@ internal class WithdrawViewModel @Inject constructor(
             isWithdrawing = true
             withdrawUseCase(withdrawReason, withdrawDescription)
                 .onSuccess {
+                    mixpanel?.track(COMPLETED_WITHDRAWAL)
                     _sideEffect.emit(WithdrawSideEffect.WithdrawComplete)
                 }
                 .onFailure {

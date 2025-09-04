@@ -18,6 +18,10 @@ object MixpanelConstants {
     const val TOGGLED_WISHLIST = "Toggled Wishlist"
     const val OPENED_REPORT = "Opened Report Overlay_product"
     const val SUBMITTED_REPORT = "Submitted Report_product"
+    const val TOGGLED_ALARM = "Toggled Alarm"
+    const val LOGGED_OUT = "Logged Out"
+    const val STARTED_WITHDRAWAL = "Started Withdrawal"
+    const val COMPLETED_WITHDRAWAL = "Completed Withdrawal"
 
     // Property Keys
     const val METHOD = "method"
@@ -35,6 +39,7 @@ object MixpanelConstants {
     const val POST_TYPE = "post_type"
     const val USER_ROLE = "user_role"
     const val ACTION = "action"
+    const val STATUS = "status"
     const val TARGET_TYPE = "target_type"
     const val TARGET_ID = "target_id"
     const val REASON_SELECTED = "reason_selected"
@@ -52,4 +57,6 @@ object MixpanelConstants {
     const val LOW_PRICE = "low_price"
     const val BUYER = "buyer"
     const val SELLER = "seller"
+    const val ON = "on"
+    const val OFF = "off"
 }

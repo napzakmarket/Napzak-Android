@@ -61,11 +61,15 @@ internal fun SettingsRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val uiState by viewModel.settingUiState.collectAsStateWithLifecycle()
-    var systemPermission by remember { mutableStateOf(NotificationManagerCompat.from(context).areNotificationsEnabled()) }
+    var systemPermission by remember {
+        mutableStateOf(
+            NotificationManagerCompat.from(context).areNotificationsEnabled()
+        )
+    }
 
     LifecycleResumeEffect(Unit) {
         systemPermission = NotificationManagerCompat.from(context).areNotificationsEnabled()
-        onPauseOrDispose {  }
+        onPauseOrDispose { }
     }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
@@ -86,7 +90,10 @@ internal fun SettingsRoute(
             onTermsClick = context::openUrl,
             onPrivacyClick = context::openUrl,
             onLogoutConfirm = viewModel::signOutUser,
-            onWithdrawClick = onWithdrawClick,
+            onWithdrawClick = {
+                viewModel.trackStartedWithdrawal()
+                onWithdrawClick()
+            },
         )
     }
 }
