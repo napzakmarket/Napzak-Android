@@ -24,16 +24,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.napzak.market.designsystem.R.drawable.ic_logo
 import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_right
+import com.napzak.market.designsystem.R.drawable.ic_logo
 import com.napzak.market.designsystem.R.drawable.ic_purple_change
 import com.napzak.market.designsystem.component.popup.NapzakPopup
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import kotlinx.coroutines.delay
-import com.napzak.market.feature.splash.R.string.update_popup_title
-import com.napzak.market.feature.splash.R.string.update_popup_subtitle
+import com.napzak.market.feature.splash.R.string.market_url
 import com.napzak.market.feature.splash.R.string.update_popup_button
+import com.napzak.market.feature.splash.R.string.update_popup_subtitle
+import com.napzak.market.feature.splash.R.string.update_popup_title
 import com.napzak.market.ui_util.getVersionName
+import com.napzak.market.ui_util.openUrl
+import kotlinx.coroutines.delay
 
 @Composable
 internal fun SplashRoute(
@@ -44,6 +46,8 @@ internal fun SplashRoute(
 ) {
     val view = LocalView.current
     val context = LocalContext.current
+    val packageName = context.packageName
+    val marketUrl = stringResource(market_url, packageName)
     val isUpdatePopupVisible by viewModel.isUpdatePopupVisible.collectAsStateWithLifecycle()
 
     DisposableEffect(Unit) {
@@ -58,11 +62,13 @@ internal fun SplashRoute(
     val navigated = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        val success = viewModel.tryAutoLogin().isSuccess
         val appVersion = context.getVersionName()
-        if (appVersion != null) viewModel.checkAppVersion(appVersion)
-        else viewModel.updatePopupVisible(false)
+        if (appVersion != null) viewModel.checkAppVersion(appVersion) else { /* null인 경우 대기 */}
         delay(2500)
+    }
+
+    LaunchedEffect(isUpdatePopupVisible) {
+        val success = viewModel.tryAutoLogin().isSuccess
 
         if (!navigated.value && isUpdatePopupVisible == false) {
             navigated.value = true
@@ -72,10 +78,7 @@ internal fun SplashRoute(
 
     SplashScreen(
         isUpdatePopupVisible = isUpdatePopupVisible,
-        onUpdateButtonClick = {
-            viewModel.moveToPlayStore()
-            viewModel.updatePopupVisible(false)
-        },
+        onUpdateButtonClick = { context.openUrl(marketUrl) },
         modifier = modifier,
     )
 }
