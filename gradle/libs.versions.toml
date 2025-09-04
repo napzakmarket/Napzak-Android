@@ -55,6 +55,7 @@ runtimeAndroid = "1.7.8"
 uiAndroid = "1.7.8"
 roomCompiler = "2.7.1"
 multidex = "2.0.1"
+mixpanel = "8.2.2"
 
 googleServices = "4.4.2"
 firebaseBom = "33.15.0"
@@ -139,6 +140,7 @@ androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime
 androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 androidx-multidex = { group = "androidx.multidex", name = "multidex", version.ref = "multidex" }
+mixpanel = { group = "com.mixpanel.android", name = "mixpanel-android", version.ref = "mixpanel" }
 
 ## firebase
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }

@@ -32,6 +32,7 @@ include(
     ":core:designsystem",
     ":core:util",
     ":core:ui_util",
+    ":core:mixpanel",
 )
 
 include(
