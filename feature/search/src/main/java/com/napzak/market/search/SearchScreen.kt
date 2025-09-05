@@ -51,6 +51,12 @@ import com.napzak.market.feature.search.R.string.search_suggested_genre
 import com.napzak.market.feature.search.R.string.search_suggested_search_text
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.genre.model.RecommendedSearchWordGenre.SearchWord
+import com.napzak.market.mixpanel.MixpanelConstants.ENTER
+import com.napzak.market.mixpanel.MixpanelConstants.GENRE
+import com.napzak.market.mixpanel.MixpanelConstants.GENRE_PAGE
+import com.napzak.market.mixpanel.MixpanelConstants.ICON
+import com.napzak.market.mixpanel.MixpanelConstants.KEYWORD
+import com.napzak.market.mixpanel.MixpanelConstants.SEARCH_BAR
 import com.napzak.market.search.component.GenreNavigationButton
 import com.napzak.market.search.component.SuggestedGenreCard
 import com.napzak.market.search.component.SuggestedKeywordChip
@@ -84,8 +90,11 @@ internal fun SearchRoute(
         onBackButtonClick = onBackButtonClick,
         onTextChange = viewModel::updateSearchTerm,
         onSearchClick = { onSearchResultNavigate(searchText) },
+        onTrackSearchClick = { viewModel.trackExecutedSearch(it) },
         onRecommendedSearchWordClick = onSearchResultNavigate,
+        onTrackSearchWordClick = { viewModel.trackClickedSuggestion(KEYWORD, it) },
         onRecommendedGenreClick = onGenreDetailNavigate,
+        onTrackGenreClick = { viewModel.trackClickedSuggestion(GENRE, it) },
         modifier = modifier,
     )
 }
@@ -97,8 +106,11 @@ private fun SearchScreen(
     onBackButtonClick: () -> Unit,
     onTextChange: (String) -> Unit,
     onSearchClick: () -> Unit,
+    onTrackSearchClick: (String) -> Unit,
     onRecommendedSearchWordClick: (String) -> Unit,
+    onTrackSearchWordClick: (Int) -> Unit,
     onRecommendedGenreClick: (Long) -> Unit,
+    onTrackGenreClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -121,8 +133,11 @@ private fun SearchScreen(
                     onBackButtonClick = onBackButtonClick,
                     onTextChange = onTextChange,
                     onSearchClick = onSearchClick,
+                    onTrackSearchClick = onTrackSearchClick,
                     onRecommendedSearchWordClick = onRecommendedSearchWordClick,
+                    onTrackSearchWordClick = onTrackSearchWordClick,
                     onRecommendedGenreClick = onRecommendedGenreClick,
+                    onTrackGenreClick = onTrackGenreClick,
                     modifier = modifier,
                 )
             }
@@ -139,8 +154,11 @@ private fun SearchSuccessScreen(
     onBackButtonClick: () -> Unit,
     onTextChange: (String) -> Unit,
     onSearchClick: () -> Unit,
+    onTrackSearchClick: (String) -> Unit,
     onRecommendedSearchWordClick: (String) -> Unit,
+    onTrackSearchWordClick: (Int) -> Unit,
     onRecommendedGenreClick: (Long) -> Unit,
+    onTrackGenreClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -185,6 +203,8 @@ private fun SearchSuccessScreen(
                 onResetClick = { onTextChange(EMPTY_TEXT) },
                 onSearchClick = onSearchClick,
                 focusRequester = focusRequester,
+                onTrackIconClick = { onTrackSearchClick(ICON) },
+                onTrackKeyboardClick = { onTrackSearchClick(ENTER) },
             )
         }
 
@@ -196,14 +216,20 @@ private fun SearchSuccessScreen(
             ) {
                 SuggestedSearchTextSection(
                     recommendedSearchWords = recommendedSearchWords,
-                    onTextChipClick = onRecommendedSearchWordClick,
+                    onTextChipClick = { text, index ->
+                        onTrackSearchWordClick(index)
+                        onRecommendedSearchWordClick(text)
+                    },
                 )
 
                 Spacer(Modifier.height(46.dp))
 
                 SuggestedGenreSection(
                     genres = recommendedGenres,
-                    onGenreCardClick = onRecommendedGenreClick,
+                    onGenreCardClick = { genreId, index ->
+                        onTrackGenreClick(index)
+                        onRecommendedGenreClick(genreId)
+                    },
                 )
             }
         } else {
@@ -216,7 +242,10 @@ private fun SearchSuccessScreen(
                     item {
                         BasicResultNavigationButton(
                             searchText = searchText,
-                            onButtonClick = onSearchClick,
+                            onButtonClick = {
+                                onTrackSearchClick(SEARCH_BAR)
+                                onSearchClick()
+                            },
                         )
 
                         Spacer(
@@ -231,7 +260,10 @@ private fun SearchSuccessScreen(
                 items(searchResultGenres) { genreItem ->
                     GenreNavigationButton(
                         genreName = genreItem.genreName,
-                        onBlockClick = { onRecommendedGenreClick(genreItem.genreId) },
+                        onBlockClick = {
+                            onTrackSearchClick(GENRE_PAGE)
+                            onRecommendedGenreClick(genreItem.genreId)
+                        },
                         modifier = Modifier.background(color = NapzakMarketTheme.colors.white),
                     )
 
@@ -294,7 +326,7 @@ private fun BasicResultNavigationButton(
 @Composable
 private fun SuggestedSearchTextSection(
     recommendedSearchWords: List<SearchWord>,
-    onTextChipClick: (String) -> Unit,
+    onTextChipClick: (String, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -312,10 +344,10 @@ private fun SuggestedSearchTextSection(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            recommendedSearchWords.forEach { searchWord ->
+            recommendedSearchWords.forEachIndexed { index, searchWord ->
                 SuggestedKeywordChip(
                     keyword = searchWord.searchWord,
-                    onKeywordChipClick = { onTextChipClick(searchWord.searchWord) },
+                    onKeywordChipClick = { onTextChipClick(searchWord.searchWord, index + 1) },
                 )
             }
         }
@@ -325,7 +357,7 @@ private fun SuggestedSearchTextSection(
 @Composable
 private fun SuggestedGenreSection(
     genres: List<Genre>,
-    onGenreCardClick: (Long) -> Unit,
+    onGenreCardClick: (Long, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -342,16 +374,16 @@ private fun SuggestedGenreSection(
         Spacer(Modifier.height(20.dp))
 
         val rows = genres.chunked(3)
-        rows.forEach { rowItems ->
+        rows.forEachIndexed { row, rowItems ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                rowItems.forEach { genre ->
+                rowItems.forEachIndexed { col, genre ->
                     SuggestedGenreCard(
                         genreName = genre.genreName,
                         imgUrl = genre.genrePhoto.toString(),
-                        onCardClick = { onGenreCardClick(genre.genreId) },
+                        onCardClick = { onGenreCardClick(genre.genreId, row * 3 + col + 1) },
                         modifier = Modifier.width(100.dp),
                     )
                 }
@@ -385,8 +417,11 @@ private fun SearchScreenPreview(modifier: Modifier = Modifier) {
             onBackButtonClick = { },
             onTextChange = { searchText = it },
             onSearchClick = { },
+            onTrackSearchClick = { },
             onRecommendedSearchWordClick = { },
+            onTrackSearchWordClick = { },
             onRecommendedGenreClick = { },
+            onTrackGenreClick = { },
             modifier = modifier,
         )
     }
