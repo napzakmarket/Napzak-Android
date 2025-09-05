@@ -2,6 +2,7 @@ package com.napzak.market.mypage.wishlist.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,7 +25,7 @@ internal fun WishlistTopSection(
     NavigateUpTopBar(
         title = stringResource(wishlist_title),
         onNavigateUp = onBackButtonClick,
-        modifier = modifier,
+        modifier = modifier.statusBarsPadding(),
     )
 
     TradeTypeTabBar(

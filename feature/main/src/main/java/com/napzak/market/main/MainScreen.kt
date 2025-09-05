@@ -179,6 +179,7 @@ private fun MainNavHost(
         popExitTransition = {
             ExitTransition.None
         },
+        modifier = modifier.fillMaxSize(),
         navController = navigator.navController,
         startDestination = navigator.startDestination,
     ) {
