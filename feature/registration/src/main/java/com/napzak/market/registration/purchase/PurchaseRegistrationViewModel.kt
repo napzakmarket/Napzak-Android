@@ -3,8 +3,17 @@ package com.napzak.market.registration.purchase
 import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.mixpanel.android.mpmetrics.MixpanelAPI
 import com.napzak.market.common.state.UiState
 import com.napzak.market.genre.model.Genre
+import com.napzak.market.mixpanel.MixpanelConstants.BUYER
+import com.napzak.market.mixpanel.MixpanelConstants.CREATED_POST
+import com.napzak.market.mixpanel.MixpanelConstants.GENRES_CATEGORY
+import com.napzak.market.mixpanel.MixpanelConstants.POST_ID
+import com.napzak.market.mixpanel.MixpanelConstants.POST_TYPE
+import com.napzak.market.mixpanel.MixpanelConstants.USER_ROLE
+import com.napzak.market.mixpanel.MixpanelConstants.WANTED
+import com.napzak.market.mixpanel.trackEvent
 import com.napzak.market.presigned_url.model.PresignedUrl
 import com.napzak.market.presigned_url.usecase.ClearCacheUseCase
 import com.napzak.market.presigned_url.usecase.CompressImageUseCase
@@ -38,6 +47,7 @@ class PurchaseRegistrationViewModel @Inject constructor(
     private val registerProductUseCase: RegisterProductUseCase,
     private val getRegisteredPurchaseProductUseCase: GetRegisteredPurchaseProductUseCase,
     private val editRegisteredProductUseCase: EditRegisteredProductUseCase,
+    private val mixpanel: MixpanelAPI?,
 ) : RegistrationViewModel(
     getProductPresignedUrlUseCase,
     uploadImageUseCase,
@@ -95,7 +105,9 @@ class PurchaseRegistrationViewModel @Inject constructor(
             _sideEffect.emit(ShowToast(EDIT_SUCCESS))
             id
         } ?: run {
-            registerProductUseCase(product).getOrThrow()
+            val productId = registerProductUseCase(product).getOrThrow()
+            trackCreatedPost(productId)
+            productId
         }
     }
 
@@ -117,5 +129,15 @@ class PurchaseRegistrationViewModel @Inject constructor(
         }.onFailure {
             updateLoadState(UiState.Failure(UPLOADING_PRODUCT_ERROR_MESSAGE))
         }
+    }
+
+    private fun trackCreatedPost(productId: Long) {
+        val props = mapOf(
+            POST_ID to productId,
+            POST_TYPE to WANTED,
+            GENRES_CATEGORY to registrationUiState.value.genre?.genreName,
+            USER_ROLE to BUYER,
+        )
+        mixpanel?.trackEvent(CREATED_POST, props)
     }
 }

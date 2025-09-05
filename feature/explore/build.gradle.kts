@@ -16,6 +16,7 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.util)
     implementation(projects.core.uiUtil)
+    implementation(projects.core.mixpanel)
     implementation(projects.domain.product)
     implementation(projects.domain.interest)
     implementation(projects.domain.genre)
@@ -23,4 +24,5 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
     implementation(libs.timber)
+    implementation(libs.mixpanel)
 }

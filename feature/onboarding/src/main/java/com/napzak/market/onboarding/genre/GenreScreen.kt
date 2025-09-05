@@ -98,7 +98,11 @@ fun GenreRoute(
                 }
             )
         },
-        onSkipClick = onSkipClick,
+        onSkipClick = {
+            viewModel.trackOnboarding()
+            viewModel.trackGenreSkipped()
+            onSkipClick()
+        },
         isShownSnackBar = isShownSnackBar,
     )
 }

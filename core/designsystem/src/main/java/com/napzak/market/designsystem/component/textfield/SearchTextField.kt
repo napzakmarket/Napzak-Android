@@ -50,6 +50,8 @@ fun SearchTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     focusRequester: FocusRequester = remember { FocusRequester() },
+    onTrackIconClick: () -> Unit = {},
+    onTrackKeyboardClick: () -> Unit = {},
 ) {
     Box(
         modifier = modifier,
@@ -69,7 +71,10 @@ fun SearchTextField(
             enabled = enabled,
             readOnly = readOnly,
             keyboardActions = KeyboardActions(
-                onSearch = { onSearchClick() },
+                onSearch = {
+                    onTrackKeyboardClick()
+                    onSearchClick()
+                },
             ),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Search,
@@ -92,7 +97,10 @@ fun SearchTextField(
                     Icon(
                         imageVector = ImageVector.vectorResource(ic_dark_gray_search),
                         contentDescription = null,
-                        modifier = Modifier.noRippleClickable(onSearchClick),
+                        modifier = Modifier.noRippleClickable {
+                            onTrackIconClick()
+                            onSearchClick()
+                        },
                         tint = Color.Unspecified,
                     )
                 }

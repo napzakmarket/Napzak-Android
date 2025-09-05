@@ -2,10 +2,20 @@ package com.napzak.market.onboarding.genre
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mixpanel.android.mpmetrics.MixpanelAPI
 import com.napzak.market.common.state.UiState
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.genre.usecase.SetPreferredGenreUseCase
 import com.napzak.market.genre.usecase.SetSearchPreferredGenresUseCase
+import com.napzak.market.mixpanel.MixpanelConstants.ANDROID
+import com.napzak.market.mixpanel.MixpanelConstants.COMPLETED_ONBOARDING
+import com.napzak.market.mixpanel.MixpanelConstants.GENRES_CATEGORY
+import com.napzak.market.mixpanel.MixpanelConstants.GENRES_COUNT
+import com.napzak.market.mixpanel.MixpanelConstants.KAKAO
+import com.napzak.market.mixpanel.MixpanelConstants.METHOD
+import com.napzak.market.mixpanel.MixpanelConstants.PLATFORM
+import com.napzak.market.mixpanel.MixpanelConstants.SKIPPED_GENRES
+import com.napzak.market.mixpanel.trackEvent
 import com.napzak.market.onboarding.genre.model.GenreEvent
 import com.napzak.market.onboarding.genre.model.GenreUiModel
 import com.napzak.market.onboarding.genre.model.GenreUiState
@@ -27,6 +37,7 @@ class GenreViewModel @Inject constructor(
     private val setPreferredGenreUseCase: SetPreferredGenreUseCase,
     private val setSearchPreferredGenresUseCase: SetSearchPreferredGenresUseCase,
     private val setRegisterGenres: SetRegisterGenres,
+    private val mixpanel: MixpanelAPI?,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GenreUiState())
@@ -190,7 +201,10 @@ class GenreViewModel @Inject constructor(
 
         viewModelScope.launch {
             setRegisterGenres(selectedIds)
-                .onSuccess { onSuccess() }
+                .onSuccess {
+                    trackOnboarding()
+                    onSuccess()
+                }
                 .onFailure {
                     //TODO 추후 구현
                 }
@@ -218,7 +232,20 @@ class GenreViewModel @Inject constructor(
         }
     }
 
-    companion object{
+    internal fun trackOnboarding() {
+        val props = mapOf(
+            METHOD to KAKAO,
+            PLATFORM to ANDROID,
+            GENRES_COUNT to uiState.value.selectedGenres.size,
+            GENRES_CATEGORY to uiState.value.selectedGenres.map { it.name },
+        )
+
+        mixpanel?.trackEvent(COMPLETED_ONBOARDING, props)
+    }
+
+    internal fun trackGenreSkipped() = mixpanel?.track(SKIPPED_GENRES)
+
+    companion object {
         private const val MAX_SELECTED_COUNT = 7
     }
 }

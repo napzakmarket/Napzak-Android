@@ -2,9 +2,17 @@ package com.napzak.market.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mixpanel.android.mpmetrics.MixpanelAPI
 import com.napzak.market.common.state.UiState
 import com.napzak.market.genre.repository.GenreNameRepository
 import com.napzak.market.genre.repository.SearchWordGenreRepository
+import com.napzak.market.mixpanel.MixpanelConstants.CLICKED_SUGGESTION
+import com.napzak.market.mixpanel.MixpanelConstants.EXECUTED_SEARCH
+import com.napzak.market.mixpanel.MixpanelConstants.SEARCH_SOURCE
+import com.napzak.market.mixpanel.MixpanelConstants.SEARCH_TEXT
+import com.napzak.market.mixpanel.MixpanelConstants.SUGGESTION_INDEX
+import com.napzak.market.mixpanel.MixpanelConstants.SUGGESTION_TYPE
+import com.napzak.market.mixpanel.trackEvent
 import com.napzak.market.search.state.SearchRecommendation
 import com.napzak.market.search.state.SearchUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +30,7 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val searchWordGenreRepository: SearchWordGenreRepository,
     private val genreNameRepository: GenreNameRepository,
+    private val mixpanel: MixpanelAPI?,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState = _uiState.asStateFlow()
@@ -72,6 +81,25 @@ class SearchViewModel @Inject constructor(
                 loadState = loadState
             )
         }
+
+    internal fun trackExecutedSearch(source: String) {
+        val props = mapOf(
+            SEARCH_SOURCE to source,
+            SEARCH_TEXT to searchTerm.value,
+        )
+
+        mixpanel?.trackEvent(EXECUTED_SEARCH, props)
+    }
+
+    internal fun trackClickedSuggestion(type: String, index: Int) {
+        val props = mapOf(
+            SUGGESTION_TYPE to type,
+            SUGGESTION_INDEX to index,
+        )
+
+        mixpanel?.trackEvent(CLICKED_SUGGESTION, props)
+    }
+
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L

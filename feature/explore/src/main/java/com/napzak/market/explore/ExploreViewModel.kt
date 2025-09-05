@@ -3,6 +3,7 @@ package com.napzak.market.explore
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mixpanel.android.mpmetrics.MixpanelAPI
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.BottomSheetType
 import com.napzak.market.common.type.SortType
@@ -14,6 +15,23 @@ import com.napzak.market.genre.model.Genre
 import com.napzak.market.genre.model.extractGenreIds
 import com.napzak.market.genre.repository.GenreNameRepository
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
+import com.napzak.market.mixpanel.MixpanelConstants.APPLIED_ARRAY_FILTER
+import com.napzak.market.mixpanel.MixpanelConstants.APPLIED_GENRE_FILTER
+import com.napzak.market.mixpanel.MixpanelConstants.FILTER_COUNT
+import com.napzak.market.mixpanel.MixpanelConstants.FOR_SALE
+import com.napzak.market.mixpanel.MixpanelConstants.HIGH_PRICE
+import com.napzak.market.mixpanel.MixpanelConstants.LATEST
+import com.napzak.market.mixpanel.MixpanelConstants.LOW_PRICE
+import com.napzak.market.mixpanel.MixpanelConstants.OPENED_SEARCH
+import com.napzak.market.mixpanel.MixpanelConstants.POPULAR
+import com.napzak.market.mixpanel.MixpanelConstants.POST_ID
+import com.napzak.market.mixpanel.MixpanelConstants.POST_TYPE
+import com.napzak.market.mixpanel.MixpanelConstants.SORT
+import com.napzak.market.mixpanel.MixpanelConstants.TAB
+import com.napzak.market.mixpanel.MixpanelConstants.VIEWED_EXPLORE
+import com.napzak.market.mixpanel.MixpanelConstants.VIEWED_PRODUCT
+import com.napzak.market.mixpanel.MixpanelConstants.WANTED
+import com.napzak.market.mixpanel.trackEvent
 import com.napzak.market.product.model.ExploreParameters
 import com.napzak.market.product.model.Product
 import com.napzak.market.product.model.SearchParameters
@@ -42,6 +60,7 @@ internal class ExploreViewModel @Inject constructor(
     private val productExploreRepository: ProductExploreRepository,
     private val genreNameRepository: GenreNameRepository,
     private val setInterestProductUseCase: SetInterestProductUseCase,
+    private val mixpanel: MixpanelAPI?,
 ) : ViewModel() {
     val searchTerm = savedStateHandle.get<String>(SEARCH_TERM_KEY)
     val sortType = savedStateHandle.get<SortType>(SORT_TYPE_KEY)
@@ -190,6 +209,8 @@ internal class ExploreViewModel @Inject constructor(
 
 
     fun updateTradeType(newTradeType: TradeType) {
+        trackViewedExplore(newTradeType)
+
         _uiState.update { currentState -> currentState.copy(selectedTab = newTradeType) }
     }
 
@@ -253,6 +274,8 @@ internal class ExploreViewModel @Inject constructor(
     }
 
     fun updateSelectedGenres(newGenres: List<Genre>) {
+        trackFilteredGenre(newGenres.size)
+
         _uiState.update { currentState ->
             currentState.copy(
                 filteredGenres = newGenres,
@@ -277,6 +300,8 @@ internal class ExploreViewModel @Inject constructor(
     }
 
     fun updateSortOption(newSortOption: SortType) {
+        trackFilteredArray()
+
         _uiState.update { currentState ->
             currentState.copy(
                 sortOption = newSortOption,
@@ -315,6 +340,44 @@ internal class ExploreViewModel @Inject constructor(
                 loadState = loadState,
             )
         }
+
+    internal fun trackViewedExplore(tradeType: TradeType) {
+        val props = mapOf(TAB to if (tradeType == TradeType.SELL) FOR_SALE else WANTED)
+
+        mixpanel?.trackEvent(VIEWED_EXPLORE, props)
+    }
+
+    private fun trackFilteredGenre(genreSize: Int) {
+        val props = mapOf(
+            FILTER_COUNT to genreSize,
+            TAB to if (uiState.value.selectedTab == TradeType.SELL) FOR_SALE else WANTED,
+        )
+        mixpanel?.trackEvent(APPLIED_GENRE_FILTER, props)
+    }
+
+    private fun trackFilteredArray() {
+        val props = mapOf(
+            SORT to when (uiState.value.sortOption) {
+                SortType.RECENT -> LATEST
+                SortType.POPULAR -> POPULAR
+                SortType.HIGH_PRICE -> HIGH_PRICE
+                SortType.LOW_PRICE -> LOW_PRICE
+            },
+            TAB to if (uiState.value.selectedTab == TradeType.SELL) FOR_SALE else WANTED,
+        )
+        mixpanel?.trackEvent(APPLIED_ARRAY_FILTER, props)
+    }
+
+    internal fun trackViewedProduct(productId: Long, postType: String) {
+        val props = mapOf(
+            POST_ID to productId,
+            POST_TYPE to postType,
+        )
+
+        mixpanel?.trackEvent(VIEWED_PRODUCT, props)
+    }
+
+    internal fun trackSearchOpened() = mixpanel?.track(OPENED_SEARCH)
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L

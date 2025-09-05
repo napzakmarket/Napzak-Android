@@ -54,6 +54,8 @@ import com.napzak.market.home.component.HorizontalScrollableProducts
 import com.napzak.market.home.component.VerticalGridProducts
 import com.napzak.market.home.state.HomeUiState
 import com.napzak.market.home.type.HomeProductType
+import com.napzak.market.mixpanel.MixpanelConstants.FOR_SALE
+import com.napzak.market.mixpanel.MixpanelConstants.WANTED
 import com.napzak.market.product.model.Product
 import com.napzak.market.type.HomeBannerType
 import com.napzak.market.ui_util.ScreenPreview
@@ -131,6 +133,9 @@ internal fun HomeRoute(
         onLikeButtonClick = viewModel::setInterest,
         onMostInterestedSellNavigate = onMostInterestedSellNavigate,
         onMostInterestedBuyNavigate = onMostInterestedBuyNavigate,
+        onTrackBannerClick = viewModel::trackClickedBanner,
+        onTrackRecommendProductClick = viewModel::trackClickedRecommendProduct,
+        onTrackPopularProductClick = viewModel::trackClickedPopularProduct,
         modifier = Modifier
             .background(NapzakMarketTheme.colors.white)
             .then(modifier),
@@ -145,6 +150,9 @@ private fun HomeScreen(
     onLikeButtonClick: (Long, Boolean, HomeProductType) -> Unit,
     onMostInterestedSellNavigate: () -> Unit,
     onMostInterestedBuyNavigate: () -> Unit,
+    onTrackBannerClick: (Long, HomeBannerType, Int) -> Unit,
+    onTrackRecommendProductClick: (Int) -> Unit,
+    onTrackPopularProductClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -164,6 +172,9 @@ private fun HomeScreen(
                 onMostInterestedBuyNavigate = onMostInterestedBuyNavigate,
                 termsLink = uiState.termsLink,
                 privacyPolicyLink = uiState.privacyPolicyLink,
+                onTrackBannerClick = onTrackBannerClick,
+                onTrackRecommendProductClick = onTrackRecommendProductClick,
+                onTrackPopularProductClick = onTrackPopularProductClick,
             )
 
             is UiState.Failure -> {}
@@ -187,6 +198,9 @@ private fun HomeSuccessScreen(
     onMostInterestedBuyNavigate: () -> Unit,
     termsLink: String,
     privacyPolicyLink: String,
+    onTrackBannerClick: (Long, HomeBannerType, Int) -> Unit,
+    onTrackRecommendProductClick: (Int) -> Unit,
+    onTrackPopularProductClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -213,6 +227,7 @@ private fun HomeSuccessScreen(
                     images = topBanners.map { it.imageUrl }.toImmutableList(),
                     onImageClick = { index ->
                         runCatching {
+                            onTrackBannerClick(topBanners[index].id, HomeBannerType.TOP, index + 1)
                             context.openUrl(topBanners[index].linkUrl)
                         }
                     },
@@ -229,7 +244,10 @@ private fun HomeSuccessScreen(
                 products = productRecommends,
                 title = stringResource(home_list_customized_title, nickname),
                 subTitle = stringResource(home_list_customized_sub_title, nickname),
-                onProductClick = onProductClick,
+                onProductClick = { productId, index ->
+                    onTrackRecommendProductClick(index + 1)
+                    onProductClick(productId)
+                },
                 onLikeClick = { productId, isInterest ->
                     onLikeButtonClick(productId, isInterest, HomeProductType.RECOMMEND)
                 },
@@ -241,6 +259,9 @@ private fun HomeSuccessScreen(
             banners[HomeBannerType.MIDDLE]?.let { banner ->
                 HomeSingleBanner(
                     banner = banner.first(),
+                    onTrackBannerClick = { bannerId ->
+                        onTrackBannerClick(bannerId, HomeBannerType.MIDDLE, 1)
+                    },
                     modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 40.dp),
                 )
             }
@@ -251,7 +272,10 @@ private fun HomeSuccessScreen(
                 products = sellProducts,
                 title = stringResource(home_list_interested_sell_title),
                 subTitle = stringResource(home_list_interested_sell_sub_title),
-                onProductClick = onProductClick,
+                onProductClick = { productId ->
+                    onProductClick(productId)
+                    onTrackPopularProductClick(FOR_SALE)
+                },
                 onLikeClick = { productId, isInterest ->
                     onLikeButtonClick(productId, isInterest, HomeProductType.POPULAR_SELL)
                 },
@@ -267,6 +291,9 @@ private fun HomeSuccessScreen(
             banners[HomeBannerType.BOTTOM]?.let { banner ->
                 HomeSingleBanner(
                     banner = banner.first(),
+                    onTrackBannerClick = { bannerId ->
+                        onTrackBannerClick(bannerId, HomeBannerType.BOTTOM, 2)
+                    },
                     modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 40.dp),
                 )
             }
@@ -277,7 +304,10 @@ private fun HomeSuccessScreen(
                 products = buyProducts,
                 title = stringResource(home_list_interested_buy_title),
                 subTitle = stringResource(home_list_interested_buy_sub_title),
-                onProductClick = onProductClick,
+                onProductClick = { productId ->
+                    onProductClick(productId)
+                    onTrackPopularProductClick(WANTED)
+                },
                 onLikeClick = { productId, isInterest ->
                     onLikeButtonClick(productId, isInterest, HomeProductType.POPULAR_BUY)
                 },
@@ -303,6 +333,7 @@ private fun HomeSuccessScreen(
 @Composable
 private fun HomeSingleBanner(
     banner: Banner,
+    onTrackBannerClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -315,7 +346,10 @@ private fun HomeSingleBanner(
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = modifier
-            .noRippleClickable { context.openUrl(banner.linkUrl) }
+            .noRippleClickable {
+                onTrackBannerClick(banner.id)
+                context.openUrl(banner.linkUrl)
+            }
             .fillMaxWidth()
             .height(110.dp)
             .clip(RoundedCornerShape(16.dp)),
@@ -363,6 +397,9 @@ private fun HomeRoutePreview() {
             onLikeButtonClick = { _, _, _ -> },
             onMostInterestedSellNavigate = { },
             onMostInterestedBuyNavigate = { },
+            onTrackBannerClick = { _, _, _ -> },
+            onTrackRecommendProductClick = {},
+            onTrackPopularProductClick = {},
         )
     }
 }
