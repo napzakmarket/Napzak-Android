@@ -13,10 +13,16 @@ import com.napzak.market.common.type.TradeType
 import com.napzak.market.detail.type.ProductDetailToastType
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.mixpanel.MixpanelConstants.BUYER
+import com.napzak.market.mixpanel.MixpanelConstants.CHANGED_PRODUCT_STATUS
 import com.napzak.market.mixpanel.MixpanelConstants.FOR_SALE
+import com.napzak.market.mixpanel.MixpanelConstants.IN_PROGRESS
 import com.napzak.market.mixpanel.MixpanelConstants.OPENED_REPORT_PRODUCT
+import com.napzak.market.mixpanel.MixpanelConstants.PAYMENT_COMPLETED
 import com.napzak.market.mixpanel.MixpanelConstants.POST_ID
 import com.napzak.market.mixpanel.MixpanelConstants.POST_TYPE
+import com.napzak.market.mixpanel.MixpanelConstants.PRODUCT_STATUS
+import com.napzak.market.mixpanel.MixpanelConstants.RESERVED
+import com.napzak.market.mixpanel.MixpanelConstants.SALE_COMPLETED
 import com.napzak.market.mixpanel.MixpanelConstants.SELLER
 import com.napzak.market.mixpanel.MixpanelConstants.STARTED_CHAT
 import com.napzak.market.mixpanel.MixpanelConstants.USER_ROLE
@@ -130,6 +136,7 @@ internal class ProductDetailViewModel @Inject constructor(
                     val tradeType = TradeType.fromName(
                         (_productDetail.value as UiState.Success<ProductDetail>).data.tradeType
                     )
+                    trackProductStatus(productId, TradeStatusType.get(tradeStatus, tradeType))
                     Timber.d("tradeStatus: $tradeStatus")
                     _sideEffect.send(
                         ProductDetailSideEffect.ShowToast(
@@ -177,6 +184,21 @@ internal class ProductDetailViewModel @Inject constructor(
     }
 
     internal fun trackReportProduct() = mixpanel?.track(OPENED_REPORT_PRODUCT)
+
+    private fun trackProductStatus(id: Long, status: TradeStatusType) {
+        val props = mapOf(
+            POST_ID to id,
+            PRODUCT_STATUS to when (status) {
+                TradeStatusType.BEFORE_TRADE_SELL -> IN_PROGRESS
+                TradeStatusType.BEFORE_TRADE_BUY -> IN_PROGRESS
+                TradeStatusType.COMPLETED_SELL -> SALE_COMPLETED
+                TradeStatusType.COMPLETED_BUY -> PAYMENT_COMPLETED
+                TradeStatusType.RESERVED -> RESERVED
+            },
+        )
+
+        mixpanel?.trackEvent(CHANGED_PRODUCT_STATUS, props)
+    }
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L

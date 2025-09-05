@@ -74,4 +74,5 @@ object MixpanelConstants {
     const val IN_PROGRESS = "in_progress"
     const val PAYMENT_COMPLETED = "payment_completed"
     const val SALE_COMPLETED = "sale_completed"
+    const val RESERVED = "reserved"
 }
