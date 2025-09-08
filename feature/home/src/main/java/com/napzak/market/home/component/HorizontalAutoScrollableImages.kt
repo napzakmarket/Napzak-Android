@@ -71,12 +71,18 @@ internal fun HorizontalAutoScrolledImages(
         contentAlignment = Alignment.BottomCenter,
         modifier = modifier
             .background(color = NapzakMarketTheme.colors.gray100)
-            .noRippleClickable { onImageClick(pagerState.currentPage % images.size) }
+            .noRippleClickable {
+                if (images.isNotEmpty()) {
+                    onImageClick(pagerState.currentPage % images.size)
+                }
+            }
     ) {
         HorizontalPager(
             state = pagerState,
         ) { page ->
-            val currentPage = page % images.size
+            val currentPage =
+                if (images.isNotEmpty()) page % images.size
+                else 0
             val currentImage = images[currentPage]
             AsyncImage(
                 model = ImageRequest
