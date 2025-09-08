@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.napzak.market.designsystem.component.button.NapzakToggleButton
+import com.napzak.market.designsystem.component.button.NapzakToggleButtonDefault
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.mypage.R.string.settings_section_app_notification_off_title
 import com.napzak.market.feature.mypage.R.string.settings_section_app_notification_title
@@ -27,6 +28,9 @@ fun SettingNotificationItem(
     val textColor =
         if (!isSystemPermissionOn) NapzakMarketTheme.colors.transRed
         else NapzakMarketTheme.colors.gray400
+    val toggleColor =
+        if (!isSystemPermissionOn) NapzakMarketTheme.colors.purple200
+        else NapzakMarketTheme.colors.purple500
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -41,6 +45,9 @@ fun SettingNotificationItem(
         NapzakToggleButton(
             isToggleOn = isAppNotificationOn,
             onToggleClick = onToggleClick,
+            toggleButtonColor = NapzakToggleButtonDefault.color.copy(
+                toggleOnColor = toggleColor
+            )
         )
     }
 
