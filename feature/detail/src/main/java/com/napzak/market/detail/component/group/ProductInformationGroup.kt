@@ -30,7 +30,8 @@ import com.napzak.market.designsystem.R.drawable.ic_gray_heart
 import com.napzak.market.designsystem.R.drawable.ic_gray_review
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.detail.R.string.detail_product_count_overflow
-import com.napzak.market.feature.detail.R.string.detail_product_price
+import com.napzak.market.feature.detail.R.string.detail_product_price_buy
+import com.napzak.market.feature.detail.R.string.detail_product_price_sell
 import com.napzak.market.feature.detail.R.string.detail_product_tag_is_price_negotiable
 
 @Composable
@@ -47,6 +48,10 @@ internal fun ProductInformationGroup(
     modifier: Modifier = Modifier,
 ) {
     val shadowColor = NapzakMarketTheme.colors.gray100.copy(alpha = 0.2f)
+    val priceStringId = when (tradeType) {
+        TradeType.SELL -> detail_product_price_sell
+        TradeType.BUY -> detail_product_price_buy
+    }
 
     Column(
         modifier = modifier.background(NapzakMarketTheme.colors.white),
@@ -94,7 +99,7 @@ internal fun ProductInformationGroup(
 
             Spacer(Modifier.height(10.dp))
             Text(
-                text = stringResource(detail_product_price, price),
+                text = stringResource(priceStringId, price),
                 style = NapzakMarketTheme.typography.title22b.copy(
                     color = NapzakMarketTheme.colors.black,
                 ),
