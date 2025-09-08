@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,10 +56,6 @@ internal fun HorizontalAutoScrolledImages(
         pageCount = { Int.MAX_VALUE },
     )
 
-    val currentPage = rememberSaveable(pagerState) {
-        pagerState.currentPage % images.size
-    }
-
     LaunchedEffect(Unit) {
         pagerState.scrollToPage(page = 0, pageOffsetFraction = 0f)
         while (true) {
@@ -76,11 +71,12 @@ internal fun HorizontalAutoScrolledImages(
         contentAlignment = Alignment.BottomCenter,
         modifier = modifier
             .background(color = NapzakMarketTheme.colors.gray100)
-            .noRippleClickable { onImageClick(currentPage) }
+            .noRippleClickable { onImageClick(pagerState.currentPage % images.size) }
     ) {
         HorizontalPager(
             state = pagerState,
-        ) {
+        ) { page ->
+            val currentPage = page % images.size
             val currentImage = images[currentPage]
             AsyncImage(
                 model = ImageRequest
