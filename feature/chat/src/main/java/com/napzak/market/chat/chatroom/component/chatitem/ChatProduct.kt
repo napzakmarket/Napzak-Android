@@ -29,13 +29,13 @@ import com.napzak.market.chat.model.ProductBrief
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_room_product_button
+import com.napzak.market.feature.chat.R.string.chat_room_product_buy_price_won_format
 import com.napzak.market.feature.chat.R.string.chat_room_product_deleted_button
-import com.napzak.market.feature.chat.R.string.chat_room_product_price_won_format
+import com.napzak.market.feature.chat.R.string.chat_room_product_sell_price_won_format
 import com.napzak.market.feature.chat.R.string.chat_room_product_title_buy_received
 import com.napzak.market.feature.chat.R.string.chat_room_product_title_buy_sent
 import com.napzak.market.feature.chat.R.string.chat_room_product_title_sell_received
 import com.napzak.market.feature.chat.R.string.chat_room_product_title_sell_sent
-import com.napzak.market.ui_util.formatToPriceString
 import com.napzak.market.ui_util.noRippleClickable
 import timber.log.Timber
 
@@ -82,10 +82,8 @@ internal fun ChatProduct(
             ChatProductDetailView(
                 genre = product.genreName,
                 name = product.title,
-                price = stringResource(
-                    chat_room_product_price_won_format,
-                    product.price.toString().formatToPriceString(),
-                ),
+                price = product.price.toString(),
+                tradeType = TradeType.fromName(product.tradeType),
                 modifier = Modifier.padding(horizontal = 20.dp),
             )
             Spacer(
@@ -138,8 +136,14 @@ private fun ChatProductDetailView(
     genre: String,
     name: String,
     price: String,
+    tradeType: TradeType,
     modifier: Modifier = Modifier,
 ) {
+    val priceText = when (tradeType) {
+        TradeType.SELL -> stringResource(chat_room_product_sell_price_won_format, price)
+        TradeType.BUY -> stringResource(chat_room_product_buy_price_won_format, price)
+    }
+
     val textColor = NapzakMarketTheme.colors.black
     val commonText: @Composable (String, TextStyle) -> Unit = { text, style ->
         Text(
@@ -160,7 +164,7 @@ private fun ChatProductDetailView(
     ) {
         commonText(genre, NapzakMarketTheme.typography.caption10sb)
         commonText(name, NapzakMarketTheme.typography.caption12sb)
-        commonText(price, NapzakMarketTheme.typography.body14b)
+        commonText(priceText, NapzakMarketTheme.typography.body14b)
     }
 }
 

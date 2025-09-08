@@ -47,9 +47,10 @@ import com.napzak.market.designsystem.R.drawable.img_thumbnail_complete_buy
 import com.napzak.market.designsystem.R.drawable.img_thumbnail_complete_sell
 import com.napzak.market.designsystem.R.drawable.img_thumbnail_reservation
 import com.napzak.market.designsystem.R.string.production_item_buy
-import com.napzak.market.designsystem.R.string.production_item_price
+import com.napzak.market.designsystem.R.string.production_item_buy_price
 import com.napzak.market.designsystem.R.string.production_item_price_suggestion
 import com.napzak.market.designsystem.R.string.production_item_sell
+import com.napzak.market.designsystem.R.string.production_item_sell_price
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.formatToPriceString
 import com.napzak.market.ui_util.noRippleClickable
@@ -128,13 +129,9 @@ fun NapzakLargeProductItem(
             modifier = Modifier.padding(top = 2.dp),
         )
 
-        Text(
-            text = stringResource(production_item_price, price.formatToPriceString()),
-            style = NapzakMarketTheme.typography.body16b,
-            color = NapzakMarketTheme.colors.gray500,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
-            modifier = Modifier.padding(top = 6.dp),
+        PriceText(
+            price = price,
+            isSellElseBuy = isSellElseBuy
         )
 
         Row(
@@ -323,6 +320,27 @@ private fun LikeButton(
         modifier = modifier
             .clearAndSetSemantics { role = Role.Button }
             .noRippleClickable(onClick = onLikeClick)
+    )
+}
+
+@Composable
+private fun PriceText(
+    price: String,
+    isSellElseBuy: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val priceText = price.formatToPriceString()
+    val textRes =
+        if (isSellElseBuy) production_item_sell_price
+        else production_item_buy_price
+
+    Text(
+        text = stringResource(textRes, priceText),
+        style = NapzakMarketTheme.typography.body16b,
+        color = NapzakMarketTheme.colors.gray500,
+        overflow = TextOverflow.Ellipsis,
+        maxLines = 1,
+        modifier = modifier.padding(top = 6.dp),
     )
 }
 

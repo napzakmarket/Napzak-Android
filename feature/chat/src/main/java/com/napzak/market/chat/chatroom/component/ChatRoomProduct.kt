@@ -32,9 +32,10 @@ import coil.request.ImageRequest
 import com.napzak.market.chat.model.ProductBrief
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.feature.chat.R.string.chat_room_product_buy_price_won_format
 import com.napzak.market.feature.chat.R.string.chat_room_product_deleted
 import com.napzak.market.feature.chat.R.string.chat_room_product_negotiable
-import com.napzak.market.feature.chat.R.string.chat_room_product_price_won_format
+import com.napzak.market.feature.chat.R.string.chat_room_product_sell_price_won_format
 import com.napzak.market.ui_util.ShadowDirection
 import com.napzak.market.ui_util.formatToPriceString
 import com.napzak.market.ui_util.napzakGradientShadow
@@ -48,6 +49,10 @@ internal fun ChatRoomProductSection(
 ) {
     val innerPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
     val alpha = if (product.isProductDeleted) 0.6f else 1f
+    val priceStringId = when (TradeType.fromName(product.tradeType)) {
+        TradeType.SELL -> chat_room_product_sell_price_won_format
+        TradeType.BUY -> chat_room_product_buy_price_won_format
+    }
 
     Row(
         modifier = modifier
@@ -85,7 +90,7 @@ internal fun ChatRoomProductSection(
             )
             ProductText(
                 text = stringResource(
-                    chat_room_product_price_won_format,
+                    priceStringId,
                     product.price.toString().formatToPriceString(),
                 ),
                 style = NapzakMarketTheme.typography.body16b,

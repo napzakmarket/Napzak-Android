@@ -7,7 +7,8 @@
     <string name="chat_room_is_not_read">1</string>
     <string name="chat_room_product_negotiable">가격 제시</string>
     <string name="chat_room_product_deleted">%s (삭제됨)</string>
-    <string name="chat_room_product_price_won_format">%s원</string>
+    <string name="chat_room_product_sell_price_won_format">%s원</string>
+    <string name="chat_room_product_buy_price_won_format">%s원대</string>
 
 
     <string name="chat_room_bottom_sheet_report">마켓 신고하기</string>
