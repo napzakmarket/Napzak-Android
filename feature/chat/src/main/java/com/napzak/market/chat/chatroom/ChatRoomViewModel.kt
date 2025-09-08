@@ -188,7 +188,6 @@ internal class ChatRoomViewModel @Inject constructor(
         collectJob = viewModelScope.launch {
             getChatFlowUseCase(roomId)
                 .collect { message ->
-                    Timber.d("수신한 메시지: $message")
                     if (message.roomId == roomId) {
                         _sideEffect.send(ChatRoomSideEffect.OnReceiveChatMessage)
 
@@ -458,13 +457,14 @@ internal class ChatRoomViewModel @Inject constructor(
                 val roomId = requireNotNull(_chatRoomStateAsSuccess.roomId)
                 chatRepository.withdrawChatRoom(roomId).onSuccess {
                     unsubscribeChatRoomUseCase(roomId)
-                    _sideEffect.trySend(ChatRoomSideEffect.OnWithdrawChatRoom)
                 }
             } catch (e: Exception) {
                 when (e) {
                     is IllegalArgumentException -> Timber.w("채팅방이 생성되지 않았습니다.")
                     else -> Timber.e(e)
                 }
+            } finally {
+                _sideEffect.trySend(ChatRoomSideEffect.OnWithdrawChatRoom)
             }
         }
     }
