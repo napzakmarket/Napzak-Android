@@ -253,8 +253,15 @@ internal class ChatRoomViewModel @Inject constructor(
             }
         }
 
+        // TODO: 과도한 경고 메시지 출력을 방지하기 위한 임시 조치
         if (added) {
-            chatMessageList.sortBy { it.messageId }
+            chatMessageList
+                .apply {
+                    removeAll {
+                        it is ReceiveMessage.Notice && it.messageId != chatMessageList.last().messageId
+                    }
+                }
+                .sortBy { it.messageId }
             _chatItems.update { chatMessageList.toList() }
         }
     }
