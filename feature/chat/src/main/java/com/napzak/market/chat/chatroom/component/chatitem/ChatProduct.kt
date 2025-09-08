@@ -36,6 +36,7 @@ import com.napzak.market.feature.chat.R.string.chat_room_product_title_buy_recei
 import com.napzak.market.feature.chat.R.string.chat_room_product_title_buy_sent
 import com.napzak.market.feature.chat.R.string.chat_room_product_title_sell_received
 import com.napzak.market.feature.chat.R.string.chat_room_product_title_sell_sent
+import com.napzak.market.ui_util.formatToPriceString
 import com.napzak.market.ui_util.noRippleClickable
 import timber.log.Timber
 
@@ -82,7 +83,7 @@ internal fun ChatProduct(
             ChatProductDetailView(
                 genre = product.genreName,
                 name = product.title,
-                price = product.price.toString(),
+                price = product.price.toString().formatToPriceString(),
                 tradeType = TradeType.fromName(product.tradeType),
                 modifier = Modifier.padding(horizontal = 20.dp),
             )
