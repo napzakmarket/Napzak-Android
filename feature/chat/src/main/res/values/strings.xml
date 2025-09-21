@@ -13,7 +13,10 @@
 
     <string name="chat_room_bottom_sheet_report">마켓 신고하기</string>
     <string name="chat_room_bottom_sheet_block">마켓 차단하기</string>
+    <string name="chat_room_bottom_sheet_unblock">마켓 차단 해제하기</string>
     <string name="chat_room_bottom_sheet_exit">채팅방 나가기</string>
+    <string name="chat_room_toast_block">마켓을 차단했어요.</string>
+    <string name="chat_room_toast_unblock">마켓 차단을 해제했어요.</string>
 
     <string name="chat_room_product_title_sell_received">팔아요 상품 문의가 도착했어요!</string>
     <string name="chat_room_product_title_buy_received">구해요 상품 문의가 도착했어요!</string>

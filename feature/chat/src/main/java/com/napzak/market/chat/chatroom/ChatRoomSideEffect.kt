@@ -6,4 +6,5 @@ sealed interface ChatRoomSideEffect {
     data object OnWithdrawChatRoom : ChatRoomSideEffect
     data class ShowToast(val message: String) : ChatRoomSideEffect
     data object OnErrorOccurred : ChatRoomSideEffect
+    data class OnChangeBlockState(val newState: Boolean) : ChatRoomSideEffect
 }

@@ -16,16 +16,19 @@ import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_circle_block
 import com.napzak.market.designsystem.R.drawable.ic_circle_error
 import com.napzak.market.designsystem.R.drawable.ic_circle_exit
+import com.napzak.market.designsystem.R.drawable.ic_circle_unblock
 import com.napzak.market.designsystem.component.bottomsheet.BottomSheetMenuItem
 import com.napzak.market.designsystem.component.bottomsheet.DragHandleBottomSheet
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_room_bottom_sheet_block
 import com.napzak.market.feature.chat.R.string.chat_room_bottom_sheet_exit
 import com.napzak.market.feature.chat.R.string.chat_room_bottom_sheet_report
+import com.napzak.market.feature.chat.R.string.chat_room_bottom_sheet_unblock
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ChatRoomBottomSheet(
+    isStoreBlocked: Boolean,
     onReportClick: () -> Unit,
     onBlockClick: () -> Unit,
     onExitClick: () -> Unit,
@@ -33,6 +36,10 @@ internal fun ChatRoomBottomSheet(
     modifier: Modifier = Modifier,
 ) {
     val sheetState = rememberModalBottomSheetState()
+
+    val (blockMessageResId, blockIconResId) =
+        if (isStoreBlocked) chat_room_bottom_sheet_unblock to ic_circle_unblock
+        else chat_room_bottom_sheet_block to ic_circle_block
 
     DragHandleBottomSheet(
         sheetState = sheetState,
@@ -48,8 +55,8 @@ internal fun ChatRoomBottomSheet(
         )
         Spacer(Modifier.height(20.dp))
         BottomSheetMenuItem(
-            menuIcon = ImageVector.vectorResource(ic_circle_block),
-            menuName = stringResource(chat_room_bottom_sheet_block),
+            menuIcon = ImageVector.vectorResource(blockIconResId),
+            menuName = stringResource(blockMessageResId),
             onItemClick = onBlockClick,
             textColor = NapzakMarketTheme.colors.gray400,
         )
@@ -68,6 +75,7 @@ internal fun ChatRoomBottomSheet(
 private fun ProductBottomSheetPreview() {
     NapzakMarketTheme {
         ChatRoomBottomSheet(
+            isStoreBlocked = false,
             onReportClick = { },
             onBlockClick = { },
             onExitClick = { },

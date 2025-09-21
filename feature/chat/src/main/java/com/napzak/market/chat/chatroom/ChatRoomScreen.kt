@@ -46,17 +46,22 @@ import com.napzak.market.chat.chatroom.component.ChatRoomProductSection
 import com.napzak.market.chat.chatroom.component.ChatRoomTopBar
 import com.napzak.market.chat.chatroom.preview.mockChatRoom
 import com.napzak.market.chat.chatroom.preview.mockChats
+import com.napzak.market.chat.chatroom.state.ChatRoomPopupEvent
+import com.napzak.market.chat.chatroom.state.ChatRoomPopupState
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.ic_no_chatting_history
+import com.napzak.market.designsystem.R.drawable.ic_white_block
+import com.napzak.market.designsystem.R.drawable.ic_white_unblock
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
-import com.napzak.market.designsystem.component.toast.ToastFontType
 import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.drawable.img_user_blocked_popup
 import com.napzak.market.feature.chat.R.string.chat_room_empty_guide_1
 import com.napzak.market.feature.chat.R.string.chat_room_empty_guide_2
+import com.napzak.market.feature.chat.R.string.chat_room_toast_block
+import com.napzak.market.feature.chat.R.string.chat_room_toast_unblock
 import com.napzak.market.ui_util.ScreenPreview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -122,9 +127,20 @@ internal fun ChatRoomRoute(
                     is ChatRoomSideEffect.ShowToast -> toast.makeText(
                         toastType = ToastType.COMMON,
                         message = sideEffect.message,
-                        fontType = ToastFontType.SMALL,
                         yOffset = toast.toastOffsetWithBottomBar(),
                     )
+
+                    is ChatRoomSideEffect.OnChangeBlockState -> {
+                        val (message, icon) =
+                            if (sideEffect.newState) chat_room_toast_block to ic_white_block
+                            else chat_room_toast_unblock to ic_white_unblock
+                        toast.makeText(
+                            toastType = ToastType.COMMON,
+                            message = context.getString(message),
+                            icon = icon,
+                            yOffset = toast.toastOffsetWithBottomBar(),
+                        )
+                    }
                 }
             }
     }
@@ -140,7 +156,8 @@ internal fun ChatRoomRoute(
             viewModel.trackReportMarket()
             onStoreReportNavigate(productId)
         },
-        onBlockClick = {}, // TODO: 차단 함수 연결
+        onBlockClick = { viewModel.toggleStoreBlockState(true) },
+        onUnblockClick = { viewModel.toggleStoreBlockState(false) },
         onWithdrawChatRoomClick = viewModel::withdrawChatRoom,
         onNavigateUp = onNavigateUp,
         onSendChatClick = viewModel::sendTextMessage,
@@ -159,6 +176,7 @@ internal fun ChatRoomScreen(
     onProductDetailClick: (Long) -> Unit,
     onReportClick: (Long) -> Unit,
     onBlockClick: () -> Unit,
+    onUnblockClick: () -> Unit,
     onWithdrawChatRoomClick: () -> Unit,
     onNavigateUp: () -> Unit,
     onSendChatClick: (String) -> Unit,
@@ -172,22 +190,11 @@ internal fun ChatRoomScreen(
 
         is UiState.Success -> {
             val chatRoom = chatRoomState.chatRoomState.data
-            var isBottomSheetVisible by remember { mutableStateOf(false) }
-            var isWithdrawDialogVisible by remember { mutableStateOf(false) }
-            var isBlockDialogVisible by remember { mutableStateOf(false) }
-            var isPreviewVisible by remember { mutableStateOf(false) }
-            var selectedImageUrl: String? by remember { mutableStateOf(null) }
-
-            ChatRoomDialogSection(
-                isWithdrawDialogVisible = isWithdrawDialogVisible,
-                isBlockDialogVisible = isBlockDialogVisible,
-                onWithdrawConfirm = onWithdrawChatRoomClick,
-                onBlockConfirm = onBlockClick,
-                onDismissClick = {
-                    isWithdrawDialogVisible = false
-                    isBlockDialogVisible = false
-                },
-            )
+            var selectedImageUrl by remember { mutableStateOf<String?>(null) }
+            var popupState by remember { mutableStateOf(ChatRoomPopupState()) }
+            fun updatePopupState(event: ChatRoomPopupEvent) {
+                popupState = popupState.handleEvent(event)
+            }
 
             Column(
                 modifier = modifier
@@ -197,7 +204,7 @@ internal fun ChatRoomScreen(
                 ChatRoomTopBar(
                     storeName = chatRoom.storeBrief?.nickname ?: "",
                     onBackClick = onNavigateUp,
-                    onMenuClick = { isBottomSheetVisible = true },
+                    onMenuClick = { updatePopupState(ChatRoomPopupEvent.ShowBottomSheet) },
                 )
 
                 chatRoom.productBrief?.let { product ->
@@ -269,7 +276,7 @@ internal fun ChatRoomScreen(
                             onTextChange = onChatChange,
                             onPhotoSelect = {
                                 selectedImageUrl = it
-                                isPreviewVisible = true
+                                updatePopupState(ChatRoomPopupEvent.ShowPreview)
                             },
                         )
                     }
@@ -280,28 +287,52 @@ internal fun ChatRoomScreen(
             selectedImageUrl?.let {
                 ChatImageZoomScreen(
                     selectedImageUrl = it,
-                    isPreview = isPreviewVisible,
+                    isPreview = popupState.isPreviewVisible,
                     onBackClick = {
                         selectedImageUrl = null
-                        isPreviewVisible = false
+                        updatePopupState(ChatRoomPopupEvent.DismissPreview)
                     },
                     onSendClick = {
                         selectedImageUrl?.let(onPhotoSelect)
                         selectedImageUrl = null
-                        isPreviewVisible = false
+                        updatePopupState(ChatRoomPopupEvent.DismissPreview)
                     },
                 )
             }
 
-
-            if (isBottomSheetVisible) {
-                ChatRoomBottomSheet(
-                    onReportClick = { chatRoom.storeBrief?.storeId?.let(onReportClick) },
-                    onBlockClick = { isBlockDialogVisible = true },
-                    onExitClick = { isWithdrawDialogVisible = true },
-                    onDismissRequest = { isBottomSheetVisible = false },
-                )
+            if (popupState.isBottomSheetVisible) {
+                chatRoom.storeBrief?.let { store ->
+                    ChatRoomBottomSheet(
+                        isStoreBlocked = store.isOpponentStoreBlocked,
+                        onReportClick = { store.storeId.let(onReportClick) },
+                        onBlockClick = {
+                            if (store.isOpponentStoreBlocked) {
+                                onUnblockClick()
+                                updatePopupState(ChatRoomPopupEvent.DismissBottomSheet)
+                            } else {
+                                updatePopupState(ChatRoomPopupEvent.ShowBlockDialog)
+                            }
+                        },
+                        onExitClick = {
+                            updatePopupState(ChatRoomPopupEvent.ShowWithdrawDialog)
+                        },
+                        onDismissRequest = {
+                            updatePopupState(ChatRoomPopupEvent.DismissBottomSheet)
+                        },
+                    )
+                }
             }
+
+            ChatRoomDialogSection(
+                isWithdrawDialogVisible = popupState.isWithdrawDialogVisible,
+                isBlockDialogVisible = popupState.isBlockDialogVisible,
+                onWithdrawConfirm = onWithdrawChatRoomClick,
+                onBlockConfirm = {
+                    onBlockClick()
+                    updatePopupState(ChatRoomPopupEvent.DismissOnBlockConfirmed)
+                },
+                onDismissClick = ::updatePopupState,
+            )
         }
 
         else -> {
@@ -359,6 +390,7 @@ private fun ChatRoomScreenPreview() {
             onProductDetailClick = {},
             onReportClick = {},
             onBlockClick = {},
+            onUnblockClick = {},
             onWithdrawChatRoomClick = {},
             onNavigateUp = {},
             onPhotoSelect = {},
@@ -380,6 +412,7 @@ private fun ChatRoomScreenEmptyPreview() {
             onProductDetailClick = {},
             onReportClick = {},
             onBlockClick = {},
+            onUnblockClick = {},
             onWithdrawChatRoomClick = {},
             onNavigateUp = {},
             onPhotoSelect = {},

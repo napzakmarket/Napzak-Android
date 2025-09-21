@@ -3,6 +3,7 @@ package com.napzak.market.chat.chatroom.component
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.napzak.market.chat.chatroom.state.ChatRoomPopupEvent
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.component.dialog.NapzakDialogDefault
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -21,7 +22,7 @@ internal fun ChatRoomDialogSection(
     isBlockDialogVisible: Boolean,
     onWithdrawConfirm: () -> Unit,
     onBlockConfirm: () -> Unit,
-    onDismissClick: () -> Unit,
+    onDismissClick: (ChatRoomPopupEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (isWithdrawDialogVisible) {
@@ -31,7 +32,7 @@ internal fun ChatRoomDialogSection(
             confirmText = stringResource(chat_room_withdraw_dialog_confirm),
             dismissText = stringResource(chat_room_withdraw_dialog_cancel),
             onConfirmClick = onWithdrawConfirm,
-            onDismissClick = onDismissClick,
+            onDismissClick = { onDismissClick(ChatRoomPopupEvent.DismissWithdrawDialog) },
             dialogColor = NapzakDialogDefault.color.copy(
                 titleColor = NapzakMarketTheme.colors.black,
             ),
@@ -46,7 +47,7 @@ internal fun ChatRoomDialogSection(
             confirmText = stringResource(chat_room_block_dialog_confirm),
             dismissText = stringResource(chat_room_block_dialog_cancel),
             onConfirmClick = onBlockConfirm,
-            onDismissClick = onDismissClick,
+            onDismissClick = { onDismissClick(ChatRoomPopupEvent.DismissBlockDialog) },
             dialogColor = NapzakDialogDefault.color.copy(
                 titleColor = NapzakMarketTheme.colors.black,
             ),
