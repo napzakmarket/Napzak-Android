@@ -269,6 +269,20 @@ class StoreViewModel @Inject constructor(
         }
     }
 
+    fun toggleStoreBlockState(currentState: Boolean) = viewModelScope.launch {
+        runCatching {
+            when (currentState) {
+                true -> storeRepository.blockStore(storeId).getOrThrow()
+                false -> storeRepository.unblockStore(storeId).getOrThrow()
+            }
+        }.onSuccess {
+            updateStoreBlockDialogVisibility(false)
+            updateBottomSheetVisibility(BottomSheetType.STORE_REPORT)
+            updateStoreDetail()
+            StoreSideEffect.ShowBlockToast(!currentState) //이전 상태를 반전시켜서 UI에 전달합니다.
+        }.onFailure(Timber::e)
+    }
+
     companion object {
         private const val DEBOUNCE_DELAY = 500L
         private const val INIT_GENRE_LIST_SIZE = 39

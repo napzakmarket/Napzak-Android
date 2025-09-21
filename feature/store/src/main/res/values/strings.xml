@@ -15,10 +15,13 @@
 
     <string name="store_report">마켓 신고하기</string>
     <string name="store_block">마켓 차단하기</string>
+    <string name="store_unblock">마켓 차단 해제하기</string>
     <string name="store_block_dialog_title">마켓을 차단하시겠어요?</string>
     <string name="store_block_dialog_content">차단하면 해당 마켓과 대화할 수 없어요.</string>
     <string name="store_block_dialog_confirm">예</string>
     <string name="store_block_dialog_cancel">아니오</string>
+    <string name="store_toast_block">마켓을 차단했어요.</string>
+    <string name="store_toast_unblock">마켓 차단을 해제했어요.</string>
 
     <string name="store_edit_title_name">마켓 이름</string>
     <string name="store_edit_sub_title_name">띄어쓰기 없이 한글, 영문, 숫자만 사용할 수 있어요 (최대 20자)</string>

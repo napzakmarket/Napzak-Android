@@ -28,6 +28,7 @@ internal fun StoreBottomSheetScreen(
     selectedGenres: List<Genre>,
     genreItems: List<Genre>,
     sortType: SortType,
+    isStoreBlocked: Boolean,
     onDismissRequest: (BottomSheetType) -> Unit,
     onSortItemClick: (SortType) -> Unit,
     onTextChange: (String) -> Unit,
@@ -62,6 +63,7 @@ internal fun StoreBottomSheetScreen(
         if (isStoreReportBottomSheetVisible) {
             StoreReportBottomSheet(
                 sheetState = sheetState,
+                isStoreBlocked = isStoreBlocked,
                 onDismissRequest = { onDismissRequest(BottomSheetType.STORE_REPORT) },
                 onReportButtonClick = onStoreReportButtonClick,
                 onBlockButtonClick = onStoreBlockButtonClick,

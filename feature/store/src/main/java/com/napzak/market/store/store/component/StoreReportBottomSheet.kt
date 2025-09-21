@@ -22,12 +22,14 @@ import com.napzak.market.designsystem.component.bottomsheet.DragHandleBottomShee
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.store.R.string.store_block
 import com.napzak.market.feature.store.R.string.store_report
+import com.napzak.market.feature.store.R.string.store_unblock
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun StoreReportBottomSheet(
     sheetState: SheetState,
+    isStoreBlocked: Boolean,
     onDismissRequest: () -> Unit,
     onReportButtonClick: () -> Unit,
     onBlockButtonClick: () -> Unit,
@@ -58,7 +60,7 @@ internal fun StoreReportBottomSheet(
         Spacer(Modifier.height(20.dp))
         BottomSheetMenuItem(
             menuIcon = ImageVector.vectorResource(ic_circle_block),
-            menuName = stringResource(store_block),
+            menuName = stringResource(if (isStoreBlocked) store_unblock else store_block),
             onItemClick = onBlockButtonClick,
             textColor = NapzakMarketTheme.colors.gray400,
         )
@@ -75,6 +77,7 @@ private fun StoreBottomSheetPreview(modifier: Modifier = Modifier) {
     NapzakMarketTheme {
         StoreReportBottomSheet(
             sheetState = sheetState,
+            isStoreBlocked = false,
             onDismissRequest = {},
             onReportButtonClick = {},
             onBlockButtonClick = {},

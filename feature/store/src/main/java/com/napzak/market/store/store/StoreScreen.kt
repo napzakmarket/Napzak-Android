@@ -20,11 +20,15 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.BottomSheetType
 import com.napzak.market.common.type.MarketTab
 import com.napzak.market.common.type.SortType
+import com.napzak.market.designsystem.R.drawable.ic_white_block
+import com.napzak.market.designsystem.R.drawable.ic_white_unblock
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.feature.store.R.string.store_toast_block
+import com.napzak.market.feature.store.R.string.store_toast_unblock
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.product.model.Product
 import com.napzak.market.store.model.StoreDetail
@@ -70,7 +74,21 @@ internal fun StoreRoute(
                         toast.makeText(
                             toastType = ToastType.HEART,
                             message = context.getString(heart_click_snackbar_message),
-                            yOffset = 20,
+                            yOffset = 100,
+                        )
+                    }
+
+                    is StoreSideEffect.ShowBlockToast -> {
+                        val (message, icon) =
+                            if (sideEffect.isStoreBlocked) store_toast_block to ic_white_block
+                            else store_toast_unblock to ic_white_unblock
+
+
+                        toast.makeText(
+                            toastType = ToastType.COMMON,
+                            message = context.getString(message),
+                            icon = icon,
+                            yOffset = 100,
                         )
                     }
 
@@ -116,15 +134,11 @@ internal fun StoreRoute(
             viewModel.updateBottomSheetVisibility(BottomSheetType.STORE_REPORT)
             onStoreReportNavigate(viewModel.storeId)
         },
-        onStoreBlockButtonClick = {
-            viewModel.updateStoreBlockDialogVisibility(true)
+        onStoreBlockButtonClick = { isStoreBlocked ->
+            if (isStoreBlocked) viewModel.toggleStoreBlockState(isStoreBlocked)
+            else viewModel.updateStoreBlockDialogVisibility(true)
         },
-        onStoreBlockConfirm = {
-            with(viewModel) {
-                updateStoreBlockDialogVisibility(false)
-                updateBottomSheetVisibility(BottomSheetType.STORE_REPORT)
-            }
-        },
+        onStoreBlockConfirm = viewModel::toggleStoreBlockState,
         onStoreBlockDismiss = {
             viewModel.updateStoreBlockDialogVisibility(false)
         },
@@ -151,8 +165,8 @@ private fun StoreScreen(
     onProductItemClick: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
     onStoreReportButtonClick: () -> Unit,
-    onStoreBlockButtonClick: () -> Unit,
-    onStoreBlockConfirm: () -> Unit,
+    onStoreBlockButtonClick: (Boolean) -> Unit,
+    onStoreBlockConfirm: (Boolean) -> Unit,
     onStoreBlockDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -225,8 +239,8 @@ private fun StoreSuccessScreen(
     onLikeButtonClick: (Long, Boolean) -> Unit,
     onMenuButtonClick: () -> Unit,
     onStoreReportButtonClick: () -> Unit,
-    onStoreBlockButtonClick: () -> Unit,
-    onStoreBlockConfirm: () -> Unit,
+    onStoreBlockButtonClick: (Boolean) -> Unit,
+    onStoreBlockConfirm: (Boolean) -> Unit,
     onStoreBlockDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -271,13 +285,14 @@ private fun StoreSuccessScreen(
         selectedGenres = filteredGenres,
         genreItems = genreItems,
         sortType = sortType,
+        isStoreBlocked = storeDetail.isBlocked,
         onDismissRequest = onDismissRequest,
         onSortItemClick = onSortItemClick,
         onTextChange = onGenreBottomSheetTextChange,
         onGenreSelectButtonClick = onGenreSelectButtonClick,
         onStoreReportButtonClick = onStoreReportButtonClick,
-        onStoreBlockButtonClick = onStoreBlockButtonClick,
-        onStoreBlockConfirm = onStoreBlockConfirm,
+        onStoreBlockButtonClick = { onStoreBlockButtonClick(storeDetail.isBlocked) },
+        onStoreBlockConfirm = { onStoreBlockConfirm(storeDetail.isBlocked) },
         onStoreBlockDismiss = onStoreBlockDismiss,
     )
 }
