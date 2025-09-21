@@ -39,11 +39,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.chat.chatroom.component.ChatImageZoomScreen
 import com.napzak.market.chat.chatroom.component.ChatRoomBottomSheet
+import com.napzak.market.chat.chatroom.component.ChatRoomDialogSection
 import com.napzak.market.chat.chatroom.component.ChatRoomInputField
 import com.napzak.market.chat.chatroom.component.ChatRoomItemColumn
 import com.napzak.market.chat.chatroom.component.ChatRoomProductSection
 import com.napzak.market.chat.chatroom.component.ChatRoomTopBar
-import com.napzak.market.chat.chatroom.component.NapzakWithdrawDialog
 import com.napzak.market.chat.chatroom.preview.mockChatRoom
 import com.napzak.market.chat.chatroom.preview.mockChats
 import com.napzak.market.chat.model.ReceiveMessage
@@ -140,7 +140,8 @@ internal fun ChatRoomRoute(
             viewModel.trackReportMarket()
             onStoreReportNavigate(productId)
         },
-        onExitChatRoomClick = viewModel::withdrawChatRoom,
+        onBlockClick = {}, // TODO: 차단 함수 연결
+        onWithdrawChatRoomClick = viewModel::withdrawChatRoom,
         onNavigateUp = onNavigateUp,
         onSendChatClick = viewModel::sendTextMessage,
         onPhotoSelect = viewModel::sendImageMessage,
@@ -157,7 +158,8 @@ internal fun ChatRoomScreen(
     onChatChange: (String) -> Unit,
     onProductDetailClick: (Long) -> Unit,
     onReportClick: (Long) -> Unit,
-    onExitChatRoomClick: () -> Unit,
+    onBlockClick: () -> Unit,
+    onWithdrawChatRoomClick: () -> Unit,
     onNavigateUp: () -> Unit,
     onSendChatClick: (String) -> Unit,
     onPhotoSelect: (String) -> Unit,
@@ -172,15 +174,21 @@ internal fun ChatRoomScreen(
             val chatRoom = chatRoomState.chatRoomState.data
             var isBottomSheetVisible by remember { mutableStateOf(false) }
             var isWithdrawDialogVisible by remember { mutableStateOf(false) }
+            var isBlockDialogVisible by remember { mutableStateOf(false) }
             var isPreviewVisible by remember { mutableStateOf(false) }
             var selectedImageUrl: String? by remember { mutableStateOf(null) }
 
-            if (isWithdrawDialogVisible) {
-                NapzakWithdrawDialog(
-                    onConfirmClick = { onExitChatRoomClick() },
-                    onDismissClick = { isWithdrawDialogVisible = false },
-                )
-            }
+            ChatRoomDialogSection(
+                isWithdrawDialogVisible = isWithdrawDialogVisible,
+                isBlockDialogVisible = isBlockDialogVisible,
+                onWithdrawConfirm = onWithdrawChatRoomClick,
+                onBlockConfirm = onBlockClick,
+                onDismissClick = {
+                    isWithdrawDialogVisible = false
+                    isBlockDialogVisible = false
+                },
+            )
+
             Column(
                 modifier = modifier
                     .fillMaxSize()
@@ -289,6 +297,7 @@ internal fun ChatRoomScreen(
             if (isBottomSheetVisible) {
                 ChatRoomBottomSheet(
                     onReportClick = { chatRoom.storeBrief?.storeId?.let(onReportClick) },
+                    onBlockClick = { isBlockDialogVisible = true },
                     onExitClick = { isWithdrawDialogVisible = true },
                     onDismissRequest = { isBottomSheetVisible = false },
                 )
@@ -349,7 +358,8 @@ private fun ChatRoomScreenPreview() {
             onSendChatClick = {},
             onProductDetailClick = {},
             onReportClick = {},
-            onExitChatRoomClick = {},
+            onBlockClick = {},
+            onWithdrawChatRoomClick = {},
             onNavigateUp = {},
             onPhotoSelect = {},
             chatRoomState = ChatRoomUiState(UiState.Success(mockChatRoom)),
@@ -369,7 +379,8 @@ private fun ChatRoomScreenEmptyPreview() {
             onSendChatClick = {},
             onProductDetailClick = {},
             onReportClick = {},
-            onExitChatRoomClick = {},
+            onBlockClick = {},
+            onWithdrawChatRoomClick = {},
             onNavigateUp = {},
             onPhotoSelect = {},
             chatRoomState = ChatRoomUiState(UiState.Success(mockChatRoom)),
