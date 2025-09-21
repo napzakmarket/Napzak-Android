@@ -138,7 +138,7 @@ internal fun ChatRoomRoute(
                             toastType = ToastType.COMMON,
                             message = context.getString(message),
                             icon = icon,
-                            yOffset = toast.toastOffsetWithBottomBar(),
+                            yOffset = 200,
                         )
                     }
                 }
