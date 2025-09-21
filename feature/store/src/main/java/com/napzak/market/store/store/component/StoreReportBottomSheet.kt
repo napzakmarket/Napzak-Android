@@ -1,5 +1,7 @@
 package com.napzak.market.store.store.component
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
@@ -14,9 +16,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R
+import com.napzak.market.designsystem.R.drawable.ic_circle_block
 import com.napzak.market.designsystem.component.bottomsheet.BottomSheetMenuItem
 import com.napzak.market.designsystem.component.bottomsheet.DragHandleBottomSheet
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.feature.store.R.string.store_block
 import com.napzak.market.feature.store.R.string.store_report
 import kotlinx.coroutines.launch
 
@@ -26,6 +30,7 @@ internal fun StoreReportBottomSheet(
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
     onReportButtonClick: () -> Unit,
+    onBlockButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -50,6 +55,13 @@ internal fun StoreReportBottomSheet(
             },
             textColor = NapzakMarketTheme.colors.red,
         )
+        Spacer(Modifier.height(20.dp))
+        BottomSheetMenuItem(
+            menuIcon = ImageVector.vectorResource(ic_circle_block),
+            menuName = stringResource(store_block),
+            onItemClick = onBlockButtonClick,
+            textColor = NapzakMarketTheme.colors.gray400,
+        )
     }
 }
 
@@ -65,6 +77,7 @@ private fun StoreBottomSheetPreview(modifier: Modifier = Modifier) {
             sheetState = sheetState,
             onDismissRequest = {},
             onReportButtonClick = {},
+            onBlockButtonClick = {},
             modifier = modifier
         )
     }

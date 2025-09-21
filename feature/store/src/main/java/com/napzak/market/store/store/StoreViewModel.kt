@@ -173,6 +173,12 @@ class StoreViewModel @Inject constructor(
         }
     }
 
+    fun updateStoreBlockDialogVisibility(isVisible: Boolean) {
+        _bottomSheetState.update {
+            it.copy(isStoreBlockDialogVisible = isVisible)
+        }
+    }
+
     fun updateGenreItemsInBottomSheet() = viewModelScope.launch {
         genreNameRepository.getGenreNames(cursor = null, size = INIT_GENRE_LIST_SIZE)
             .onSuccess { genres ->

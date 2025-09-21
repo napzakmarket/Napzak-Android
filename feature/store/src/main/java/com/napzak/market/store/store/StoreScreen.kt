@@ -116,6 +116,18 @@ internal fun StoreRoute(
             viewModel.updateBottomSheetVisibility(BottomSheetType.STORE_REPORT)
             onStoreReportNavigate(viewModel.storeId)
         },
+        onStoreBlockButtonClick = {
+            viewModel.updateStoreBlockDialogVisibility(true)
+        },
+        onStoreBlockConfirm = {
+            with(viewModel) {
+                updateStoreBlockDialogVisibility(false)
+                updateBottomSheetVisibility(BottomSheetType.STORE_REPORT)
+            }
+        },
+        onStoreBlockDismiss = {
+            viewModel.updateStoreBlockDialogVisibility(false)
+        },
         modifier = modifier,
     )
 }
@@ -139,6 +151,9 @@ private fun StoreScreen(
     onProductItemClick: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
     onStoreReportButtonClick: () -> Unit,
+    onStoreBlockButtonClick: () -> Unit,
+    onStoreBlockConfirm: () -> Unit,
+    onStoreBlockDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (uiState.isLoaded) {
@@ -174,6 +189,9 @@ private fun StoreScreen(
                     onLikeButtonClick = onLikeButtonClick,
                     onMenuButtonClick = onMenuButtonClick,
                     onStoreReportButtonClick = onStoreReportButtonClick,
+                    onStoreBlockButtonClick = onStoreBlockButtonClick,
+                    onStoreBlockConfirm = onStoreBlockConfirm,
+                    onStoreBlockDismiss = onStoreBlockDismiss,
                     modifier = modifier,
                 )
             }
@@ -207,6 +225,9 @@ private fun StoreSuccessScreen(
     onLikeButtonClick: (Long, Boolean) -> Unit,
     onMenuButtonClick: () -> Unit,
     onStoreReportButtonClick: () -> Unit,
+    onStoreBlockButtonClick: () -> Unit,
+    onStoreBlockConfirm: () -> Unit,
+    onStoreBlockDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val sheetState = rememberModalBottomSheetState(
@@ -255,6 +276,9 @@ private fun StoreSuccessScreen(
         onTextChange = onGenreBottomSheetTextChange,
         onGenreSelectButtonClick = onGenreSelectButtonClick,
         onStoreReportButtonClick = onStoreReportButtonClick,
+        onStoreBlockButtonClick = onStoreBlockButtonClick,
+        onStoreBlockConfirm = onStoreBlockConfirm,
+        onStoreBlockDismiss = onStoreBlockDismiss,
     )
 }
 
@@ -286,6 +310,9 @@ private fun StoreScreenPreview(modifier: Modifier = Modifier) {
             onProductItemClick = {},
             onLikeButtonClick = { id, value -> },
             onStoreReportButtonClick = {},
+            onStoreBlockButtonClick = {},
+            onStoreBlockConfirm = {},
+            onStoreBlockDismiss = {},
             modifier = modifier,
         )
     }
