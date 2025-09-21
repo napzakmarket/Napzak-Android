@@ -9,6 +9,8 @@ data class StoreBrief(
     val isOpponentStoreBlocked: Boolean,
     val isMyStoreBlocked: Boolean,
 ) {
+    val isChatBlocked get() = isOpponentStoreBlocked || isMyStoreBlocked
+
     companion object {
         fun mock() = StoreBrief(
             storeId = 1,

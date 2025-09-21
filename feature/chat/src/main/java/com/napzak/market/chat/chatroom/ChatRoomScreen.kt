@@ -271,7 +271,8 @@ internal fun ChatRoomScreen(
                         }
                         ChatRoomInputField(
                             text = chat,
-                            enabled = !chatRoomState.isChatDisabled,
+                            enabled = !chatRoomState.isChatDisabled
+                                    && chatRoom.storeBrief?.isChatBlocked == false,
                             onSendClick = onSendChatClick,
                             onTextChange = onChatChange,
                             onPhotoSelect = {
