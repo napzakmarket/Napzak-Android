@@ -6,4 +6,18 @@ data class StoreBrief(
     val storePhoto: String,
     val isWithdrawn: Boolean,
     val isReported: Boolean,
-)
+    val isOpponentStoreBlocked: Boolean,
+    val isMyStoreBlocked: Boolean,
+) {
+    companion object {
+        fun mock() = StoreBrief(
+            storeId = 1,
+            nickname = "납자기",
+            storePhoto = "",
+            isWithdrawn = false,
+            isReported = false,
+            isOpponentStoreBlocked = false,
+            isMyStoreBlocked = false,
+        )
+    }
+}

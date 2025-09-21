@@ -157,16 +157,9 @@ internal val mockProductBrief
         isProductDeleted = false
     )
 
-internal val mockStoreBrief = StoreBrief(
-    storeId = 1,
-    nickname = "납자기",
-    storePhoto = "",
-    isWithdrawn = false,
-    isReported = false,
-)
 
 internal val mockChatRoom = ChatRoomState(
     roomId = 1,
     productBrief = mockProductBrief,
-    storeBrief = mockStoreBrief
+    storeBrief = StoreBrief.mock()
 )
