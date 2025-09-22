@@ -272,14 +272,15 @@ class StoreViewModel @Inject constructor(
     fun toggleStoreBlockState(currentState: Boolean) = viewModelScope.launch {
         runCatching {
             when (currentState) {
-                true -> storeRepository.blockStore(storeId).getOrThrow()
-                false -> storeRepository.unblockStore(storeId).getOrThrow()
+                true -> storeRepository.unblockStore(storeId).getOrThrow()
+                false -> storeRepository.blockStore(storeId).getOrThrow()
             }
         }.onSuccess {
             updateStoreBlockDialogVisibility(false)
             updateBottomSheetVisibility(BottomSheetType.STORE_REPORT)
             updateStoreDetail()
-            StoreSideEffect.ShowBlockToast(!currentState) //이전 상태를 반전시켜서 UI에 전달합니다.
+            //이전 상태를 반전시켜서 UI에 전달합니다.
+            _sideEffect.send(StoreSideEffect.ShowBlockToast(!currentState))
         }.onFailure(Timber::e)
     }
 
