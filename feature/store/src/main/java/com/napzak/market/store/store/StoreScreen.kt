@@ -83,7 +83,6 @@ internal fun StoreRoute(
                             if (sideEffect.isStoreBlocked) store_toast_block to ic_white_block
                             else store_toast_unblock to ic_white_unblock
 
-
                         toast.makeText(
                             toastType = ToastType.COMMON,
                             message = context.getString(message),
