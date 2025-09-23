@@ -103,125 +103,123 @@ internal fun StoreScrollSection(
             )
 
 //            if (selectedTab != MarketTab.REVIEW && productCount != 0) {
-            if (productCount != 0) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = NapzakMarketTheme.colors.gray10)
-                        .padding(horizontal = 20.dp)
-                        .padding(top = 15.dp, bottom = 12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    GenreFilterChip(
-                        genreList = filteredGenres,
-                        onChipClick = onGenreFilterClick,
-                    )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = NapzakMarketTheme.colors.gray10)
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 15.dp, bottom = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                GenreFilterChip(
+                    genreList = filteredGenres,
+                    onChipClick = onGenreFilterClick,
+                )
 
-                    BasicFilterChip(
-                        filterName = filterChipName,
-                        isClicked = isOnSale,
-                        onChipClick = onFilterClick,
-                    )
-                }
+                BasicFilterChip(
+                    filterName = filterChipName,
+                    isClicked = isOnSale,
+                    onChipClick = onFilterClick,
+                )
             }
         }
 
 //        if (selectedTab != MarketTab.REVIEW) {
-            if (productCount == 0) {
-                item {
-                    StoreEmptyView(
-                        isOwner = isOwner,
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                }
-            } else {
-                item {
-                    Column {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 20.dp, top = 20.dp, end = 20.dp),
-                        ) {
-                            Text(
-                                text = buildAnnotatedString {
-                                    withStyle(style = SpanStyle(color = NapzakMarketTheme.colors.gray500)) {
-                                        append(stringResource(store_product))
-                                    }
-                                    withStyle(style = SpanStyle(color = NapzakMarketTheme.colors.purple500)) {
-                                        append(stringResource(store_count, productCount))
-                                    }
-                                },
-                                style = NapzakMarketTheme.typography.body14sb,
-                            )
-
-                            Spacer(Modifier.weight(1f))
-
-                            Row(
-                                modifier = Modifier.noRippleClickable { onSortOptionClick(sortType) },
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Text(
-                                    text = sortType.label,
-                                    style = NapzakMarketTheme.typography.caption12sb,
-                                    color = NapzakMarketTheme.colors.gray200,
-                                )
-
-                                Spacer(Modifier.width(3.dp))
-
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(ic_down_chevron_7),
-                                    contentDescription = null,
-                                    tint = NapzakMarketTheme.colors.gray200,
-                                    modifier = Modifier.size(width = 7.dp, height = 4.dp),
-                                )
-                            }
-                        }
-                    }
-                }
-
-                itemsIndexed(productList.chunked(2)) { index, rowItems ->
+        if (productCount == 0) {
+            item {
+                StoreEmptyView(
+                    isOwner = isOwner,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+        } else {
+            item {
+                Column {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 20.dp)
-                            .padding(horizontal = 20.dp),
-                        horizontalArrangement = Arrangement.spacedBy(20.dp),
+                            .padding(start = 20.dp, top = 20.dp, end = 20.dp),
                     ) {
-                        rowItems.forEach { product ->
-                            with(product) {
-                                NapzakLargeProductItem(
-                                    genre = genreName,
-                                    title = productName,
-                                    imgUrl = photo,
-                                    price = price.toString(),
-                                    createdDate = uploadTime,
-                                    reviewCount = chatCount.toString(),
-                                    likeCount = interestCount.toString(),
-                                    isLiked = isInterested,
-                                    isMyItem = isOwnedByCurrentUser,
-                                    isSellElseBuy = TradeType.valueOf(tradeType) == TradeType.SELL,
-                                    isSuggestionAllowed = isPriceNegotiable,
-                                    tradeStatus = TradeStatusType.get(
-                                        tradeStatus, TradeType.valueOf(tradeType)
-                                    ),
-                                    onLikeClick = { onLikeButtonClick(productId, isInterested) },
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .noRippleClickable { onProductDetailNavigate(productId) },
-                                )
-                            }
-                        }
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(style = SpanStyle(color = NapzakMarketTheme.colors.gray500)) {
+                                    append(stringResource(store_product))
+                                }
+                                withStyle(style = SpanStyle(color = NapzakMarketTheme.colors.purple500)) {
+                                    append(stringResource(store_count, productCount))
+                                }
+                            },
+                            style = NapzakMarketTheme.typography.body14sb,
+                        )
 
-                        if (rowItems.size == 1) {
-                            Spacer(modifier = Modifier.weight(1f))
+                        Spacer(Modifier.weight(1f))
+
+                        Row(
+                            modifier = Modifier.noRippleClickable { onSortOptionClick(sortType) },
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = sortType.label,
+                                style = NapzakMarketTheme.typography.caption12sb,
+                                color = NapzakMarketTheme.colors.gray200,
+                            )
+
+                            Spacer(Modifier.width(3.dp))
+
+                            Icon(
+                                imageVector = ImageVector.vectorResource(ic_down_chevron_7),
+                                contentDescription = null,
+                                tint = NapzakMarketTheme.colors.gray200,
+                                modifier = Modifier.size(width = 7.dp, height = 4.dp),
+                            )
                         }
                     }
                 }
+            }
 
-                item {
-                    Spacer(Modifier.padding(bottom = 32.dp))
+            itemsIndexed(productList.chunked(2)) { index, rowItems ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp)
+                        .padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                ) {
+                    rowItems.forEach { product ->
+                        with(product) {
+                            NapzakLargeProductItem(
+                                genre = genreName,
+                                title = productName,
+                                imgUrl = photo,
+                                price = price.toString(),
+                                createdDate = uploadTime,
+                                reviewCount = chatCount.toString(),
+                                likeCount = interestCount.toString(),
+                                isLiked = isInterested,
+                                isMyItem = isOwnedByCurrentUser,
+                                isSellElseBuy = TradeType.valueOf(tradeType) == TradeType.SELL,
+                                isSuggestionAllowed = isPriceNegotiable,
+                                tradeStatus = TradeStatusType.get(
+                                    tradeStatus, TradeType.valueOf(tradeType)
+                                ),
+                                onLikeClick = { onLikeButtonClick(productId, isInterested) },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .noRippleClickable { onProductDetailNavigate(productId) },
+                            )
+                        }
+                    }
+
+                    if (rowItems.size == 1) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
                 }
             }
+
+            item {
+                Spacer(Modifier.padding(bottom = 32.dp))
+            }
+        }
 //        }
     }
 }
