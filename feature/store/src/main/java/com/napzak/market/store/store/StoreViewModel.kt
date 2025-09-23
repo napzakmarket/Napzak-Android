@@ -173,6 +173,12 @@ class StoreViewModel @Inject constructor(
         }
     }
 
+    fun updateStoreBlockDialogVisibility(isVisible: Boolean) {
+        _bottomSheetState.update {
+            it.copy(isStoreBlockDialogVisible = isVisible)
+        }
+    }
+
     fun updateGenreItemsInBottomSheet() = viewModelScope.launch {
         genreNameRepository.getGenreNames(cursor = null, size = INIT_GENRE_LIST_SIZE)
             .onSuccess { genres ->
@@ -261,6 +267,21 @@ class StoreViewModel @Inject constructor(
 
             else -> {}
         }
+    }
+
+    fun toggleStoreBlockState(currentState: Boolean) = viewModelScope.launch {
+        runCatching {
+            when (currentState) {
+                true -> storeRepository.unblockStore(storeId).getOrThrow()
+                false -> storeRepository.blockStore(storeId).getOrThrow()
+            }
+        }.onSuccess {
+            updateStoreBlockDialogVisibility(false)
+            updateBottomSheetVisibility(BottomSheetType.STORE_REPORT)
+            updateStoreDetail()
+            //이전 상태를 반전시켜서 UI에 전달합니다.
+            _sideEffect.send(StoreSideEffect.ShowBlockToast(!currentState))
+        }.onFailure(Timber::e)
     }
 
     companion object {

@@ -476,6 +476,24 @@ internal class ChatRoomViewModel @Inject constructor(
         }
     }
 
+    fun toggleStoreBlockState(targetState: Boolean) = viewModelScope.launch {
+        runCatching {
+            val storeId = requireNotNull(_chatRoomStateAsSuccess.storeBrief?.storeId)
+            when (targetState) {
+                true -> storeRepository.blockStore(storeId).getOrThrow()
+                false -> storeRepository.unblockStore(storeId).getOrThrow()
+            }
+        }.onSuccess {
+            (_chatRoomState.value.chatRoomState as? UiState.Success)
+                ?.data?.productBrief?.productId?.let { productId ->
+                    fetchChatRoomDetail(productId)
+                    _sideEffect.send(
+                        ChatRoomSideEffect.OnChangeBlockState(targetState)
+                    )
+                }
+        }.onFailure(Timber::e)
+    }
+
     internal fun trackReportMarket() = mixpanel?.track(OPENED_REPORT_MARKET)
 
     companion object {

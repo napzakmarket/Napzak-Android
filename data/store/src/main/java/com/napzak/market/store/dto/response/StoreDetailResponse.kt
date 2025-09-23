@@ -11,6 +11,7 @@ data class StoreDetailResponse(
     @SerialName("storePhoto") val storePhoto: String,
     @SerialName("storeCover") val storeCover: String,
     @SerialName("isStoreOwner") val isStoreOwner: Boolean,
+    @SerialName("isStoreBlocked") val isStoreBlocked: Boolean,
     @SerialName("genrePreferences") val genrePreferences: List<StoreDetailGenreDto>,
 )
 

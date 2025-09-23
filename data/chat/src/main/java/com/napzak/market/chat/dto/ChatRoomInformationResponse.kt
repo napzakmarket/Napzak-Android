@@ -30,5 +30,7 @@ data class ChatRoomInformationResponse(
         @SerialName("storePhoto") val storePhoto: String,
         @SerialName("isWithdrawn") val isWithdrawn: Boolean,
         @SerialName("isReported") val isReported: Boolean,
+        @SerialName("isOpponentStoreBlocked") val isOpponentStoreBlocked: Boolean,
+        @SerialName("isChatBlocked") val isChatBlocked: Boolean,
     )
 }

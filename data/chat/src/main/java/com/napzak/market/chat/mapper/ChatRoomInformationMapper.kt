@@ -30,4 +30,6 @@ private fun ChatRoomInformationResponse.StoreInfo.toDomain(): StoreBrief = Store
     storePhoto = storePhoto,
     isWithdrawn = isWithdrawn,
     isReported = isReported,
+    isOpponentStoreBlocked = isOpponentStoreBlocked,
+    isMyStoreBlocked = isChatBlocked,
 )

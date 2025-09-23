@@ -1,12 +1,11 @@
 package com.napzak.market.store.repository
 
 import com.napzak.market.store.model.Genre
-import com.napzak.market.store.model.KakaoLogin
-import com.napzak.market.store.model.UserWithdrawal
 import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.model.StoreEditProfile
 import com.napzak.market.store.model.StoreInfo
 import com.napzak.market.store.model.TermsAgreement
+import com.napzak.market.store.model.UserWithdrawal
 
 interface StoreRepository {
     suspend fun getValidateNickname(nickname: String): Result<Unit>
@@ -30,4 +29,8 @@ interface StoreRepository {
     suspend fun getTermsAgreement() : Result<TermsAgreement>
 
     suspend fun postTermsAgreement(bundleId: Int): Result<Unit>
+
+    suspend fun blockStore(storeId: Long): Result<Unit>
+
+    suspend fun unblockStore(storeId: Long): Result<Unit>
 }

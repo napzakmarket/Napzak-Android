@@ -61,4 +61,12 @@ class StoreDataSource @Inject constructor(
     suspend fun postTermsAgreement(bundleId: Int) : EmptyDataResponse{
         return storeService.postTermsAgreement(bundleId)
     }
+
+    suspend fun blockStore(storeId: Long): EmptyDataResponse {
+        return storeService.blockStore(storeId)
+    }
+
+    suspend fun unblockStore(storeId: Long): EmptyDataResponse {
+        return storeService.unblockStore(storeId)
+    }
 }

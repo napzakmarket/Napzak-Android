@@ -65,4 +65,15 @@ interface StoreService {
     suspend fun postTermsAgreement(
         @Path("bundleId") bundleId: Int
     ): EmptyDataResponse
+
+    @POST("stores/block/{storeId}")
+    suspend fun blockStore(
+        @Path("storeId") storeId: Long
+    ): EmptyDataResponse
+
+
+    @POST("stores/unblock/{storeId}")
+    suspend fun unblockStore(
+        @Path("storeId") storeId: Long
+    ): EmptyDataResponse
 }

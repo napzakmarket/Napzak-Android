@@ -66,4 +66,12 @@ class StoreRepositoryImpl @Inject constructor(
     override suspend fun postTermsAgreement(bundleId: Int) : Result<Unit> = runCatching {
         storeDataSource.postTermsAgreement(bundleId)
     }
+
+    override suspend fun blockStore(storeId: Long): Result<Unit> = runCatching {
+        storeDataSource.blockStore(storeId)
+    }
+
+    override suspend fun unblockStore(storeId: Long): Result<Unit> = runCatching {
+        storeDataSource.unblockStore(storeId)
+    }
 }
