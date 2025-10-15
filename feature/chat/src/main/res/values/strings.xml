@@ -12,7 +12,11 @@
 
 
     <string name="chat_room_bottom_sheet_report">마켓 신고하기</string>
+    <string name="chat_room_bottom_sheet_block">마켓 차단하기</string>
+    <string name="chat_room_bottom_sheet_unblock">마켓 차단 해제하기</string>
     <string name="chat_room_bottom_sheet_exit">채팅방 나가기</string>
+    <string name="chat_room_toast_block">마켓을 차단했어요.</string>
+    <string name="chat_room_toast_unblock">마켓 차단을 해제했어요.</string>
 
     <string name="chat_room_product_title_sell_received">팔아요 상품 문의가 도착했어요!</string>
     <string name="chat_room_product_title_buy_received">구해요 상품 문의가 도착했어요!</string>
@@ -31,8 +35,13 @@
 
     <string name="chat_room_withdraw_dialog_title">채팅방 나가기</string>
     <string name="chat_room_withdraw_dialog_content">채팅방에서 나가시겠어요? 나가기를 하면\n더이상 상대방과 대화할 수 없습니다.</string>
+    <string name="chat_room_block_dialog_title">마켓을 차단하시겠어요?</string>
+    <string name="chat_room_block_dialog_content">차단하면 해당 마켓과 대화할 수 없어요.</string>
+
     <string name="chat_room_withdraw_dialog_confirm">나가기</string>
     <string name="chat_room_withdraw_dialog_cancel">취소</string>
+    <string name="chat_room_block_dialog_confirm">예</string>
+    <string name="chat_room_block_dialog_cancel">아니오</string>
 
     <string name="permission_modal_system_setting_off_title">기기 알림이 꺼져있어요!</string>
     <string name="permission_modal_app_setting_off_title">앱 내 알림이 꺼져있어요!</string>

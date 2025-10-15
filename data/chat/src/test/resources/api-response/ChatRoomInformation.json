@@ -19,7 +19,9 @@
       "nickname": "납작한 시나모롤",
       "storePhoto": "https://napzak-dev-bucket.s3.ap-northeast-2.amazonaws.com/store/img_profile_lg.png",
       "isWithdrawn": false,
-      "isReported": false
+      "isReported": false,
+      "isOpponentStoreBlocked": false,
+      "isChatBlocked": false
     },
     "roomId": 6
   }

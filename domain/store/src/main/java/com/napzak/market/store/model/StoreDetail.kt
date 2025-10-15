@@ -7,6 +7,7 @@ data class StoreDetail(
     val photoUrl: String,
     val coverUrl: String,
     val isOwner: Boolean,
+    val isBlocked: Boolean,
     val genrePreferences: List<StoreDetailGenre>,
 ) {
     // TODO: 삭제해야 함
@@ -18,6 +19,7 @@ data class StoreDetail(
             photoUrl = "",
             coverUrl = "",
             isOwner = true,
+            isBlocked = false,
             genrePreferences = listOf(
                 StoreDetailGenre(0, "산리오0"),
                 StoreDetailGenre(1, "산리오1"),

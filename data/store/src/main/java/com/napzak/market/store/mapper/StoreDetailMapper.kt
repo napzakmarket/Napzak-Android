@@ -12,6 +12,7 @@ fun StoreDetailResponse.toDomain(): StoreDetail = StoreDetail(
     photoUrl = storePhoto,
     coverUrl = storeCover,
     isOwner = isStoreOwner,
+    isBlocked = isStoreBlocked,
     genrePreferences = genrePreferences.map { it.toDomain() },
 )
 
