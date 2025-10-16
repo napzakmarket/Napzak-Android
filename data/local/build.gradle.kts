@@ -12,4 +12,12 @@ android {
 dependencies {
     implementation(libs.androidx.datastore)
     implementation(projects.domain.notification)
+
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.paging)
+    ksp(libs.androidx.room.compiler)
+
+    androidTestImplementation(libs.androidx.room.testing)
+    androidTestImplementation(libs.coroutines.test)
 }
