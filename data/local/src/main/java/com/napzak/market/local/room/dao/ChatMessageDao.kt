@@ -19,7 +19,10 @@ interface ChatMessageDao {
     fun getChatMessages(roomId: Long): PagingSource<Int, ChatMessageEntity>
 
     @Query("SELECT * FROM chat_messages WHERE roomId = :roomId ORDER BY id DESC LIMIT 1")
-    fun getLatestMessage(roomId: Long): Flow<ChatMessageEntity>?
+    fun getLatestMessage(roomId: Long): ChatMessageEntity?
+
+    @Query("SELECT * FROM chat_messages WHERE roomId = :roomId ORDER BY id DESC LIMIT 1")
+    fun getLatestMessageAsFlow(roomId: Long): Flow<ChatMessageEntity>?
 
     @Query("DELETE FROM chat_messages WHERE roomId = :roomId")
     suspend fun deleteChatMessages(roomId: Long)

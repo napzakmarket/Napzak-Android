@@ -3,6 +3,7 @@ package com.napzak.market.local.room
 import android.content.Context
 import androidx.room.Room
 import com.napzak.market.local.room.dao.ChatMessageDao
+import com.napzak.market.local.room.dao.ChatRemoteKeyDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -67,4 +68,10 @@ object RoomModule {
     fun provideChatMessageDao(
         napzakDatabase: NapzakDatabase
     ): ChatMessageDao = napzakDatabase.chatMessageDao()
+
+    @Singleton
+    @Provides
+    fun provideChatRemoteKeyDao(
+        napzakDatabase: NapzakDatabase
+    ): ChatRemoteKeyDao = napzakDatabase.chatRemoteKeyDao()
 }

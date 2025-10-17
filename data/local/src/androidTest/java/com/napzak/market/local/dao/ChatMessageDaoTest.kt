@@ -63,7 +63,7 @@ class ChatMessageDaoTest : DbAbstract() {
         // when
         dao.insertChatMessages(entities)
         val lastMessage = async {
-            dao.getLatestMessage(targetId)?.firstOrNull()
+            dao.getLatestMessageAsFlow(targetId)?.firstOrNull()
         }.await()
 
         // then
@@ -81,7 +81,7 @@ class ChatMessageDaoTest : DbAbstract() {
         dao.insertChatMessages(listOf(entity))
         dao.updateMessageIdAndStatusByUuid(expected)
         val lastMessage = async {
-            dao.getLatestMessage(targetId)?.firstOrNull()
+            dao.getLatestMessageAsFlow(targetId)?.firstOrNull()
         }.await()
 
         // then
@@ -100,7 +100,7 @@ class ChatMessageDaoTest : DbAbstract() {
         dao.insertChatMessages(listOf(expected))
         dao.markMessagesAsRead(roomId, isMessageOwner)
         val lastMessage = async {
-            dao.getLatestMessage(targetId)?.firstOrNull()
+            dao.getLatestMessageAsFlow(targetId)?.firstOrNull()
         }.await()
 
         // then

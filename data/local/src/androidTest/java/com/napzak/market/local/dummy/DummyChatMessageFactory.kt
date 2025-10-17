@@ -10,7 +10,7 @@ object DummyChatMessageEntityFactory {
         uuid: String = "uuid-dummy-$id",
         messageId: Long? = id * 100,
         roomId: Long = id,
-        senderId: String = "user_$id",
+        senderId: Long = id + 1,
         message: String = "hello world",
         messageType: ChatMessageType = ChatMessageType.TEXT,
         createdAt: String = "00:00",
