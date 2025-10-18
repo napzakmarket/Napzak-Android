@@ -53,6 +53,5 @@ class ChatRemoteKeyDaoTest : DbAbstract() {
 
         // then
         assertEquals(null, actual)
-
     }
 }

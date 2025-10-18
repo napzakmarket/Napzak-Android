@@ -12,8 +12,4 @@ object DummyChatRemoteKeyFactory {
         refreshAnchorMessageId = refreshAnchorMessageId,
         appendCursor = appendCursor
     )
-
-    fun createEntities(count: Int): List<ChatRemoteKeyEntity> {
-        return (1L..count).map { createEntity(it) }
-    }
 }
