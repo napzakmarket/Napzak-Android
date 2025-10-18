@@ -5,9 +5,9 @@ import com.napzak.market.chat.repositoryimpl.ChatRepositoryImpl
 import com.napzak.market.chat.service.ChatService
 import kotlinx.coroutines.test.runTest
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class ChatRoomListApiTest : ApiAbstract<ChatService>() {
     private lateinit var service: ChatService

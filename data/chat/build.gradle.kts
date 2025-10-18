@@ -10,6 +10,11 @@ plugins {
 
 android {
     setNameSpace("data.chat")
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
