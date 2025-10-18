@@ -5,6 +5,7 @@ plugins {
     id("com.napzak.market.buildlogic.primitive.hilt")
     id("com.napzak.market.buildlogic.primitive.retrofit")
     id("com.napzak.market.buildlogic.primitive.okhttp")
+    id("com.napzak.market.buildlogic.primitive.room")
 }
 
 android {
@@ -13,14 +14,15 @@ android {
 
 dependencies {
     implementation(projects.data.remote)
+    implementation(projects.data.local)
     implementation(projects.domain.chat)
     implementation(projects.core.util)
 
     implementation(libs.timber)
+    implementation(libs.androidx.room.paging)
 
     testImplementation(libs.okhttp.mockwebserver)
     testImplementation(libs.coroutines.test)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.androidx.room.testing)
 }
