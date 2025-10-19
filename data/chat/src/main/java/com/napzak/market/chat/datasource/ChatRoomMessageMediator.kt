@@ -6,6 +6,7 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.napzak.market.chat.dto.ChatMessageMetadata
+import com.napzak.market.chat.dto.MessageItem
 import com.napzak.market.chat.mapper.toEntity
 import com.napzak.market.chat.mapper.toProductEntity
 import com.napzak.market.local.room.NapzakDatabase
@@ -43,24 +44,14 @@ class ChatRoomMessageMediator @Inject constructor(
         }
 
         try {
-            val response = chatRoomDataSource.getChatRoomMessages(roomId, cursor, PAGE_SIZE).data
-            val messages = response.messages
-            val cursor = response.cursor
-            val entities = messages.map { it.toEntity(roomId) }
+            val (messages, nextCursor) = fetchMessagesAndCursorFromRemote(cursor)
 
             database.withTransaction {
-                chatMessageDao.insertChatMessages(entities)
-                messages
-                    .filter { it.metadata == ChatMessageMetadata.Product }
-                    .forEach { message ->
-                        message.toProductEntity()?.let { product ->
-                            chatProductDao.upsertProduct(product)
-                        }
-                    }
-                updateChatRemoteKey(remoteKey, cursor)
+                upsertChatMessages(messages)
+                updateChatRemoteKey(remoteKey, nextCursor)
             }
 
-            val endOfPaginationReached = entities.isEmpty() || cursor == null
+            val endOfPaginationReached = messages.isEmpty() || nextCursor == null
             return MediatorResult.Success(endOfPaginationReached)
         } catch (e: Exception) {
             Timber.e("ChatRoomMessages Load failed: ${e.message}")
@@ -70,18 +61,19 @@ class ChatRoomMessageMediator @Inject constructor(
 
     private suspend fun loadNewMessagesAndBridge(remoteKey: ChatRemoteKeyEntity?): MediatorResult {
         return try {
-            val fetchMessages = mutableListOf<ChatMessageEntity>()
+            val fetchedMessages = mutableListOf<MessageItem>()
             val anchorMessageId = remoteKey?.refreshAnchorMessageId
             var cursor: String? = null
             var bridge = false
             var currentLoadCount = 0
             val maxAttempt = if (anchorMessageId != null) BRIDGE_MAX_COUNT else 1
 
+            // 앵커로 설정된 메세지 ID가 나타날 때까지 페이지 요청을 반복한다.
             while (currentLoadCount < maxAttempt && !bridge) {
-                val (entities, nextCursor) = getMessagesAndCursor(cursor)
-                bridge = entities.any { entity -> entity.messageId == anchorMessageId }
+                val (messages, nextCursor) = fetchMessagesAndCursorFromRemote(cursor)
 
-                fetchMessages.addAll(entities)
+                bridge = messages.any { message -> message.messageId == anchorMessageId }
+                fetchedMessages.addAll(messages)
                 cursor = nextCursor
                 currentLoadCount++
 
@@ -93,7 +85,7 @@ class ChatRoomMessageMediator @Inject constructor(
                     chatMessageDao.deleteChatMessages(roomId)
                     remoteKeyDao.deleteRemoteKey(roomId)
                 } else {
-                    chatMessageDao.insertChatMessages(fetchMessages)
+                    upsertChatMessages(fetchedMessages)
                     updateChatRemoteKey(remoteKey, cursor)
                 }
             }
@@ -106,19 +98,31 @@ class ChatRoomMessageMediator @Inject constructor(
         }
     }
 
+    private suspend fun upsertChatMessages(messages: List<MessageItem>) {
+        val entities = messages.map { it.toEntity(roomId) }
+        chatMessageDao.insertChatMessages(entities)
+        messages
+            .filter { it.metadata is ChatMessageMetadata.Product }
+            .forEach { message ->
+                message.toProductEntity()?.let { product ->
+                    chatProductDao.upsertProduct(product)
+                }
+            }
+    }
+
+    private suspend fun fetchMessagesAndCursorFromRemote(cursor: String?): Pair<List<MessageItem>, String?> {
+        val response = chatRoomDataSource.getChatRoomMessages(roomId, cursor, PAGE_SIZE).data
+        val messages = response.messages
+        val cursor = response.cursor
+        return messages to cursor
+    }
+
     private suspend fun updateChatRemoteKey(remoteKey: ChatRemoteKeyEntity?, cursor: String?) {
         val newAnchorMessageId = chatMessageDao.getLatestMessage(roomId)?.messageId
         val newKey =
             remoteKey?.copy(refreshAnchorMessageId = newAnchorMessageId, appendCursor = cursor)
                 ?: ChatRemoteKeyEntity(roomId, newAnchorMessageId, cursor)
         remoteKeyDao.upsertKey(newKey)
-    }
-
-    private suspend fun getMessagesAndCursor(cursor: String?): Pair<List<ChatMessageEntity>, String?> {
-        val response = chatRoomDataSource.getChatRoomMessages(roomId, cursor, PAGE_SIZE).data
-        val chatMessageEntities = response.messages.map { it.toEntity(roomId) }
-        val cursor = response.cursor
-        return chatMessageEntities to cursor
     }
 
     private suspend fun getRemoteKey(): ChatRemoteKeyEntity? {
