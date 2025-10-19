@@ -10,6 +10,10 @@ object DummyChatProductFactory {
         price: Int = 1000,
         genreName: String = "product-${productId}",
         isProductDeleted: Boolean = false,
+        photo: String = "product-${productId}",
+        isPriceNegotiable: Boolean = false,
+        productOwnerId: Long = productId,
+        isMyProduct: Boolean = false,
     ) = ChatProductEntity(
         productId = productId,
         tradeType = tradeType,
@@ -17,5 +21,9 @@ object DummyChatProductFactory {
         price = price,
         genreName = genreName,
         isProductDeleted = isProductDeleted,
+        photo = photo,
+        isPriceNegotiable = isPriceNegotiable,
+        productOwnerId = productOwnerId,
+        isMyProduct = isMyProduct,
     )
 }
