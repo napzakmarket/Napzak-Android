@@ -13,7 +13,7 @@ fun MessageItem.toProductEntity(): ChatProductEntity? {
             title = metadata.title,
             price = metadata.price,
             genreName = metadata.genreName,
-            isProductDeleted = metadata.isProductDeleted ?: false
+            isProductDeleted = metadata.isProductDeleted ?: false,
         )
     } else null
 }
@@ -25,10 +25,8 @@ fun ChatProductEntity.toDomain(): ProductBrief = ProductBrief(
     price = price,
     genreName = genreName,
     isProductDeleted = isProductDeleted,
-
-    // 사용되지 않는 속성들
-    isPriceNegotiable = false,
-    photo = "",
-    productOwnerId = 0,
-    isMyProduct = false,
+    isPriceNegotiable = isPriceNegotiable,
+    photo = photo ?: "",
+    productOwnerId = productOwnerId ?: 0L,
+    isMyProduct = isMyProduct,
 )
