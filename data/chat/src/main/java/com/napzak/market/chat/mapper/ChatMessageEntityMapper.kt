@@ -73,7 +73,7 @@ private fun MessageItem.toProductEntity(
     roomId = roomId,
     senderId = requireNotNull(senderId),
     messageType = ChatMessageType.PRODUCT,
-    message = metadata.productId.toString(),
+    productId = metadata.productId,
     createdAt = requireNotNull(createdAt),
     isRead = isRead ?: false,
     isMessageOwner = isMessageOwner ?: false,

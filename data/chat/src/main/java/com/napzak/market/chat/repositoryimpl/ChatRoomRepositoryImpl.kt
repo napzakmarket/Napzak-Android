@@ -17,8 +17,7 @@ import com.napzak.market.local.room.NapzakDatabase
 import com.napzak.market.local.room.dao.ChatMessageDao
 import com.napzak.market.local.room.dao.ChatProductDao
 import com.napzak.market.local.room.dao.ChatRemoteKeyDao
-import com.napzak.market.local.room.entity.ChatMessageEntity
-import com.napzak.market.local.room.type.ChatMessageType
+import com.napzak.market.local.room.entity.ChatMessageWithProduct
 import com.napzak.market.util.android.suspendRunCatching
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -72,21 +71,15 @@ class ChatRoomRepositoryImpl @Inject constructor(
                 chatProductDao = chatProductDao,
                 remoteKeyDao = chatRemoteKeyDao,
             ),
-            pagingSourceFactory = { chatMessageDao.getChatMessages(roomId) }
+            pagingSourceFactory = { chatMessageDao.getChatMessagesWithProducts(roomId) }
         ).flow.map { pagingData -> pagingData.mapToDomain(roomId) }
     }
 
-    private fun PagingData<ChatMessageEntity>.mapToDomain(
+    private fun PagingData<ChatMessageWithProduct>.mapToDomain(
         roomId: Long,
-    ): PagingData<ReceiveMessage<*>> = map { chatMessageEntity ->
-        if (chatMessageEntity.messageType == ChatMessageType.PRODUCT) {
-            val product = chatMessageEntity.message?.toLongOrNull()?.let { productId ->
-                chatProductDao.getProduct(productId)?.toDomain()
-            }
-            chatMessageEntity.toDomain(roomId, product)
-        } else {
-            chatMessageEntity.toDomain(roomId)
-        }
+    ): PagingData<ReceiveMessage<*>> = map { joinedResult ->
+        val product = joinedResult.product?.toDomain()
+        joinedResult.message.toDomain(roomId, product)
     }
 
     override suspend fun enterChatRoom(

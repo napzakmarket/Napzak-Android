@@ -40,7 +40,7 @@ class ChatMessageDaoTest : DbAbstract() {
 
         //when
         dao.insertChatMessages(entities)
-        val pagingSource = dao.getChatMessages(targetId)
+        val pagingSource = dao.getChatMessagesWithProducts(targetId)
         val loadedData = (pagingSource.load(
             Refresh(
                 key = null,
@@ -50,7 +50,8 @@ class ChatMessageDaoTest : DbAbstract() {
         ) as Page).data.firstOrNull() ?: return@runTest
 
         //then
-        assertEquals(expected, loadedData)
+        assertEquals(expected, loadedData.message)
+        assertEquals(null, loadedData.product)
     }
 
     @Test
@@ -63,7 +64,7 @@ class ChatMessageDaoTest : DbAbstract() {
         // when
         dao.insertChatMessages(entities)
         val lastMessage = async {
-            dao.getLatestMessageAsFlow(targetId)?.firstOrNull()
+            dao.getLatestMessageAsFlow(targetId).firstOrNull()
         }.await()
 
         // then
@@ -81,7 +82,7 @@ class ChatMessageDaoTest : DbAbstract() {
         dao.insertChatMessages(listOf(entity))
         dao.updateMessageIdAndStatusByUuid(expected)
         val lastMessage = async {
-            dao.getLatestMessageAsFlow(targetId)?.firstOrNull()
+            dao.getLatestMessageAsFlow(targetId).firstOrNull()
         }.await()
 
         // then
@@ -100,7 +101,7 @@ class ChatMessageDaoTest : DbAbstract() {
         dao.insertChatMessages(listOf(expected))
         dao.markMessagesAsRead(roomId, isMessageOwner)
         val lastMessage = async {
-            dao.getLatestMessageAsFlow(targetId)?.firstOrNull()
+            dao.getLatestMessageAsFlow(targetId).firstOrNull()
         }.await()
 
         // then

@@ -10,7 +10,7 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.napzak.market.chat.datasource.ChatRoomDataSource
 import com.napzak.market.chat.datasource.ChatRoomMessageMediator
 import com.napzak.market.local.room.NapzakDatabase
-import com.napzak.market.local.room.entity.ChatMessageEntity
+import com.napzak.market.local.room.entity.ChatMessageWithProduct
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertFalse
@@ -73,7 +73,7 @@ class ChatRoomMessageMediatorTest {
         ).thenReturn(mockResponse)
 
         // when
-        val pagingState = PagingState<Int, ChatMessageEntity>(
+        val pagingState = PagingState<Int, ChatMessageWithProduct>(
             pages = emptyList(),
             anchorPosition = null,
             config = PagingConfig(pageSize),
@@ -100,7 +100,7 @@ class ChatRoomMessageMediatorTest {
         ).thenReturn(mockResponse)
 
         // when
-        val pagingState = PagingState<Int, ChatMessageEntity>(
+        val pagingState = PagingState<Int, ChatMessageWithProduct>(
             pages = emptyList(),
             anchorPosition = null,
             config = PagingConfig(pageSize),

@@ -13,7 +13,7 @@ import com.napzak.market.local.room.NapzakDatabase
 import com.napzak.market.local.room.dao.ChatMessageDao
 import com.napzak.market.local.room.dao.ChatProductDao
 import com.napzak.market.local.room.dao.ChatRemoteKeyDao
-import com.napzak.market.local.room.entity.ChatMessageEntity
+import com.napzak.market.local.room.entity.ChatMessageWithProduct
 import com.napzak.market.local.room.entity.ChatRemoteKeyEntity
 import timber.log.Timber
 import javax.inject.Inject
@@ -26,11 +26,11 @@ class ChatRoomMessageMediator @Inject constructor(
     private val chatMessageDao: ChatMessageDao,
     private val chatProductDao: ChatProductDao,
     private val remoteKeyDao: ChatRemoteKeyDao,
-) : RemoteMediator<Int, ChatMessageEntity>() {
+) : RemoteMediator<Int, ChatMessageWithProduct>() {
 
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, ChatMessageEntity>
+        state: PagingState<Int, ChatMessageWithProduct>
     ): MediatorResult {
         val remoteKey = getRemoteKey()
         val cursor = when (loadType) {

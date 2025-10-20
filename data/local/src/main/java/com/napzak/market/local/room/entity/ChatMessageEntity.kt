@@ -8,7 +8,7 @@ import com.napzak.market.local.room.type.ChatStatusType
 
 @Entity(
     tableName = "chat_messages",
-    indices = [Index("roomId")]
+    indices = [Index("roomId")],
 )
 data class ChatMessageEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -18,6 +18,7 @@ data class ChatMessageEntity(
     val senderId: Long? = null,
     val messageType: ChatMessageType,
     val message: String? = null,
+    val productId: Long? = null,
     val createdAt: String,
     val isMessageOwner: Boolean = false,
     val isProfileNeeded: Boolean = false,

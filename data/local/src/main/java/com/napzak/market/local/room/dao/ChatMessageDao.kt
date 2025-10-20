@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.napzak.market.local.room.entity.ChatMessageEntity
+import com.napzak.market.local.room.entity.ChatMessageWithProduct
 import com.napzak.market.local.room.type.ChatStatusType
 import kotlinx.coroutines.flow.Flow
 
@@ -15,8 +16,15 @@ interface ChatMessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertChatMessages(entities: List<ChatMessageEntity>)
 
-    @Query("SELECT * FROM chat_messages WHERE roomId = :roomId ORDER BY messageId DESC")
-    fun getChatMessages(roomId: Long): PagingSource<Int, ChatMessageEntity>
+    @Query(
+        """
+        SELECT m.*, p.* FROM chat_messages as m
+        LEFT JOIN chat_product as p ON m.productId = p.productId
+        WHERE m.roomId = :roomId 
+        ORDER BY m.messageId DESC
+    """
+    )
+    fun getChatMessagesWithProducts(roomId: Long): PagingSource<Int, ChatMessageWithProduct>
 
     @Query("SELECT * FROM chat_messages WHERE roomId = :roomId ORDER BY messageId DESC LIMIT 1")
     fun getLatestMessage(roomId: Long): ChatMessageEntity?
