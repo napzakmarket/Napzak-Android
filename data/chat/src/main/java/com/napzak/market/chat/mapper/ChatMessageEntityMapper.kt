@@ -57,7 +57,7 @@ private fun MessageItem.toImageEntity(
     roomId = roomId,
     senderId = requireNotNull(senderId),
     messageType = ChatMessageType.IMAGE,
-    message = requireNotNull(metadata.imageUrls.firstOrNull { !it.isNullOrBlank() }),
+    message = metadata.imageUrls.firstOrNull { !it.isNullOrBlank() } ?: "",
     createdAt = requireNotNull(createdAt),
     isRead = isRead ?: false,
     isMessageOwner = isMessageOwner ?: false,
