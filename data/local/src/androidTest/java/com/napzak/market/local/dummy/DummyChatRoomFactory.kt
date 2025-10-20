@@ -1,6 +1,5 @@
 package com.napzak.market.local.dummy
 
-import com.napzak.market.local.room.entity.ChatMessageEntity
 import com.napzak.market.local.room.entity.ChatRoomEntity
 
 object DummyChatRoomFactory {
@@ -26,7 +25,7 @@ object DummyChatRoomFactory {
         isChatBlocked = isChatBlocked,
     )
 
-    fun createEntities(count: Int): List<ChatMessageEntity> {
-        return (1L..count).map { DummyChatMessageEntityFactory.createEntity(it) }
+    fun createEntities(count: Int): List<ChatRoomEntity> {
+        return (1..count).map { DummyChatRoomFactory.createEntity(it.toLong()) }
     }
 }

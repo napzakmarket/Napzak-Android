@@ -34,6 +34,6 @@ object DummyChatMessageEntityFactory {
     )
 
     fun createEntities(count: Int): List<ChatMessageEntity> {
-        return (1L..count).map { createEntity(it) }
+        return (1..count).map { createEntity(it.toLong()) }
     }
 }

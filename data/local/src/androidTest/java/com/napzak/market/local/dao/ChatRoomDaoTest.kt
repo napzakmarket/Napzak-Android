@@ -41,7 +41,7 @@ class ChatRoomDaoTest : DbAbstract() {
     }
 
     @Test
-    fun check_if_product_is_updated() = runTest {
+    fun check_if_room_is_updated() = runTest {
         // given
         val targetId = 1L
         val entity = DummyFactory.createEntity(targetId)
@@ -56,7 +56,7 @@ class ChatRoomDaoTest : DbAbstract() {
     }
 
     @Test
-    fun check_if_product_is_deleted() = runTest {
+    fun check_if_room_is_deleted() = runTest {
         // given
         val targetId = 1L
         val entity = DummyFactory.createEntity(targetId)
