@@ -80,7 +80,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
         roomId: Long,
     ): PagingData<ReceiveMessage<*>> = map { chatMessageEntity ->
         if (chatMessageEntity.messageType == ChatMessageType.PRODUCT) {
-            val product = chatMessageEntity.message?.toLong()?.let { productId ->
+            val product = chatMessageEntity.message?.toLongOrNull()?.let { productId ->
                 chatProductDao.getProduct(productId)?.toDomain()
             }
             chatMessageEntity.toDomain(roomId, product)
