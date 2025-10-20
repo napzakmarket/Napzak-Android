@@ -17,5 +17,4 @@ dependencies {
     implementation(libs.androidx.room.paging)
     androidTestImplementation(libs.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }
