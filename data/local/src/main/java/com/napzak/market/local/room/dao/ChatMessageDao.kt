@@ -15,14 +15,14 @@ interface ChatMessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertChatMessages(entities: List<ChatMessageEntity>)
 
-    @Query("SELECT * FROM chat_messages WHERE roomId = :roomId ORDER BY id DESC")
+    @Query("SELECT * FROM chat_messages WHERE roomId = :roomId ORDER BY messageId DESC")
     fun getChatMessages(roomId: Long): PagingSource<Int, ChatMessageEntity>
 
-    @Query("SELECT * FROM chat_messages WHERE roomId = :roomId ORDER BY id DESC LIMIT 1")
+    @Query("SELECT * FROM chat_messages WHERE roomId = :roomId ORDER BY messageId DESC LIMIT 1")
     fun getLatestMessage(roomId: Long): ChatMessageEntity?
 
-    @Query("SELECT * FROM chat_messages WHERE roomId = :roomId ORDER BY id DESC LIMIT 1")
-    fun getLatestMessageAsFlow(roomId: Long): Flow<ChatMessageEntity>?
+    @Query("SELECT * FROM chat_messages WHERE roomId = :roomId ORDER BY messageId DESC LIMIT 1")
+    fun getLatestMessageAsFlow(roomId: Long): Flow<ChatMessageEntity?>
 
     @Query("DELETE FROM chat_messages WHERE roomId = :roomId")
     suspend fun deleteChatMessages(roomId: Long)
@@ -41,6 +41,11 @@ interface ChatMessageDao {
         status: ChatStatusType = ChatStatusType.RECEIVED
     )
 
-    @Query("UPDATE chat_messages SET isRead = 1 WHERE roomId = :roomId AND isMessageOwner = :isMessageOwner")
+    @Query(
+        """
+        UPDATE chat_messages SET isRead = 1 
+        WHERE roomId = :roomId AND isMessageOwner = :isMessageOwner AND isRead = 0
+        """
+    )
     suspend fun markMessagesAsRead(roomId: Long, isMessageOwner: Boolean)
 }
