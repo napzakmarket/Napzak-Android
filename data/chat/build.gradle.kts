@@ -22,6 +22,7 @@ dependencies {
     implementation(projects.data.local)
     implementation(projects.domain.chat)
     implementation(projects.core.util)
+    implementation(projects.core.common)
 
     implementation(libs.timber)
     implementation(libs.androidx.room.paging)
