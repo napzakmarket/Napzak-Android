@@ -10,7 +10,7 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.napzak.market.chat.datasource.ChatRoomDataSource
 import com.napzak.market.chat.datasource.ChatRoomMessageMediator
 import com.napzak.market.local.room.NapzakDatabase
-import com.napzak.market.local.room.entity.ChatMessageWithProduct
+import com.napzak.market.local.room.relation.ChatMessageWithProduct
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertFalse

@@ -13,8 +13,8 @@ import com.napzak.market.local.room.NapzakDatabase
 import com.napzak.market.local.room.dao.ChatMessageDao
 import com.napzak.market.local.room.dao.ChatProductDao
 import com.napzak.market.local.room.dao.ChatRemoteKeyDao
-import com.napzak.market.local.room.entity.ChatMessageWithProduct
 import com.napzak.market.local.room.entity.ChatRemoteKeyEntity
+import com.napzak.market.local.room.relation.ChatMessageWithProduct
 import timber.log.Timber
 import javax.inject.Inject
 

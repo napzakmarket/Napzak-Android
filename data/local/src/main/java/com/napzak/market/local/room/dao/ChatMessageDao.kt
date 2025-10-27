@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.napzak.market.local.room.entity.ChatMessageEntity
-import com.napzak.market.local.room.entity.ChatMessageWithProduct
+import com.napzak.market.local.room.relation.ChatMessageWithProduct
 import com.napzak.market.local.room.type.ChatStatusType
 import kotlinx.coroutines.flow.Flow
 

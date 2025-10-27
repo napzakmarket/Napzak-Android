@@ -17,7 +17,7 @@ import com.napzak.market.local.room.NapzakDatabase
 import com.napzak.market.local.room.dao.ChatMessageDao
 import com.napzak.market.local.room.dao.ChatProductDao
 import com.napzak.market.local.room.dao.ChatRemoteKeyDao
-import com.napzak.market.local.room.entity.ChatMessageWithProduct
+import com.napzak.market.local.room.relation.ChatMessageWithProduct
 import com.napzak.market.util.android.suspendRunCatching
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
