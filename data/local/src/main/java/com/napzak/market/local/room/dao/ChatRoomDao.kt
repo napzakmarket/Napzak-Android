@@ -76,7 +76,11 @@ interface ChatRoomDao {
         """
     )
     suspend fun updateLastMessage(
-        roomId: Long, lastMessage: String, lastMessageAt: Long, unreadCount: Int, lastUpdated: Long,
+        roomId: Long,
+        lastMessage: String,
+        lastMessageAt: String,
+        unreadCount: Int,
+        lastUpdated: String,
     )
 
     @Query("UPDATE chat_room SET productId = :productId WHERE roomId = :roomId")

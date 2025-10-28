@@ -4,4 +4,5 @@ data class ChatRoomInformation(
     val roomId: Long?,
     val productBrief: ProductBrief,
     val storeBrief: StoreBrief,
+    val isOpponentOnline: Boolean = false,
 )

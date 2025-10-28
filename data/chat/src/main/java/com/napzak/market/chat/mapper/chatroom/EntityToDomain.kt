@@ -22,7 +22,8 @@ internal fun ChatRoomWithProduct.toDomain(): ChatRoomInformation? {
     return ChatRoomInformation(
         roomId = room.roomId,
         storeBrief = room.toStoreBrief(),
-        productBrief = productBrief
+        productBrief = productBrief,
+        isOpponentOnline = room.isOpponentOnline,
     )
 }
 
