@@ -14,7 +14,7 @@ import com.napzak.market.local.room.type.ChatMessageType.TEXT
 import com.napzak.market.local.room.type.ChatMessageType.WITHDRAWN
 
 
-fun ChatRealtimeMessage.toEntity(storeId: Long): ChatMessageEntity {
+fun ChatRealtimeMessage.toEntity(storeId: Long, messageId: Long): ChatMessageEntity {
     return when (metadata) {
         is ChatMessageMetadata.Image -> toImage(storeId, messageId, metadata)
         is ChatMessageMetadata.Product -> toProduct(storeId, messageId, metadata)

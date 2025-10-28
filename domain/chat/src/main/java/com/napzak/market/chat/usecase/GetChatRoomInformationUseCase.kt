@@ -22,7 +22,7 @@ class GetChatRoomInformationUseCase @Inject constructor(
     private suspend fun fetchChatRoomInformationByRoomId(
         roomId: Long,
     ): Pair<ChatRoomInformation, ChatCondition> {
-        val (productId, _) = chatRoomRepository.enterChatRoom(roomId).getOrThrow()
+        val productId = enterChatRoom(roomId)
         val info = chatRoomRepository.getChatRoomInformation(productId, roomId).getOrThrow()
         return info to ChatCondition.PRODUCT_NOT_CHANGED
     }
@@ -35,7 +35,7 @@ class GetChatRoomInformationUseCase @Inject constructor(
         val chatCondition = if (roomId == null) {
             ChatCondition.NEW_CHAT_ROOM
         } else {
-            val (remoteProductId, _) = chatRoomRepository.enterChatRoom(roomId).getOrThrow()
+            val remoteProductId = enterChatRoom(roomId)
             if (remoteProductId != productId) {
                 ChatCondition.PRODUCT_CHANGED
             } else {
@@ -44,6 +44,9 @@ class GetChatRoomInformationUseCase @Inject constructor(
         }
         return info to chatCondition
     }
+
+    private suspend fun enterChatRoom(roomId: Long) =
+        chatRoomRepository.enterChatRoom(roomId).getOrThrow()
 
     companion object {
         private const val ERROR_MESSAGE = "채팅방 정보를 불러올 수 없습니다."

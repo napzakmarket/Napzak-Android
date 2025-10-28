@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -62,9 +61,14 @@ class ChatRoomViewModel @Inject constructor(
     private val _sideEffect = Channel<ChatRoomSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
 
-    private val _chatRoomState = MutableStateFlow<UiState<ChatRoomInformation>>(UiState.Loading)
-    val chatRoomState = _chatRoomState.asStateFlow()
-    private val _chatRoomStateAsSuccess get() = chatRoomState.value as? UiState.Success<ChatRoomInformation>
+    val chatRoomState = _roomId.flatMapLatest { roomId ->
+        if (roomId == null) flowOf(UiState.Empty)
+        else chatRoomRepository.getChatRoomInformationAsFlow(roomId).map { UiState.Success(it) }
+    }.stateIn(
+        scope = viewModelScope,
+        started = WhileSubscribed(5_000),
+        initialValue = UiState.Loading
+    )
 
     val chatMessageFlow: StateFlow<Flow<PagingData<ReceiveMessage<*>>>> =
         _roomId.filterNotNull().mapNotNull { roomId ->
@@ -95,11 +99,12 @@ class ChatRoomViewModel @Inject constructor(
     }
 
     fun collectChatRoomInformation() = viewModelScope.launch {
-        _roomId.flatMapLatest { roomId ->
-            if (roomId == null) flowOf(UiState.Empty)
-            else chatRoomRepository.getChatRoomInformationAsFlow(roomId).map { UiState.Success(it) }
-        }.collect { state ->
-            _chatRoomState.update { state }
+        chatRoomState.mapNotNull { it as? UiState.Success }.collect { state ->
+            val roomId = state.data.roomId ?: return@collect
+            val isOpponentOnline = state.data.isOpponentOnline
+            if (isOpponentOnline) {
+                chatRoomRepository.markMessagesAsRead(roomId, true)
+            }
         }
     }
 
@@ -178,7 +183,8 @@ class ChatRoomViewModel @Inject constructor(
 
     private suspend fun createNewRoom() {
         val productId = requireNotNull(_productId.value)
-        val chatRoomState = requireNotNull(_chatRoomStateAsSuccess?.data)
+        val chatRoomState =
+            requireNotNull(chatRoomState.value as? UiState.Success<ChatRoomInformation>).data
         val receiverId = chatRoomState.storeBrief.storeId
         _roomId.update {
             createChatRoomUseCase(productId, receiverId).getOrThrow()
@@ -187,7 +193,8 @@ class ChatRoomViewModel @Inject constructor(
 
     private suspend fun patchChatProduct() {
         val roomId = requireNotNull(_roomId.value)
-        val productBrief = requireNotNull(_chatRoomStateAsSuccess?.data?.productBrief)
+        val productBrief =
+            requireNotNull(chatRoomState.value as? UiState.Success<ChatRoomInformation>).data.productBrief
         patchChatRoomUseCase(roomId, productBrief)
     }
 

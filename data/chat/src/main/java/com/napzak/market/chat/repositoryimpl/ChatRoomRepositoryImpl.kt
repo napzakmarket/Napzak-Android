@@ -108,16 +108,16 @@ class ChatRoomRepositoryImpl @Inject constructor(
 
     override suspend fun enterChatRoom(
         roomId: Long,
-    ): Result<Pair<Long, Boolean>> {
+    ): Result<Long> {
         return suspendRunCatching {
-            val result = with(chatRoomDataSource.enterChatRoom(roomId).data) {
+            val (product, isOpponentOnline) = with(chatRoomDataSource.enterChatRoom(roomId).data) {
                 productId to onlineStoreIds.isNotEmpty()
             }
             runOnChatRoomDao {
                 updateMyOnlineStatus(roomId, true)
-                updateOpponentOnlineStatus(roomId, result.second)
+                updateOpponentOnlineStatus(roomId, isOpponentOnline)
             }
-            result
+            product
         }
     }
 
@@ -125,8 +125,8 @@ class ChatRoomRepositoryImpl @Inject constructor(
         roomId: Long,
     ): Result<Unit> {
         return suspendRunCatching {
-            chatRoomDataSource.leaveChatRoom(roomId)
             runOnChatRoomDao { updateMyOnlineStatus(roomId, false) }
+            chatRoomDataSource.leaveChatRoom(roomId)
         }
     }
 
@@ -150,15 +150,26 @@ class ChatRoomRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun runOnChatRoomDao(block: suspend ChatRoomDao.() -> Unit) {
-        withContext(ioDispatcher) {
-            chatRoomDao.block()
+    override suspend fun markMessagesAsRead(
+        roomId: Long,
+        isMessageOwner: Boolean
+    ): Result<Unit> {
+        return suspendRunCatching {
+            runOnChatMessageDao {
+                markMessagesAsRead(roomId, isMessageOwner)
+            }
         }
     }
 
+    private suspend fun runOnChatRoomDao(block: suspend ChatRoomDao.() -> Unit) {
+        withContext(ioDispatcher) { chatRoomDao.block() }
+    }
+
     private suspend fun runOnChatProductDao(block: suspend ChatProductDao.() -> Unit) {
-        withContext(ioDispatcher) {
-            chatProductDao.block()
-        }
+        withContext(ioDispatcher) { chatProductDao.block() }
+    }
+
+    private suspend fun runOnChatMessageDao(block: suspend ChatMessageDao.() -> Unit) {
+        withContext(ioDispatcher) { chatMessageDao.block() }
     }
 }
