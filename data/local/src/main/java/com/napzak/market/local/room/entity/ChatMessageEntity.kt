@@ -13,7 +13,7 @@ import com.napzak.market.local.room.type.ChatStatusType
 data class ChatMessageEntity(
     @PrimaryKey val messageId: Long,
     val uuid: String? = null,
-    val roomId: Long? = null,
+    val roomId: Long,
     val senderId: Long? = null,
     val messageType: ChatMessageType,
     val message: String? = null,

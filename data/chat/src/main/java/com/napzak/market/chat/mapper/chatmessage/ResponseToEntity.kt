@@ -15,7 +15,6 @@ import com.napzak.market.local.room.type.ChatMessageType.WITHDRAWN
 
 
 fun ChatRealtimeMessage.toEntity(storeId: Long): ChatMessageEntity {
-    val messageId = messageId ?: 0
     return when (metadata) {
         is ChatMessageMetadata.Image -> toImage(storeId, messageId, metadata)
         is ChatMessageMetadata.Product -> toProduct(storeId, messageId, metadata)

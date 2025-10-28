@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ChatRealtimeMessage(
-    @SerialName("messageId") val messageId: Long? = null,
-    @SerialName("roomId") val roomId: Long? = null,
+    @SerialName("messageId") val messageId: Long,
+    @SerialName("roomId") val roomId: Long,
     @SerialName("senderId") val senderId: Long? = null,
     @SerialName("type") val type: String,
     @SerialName("content") val content: String? = null,
