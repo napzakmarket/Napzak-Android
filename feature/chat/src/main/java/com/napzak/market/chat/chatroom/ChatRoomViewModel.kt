@@ -13,13 +13,16 @@ import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.chat.model.SendMessage
 import com.napzak.market.chat.repository.ChatRoomRepository
 import com.napzak.market.chat.type.ChatCondition
+import com.napzak.market.chat.usecase.CreateChatRoomUseCase
+import com.napzak.market.chat.usecase.GetChatRoomInformationUseCase
+import com.napzak.market.chat.usecase.PatchChatRoomUseCase
 import com.napzak.market.chat.usecase.SendChatMessageUseCase
 import com.napzak.market.common.state.UiState
 import com.napzak.market.mixpanel.MixpanelConstants.OPENED_REPORT_MARKET
 import com.napzak.market.presigned_url.model.UploadImage
 import com.napzak.market.presigned_url.model.UploadImage.ImageType.CHAT
 import com.napzak.market.presigned_url.usecase.UploadImagesUseCase
-import com.napzak.market.store.repository.StoreRepository
+import com.napzak.market.store.usecase.SetStoreBlockStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -46,13 +49,15 @@ class ChatRoomViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val mixpanel: MixpanelAPI?,
     private val chatRoomRepository: ChatRoomRepository,
-    private val storeRepository: StoreRepository,
+    private val getChatRoomInformationUseCase: GetChatRoomInformationUseCase,
     private val sendChatMessageUseCase: SendChatMessageUseCase,
+    private val createChatRoomUseCase: CreateChatRoomUseCase,
+    private val patchChatRoomUseCase: PatchChatRoomUseCase,
     private val uploadImagesUseCase: UploadImagesUseCase,
+    private val setStoreBlockStateUseCase: SetStoreBlockStateUseCase,
 ) : ViewModel() {
     private val _roomId = MutableStateFlow<Long?>(savedStateHandle[ROOM_ID_KEY])
     private val _productId = MutableStateFlow<Long?>(savedStateHandle[PRODUCT_ID_KEY])
-    private val _storeId = MutableStateFlow<Long?>(null)
 
     private val _sideEffect = Channel<ChatRoomSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
@@ -73,58 +78,20 @@ class ChatRoomViewModel @Inject constructor(
     var chat by mutableStateOf("")
     private var chatCondition by mutableStateOf(ChatCondition.PRODUCT_NOT_CHANGED)
 
-    init {
-        fetchChatRoomData()
-    }
-
-    fun fetchChatRoomData() = viewModelScope.launch {
-        runCatching {
-            _roomId.value?.let { fetchChatRoomInformationByRoomId(it) }
-                ?: _productId.value?.let { fetchChatRoomInformationByProductId(it) }
-                ?: throw Throwable(message = "채팅방 정보를 불러올 수 없습니다.")
-        }.onFailure { t ->
-            Timber.e(t)
-            with(_sideEffect) {
-                send(ChatRoomSideEffect.ShowToast(CHAT_ERROR_MSG))
-                send(ChatRoomSideEffect.OnErrorOccurred)
+    fun initializeChatRoom() = viewModelScope.launch {
+        getChatRoomInformationUseCase(_roomId.value, _productId.value)
+            .onSuccess { (info, condition) ->
+                _roomId.update { info.roomId }
+                _productId.update { info.productBrief.productId }
+                chatCondition = condition
             }
-        }
-    }
-
-    private suspend fun fetchChatRoomInformationByRoomId(roomId: Long) {
-        chatRoomRepository.enterChatRoom(roomId)
-            .onSuccess { (productId, _) ->
-                _productId.update { productId }
-                getChatRoomInformation(productId, roomId)
-            }.getOrElse { t -> throw Throwable(cause = t, message = "roomId 정보 조회 실패") }
-    }
-
-    private suspend fun fetchChatRoomInformationByProductId(productId: Long) {
-        val chatRoom = getChatRoomInformation(productId, null)
-        val roomId = chatRoom.roomId
-        if (roomId == null) {
-            chatCondition = ChatCondition.NEW_CHAT_ROOM
-            // TODO: 여기에서 전달받은 데이터를 인메모리로 저장해야 하는데...
-            _chatRoomState.update { UiState.Success(chatRoom) }
-
-        } else {
-            chatRoomRepository.enterChatRoom(roomId)
-                .onSuccess { (remoteProductId, _) ->
-                    _roomId.update { roomId }
-                    // 서버에 저장된 채팅방의 상품과 현재 상품이 다른 경우
-                    if (remoteProductId != productId) {
-                        chatCondition = ChatCondition.PRODUCT_CHANGED
-                    }
-                }.getOrElse { t -> throw Throwable(cause = t, message = "productId 정보 조회 실패") }
-        }
-    }
-
-    private suspend fun getChatRoomInformation(
-        productId: Long,
-        roomId: Long?
-    ): ChatRoomInformation {
-        return chatRoomRepository.getChatRoomInformation(productId, roomId)
-            .getOrElse { t -> throw Throwable(cause = t, message = "채팅방 정보 조회 실패") }
+            .onFailure { t ->
+                Timber.e(t)
+                with(_sideEffect) {
+                    send(ChatRoomSideEffect.ShowToast(CHAT_ERROR_MSG))
+                    send(ChatRoomSideEffect.OnErrorOccurred)
+                }
+            }
     }
 
     fun collectChatRoomInformation() = viewModelScope.launch {
@@ -213,45 +180,27 @@ class ChatRoomViewModel @Inject constructor(
         val productId = requireNotNull(_productId.value)
         val chatRoomState = requireNotNull(_chatRoomStateAsSuccess?.data)
         val receiverId = chatRoomState.storeBrief.storeId
-        val productBrief = chatRoomState.productBrief
-
-        val roomId = chatRoomRepository.createChatRoom(productId, receiverId).getOrThrow()
-        chatRoomRepository.enterChatRoom(roomId)
-        fetchChatRoomInformationByRoomId(roomId)
-        sendChatMessageUseCase(SendMessage.Product(roomId, null, productBrief))
+        _roomId.update {
+            createChatRoomUseCase(productId, receiverId).getOrThrow()
+        }
     }
 
     private suspend fun patchChatProduct() {
         val roomId = requireNotNull(_roomId.value)
         val productBrief = requireNotNull(_chatRoomStateAsSuccess?.data?.productBrief)
-        chatRoomRepository.patchChatRoomProduct(roomId, productBrief.productId)
-        sendChatMessageUseCase(SendMessage.Product(roomId, null, productBrief))
+        patchChatRoomUseCase(roomId, productBrief)
     }
 
     fun toggleStoreBlockState(targetState: Boolean) = viewModelScope.launch {
-        fetchStoreId()
-        runCatching {
-            _storeId.value?.let { storeId ->
-                when (targetState) {
-                    true -> storeRepository.blockStore(storeId).getOrThrow()
-                    false -> storeRepository.unblockStore(storeId).getOrThrow()
+        setStoreBlockStateUseCase(targetState)
+            .onSuccess {
+                _productId.value?.let { productId ->
+                    chatRoomRepository.getChatRoomInformation(productId, null)
+                    _sideEffect.send(
+                        ChatRoomSideEffect.OnChangeBlockState(targetState)
+                    )
                 }
-            }
-        }.onSuccess {
-            _productId.value?.let { productId ->
-                getChatRoomInformation(productId, null)
-                _sideEffect.send(
-                    ChatRoomSideEffect.OnChangeBlockState(targetState)
-                )
-            }
-        }.onFailure(Timber::e)
-    }
-
-    private fun fetchStoreId() = viewModelScope.launch {
-        storeRepository.fetchStoreInfo()
-            .onSuccess { storeInfo ->
-                _storeId.update { storeInfo.storeId }
-            }
+            }.onFailure(Timber::e)
     }
 
     internal fun trackReportMarket() = mixpanel?.track(OPENED_REPORT_MARKET)

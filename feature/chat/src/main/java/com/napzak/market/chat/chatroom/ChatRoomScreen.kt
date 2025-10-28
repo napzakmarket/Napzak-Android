@@ -86,7 +86,7 @@ internal fun ChatRoomRoute(
 
     LifecycleResumeEffect(Unit) {
         viewModel.collectChatRoomInformation()
-        viewModel.fetchChatRoomData()
+        viewModel.initializeChatRoom()
 
         onPauseOrDispose {
             viewModel.leaveChatRoom()
@@ -246,7 +246,7 @@ internal fun ChatRoomScreen(
                                 ChatRoomItemColumn(
                                     listState = chatListState,
                                     chatMessages = chatMessages,
-                                    opponentImageUrl = chatRoom.storeBrief?.storePhoto,
+                                    opponentImageUrl = chatRoom.storeBrief.storePhoto,
                                     onItemClick = { message ->
                                         when (message) {
                                             is ReceiveMessage.Product -> onProductDetailClick(
@@ -306,7 +306,7 @@ internal fun ChatRoomScreen(
             }
 
             if (popupState.isBottomSheetVisible) {
-                chatRoom.storeBrief?.let { store ->
+                chatRoom.storeBrief.let { store ->
                     ChatRoomBottomSheet(
                         isStoreBlocked = store.isOpponentStoreBlocked,
                         onReportClick = { store.storeId.let(onReportClick) },
