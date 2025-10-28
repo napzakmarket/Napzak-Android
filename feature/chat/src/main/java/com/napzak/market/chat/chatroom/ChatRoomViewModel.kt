@@ -3,502 +3,262 @@ package com.napzak.market.chat.chatroom
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import com.mixpanel.android.mpmetrics.MixpanelAPI
-import com.napzak.market.chat.chatroom.type.ChatCondition
+import com.napzak.market.chat.model.ChatRoomInformation
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.chat.model.SendMessage
 import com.napzak.market.chat.repository.ChatRoomRepository
-import com.napzak.market.chat.usecase.GetChatFlowUseCase
-import com.napzak.market.chat.usecase.SendMessageUseCase
-import com.napzak.market.chat.usecase.UnsubscribeChatRoomUseCase
+import com.napzak.market.chat.type.ChatCondition
+import com.napzak.market.chat.usecase.SendChatMessageUseCase
 import com.napzak.market.common.state.UiState
 import com.napzak.market.mixpanel.MixpanelConstants.OPENED_REPORT_MARKET
 import com.napzak.market.presigned_url.model.UploadImage
+import com.napzak.market.presigned_url.model.UploadImage.ImageType.CHAT
 import com.napzak.market.presigned_url.usecase.UploadImagesUseCase
 import com.napzak.market.store.repository.StoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
-internal class ChatRoomViewModel @Inject constructor(
+class ChatRoomViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val chatRepository: ChatRoomRepository,
-    private val getChatFlowUseCase: GetChatFlowUseCase,
-    private val sendMessageUseCase: SendMessageUseCase,
-    private val unsubscribeChatRoomUseCase: UnsubscribeChatRoomUseCase,
-    private val storeRepository: StoreRepository,
-    private val uploadImagesUseCase: UploadImagesUseCase,
     private val mixpanel: MixpanelAPI?,
+    private val chatRoomRepository: ChatRoomRepository,
+    private val storeRepository: StoreRepository,
+    private val sendChatMessageUseCase: SendChatMessageUseCase,
+    private val uploadImagesUseCase: UploadImagesUseCase,
 ) : ViewModel() {
-    private val chatMessageIdSet = mutableSetOf<Long>()
-    private val chatMessageList = mutableListOf<ReceiveMessage<*>>()
-    private var collectJob: Job? = null
-
-    private val _chatItems = MutableStateFlow<List<ReceiveMessage<*>>>(emptyList())
-    val chatItems: StateFlow<List<ReceiveMessage<*>>> = _chatItems.asStateFlow()
-
-    private val _chatRoomState = MutableStateFlow(ChatRoomUiState())
-    val chatRoomState = _chatRoomState.asStateFlow()
+    private val _roomId = MutableStateFlow<Long?>(savedStateHandle[ROOM_ID_KEY])
+    private val _productId = MutableStateFlow<Long?>(savedStateHandle[PRODUCT_ID_KEY])
+    private val _storeId = MutableStateFlow<Long?>(null)
 
     private val _sideEffect = Channel<ChatRoomSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
 
-    private val chatCondition = mutableStateOf(ChatCondition.PRODUCT_NOT_CHANGED)
+    private val _chatRoomState = MutableStateFlow<UiState<ChatRoomInformation>>(UiState.Loading)
+    val chatRoomState = _chatRoomState.asStateFlow()
+    private val _chatRoomStateAsSuccess get() = chatRoomState.value as? UiState.Success<ChatRoomInformation>
+
+    val chatMessageFlow: StateFlow<Flow<PagingData<ReceiveMessage<*>>>> =
+        _roomId.filterNotNull().mapNotNull { roomId ->
+            chatRoomRepository.getPagedChatRoomMessages(roomId)
+        }.stateIn(
+            scope = viewModelScope,
+            started = WhileSubscribed(5_000),
+            initialValue = flowOf(PagingData.empty())
+        )
 
     var chat by mutableStateOf("")
+    private var chatCondition by mutableStateOf(ChatCondition.PRODUCT_NOT_CHANGED)
 
-    private val _roomId
-        get() = requireNotNull(savedStateHandle.get<Long>(ROOM_ID_KEY))
-
-    private val _productId
-        get() = requireNotNull(savedStateHandle.get<Long>(PRODUCT_ID_KEY))
-
-    private val _chatRoomStateAsSuccess
-        get() = (_chatRoomState.value.chatRoomState as UiState.Success).data
-
-    /**
-     * [SavedStateHandle]에 저장된 값들을 활용하여 채팅방 정보들을 준비합니다.
-     *
-     * 1. 채팅 탭에서 진입한 경우, `roomId` 값을 활용해 채팅방을 준비합니다.
-     * 2. 물품 상세 화면에서 진입한 경우, `productId` 값을 활용해 채팅방을 준비합니다.
-     * 3. 실패한 경우 UI 상태를 `Failure`로 설정합니다.
-     */
-    fun prepareChatRoom() = viewModelScope.launch {
-        fetchStoreId()
-        runCatching { prepareChatRoomWithRoomId(_roomId) }
-            .onFailure(Timber::e)
-            .recoverCatching { prepareChatRoomWithProductId(_productId) }
-            .onFailure { e ->
-                Timber.e(e)
-                with(_sideEffect) {
-                    send(ChatRoomSideEffect.ShowToast("채팅방 정보를 불러올 수 없습니다."))
-                    send(ChatRoomSideEffect.OnErrorOccurred)
-                }
-                _chatRoomState.update {
-                    it.copy(chatRoomState = UiState.Failure(e.message.toString()))
-                }
-            }
+    init {
+        fetchChatRoomData()
     }
 
-    /**
-     * [StoreRepository]를 통해 내 상점 ID를 불러옵니다.
-     *
-     * 불러온 상점 ID는 메시지의 방향을 설정하기 위해 사용합니다.
-     */
-    private fun fetchStoreId() = viewModelScope.launch {
-        val storeId = storeRepository.fetchStoreInfo().getOrNull()?.storeId
-        _chatRoomState.update {
-            it.copy(storeId = storeId)
-        }
-    }
-
-    /**
-     * [_roomId] 깂을 활용하여 상대방과 사용자의 관계에 알맞게 채팅방을 구성합니다.
-     */
-    private suspend fun prepareChatRoomWithRoomId(roomId: Long) {
-        val productId = enterChatRoom(roomId)
-        fetchMessages(roomId)
-        fetchChatRoomDetail(productId, roomId)
-        collectMessages(roomId)
-    }
-
-    /**
-     * [_productId] 깂을 활용하여 상대방과 사용자의 관계에 알맞게 채팅방을 구성합니다.
-     *
-     * 각 상황마다 채팅 조건 [chatCondition]을 수정합니다. 이 값은 채팅방 입장 후 처음 메시지를 보낼 때 조건을 따지기 위해 사용됩니다.
-     *
-     * - 채팅을 처음하는 경우, 채팅 조건만 수정합니다.
-     * - 채팅 기록이 있다면, 채팅방의 상태를 수정하고 채팅 기록을 불러옵니다.
-     * - 물품도 변경되었다면, 채팅 조건도 수정합니다.
-     */
-    private suspend fun prepareChatRoomWithProductId(productId: Long) {
-        fetchChatRoomDetail(productId)
-
-        // 채팅방이 없는 경우
-        if (_chatRoomStateAsSuccess.roomId == null) {
-            chatCondition.value = ChatCondition.NEW_CHAT_ROOM
-            return
-        }
-        // 채팅방이 있는 경우
-        _chatRoomStateAsSuccess.roomId?.let { roomId ->
-            val currentChatRoomProductId = enterChatRoom(roomId)
-            fetchMessages(roomId)
-            collectMessages(roomId)
-
-            if (currentChatRoomProductId != productId) {
-                chatCondition.value = ChatCondition.PRODUCT_CHANGED
+    fun fetchChatRoomData() = viewModelScope.launch {
+        runCatching {
+            _roomId.value?.let { fetchChatRoomInformationByRoomId(it) }
+                ?: _productId.value?.let { fetchChatRoomInformationByProductId(it) }
+                ?: throw Throwable(message = "채팅방 정보를 불러올 수 없습니다.")
+        }.onFailure { t ->
+            Timber.e(t)
+            with(_sideEffect) {
+                send(ChatRoomSideEffect.ShowToast(CHAT_ERROR_MSG))
+                send(ChatRoomSideEffect.OnErrorOccurred)
             }
         }
     }
 
-    /**
-     * 채팅방의 정보를 불러옵니다.
-     * 불러온 정보로 [_chatRoomState]의 상태를 초기화합니다.
-     */
-    private suspend fun fetchChatRoomDetail(productId: Long, roomId: Long? = null) {
-        chatRepository.getChatRoomInformation(productId, roomId)
-            .onSuccess { response ->
-                _chatRoomState.update {
-                    it.copy(
-                        chatRoomState = UiState.Success(
-                            ChatRoomState(
-                                roomId = response.roomId,
-                                storeBrief = response.storeBrief,
-                                productBrief = response.productBrief,
-                            )
-                        )
-                    )
-                }
-            }.getOrThrow()
+    private suspend fun fetchChatRoomInformationByRoomId(roomId: Long) {
+        chatRoomRepository.enterChatRoom(roomId)
+            .onSuccess { (productId, _) ->
+                _productId.update { productId }
+                getChatRoomInformation(productId, roomId)
+            }.getOrElse { t -> throw Throwable(cause = t, message = "roomId 정보 조회 실패") }
     }
 
-    // TODO: 페이징 처리
-    /**
-     * 채팅방의 과거 채팅 기록들을 불러옵니다.
-     */
-    private suspend fun fetchMessages(roomId: Long) {
-        chatRepository.getChatRoomMessages(roomId)
-            .onSuccess { messages ->
-                if (messages.firstOrNull() is ReceiveMessage.Notice) {
-                    _chatRoomState.update { it.copy(isRoomWithdrawn = true) }
-                }
+    private suspend fun fetchChatRoomInformationByProductId(productId: Long) {
+        val chatRoom = getChatRoomInformation(productId, null)
+        val roomId = chatRoom.roomId
+        if (roomId == null) {
+            chatCondition = ChatCondition.NEW_CHAT_ROOM
+            // TODO: 여기에서 전달받은 데이터를 인메모리로 저장해야 하는데...
+            _chatRoomState.update { UiState.Success(chatRoom) }
 
-                addMessages(messages.asReversed())
-            }.getOrThrow()
-    }
-
-    /**
-     * 구독 중인 소켓 채널로부터 메시지를 수신합니다. 이 메서드가 호출되어야 수신이 시작됩니다.
-     */
-    private fun collectMessages(roomId: Long) {
-        collectJob?.cancel()
-        collectJob = viewModelScope.launch {
-            getChatFlowUseCase(roomId)
-                .collect { message ->
-                    if (message.roomId == roomId) {
-                        _sideEffect.send(ChatRoomSideEffect.OnReceiveChatMessage)
-
-                        when (message) {
-                            is ReceiveMessage.Join -> {
-                                updateUserMessageReadState(message)
-                            }
-
-                            is ReceiveMessage.Leave -> {
-                                _chatRoomState.update { it.copy(isOpponentOnline = false) }
-                            }
-
-                            is ReceiveMessage.Notice -> {
-                                _chatRoomState.update { it.copy(isRoomWithdrawn = true) }
-                                addMessages(listOf(message))
-                            }
-
-                            else -> {
-                                addMessages(listOf(message))
-                            }
-                        }
+        } else {
+            chatRoomRepository.enterChatRoom(roomId)
+                .onSuccess { (remoteProductId, _) ->
+                    _roomId.update { roomId }
+                    // 서버에 저장된 채팅방의 상품과 현재 상품이 다른 경우
+                    if (remoteProductId != productId) {
+                        chatCondition = ChatCondition.PRODUCT_CHANGED
                     }
-                }
+                }.getOrElse { t -> throw Throwable(cause = t, message = "productId 정보 조회 실패") }
         }
     }
 
-    private fun updateUserMessageReadState(message: ReceiveMessage.Join) {
-        if (!message.isMessageOwner) {
-            chatMessageList.forEachIndexed { index, record ->
-                if (with(record) { isMessage && isMessageOwner && isRead }) {
-                    return@forEachIndexed
-                }
-                chatMessageList[index] =
-                    if (with(record) { isMessage && isMessageOwner && !isRead }) {
-                        runCatching {
-                            (record as ReceiveMessage.Text).copy(isRead = true)
-                        }.recoverCatching {
-                            (record as ReceiveMessage.Image).copy(isRead = true)
-                        }.recoverCatching {
-                            (record as ReceiveMessage.Product).copy(isRead = true)
-                        }.getOrNull() ?: record
-                    } else record
+    private suspend fun getChatRoomInformation(
+        productId: Long,
+        roomId: Long?
+    ): ChatRoomInformation {
+        return chatRoomRepository.getChatRoomInformation(productId, roomId)
+            .getOrElse { t -> throw Throwable(cause = t, message = "채팅방 정보 조회 실패") }
+    }
+
+    fun collectChatRoomInformation() = viewModelScope.launch {
+        _roomId.flatMapLatest { roomId ->
+            if (roomId == null) flowOf(UiState.Empty)
+            else chatRoomRepository.getChatRoomInformationAsFlow(roomId).map { UiState.Success(it) }
+        }.collect { state ->
+            _chatRoomState.update { state }
+        }
+    }
+
+    fun leaveChatRoom() = viewModelScope.launch {
+        val roomId = _roomId.value
+        if (roomId == null) {
+            Timber.w("채팅방이 생성되지 않았습니다.")
+        } else {
+            chatRoomRepository.leaveChatRoom(roomId)
+                .onFailure(Timber::e)
+        }
+    }
+
+    fun withdrawChatRoom() = viewModelScope.launch {
+        val roomId = _roomId.value
+        if (roomId == null) {
+            Timber.w("채팅방이 생성되지 않았습니다.")
+        } else {
+            chatRoomRepository.withdrawChatRoom(roomId)
+                .onFailure(Timber::e)
+        }
+        _sideEffect.trySend(ChatRoomSideEffect.OnWithdrawChatRoom)
+    }
+
+    fun sendTextMessage(text: String) = viewModelScope.launch {
+        runCatching {
+            when (chatCondition) {
+                ChatCondition.NEW_CHAT_ROOM -> createNewRoom()
+                ChatCondition.PRODUCT_CHANGED -> patchChatProduct()
+                ChatCondition.PRODUCT_NOT_CHANGED -> Unit
             }
-
-            _chatRoomState.update { it.copy(isOpponentOnline = true) }
-            _chatItems.update { chatMessageList.toList() }
+            val roomId = requireNotNull(_roomId.value) { "roomId가 없습니다." }
+            sendMessage(SendMessage.Text(roomId, text))
+        }.onSuccess {
+            chatCondition = ChatCondition.PRODUCT_NOT_CHANGED
+        }.onFailure {
+            Timber.e(it)
+            _sideEffect.trySend(ChatRoomSideEffect.ShowToast(CHAT_ERROR_MSG))
         }
     }
 
-    /**
-     * 수신한 메시지를 화면에 출력할 메시지 리스트에 넣습니다. 수신한 메시지의 타입에 따라
-     *
-     * - 넣고자하는 메시지의 id가 이미 존재한다면 메시지 리스트에 추가하지 않습니다.
-     * - 메시지가 이미지인 경우, 이미지 url의 쿼리를 제거합니다.
-     * - 메시지 리스트가 변경되었다면 메시지 플로우를 갱신합니다.
-     */
-    private fun addMessages(newMessages: List<ReceiveMessage<*>>) {
-        var added = false
-        newMessages.forEach { message ->
-            if (chatMessageIdSet.add(message.messageId)) {
-                chatMessageList.add(preprocessMessage(message))
-                added = true
+    fun sendImageMessage(uri: String) = viewModelScope.launch {
+        runCatching {
+            when (chatCondition) {
+                ChatCondition.NEW_CHAT_ROOM -> createNewRoom()
+                ChatCondition.PRODUCT_CHANGED -> patchChatProduct()
+                ChatCondition.PRODUCT_NOT_CHANGED -> Unit
             }
-        }
-
-        // TODO: 과도한 경고 메시지 출력을 방지하기 위한 임시 조치
-        if (added) {
-            chatMessageList
-                .apply {
-                    removeAll {
-                        it is ReceiveMessage.Notice && it.messageId != chatMessageList.last().messageId
-                    }
-                }
-                .sortBy { it.messageId }
-            _chatItems.update { chatMessageList.toList() }
+            val imageUrls = getUploadImageUrls(uri)
+            val roomId = requireNotNull(_roomId.value) { "roomId가 없습니다." }
+            sendMessage(SendMessage.Image(roomId, null, imageUrls))
+        }.onSuccess {
+            chatCondition = ChatCondition.PRODUCT_NOT_CHANGED
+            _sideEffect.trySend(ChatRoomSideEffect.OnSendChatMessage)
+        }.onFailure {
+            Timber.e(it)
+            _sideEffect.trySend(ChatRoomSideEffect.ShowToast(CHAT_ERROR_MSG))
         }
     }
 
-    /**
-     * 채팅 소켓 채널을 통해 텍스트를 전송합니다.
-     *
-     * 텍스트를 전송할 떄마다 첫 채팅인지 혹은 물품 정보가 변경되었는지 확인합니다.
-     */
-    fun sendTextMessage(text: String) {
-        viewModelScope.launch {
-            try {
-                when (chatCondition.value) {
-                    ChatCondition.NEW_CHAT_ROOM -> {
-                        createNewRoom(_productId)
-                        chatCondition.value = ChatCondition.PRODUCT_NOT_CHANGED
-                    }
-
-                    ChatCondition.PRODUCT_CHANGED -> {
-                        _chatRoomStateAsSuccess.roomId?.let { patchProduct(it, _productId) }
-                        chatCondition.value = ChatCondition.PRODUCT_NOT_CHANGED
-                    }
-
-                    ChatCondition.PRODUCT_NOT_CHANGED -> {} //no work to do
-                }
-                val roomId = requireNotNull(_chatRoomStateAsSuccess.roomId)
-                sendMessage(SendMessage.Text(roomId, text))
-                chat = ""
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
-        }
-    }
-
-    /**
-     * 채팅 소켓 채널을 통해 이미지 URL을 전송합니다.
-     * 이미지를 전송할 떄마다 첫 채팅인지 혹은 물품 정보가 변경되었는지 확인합니다.
-     */
-    fun sendImageMessage(uri: String) {
-        viewModelScope.launch {
-            try {
-                when (chatCondition.value) {
-                    ChatCondition.NEW_CHAT_ROOM -> {
-                        createNewRoom(_productId)
-                        chatCondition.value = ChatCondition.PRODUCT_NOT_CHANGED
-                    }
-
-                    ChatCondition.PRODUCT_CHANGED -> {
-                        _chatRoomStateAsSuccess.roomId?.let { patchProduct(it, _productId) }
-                        chatCondition.value = ChatCondition.PRODUCT_NOT_CHANGED
-                    }
-
-                    ChatCondition.PRODUCT_NOT_CHANGED -> {} //no work to do
-                }
-
-                uploadImagesUseCase(
-                    listOf(UploadImage(UploadImage.ImageType.CHAT, uri))
-                ).onSuccess { response ->
-                    val imageUrls = response.map {
-                        it.value.toUri().toString().substringBefore("?")
-                    }
-                    val roomId = requireNotNull(_chatRoomStateAsSuccess.roomId)
-                    sendMessage(SendMessage.Image(roomId, null, imageUrls))
-                }.getOrThrow()
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
-        }
-    }
-
-    /**
-     * 채팅 소켓 채널을 통해 새로운 물품 정보를 전송합니다.
-     */
-    fun sendProductMessage() {
-        viewModelScope.launch {
-            try {
-                val productBrief = requireNotNull(_chatRoomStateAsSuccess.productBrief)
-                val roomId = requireNotNull(_chatRoomStateAsSuccess.roomId)
-
-                sendMessage(SendMessage.Product(roomId, null, productBrief))
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
-        }
-    }
-
-    /**
-     * 채팅 소켓 채널을 통해 메시지를 전송합니다.
-     * 성공적으로 전송하면 [ChatRoomSideEffect.OnSendChatMessage]를 발생시킵니다.
-     */
     private suspend fun sendMessage(message: SendMessage<*>) {
-        sendMessageUseCase(message)
-        _sideEffect.trySend(ChatRoomSideEffect.OnSendChatMessage)
-    }
-
-    /**
-     * 인식할 수 없는 이미지 링크에 대해서 전처리를 수행합니다.
-     * 1. 쿼리 파라미터를 없앱니다.
-     * 2. 메시지 읽음 처리를 수행합니다. 다음 상태일 때 메시지를 읽음 처리합니다:
-     *    - 불러온 메시지의 기록의 isRead가 true
-     *    - 수신한 메시지의 송신자가 '본인'일 경우
-     *    - 상대방이 채팅방에 접속해있는 경우
-     */
-    private fun preprocessMessage(message: ReceiveMessage<*>): ReceiveMessage<*> {
-        val isRead =
-            message.isRead || !message.isMessageOwner || _chatRoomState.value.isOpponentOnline
-
-        return when (message) {
-            is ReceiveMessage.Text -> message.copy(isRead = isRead)
-            is ReceiveMessage.Product -> message.copy(isRead = isRead)
-            is ReceiveMessage.Image -> {
-                message.copy(
-                    imageUrl = message.imageUrl.toUri().toString().substringBefore("?"),
-                    isRead = isRead
-                )
-            }
-
-            else -> message
+        sendChatMessageUseCase(message).onSuccess {
+            chat = ""
+            _sideEffect.trySend(ChatRoomSideEffect.OnSendChatMessage)
         }
     }
 
-    /**
-     * 상대방과 처음 채팅을 시도할 때, 채팅방의 상태를 초기화하기 위해 일련의 과정을 수행합니다..
-     *
-     * 각 과정에서 에러가 발생하면 예외를 던집니다.
-     * 1. 채팅방을 생성합니다. 이 과정에서 채팅방의 ID를 반환받습니다.
-     * 2. 생성된 채팅방에 입장합니다.
-     * 3. 채팅방 상태를 업데이트합니다.
-     * 3. 채팅방에 대한 메시지 채널을 구독합니다.
-     * 4. 채팅방 채널을 통해 제품 정보를 전송합니다.
-     */
-    private suspend fun createNewRoom(productId: Long) {
-        val storeId = requireNotNull(_chatRoomStateAsSuccess.storeBrief?.storeId)
-        val roomId = chatRepository.createChatRoom(productId, storeId).getOrThrow()
-
-        try {
-            enterChatRoom(roomId)
-            collectMessages(roomId)
-            fetchChatRoomDetail(productId, roomId)
-            sendProductMessage()
-        } catch (e: Exception) {
-            Timber.e(e, "채팅방 생성에 실패했습니다.")
-            throw e
+    private suspend fun getUploadImageUrls(uri: String): List<String> {
+        val response = uploadImagesUseCase(
+            listOf(UploadImage(CHAT, uri))
+        ).getOrElse { cause ->
+            throw Throwable("이미지 변환 실패", cause)
         }
+        return response.values.map { uri -> uri.substringBefore("?") }
     }
 
-    /**
-     * 기존에 대화 중이던 방에서 물품이 변경되었을 때 새로운 정보를 등록하기 위해 일련의 과정을 수행합니다.
-     *
-     * 실패하면 에외를 던집니다.
-     * 1. 채팅방 상단 고정 상품을 수정합니다.
-     * 2. 채팅방 채널을 통해 제품 정보를 전송합니다.
-     */
-    private suspend fun patchProduct(roomId: Long, productId: Long) {
-        chatRepository.patchChatRoomProduct(roomId, productId)
-            .onSuccess { sendProductMessage() }
-            .getOrThrow()
+    private suspend fun createNewRoom() {
+        val productId = requireNotNull(_productId.value)
+        val chatRoomState = requireNotNull(_chatRoomStateAsSuccess?.data)
+        val receiverId = chatRoomState.storeBrief.storeId
+        val productBrief = chatRoomState.productBrief
+
+        val roomId = chatRoomRepository.createChatRoom(productId, receiverId).getOrThrow()
+        chatRoomRepository.enterChatRoom(roomId)
+        fetchChatRoomInformationByRoomId(roomId)
+        sendChatMessageUseCase(SendMessage.Product(roomId, null, productBrief))
     }
 
-    /**
-     * 채팅방에 입장하여 서버에게 채팅방에 접속 중임을 알립니다.
-     * @return productId
-     */
-    private suspend fun enterChatRoom(roomId: Long): Long =
-        chatRepository.enterChatRoom(roomId).mapCatching { (productId, isOnline) ->
-            Timber.d("채팅방 입장 및 구독 시작함")
-            _chatRoomState.update { it.copy(isOpponentOnline = isOnline) }
-            productId
-        }.getOrElse { e ->
-            Timber.e(e)
-            _chatRoomState.update { it.copy(isUserExitChatRoom = true) }
-            _sideEffect.send(ChatRoomSideEffect.ShowToast(USER_EXIT_ERROR_MESSAGE))
-            throw e
-        }
-
-
-    /**
-     * 현재 채팅방에 접속 중이지 않음을 서버에 알리기 위해 호춣합니다.
-     */
-    fun leaveChatRoom() {
-        viewModelScope.launch {
-            try {
-                val roomId = requireNotNull(_chatRoomStateAsSuccess.roomId)
-                chatRepository.leaveChatRoom(roomId)
-            } catch (e: Exception) {
-                when (e) {
-                    is IllegalArgumentException -> Timber.w("채팅방이 생성되지 않았습니다.")
-                    else -> Timber.e(e)
-                }
-            }
-        }
-    }
-
-    /**
-     * 채팅방에서 나가기 위해 호출합니다.
-     */
-    fun withdrawChatRoom() {
-        viewModelScope.launch {
-            try {
-                val roomId = requireNotNull(_chatRoomStateAsSuccess.roomId)
-                chatRepository.withdrawChatRoom(roomId).onSuccess {
-                    unsubscribeChatRoomUseCase(roomId)
-                }
-            } catch (e: Exception) {
-                when (e) {
-                    is IllegalArgumentException -> Timber.w("채팅방이 생성되지 않았습니다.")
-                    else -> Timber.e(e)
-                }
-            } finally {
-                _sideEffect.trySend(ChatRoomSideEffect.OnWithdrawChatRoom)
-            }
-        }
+    private suspend fun patchChatProduct() {
+        val roomId = requireNotNull(_roomId.value)
+        val productBrief = requireNotNull(_chatRoomStateAsSuccess?.data?.productBrief)
+        chatRoomRepository.patchChatRoomProduct(roomId, productBrief.productId)
+        sendChatMessageUseCase(SendMessage.Product(roomId, null, productBrief))
     }
 
     fun toggleStoreBlockState(targetState: Boolean) = viewModelScope.launch {
+        fetchStoreId()
         runCatching {
-            val storeId = requireNotNull(_chatRoomStateAsSuccess.storeBrief?.storeId)
-            when (targetState) {
-                true -> storeRepository.blockStore(storeId).getOrThrow()
-                false -> storeRepository.unblockStore(storeId).getOrThrow()
+            _storeId.value?.let { storeId ->
+                when (targetState) {
+                    true -> storeRepository.blockStore(storeId).getOrThrow()
+                    false -> storeRepository.unblockStore(storeId).getOrThrow()
+                }
             }
         }.onSuccess {
-            (_chatRoomState.value.chatRoomState as? UiState.Success)
-                ?.data?.productBrief?.productId?.let { productId ->
-                    fetchChatRoomDetail(productId)
-                    _sideEffect.send(
-                        ChatRoomSideEffect.OnChangeBlockState(targetState)
-                    )
-                }
+            _productId.value?.let { productId ->
+                getChatRoomInformation(productId, null)
+                _sideEffect.send(
+                    ChatRoomSideEffect.OnChangeBlockState(targetState)
+                )
+            }
         }.onFailure(Timber::e)
+    }
+
+    private fun fetchStoreId() = viewModelScope.launch {
+        storeRepository.fetchStoreInfo()
+            .onSuccess { storeInfo ->
+                _storeId.update { storeInfo.storeId }
+            }
     }
 
     internal fun trackReportMarket() = mixpanel?.track(OPENED_REPORT_MARKET)
 
-    companion object {
+    companion object Companion {
         private const val ROOM_ID_KEY = "chatRoomId"
         private const val PRODUCT_ID_KEY = "productId"
-        private const val USER_EXIT_ERROR_MESSAGE = "해당 채팅방을 나간 상태입니다."
+        private const val CHAT_ERROR_MSG = "오류가 발생했습니다. 다시 시도해주세요."
     }
 }

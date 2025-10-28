@@ -5,12 +5,22 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
 import com.napzak.market.local.room.entity.ChatRoomEntity
+import com.napzak.market.local.room.relation.ChatRoomWithProduct
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ChatRoomDao {
     @Query("SELECT * FROM chat_room WHERE roomId = :roomId")
     fun getChatRoom(roomId: Long): ChatRoomEntity?
+
+    @Query(
+        """
+        SELECT r.*, p.* FROM chat_room AS r
+        LEFT JOIN chat_product AS p ON r.productId = p.productId
+        WHERE r.roomId = :roomId 
+    """
+    )
+    fun getChatRoomFlow(roomId: Long): Flow<ChatRoomWithProduct?>
 
     @Query("SELECT * FROM chat_room")
     fun getChatRoomsFlow(): Flow<List<ChatRoomEntity>>
@@ -71,6 +81,10 @@ interface ChatRoomDao {
 
     @Query("UPDATE chat_room SET productId = :productId WHERE roomId = :roomId")
     suspend fun updateProductId(roomId: Long, productId: Long)
+
+
+    @Query("UPDATE chat_room SET isOnline = :isOnline WHERE roomId = :roomId")
+    suspend fun updateMyOnlineStatus(roomId: Long, isOnline: Boolean)
 
     @Query("UPDATE chat_room SET isOpponentOnline = :isOpponentOnline WHERE roomId = :roomId")
     suspend fun updateOpponentOnlineStatus(roomId: Long, isOpponentOnline: Boolean)

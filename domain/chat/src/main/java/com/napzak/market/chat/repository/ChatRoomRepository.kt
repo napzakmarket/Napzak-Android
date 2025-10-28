@@ -11,6 +11,10 @@ interface ChatRoomRepository {
         roomId: Long? = null
     ): Result<ChatRoomInformation>
 
+    fun getChatRoomInformationAsFlow(
+        roomId: Long
+    ): Flow<ChatRoomInformation>
+
     suspend fun createChatRoom(productId: Long, receiverId: Long): Result<Long>
     suspend fun getChatRoomMessages(roomId: Long): Result<List<ReceiveMessage<*>>>
     fun getPagedChatRoomMessages(roomId: Long): Flow<PagingData<ReceiveMessage<*>>>

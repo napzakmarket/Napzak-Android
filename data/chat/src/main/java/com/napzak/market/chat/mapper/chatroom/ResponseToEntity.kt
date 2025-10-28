@@ -17,9 +17,9 @@ internal fun ChatRoomListResponse.ChatRoom.toEntity() = ChatRoomEntity(
     isWithdrawn = isOpponentWithdrawn,
 )
 
-internal fun ChatRoomInformationResponse.toRoomEntity(): ChatRoomEntity? {
-    val entity = ChatRoomEntity(
-        roomId = roomId ?: return null,
+internal fun ChatRoomInformationResponse.toRoomEntity(roomId: Long): ChatRoomEntity =
+    ChatRoomEntity(
+        roomId = roomId,
         productId = productInfo.productId,
         opponentNickName = storeInfo.nickname,
         opponentStorePhoto = storeInfo.storePhoto,
@@ -28,8 +28,7 @@ internal fun ChatRoomInformationResponse.toRoomEntity(): ChatRoomEntity? {
         isOpponentStoreBlocked = storeInfo.isOpponentStoreBlocked,
         isChatBlocked = storeInfo.isChatBlocked,
     )
-    return entity
-}
+
 
 internal fun ChatRoomInformationResponse.toProductEntity() = with(productInfo) {
     ChatProductEntity(

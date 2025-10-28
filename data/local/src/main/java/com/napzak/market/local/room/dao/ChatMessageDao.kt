@@ -37,7 +37,7 @@ interface ChatMessageDao {
 
     @Transaction
     suspend fun updateMessageIdAndStatusByUuid(entity: ChatMessageEntity) {
-        if (entity.uuid != null && entity.messageId != null) {
+        if (entity.uuid != null) {
             updateMessageIdAndStatusInternal(entity.uuid, entity.messageId)
         }
     }

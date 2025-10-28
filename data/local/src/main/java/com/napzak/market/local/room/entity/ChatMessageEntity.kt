@@ -11,9 +11,8 @@ import com.napzak.market.local.room.type.ChatStatusType
     indices = [Index("roomId")],
 )
 data class ChatMessageEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @PrimaryKey val messageId: Long,
     val uuid: String? = null,
-    val messageId: Long? = null,
     val roomId: Long? = null,
     val senderId: Long? = null,
     val messageType: ChatMessageType,

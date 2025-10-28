@@ -13,6 +13,7 @@ data class ChatRoomEntity(
     val lastMessage: String = "",
     val lastMessageAt: String = "",
     val unreadCount: Int = 0,
+    val isOnline: Boolean = false,
     val isOpponentOnline: Boolean = false,
     val isWithdrawn: Boolean = false,
     val isReported: Boolean = false,
