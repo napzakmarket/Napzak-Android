@@ -136,6 +136,8 @@ class ChatRoomRepositoryImpl @Inject constructor(
         return suspendRunCatching {
             chatRoomDataSource.withdrawChatRoom(roomId)
             runOnChatRoomDao { deleteChatRoom(roomId) }
+            runOnChatMessageDao { deleteChatMessages(roomId) }
+            runOnRemoteKeyDao { deleteRemoteKey(roomId) }
         }
     }
 
@@ -171,5 +173,9 @@ class ChatRoomRepositoryImpl @Inject constructor(
 
     private suspend fun runOnChatMessageDao(block: suspend ChatMessageDao.() -> Unit) {
         withContext(ioDispatcher) { chatMessageDao.block() }
+    }
+
+    private suspend fun runOnRemoteKeyDao(block: suspend ChatRemoteKeyDao.() -> Unit) {
+        withContext(ioDispatcher) { chatRemoteKeyDao.block() }
     }
 }
