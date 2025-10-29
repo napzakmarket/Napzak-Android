@@ -26,10 +26,12 @@ import com.napzak.market.store.usecase.SetStoreBlockStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -61,14 +63,8 @@ class ChatRoomViewModel @Inject constructor(
     private val _sideEffect = Channel<ChatRoomSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
 
-    val chatRoomState = _roomId.flatMapLatest { roomId ->
-        if (roomId == null) flowOf(UiState.Empty)
-        else chatRoomRepository.getChatRoomInformationAsFlow(roomId).map { UiState.Success(it) }
-    }.stateIn(
-        scope = viewModelScope,
-        started = WhileSubscribed(5_000),
-        initialValue = UiState.Loading
-    )
+    private val _chatRoomState = MutableStateFlow<UiState<ChatRoomInformation>>(UiState.Loading)
+    val chatRoomState = _chatRoomState.asStateFlow()
 
     val chatMessageFlow: StateFlow<Flow<PagingData<ReceiveMessage<*>>>> =
         _roomId.filterNotNull().mapNotNull { roomId ->
@@ -87,6 +83,7 @@ class ChatRoomViewModel @Inject constructor(
             .onSuccess { (info, condition) ->
                 _roomId.update { info.roomId }
                 _productId.update { info.productBrief.productId }
+                _chatRoomState.update { UiState.Success(info) }
                 chatCondition = condition
             }
             .onFailure { t ->
@@ -99,11 +96,16 @@ class ChatRoomViewModel @Inject constructor(
     }
 
     fun collectChatRoomInformation() = viewModelScope.launch {
-        chatRoomState.mapNotNull { it as? UiState.Success }.collect { state ->
-            val roomId = state.data.roomId ?: return@collect
-            val isOpponentOnline = state.data.isOpponentOnline
-            if (isOpponentOnline) {
-                chatRoomRepository.markMessagesAsRead(roomId, true)
+        _roomId.flatMapLatest { roomId ->
+            if (roomId == null) flowOf(UiState.Empty)
+            else chatRoomRepository.getChatRoomInformationAsFlow(roomId).map { UiState.Success(it) }
+        }.collect { chatRoomState ->
+            (chatRoomState as? UiState.Success)?.let { state ->
+                val roomId = state.data.roomId ?: return@collect
+                val isOpponentOnline = state.data.isOpponentOnline
+                if (isOpponentOnline) {
+                    chatRoomRepository.markMessagesAsRead(roomId, true)
+                }
             }
         }
     }
@@ -131,11 +133,7 @@ class ChatRoomViewModel @Inject constructor(
 
     fun sendTextMessage(text: String) = viewModelScope.launch {
         runCatching {
-            when (chatCondition) {
-                ChatCondition.NEW_CHAT_ROOM -> createNewRoom()
-                ChatCondition.PRODUCT_CHANGED -> patchChatProduct()
-                ChatCondition.PRODUCT_NOT_CHANGED -> Unit
-            }
+            prepareChatRoomContext(chatCondition)
             val roomId = requireNotNull(_roomId.value) { "roomId가 없습니다." }
             sendMessage(SendMessage.Text(roomId, text))
         }.onSuccess {
@@ -148,11 +146,7 @@ class ChatRoomViewModel @Inject constructor(
 
     fun sendImageMessage(uri: String) = viewModelScope.launch {
         runCatching {
-            when (chatCondition) {
-                ChatCondition.NEW_CHAT_ROOM -> createNewRoom()
-                ChatCondition.PRODUCT_CHANGED -> patchChatProduct()
-                ChatCondition.PRODUCT_NOT_CHANGED -> Unit
-            }
+            prepareChatRoomContext(chatCondition)
             val imageUrls = getUploadImageUrls(uri)
             val roomId = requireNotNull(_roomId.value) { "roomId가 없습니다." }
             sendMessage(SendMessage.Image(roomId, null, imageUrls))
@@ -162,6 +156,22 @@ class ChatRoomViewModel @Inject constructor(
         }.onFailure {
             Timber.e(it)
             _sideEffect.trySend(ChatRoomSideEffect.ShowToast(CHAT_ERROR_MSG))
+        }
+    }
+
+    private suspend fun prepareChatRoomContext(chatCondition: ChatCondition) {
+        when (chatCondition) {
+            ChatCondition.NEW_CHAT_ROOM -> {
+                createNewRoom()
+                delay(100L)
+            }
+
+            ChatCondition.PRODUCT_CHANGED -> {
+                patchChatProduct()
+                delay(100L)
+            }
+
+            ChatCondition.PRODUCT_NOT_CHANGED -> Unit
         }
     }
 
@@ -199,7 +209,9 @@ class ChatRoomViewModel @Inject constructor(
     }
 
     fun toggleStoreBlockState(targetState: Boolean) = viewModelScope.launch {
-        setStoreBlockStateUseCase(targetState)
+        val storeId =
+            (chatRoomState.value as? UiState.Success)?.data?.storeBrief?.storeId ?: return@launch
+        setStoreBlockStateUseCase(storeId, targetState)
             .onSuccess {
                 _productId.value?.let { productId ->
                     chatRoomRepository.getChatRoomInformation(productId, null)

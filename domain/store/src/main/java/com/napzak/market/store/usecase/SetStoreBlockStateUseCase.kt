@@ -6,19 +6,7 @@ import javax.inject.Inject
 class SetStoreBlockStateUseCase @Inject constructor(
     private val storeRepository: StoreRepository,
 ) {
-    suspend operator fun invoke(targetState: Boolean) = runCatching {
-        val storeId = getStoreId()
-        setBlockState(storeId, targetState)
-    }
-
-    private suspend fun getStoreId(): Long {
-        return storeRepository.fetchStoreInfo()
-            .getOrElse { t ->
-                throw Throwable(cause = t, message = "스토어 정보 조회 실패")
-            }.storeId
-    }
-
-    private suspend fun setBlockState(storeId: Long, targetState: Boolean) {
+    suspend operator fun invoke(storeId: Long, targetState: Boolean) = runCatching {
         when (targetState) {
             true -> storeRepository.blockStore(storeId)
             false -> storeRepository.unblockStore(storeId)
