@@ -85,6 +85,10 @@ class ChatRoomViewModel @Inject constructor(
                 _productId.update { info.productBrief.productId }
                 _chatRoomState.update { UiState.Success(info) }
                 chatCondition = condition
+
+                if (info.storeBrief.isWithdrawn) {
+                    _sideEffect.trySend(ChatRoomSideEffect.OnWithdrawChatRoom)
+                }
             }
             .onFailure { t ->
                 Timber.e(t)

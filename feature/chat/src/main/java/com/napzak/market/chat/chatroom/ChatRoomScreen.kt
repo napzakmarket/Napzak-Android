@@ -37,6 +37,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.napzak.market.chat.chatroom.component.ChatImageZoomScreen
@@ -63,8 +64,10 @@ import com.napzak.market.feature.chat.R.string.chat_room_empty_guide_1
 import com.napzak.market.feature.chat.R.string.chat_room_empty_guide_2
 import com.napzak.market.feature.chat.R.string.chat_room_toast_block
 import com.napzak.market.feature.chat.R.string.chat_room_toast_unblock
+import com.napzak.market.ui_util.ScreenPreview
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flowOf
 import timber.log.Timber
 
 @Composable
@@ -91,10 +94,6 @@ internal fun ChatRoomRoute(
         onPauseOrDispose {
             viewModel.leaveChatRoom()
         }
-    }
-
-    LaunchedEffect(chatRoomState) {
-        Timber.tag("Chatting").d(chatRoomState.toString())
     }
 
     LaunchedEffect(Unit) {
@@ -237,46 +236,20 @@ internal fun ChatRoomScreen(
                             .fillMaxSize()
                             .imePadding(),
                     ) {
-                        if (chatMessages.itemCount > 0) {
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .background(NapzakMarketTheme.colors.white),
-                            ) {
-                                ChatRoomItemColumn(
-                                    listState = chatListState,
-                                    chatMessages = chatMessages,
-                                    opponentImageUrl = chatRoom.storeBrief.storePhoto,
-                                    onItemClick = { message ->
-                                        when (message) {
-                                            is ReceiveMessage.Product -> onProductDetailClick(
-                                                message.product.productId
-                                            )
+                        ChatRoomMessageSection(
+                            chatMessages = chatMessages,
+                            chatListState = chatListState,
+                            chatRoomInformation = chatRoom,
+                            onProductMessageClick = onProductDetailClick,
+                            onImageMessageClick = { selectedImageUrl = it },
+                            modifier = Modifier
+                                .weight(1f)
+                                .background(NapzakMarketTheme.colors.white),
+                        )
 
-                                            is ReceiveMessage.Image -> {
-                                                selectedImageUrl = message.imageUrl
-                                            }
-
-                                            else -> {}
-                                        }
-                                    },
-                                    modifier = Modifier.fillMaxSize(),
-                                )
-
-                                if (chatRoom.storeBrief.isReported || chatRoom.storeBrief.isChatBlocked) {
-                                    Image(
-                                        painter = painterResource(img_user_blocked_popup),
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .align(Alignment.BottomCenter)
-                                            .padding(bottom = 23.dp),
-                                    )
-                                }
-                            }
-                        }
                         ChatRoomInputField(
                             text = chat,
-                            enabled = !chatRoom.storeBrief.isChatBlocked,
+                            enabled = !chatRoom.isChatBlocked,
                             onSendClick = onSendChatClick,
                             onTextChange = onChatChange,
                             onPhotoSelect = {
@@ -343,11 +316,52 @@ internal fun ChatRoomScreen(
         else -> {
             /*TODO: 채팅방 정보를 불러오지 못하는 경우에 대한 화면 구현*/
             Timber.tag("ChatRoom").d("none ChatRoomScreen called")
-            /*LaunchedEffect((chatRoomState as? UiState.Success).data.storeBrief.isWithdrawn) {
-                if (chatRoomState.isUserExitChatRoom) {
-                    onNavigateUp()
-                }
-            }*/
+        }
+    }
+}
+
+@Composable
+private fun ChatRoomMessageSection(
+    chatMessages: LazyPagingItems<ReceiveMessage<*>>,
+    chatListState: LazyListState,
+    chatRoomInformation: ChatRoomInformation,
+    onProductMessageClick: (Long) -> Unit,
+    onImageMessageClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (chatMessages.itemCount > 0) {
+        Box(
+            modifier = modifier,
+        ) {
+            ChatRoomItemColumn(
+                listState = chatListState,
+                chatMessages = chatMessages,
+                opponentImageUrl = chatRoomInformation.storeBrief.storePhoto,
+                onItemClick = { message ->
+                    when (message) {
+                        is ReceiveMessage.Product -> {
+                            onProductMessageClick(message.product.productId)
+                        }
+
+                        is ReceiveMessage.Image -> {
+                            onImageMessageClick(message.imageUrl)
+                        }
+
+                        else -> {} // no events
+                    }
+                },
+                modifier = Modifier.fillMaxSize(),
+            )
+
+            if (chatRoomInformation.isChatBlocked) {
+                Image(
+                    painter = painterResource(img_user_blocked_popup),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 23.dp),
+                )
+            }
         }
     }
 }
@@ -383,13 +397,18 @@ private fun EmptyChatScreen(
     }
 }
 
-/*@ScreenPreview
+@ScreenPreview
 @Composable
 private fun ChatRoomScreenPreview() {
     NapzakMarketTheme {
+        val chatMessages = flowOf<PagingData<ReceiveMessage<*>>>().collectAsLazyPagingItems()
+        val chatRoomState = UiState.Success(ChatRoomInformation.mock())
+        val chatListState = rememberLazyListState()
         ChatRoomScreen(
             chat = { "" },
-            chatItems = mockChats.toImmutableList(),
+            chatMessages = chatMessages,
+            chatRoomState = chatRoomState,
+            chatListState = chatListState,
             onChatChange = {},
             onSendChatClick = {},
             onProductDetailClick = {},
@@ -399,30 +418,6 @@ private fun ChatRoomScreenPreview() {
             onWithdrawChatRoomClick = {},
             onNavigateUp = {},
             onPhotoSelect = {},
-            chatRoomState = ChatRoomUiState(UiState.Success(mockChatRoom)),
-            chatListState = rememberLazyListState(),
         )
     }
 }
-
-@ScreenPreview
-@Composable
-private fun ChatRoomScreenEmptyPreview() {
-    NapzakMarketTheme {
-        ChatRoomScreen(
-            chat = { "" },
-            chatItems = emptyList<ReceiveMessage<*>>().toImmutableList(),
-            onChatChange = {},
-            onSendChatClick = {},
-            onProductDetailClick = {},
-            onReportClick = {},
-            onBlockClick = {},
-            onUnblockClick = {},
-            onWithdrawChatRoomClick = {},
-            onNavigateUp = {},
-            onPhotoSelect = {},
-            chatRoomState = ChatRoomUiState(UiState.Success(mockChatRoom)),
-            chatListState = rememberLazyListState(),
-        )
-    }
-}*/
