@@ -2,7 +2,7 @@ package com.napzak.market.local.room.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Entity(tableName = "chat_room")
 data class ChatRoomEntity(
@@ -19,5 +19,5 @@ data class ChatRoomEntity(
     val isReported: Boolean = false,
     val isOpponentStoreBlocked: Boolean = false,
     val isChatBlocked: Boolean = false,
-    val lastUpdated: String = LocalDate.now().toString()
+    val lastUpdated: String = LocalDateTime.now().toString()
 )

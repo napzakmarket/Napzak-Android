@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class ChatRoomRepositoryImpl @Inject constructor(
@@ -236,7 +236,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
                 lastMessage = lastMessage,
                 lastMessageAt = messageEntity.createdAt,
                 unreadCount = unreadCount + 1,
-                lastUpdated = LocalDate.now().toString()
+                lastUpdated = LocalDateTime.now().toString()
             )
         }
     }

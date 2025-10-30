@@ -81,7 +81,7 @@ class WebSocketLifecycleObserver @Inject constructor(
     }
 
     private suspend fun connectChatSocket(storeId: Long) {
-        connectChatSocketUseCase(storeId, activityScope)
+        connectChatSocketUseCase(storeId)
     }
 
     private suspend fun subscribeChatRooms(storeId: Long) {

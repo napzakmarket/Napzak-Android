@@ -17,12 +17,12 @@ interface ChatRoomDao {
         """
         SELECT r.*, p.* FROM chat_room AS r
         LEFT JOIN chat_product AS p ON r.productId = p.productId
-        WHERE r.roomId = :roomId 
+        WHERE r.roomId = :roomId
     """
     )
     fun getChatRoomFlow(roomId: Long): Flow<ChatRoomWithProduct?>
 
-    @Query("SELECT * FROM chat_room")
+    @Query("SELECT * FROM chat_room ORDER BY lastUpdated DESC")
     fun getChatRoomsFlow(): Flow<List<ChatRoomEntity>>
 
     @Transaction
