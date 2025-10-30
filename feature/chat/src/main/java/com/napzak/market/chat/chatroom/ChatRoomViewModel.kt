@@ -47,7 +47,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ChatRoomViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val mixpanel: MixpanelAPI?,
     private val chatRoomRepository: ChatRoomRepository,
     private val getChatRoomInformationUseCase: GetChatRoomInformationUseCase,

@@ -31,7 +31,7 @@ class HandleChatMessageStreamUseCase @Inject constructor(
         myStoreId: Long,
         message: ReceiveMessage<*>,
     ) {
-        val roomId = message.roomId ?: return
+        val roomId = message.roomId
         if (myStoreId != message.senderId) {
             val isOpponentOnline = message is ReceiveMessage.Join
             chatRoomRepository.setOpponentOnlineStatusInLocal(roomId, isOpponentOnline)
