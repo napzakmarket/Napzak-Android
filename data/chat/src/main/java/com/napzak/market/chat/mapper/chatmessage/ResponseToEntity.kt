@@ -1,105 +1,122 @@
 package com.napzak.market.chat.mapper.chatmessage
 
 import com.napzak.market.chat.dto.ChatMessageMetadata
-import com.napzak.market.chat.dto.ChatRealtimeMessage
+import com.napzak.market.chat.dto.MessageItem
 import com.napzak.market.local.room.entity.ChatMessageEntity
 import com.napzak.market.local.room.entity.ChatProductEntity
 import com.napzak.market.local.room.type.ChatMessageType
-import com.napzak.market.local.room.type.ChatMessageType.DATE
-import com.napzak.market.local.room.type.ChatMessageType.EXIT
-import com.napzak.market.local.room.type.ChatMessageType.IMAGE
-import com.napzak.market.local.room.type.ChatMessageType.PRODUCT
-import com.napzak.market.local.room.type.ChatMessageType.REPORTED
-import com.napzak.market.local.room.type.ChatMessageType.TEXT
-import com.napzak.market.local.room.type.ChatMessageType.WITHDRAWN
+import com.napzak.market.local.room.type.ChatStatusType
 
-
-fun ChatRealtimeMessage.toEntity(storeId: Long, messageId: Long): ChatMessageEntity {
+internal fun MessageItem.toEntity(roomId: Long): ChatMessageEntity {
     return when (metadata) {
-        is ChatMessageMetadata.Image -> toImage(storeId, messageId, metadata)
-        is ChatMessageMetadata.Product -> toProduct(storeId, messageId, metadata)
-        is ChatMessageMetadata.EXIT -> toNotice(messageId, metadata.content, EXIT)
-        is ChatMessageMetadata.REPORTED -> toNotice(messageId, metadata.content, REPORTED)
-        is ChatMessageMetadata.WITHDRAWN -> toNotice(messageId, metadata.content, WITHDRAWN)
-        is ChatMessageMetadata.Date -> toDate(messageId, metadata)
-        else -> toText(storeId, messageId)
+        null -> toTextEntity(roomId)
+        is ChatMessageMetadata.Image -> toImageEntity(roomId, metadata)
+        is ChatMessageMetadata.Product -> toProductEntity(roomId, metadata)
+        is ChatMessageMetadata.EXIT -> toNoticeEntity(
+            roomId,
+            metadata.content,
+            ChatMessageType.EXIT
+        )
+
+        is ChatMessageMetadata.REPORTED -> toNoticeEntity(
+            roomId,
+            metadata.content,
+            ChatMessageType.REPORTED
+        )
+
+        is ChatMessageMetadata.WITHDRAWN -> toNoticeEntity(
+            roomId,
+            metadata.content,
+            ChatMessageType.WITHDRAWN
+        )
+
+        is ChatMessageMetadata.Date -> toDateEntity(roomId, metadata)
     }
 }
 
-fun ChatMessageMetadata.Product.toProductEntity() =
-    ChatProductEntity(
-        productId = productId,
-        tradeType = tradeType,
-        title = title,
-        price = price,
-        isPriceNegotiable = false,
-        genreName = genreName,
-        isProductDeleted = isProductDeleted == true,
+internal fun MessageItem.toProductEntity(): ChatProductEntity? {
+    return if (metadata is ChatMessageMetadata.Product) {
+        ChatProductEntity(
+            productId = metadata.productId,
+            tradeType = metadata.tradeType,
+            title = metadata.title,
+            price = metadata.price,
+            genreName = metadata.genreName,
+            isProductDeleted = metadata.isProductDeleted ?: false,
+        )
+    } else null
+}
+
+private fun MessageItem.toTextEntity(roomId: Long): ChatMessageEntity =
+    ChatMessageEntity(
+        messageId = requireNotNull(messageId),
+        roomId = roomId,
+        senderId = requireNotNull(senderId),
+        messageType = ChatMessageType.TEXT,
+        message = content ?: "",
+        createdAt = requireNotNull(createdAt),
+        isRead = isRead ?: false,
+        isMessageOwner = isMessageOwner ?: false,
+        isProfileNeeded = isProfileNeeded ?: false,
+        status = ChatStatusType.RECEIVED,
     )
 
-private fun ChatRealtimeMessage.toText(
-    storeId: Long,
-    messageId: Long,
-) = ChatMessageEntity(
-    messageId = messageId,
+private fun MessageItem.toImageEntity(
+    roomId: Long,
+    metadata: ChatMessageMetadata.Image
+): ChatMessageEntity = ChatMessageEntity(
+    messageId = requireNotNull(messageId),
     roomId = roomId,
-    senderId = senderId,
-    messageType = TEXT,
-    message = content,
-    createdAt = createdAt ?: "",
-    isMessageOwner = senderId == storeId,
+    senderId = requireNotNull(senderId),
+    messageType = ChatMessageType.IMAGE,
+    message = metadata.imageUrls.firstOrNull { !it.isNullOrBlank() } ?: "",
+    createdAt = requireNotNull(createdAt),
     isRead = isRead ?: false,
+    isMessageOwner = isMessageOwner ?: false,
+    isProfileNeeded = isProfileNeeded ?: false,
+    status = ChatStatusType.RECEIVED,
 )
 
-private fun ChatRealtimeMessage.toImage(
-    storeId: Long,
-    messageId: Long,
-    metadata: ChatMessageMetadata.Image,
-) = ChatMessageEntity(
-    messageId = messageId,
+private fun MessageItem.toProductEntity(
+    roomId: Long,
+    metadata: ChatMessageMetadata.Product
+): ChatMessageEntity = ChatMessageEntity(
+    messageId = requireNotNull(messageId),
     roomId = roomId,
-    senderId = senderId,
-    messageType = IMAGE,
-    message = metadata.imageUrls.firstOrNull() ?: "",
-    createdAt = createdAt ?: "",
-    isMessageOwner = senderId == storeId,
-    isRead = isRead ?: false,
-)
-
-private fun ChatRealtimeMessage.toProduct(
-    storeId: Long,
-    messageId: Long,
-    metadata: ChatMessageMetadata.Product,
-) = ChatMessageEntity(
-    messageId = messageId,
-    roomId = roomId,
-    senderId = senderId,
-    messageType = PRODUCT,
+    senderId = requireNotNull(senderId),
+    messageType = ChatMessageType.PRODUCT,
     productId = metadata.productId,
-    createdAt = createdAt ?: "",
-    isMessageOwner = senderId == storeId,
+    createdAt = requireNotNull(createdAt),
     isRead = isRead ?: false,
+    isMessageOwner = isMessageOwner ?: false,
+    isProfileNeeded = isProfileNeeded ?: false,
+    status = ChatStatusType.RECEIVED,
 )
 
-private fun ChatRealtimeMessage.toDate(
-    messageId: Long,
-    metadata: ChatMessageMetadata.Date,
-) = ChatMessageEntity(
-    messageId = messageId,
-    roomId = roomId,
-    messageType = DATE,
-    message = metadata.date,
-    createdAt = createdAt ?: ""
-)
-
-private fun ChatRealtimeMessage.toNotice(
-    messageId: Long,
+private fun MessageItem.toNoticeEntity(
+    roomId: Long,
     content: String,
-    messageType: ChatMessageType,
-) = ChatMessageEntity(
-    messageId = messageId,
+    noticeType: ChatMessageType
+): ChatMessageEntity = ChatMessageEntity(
+    messageId = requireNotNull(messageId),
     roomId = roomId,
+    senderId = senderId,
+    messageType = noticeType,
     message = content,
-    messageType = messageType,
-    createdAt = createdAt ?: ""
+    createdAt = requireNotNull(createdAt),
+    isRead = true,
+    status = ChatStatusType.RECEIVED,
+)
+
+private fun MessageItem.toDateEntity(
+    roomId: Long,
+    metadata: ChatMessageMetadata.Date
+): ChatMessageEntity = ChatMessageEntity(
+    messageId = requireNotNull(messageId),
+    roomId = roomId,
+    messageType = ChatMessageType.DATE,
+    message = metadata.date,
+    createdAt = requireNotNull(createdAt),
+    isRead = true,
+    status = ChatStatusType.RECEIVED,
 )

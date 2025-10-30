@@ -14,7 +14,6 @@ interface ChatRoomRepository {
     fun getChatRoomInformationAsFlow(
         roomId: Long
     ): Flow<ChatRoomInformation>
-
     suspend fun createChatRoom(productId: Long, receiverId: Long): Result<Long>
     suspend fun getChatRoomMessages(roomId: Long): Result<List<ReceiveMessage<*>>>
     fun getPagedChatRoomMessages(roomId: Long): Flow<PagingData<ReceiveMessage<*>>>
@@ -23,4 +22,12 @@ interface ChatRoomRepository {
     suspend fun withdrawChatRoom(roomId: Long): Result<Unit>
     suspend fun patchChatRoomProduct(roomId: Long, productId: Long): Result<Long>
     suspend fun markMessagesAsRead(roomId: Long, isMessageOwner: Boolean): Result<Unit>
+    suspend fun insertMessageIntoLocal(message: ReceiveMessage<*>, isRead: Boolean): Result<Unit>
+    suspend fun getChatRoomInformationFromLocal(roomId: Long): Result<ChatRoomInformation?>
+    suspend fun setOpponentOnlineStatusInLocal(
+        roomId: Long,
+        isOpponentOnline: Boolean
+    ): Result<Unit>
+
+    suspend fun setChatRoomByMessageInLocal(message: ReceiveMessage<*>): Result<Unit>
 }

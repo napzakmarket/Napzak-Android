@@ -7,8 +7,8 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.napzak.market.chat.dto.ChatMessageMetadata
 import com.napzak.market.chat.dto.MessageItem
-import com.napzak.market.chat.mapper.toEntity
-import com.napzak.market.chat.mapper.toProductEntity
+import com.napzak.market.chat.mapper.chatmessage.toEntity
+import com.napzak.market.chat.mapper.chatmessage.toProductEntity
 import com.napzak.market.local.room.NapzakDatabase
 import com.napzak.market.local.room.dao.ChatMessageDao
 import com.napzak.market.local.room.dao.ChatProductDao

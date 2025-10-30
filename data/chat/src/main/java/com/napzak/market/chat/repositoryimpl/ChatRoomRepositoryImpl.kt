@@ -10,10 +10,12 @@ import com.napzak.market.chat.datasource.ChatRoomDataSource
 import com.napzak.market.chat.datasource.ChatRoomMessageMediator
 import com.napzak.market.chat.dto.ChatRoomCreateRequest
 import com.napzak.market.chat.dto.ChatRoomPatchProductRequest
+import com.napzak.market.chat.mapper.chatmessage.toDomain
+import com.napzak.market.chat.mapper.chatmessage.toEntity
+import com.napzak.market.chat.mapper.chatmessage.toProductEntity
 import com.napzak.market.chat.mapper.chatroom.toDomain
 import com.napzak.market.chat.mapper.chatroom.toProductEntity
 import com.napzak.market.chat.mapper.chatroom.toRoomEntity
-import com.napzak.market.chat.mapper.toDomain
 import com.napzak.market.chat.model.ChatRoomInformation
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.chat.repository.ChatRoomRepository
@@ -23,13 +25,17 @@ import com.napzak.market.local.room.dao.ChatMessageDao
 import com.napzak.market.local.room.dao.ChatProductDao
 import com.napzak.market.local.room.dao.ChatRemoteKeyDao
 import com.napzak.market.local.room.dao.ChatRoomDao
+import com.napzak.market.local.room.entity.ChatMessageEntity
 import com.napzak.market.local.room.relation.ChatMessageWithProduct
+import com.napzak.market.local.room.type.ChatMessageType
 import com.napzak.market.util.android.suspendRunCatching
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 import javax.inject.Inject
 
 class ChatRoomRepositoryImpl @Inject constructor(
@@ -160,6 +166,78 @@ class ChatRoomRepositoryImpl @Inject constructor(
             runOnChatMessageDao {
                 markMessagesAsRead(roomId, isMessageOwner)
             }
+        }
+    }
+
+    override suspend fun insertMessageIntoLocal(
+        message: ReceiveMessage<*>, isRead: Boolean,
+    ): Result<Unit> = suspendRunCatching {
+        val messageEntity =
+            message.toEntity()?.copy(isRead = isRead) ?: throw NullPointerException()
+        val productEntity =
+            if (message is ReceiveMessage.Product) message.toProductEntity()
+            else null
+        chatMessageDao.insertChatMessages(listOf(messageEntity))
+        productEntity?.let { chatProductDao.updateProductPartially(it) }
+    }
+
+    override suspend fun getChatRoomInformationFromLocal(roomId: Long): Result<ChatRoomInformation?> {
+        return suspendRunCatching {
+            withContext(ioDispatcher) {
+                return@withContext chatRoomDao.getChatRoomFlow(roomId).firstOrNull()?.toDomain()
+            }
+        }
+    }
+
+    override suspend fun setOpponentOnlineStatusInLocal(
+        roomId: Long,
+        isOpponentOnline: Boolean
+    ): Result<Unit> {
+        return suspendRunCatching {
+            runOnChatRoomDao {
+                updateOpponentOnlineStatus(roomId, isOpponentOnline)
+            }
+        }
+    }
+
+    override suspend fun setChatRoomByMessageInLocal(message: ReceiveMessage<*>): Result<Unit> {
+        return suspendRunCatching {
+            withContext(ioDispatcher) {
+                napzakDatabase.withTransaction {
+                    message.toEntity()?.let { messageEntity ->
+                        updateChatRoomStatus(messageEntity)
+                        setChatRoomLatestMessage(messageEntity)
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun updateChatRoomStatus(messageEntity: ChatMessageEntity) {
+        val roomId = messageEntity.roomId
+        when (messageEntity.messageType) {
+            ChatMessageType.EXIT -> chatRoomDao.updateWithdrawnStatus(roomId, true)
+            ChatMessageType.WITHDRAWN -> chatRoomDao.updateWithdrawnStatus(roomId, true)
+            ChatMessageType.REPORTED -> chatRoomDao.updateStoreReportedStatus(roomId, true)
+            else -> return
+        }
+    }
+
+    private suspend fun setChatRoomLatestMessage(messageEntity: ChatMessageEntity) {
+        val lastMessage = when (messageEntity.messageType) {
+            ChatMessageType.IMAGE -> "사진"
+            ChatMessageType.TEXT, ChatMessageType.WITHDRAWN -> messageEntity.message ?: ""
+            else -> return
+        }
+        val roomId = messageEntity.roomId
+        chatRoomDao.getChatRoom(roomId)?.unreadCount?.let { unreadCount ->
+            chatRoomDao.updateLastMessage(
+                roomId = messageEntity.roomId,
+                lastMessage = lastMessage,
+                lastMessageAt = messageEntity.createdAt,
+                unreadCount = unreadCount + 1,
+                lastUpdated = LocalDate.now().toString()
+            )
         }
     }
 
