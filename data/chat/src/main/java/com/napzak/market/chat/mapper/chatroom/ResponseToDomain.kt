@@ -1,4 +1,4 @@
-package com.napzak.market.chat.mapper
+package com.napzak.market.chat.mapper.chatroom
 
 import com.napzak.market.chat.dto.ChatRoomInformationResponse
 import com.napzak.market.chat.model.ChatRoomInformation

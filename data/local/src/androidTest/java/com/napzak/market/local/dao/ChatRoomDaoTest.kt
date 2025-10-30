@@ -33,7 +33,7 @@ class ChatRoomDaoTest : DbAbstract() {
         val expected = DummyFactory.createEntity(targetId)
 
         // when
-        dao.upsertChatRoom(expected)
+        dao.safeUpsertChatRooms(listOf(expected), false)
         val actual = dao.getChatRoom(targetId)
 
         // then
@@ -47,7 +47,7 @@ class ChatRoomDaoTest : DbAbstract() {
         val entity = DummyFactory.createEntity(targetId)
 
         // when
-        dao.upsertChatRoom(entity)
+        dao.safeUpsertChatRooms(listOf(entity), false)
         dao.upsertChatRoom(entity.copy(isChatBlocked = true))
         val actual = dao.getChatRoom(targetId)
 

@@ -8,14 +8,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemKey
 import com.napzak.market.chat.chatroom.component.chatitem.ChatDate
 import com.napzak.market.chat.chatroom.component.chatitem.ChatImageItem
 import com.napzak.market.chat.chatroom.component.chatitem.ChatNotice
@@ -23,21 +22,16 @@ import com.napzak.market.chat.chatroom.component.chatitem.ChatProduct
 import com.napzak.market.chat.chatroom.component.chatitem.ChatText
 import com.napzak.market.chat.chatroom.component.chatitem.MyChatItemContainer
 import com.napzak.market.chat.chatroom.component.chatitem.OpponentChatItemContainer
-import com.napzak.market.chat.chatroom.preview.mockChats
 import com.napzak.market.chat.model.ReceiveMessage
-import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 internal fun ChatRoomItemColumn(
     listState: LazyListState,
-    chatItems: ImmutableList<ReceiveMessage<*>>,
+    chatMessages: LazyPagingItems<ReceiveMessage<*>>,
     opponentImageUrl: String?,
     onItemClick: (ReceiveMessage<*>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val reversedChatItem = chatItems.asReversed()
     LazyColumn(
         state = listState,
         reverseLayout = true,
@@ -46,12 +40,16 @@ internal fun ChatRoomItemColumn(
             .padding(horizontal = 20.dp),
     ) {
         item { Spacer(Modifier.height(30.dp)) }
-        itemsIndexed(reversedChatItem, key = { _, item -> item.messageId }) { index, chatItem ->
+        items(
+            count = chatMessages.itemCount,
+            key = chatMessages.itemKey(),
+        ) { index ->
+            val chatItem: ReceiveMessage<*> = chatMessages[index] ?: return@items
             val previousChatItem =
-                if (index < reversedChatItem.lastIndex) reversedChatItem[index + 1]
+                if (index < chatMessages.itemCount - 1) chatMessages[index + 1]
                 else null
             val nextChatItem =
-                if (index > 0) reversedChatItem[index - 1]
+                if (index > 0) chatMessages[index - 1]
                 else null
             val isProfileVisible = isProfileVisible(chatItem, previousChatItem)
             val timeStamp = getTimeStamp(chatItem, nextChatItem)
@@ -220,18 +218,5 @@ private fun getChatItemSpace(
         chatItem is ReceiveMessage.Date || previousChatItem is ReceiveMessage.Date -> 20.dp
         chatItem is ReceiveMessage.Notice || previousChatItem is ReceiveMessage.Notice -> 30.dp
         else -> 8.dp
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun ChatRoomItemColumnPreview() {
-    NapzakMarketTheme {
-        ChatRoomItemColumn(
-            listState = remember { LazyListState() },
-            chatItems = mockChats.toImmutableList(),
-            opponentImageUrl = null,
-            onItemClick = {},
-        )
     }
 }

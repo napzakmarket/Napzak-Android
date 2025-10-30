@@ -4,15 +4,15 @@ import com.napzak.market.chat.repository.ChatRepository
 import com.napzak.market.chat.repository.ChatSocketRepository
 import javax.inject.Inject
 
-class SubscribeChatRoomsUseCase @Inject constructor(
+class HandleNewChatRequestStreamUseCase @Inject constructor(
+    private val chatSocketRepository: ChatSocketRepository,
     private val chatRepository: ChatRepository,
-    private val chatSocketRepository: ChatSocketRepository
 ) {
-    suspend operator fun invoke(storeId: Long): Result<Unit> {
-        return chatRepository.getChatRoomIds().mapCatching { roomIds ->
-            roomIds.forEach { roomId ->
+    suspend operator fun invoke() {
+        chatSocketRepository.getNewChatRequestStream()
+            .collect { roomId ->
                 chatSocketRepository.subscribeChatRoom(roomId)
+                chatRepository.fetchChatRoomsFromRemote()
             }
-        }
     }
 }
