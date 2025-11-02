@@ -231,12 +231,13 @@ class ChatRoomRepositoryImpl @Inject constructor(
             else -> return
         }
         val roomId = messageEntity.roomId
-        chatRoomDao.getChatRoom(roomId)?.unreadCount?.let { unreadCount ->
+        chatRoomDao.getChatRoom(roomId)?.unreadCount?.let {
+            val unreadCount = if (!messageEntity.isMessageOwner) it + 1 else it
             chatRoomDao.updateLastMessage(
                 roomId = messageEntity.roomId,
                 lastMessage = lastMessage,
                 lastMessageAt = messageEntity.createdAt,
-                unreadCount = unreadCount + 1,
+                unreadCount = unreadCount,
                 lastUpdated = LocalDateTime.now().toString()
             )
         }
