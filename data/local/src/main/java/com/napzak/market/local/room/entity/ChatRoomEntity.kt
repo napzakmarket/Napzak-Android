@@ -8,6 +8,7 @@ import java.time.LocalDateTime
 data class ChatRoomEntity(
     @PrimaryKey val roomId: Long,
     val productId: Long? = null,
+    val opponentStoreId: Long? = null,
     val opponentNickName: String,
     val opponentStorePhoto: String,
     val lastMessage: String = "",

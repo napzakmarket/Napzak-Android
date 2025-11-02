@@ -21,6 +21,7 @@ internal fun ChatRoomInformationResponse.toRoomEntity(roomId: Long): ChatRoomEnt
     ChatRoomEntity(
         roomId = roomId,
         productId = productInfo.productId,
+        opponentStoreId = storeInfo.storeId,
         opponentNickName = storeInfo.nickname,
         opponentStorePhoto = storeInfo.storePhoto,
         isWithdrawn = storeInfo.isWithdrawn,

@@ -29,7 +29,7 @@ internal fun ChatRoomWithProduct.toDomain(): ChatRoomInformation? {
 }
 
 private fun ChatRoomEntity.toStoreBrief() = StoreBrief(
-    storeId = 0,
+    storeId = opponentStoreId ?: 0L, // 채팅방에선 스토어 아이디, 채팅탭에선 0L
     nickname = opponentNickName,
     storePhoto = opponentStorePhoto,
     isWithdrawn = isWithdrawn,
