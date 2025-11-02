@@ -32,6 +32,8 @@ interface ChatRoomDao {
             if (existingChatRoom == null) {
                 upsertChatRoom(chatRoom)
             } else {
+                // 채팅탭과 채팅방에서 정보를 갱신하는 상황을 나눕니다.
+                // isInformation은 상세한 정보를 보여줘야 하는 채팅방을 의미합니다.
                 val updatedChatRoom = if (isInformation) {
                     with(chatRoom) {
                         existingChatRoom.copy(
@@ -53,6 +55,7 @@ interface ChatRoomDao {
                             lastMessageAt = lastMessageAt,
                             unreadCount = unreadCount,
                             isWithdrawn = isWithdrawn,
+                            lastUpdated = lastUpdated,
                         )
                     }
                 }
