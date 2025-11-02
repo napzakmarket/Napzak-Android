@@ -11,7 +11,7 @@ class SubscribeChatRoomsUseCase @Inject constructor(
     suspend operator fun invoke(storeId: Long): Result<Unit> {
         return chatRepository.getChatRoomIds().mapCatching { roomIds ->
             roomIds.forEach { roomId ->
-                chatSocketRepository.subscribeChatRoom(roomId)
+                chatSocketRepository.subscribeChatRoom(roomId).getOrThrow()
             }
         }
     }

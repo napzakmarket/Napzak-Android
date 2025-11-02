@@ -6,11 +6,8 @@ import com.napzak.market.chat.repository.ChatRoomRepository
 import com.napzak.market.chat.repository.ChatSocketRepository
 import javax.inject.Inject
 
-/**
- * 새로운 채팅방을 생성하고, 입장 및 구독을 시작합니다.
- *
- * 새 채팅방 아이디 `roomId: Long`을 반환합니다.
- */
+// 새로운 채팅방에 대한 생성, 입장, 구독을 실행합니다.
+// 새 채팅방의 roomId를 반환합니다.
 class CreateChatRoomUseCase @Inject constructor(
     private val chatRoomRepository: ChatRoomRepository,
     private val chatSocketRepository: ChatSocketRepository,
@@ -33,8 +30,8 @@ class CreateChatRoomUseCase @Inject constructor(
             .getOrThrow()
 
     private suspend fun enterChatRoom(roomId: Long) {
-        chatRoomRepository.enterChatRoom(roomId)
-        chatSocketRepository.subscribeChatRoom(roomId)
+        chatRoomRepository.enterChatRoom(roomId).getOrThrow()
+        chatSocketRepository.subscribeChatRoom(roomId).getOrThrow()
     }
 
     private suspend fun getChatRoomInformation(productId: Long, roomId: Long) =
@@ -42,6 +39,6 @@ class CreateChatRoomUseCase @Inject constructor(
 
     private suspend fun sendProductMessage(roomId: Long, productBrief: ProductBrief) {
         val message = SendMessage.Product(roomId, null, productBrief)
-        chatSocketRepository.sendChat(message)
+        chatSocketRepository.sendChat(message).getOrThrow()
     }
 }

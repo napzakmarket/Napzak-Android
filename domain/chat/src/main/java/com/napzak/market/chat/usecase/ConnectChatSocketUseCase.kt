@@ -6,9 +6,8 @@ import javax.inject.Inject
 class ConnectChatSocketUseCase @Inject constructor(
     private val chatSocketRepository: ChatSocketRepository,
 ) {
-    suspend operator fun invoke(storeId: Long): Result<Unit> {
-        return chatSocketRepository.connect().onSuccess {
-            chatSocketRepository.subscribeCreateChatRoom(storeId)
-        }
+    suspend operator fun invoke(storeId: Long): Result<Unit> = runCatching {
+        chatSocketRepository.connect().getOrThrow()
+        chatSocketRepository.subscribeCreateChatRoom(storeId).getOrThrow()
     }
 }

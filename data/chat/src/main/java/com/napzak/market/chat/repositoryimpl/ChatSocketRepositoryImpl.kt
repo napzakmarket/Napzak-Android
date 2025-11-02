@@ -28,21 +28,18 @@ class ChatSocketRepositoryImpl @Inject constructor(
     }
 
     override suspend fun subscribeChatRoom(roomId: Long): Result<Unit> = suspendRunCatching {
-        if (awaitConnected()) {
-            chatSocketDataSource.subscribeChatRoom(roomId)
-        }
+        awaitConnected()
+        chatSocketDataSource.subscribeChatRoom(roomId)
     }
 
     override suspend fun subscribeCreateChatRoom(storeId: Long) = runCatching {
-        if (awaitConnected()) {
-            chatSocketDataSource.subscribeCreateChatRoom(storeId)
-        }
+        awaitConnected()
+        chatSocketDataSource.subscribeCreateChatRoom(storeId)
     }
 
     override suspend fun sendChat(chat: SendMessage<*>): Result<Unit> = suspendRunCatching {
-        if (awaitConnected()) {
-            chatSocketDataSource.sendMessage(chat.toRequest())
-        }
+        awaitConnected()
+        chatSocketDataSource.sendMessage(chat.toRequest())
     }
 
     override fun getChatMessageStream(storeId: Long): Flow<ReceiveMessage<*>> {
@@ -53,13 +50,15 @@ class ChatSocketRepositoryImpl @Inject constructor(
         return chatSocketDataSource.getNewChatRequestFlow()
     }
 
-    private suspend fun awaitConnected(timeoutMs: Long = 7_000): Boolean {
-        return withTimeoutOrNull(timeoutMs) {
+    private suspend fun awaitConnected(timeoutMs: Long = 7_000) {
+        val connected = withTimeoutOrNull(timeoutMs) {
             chatSocketDataSource.socketConnectionState
                 .distinctUntilChanged()
                 .filter { it == SocketConnectionState.CONNECTED }
                 .first()
             true
         } ?: false
+
+        if (!connected) throw IllegalStateException("소켓이 연결되어 있지 않습니다.")
     }
 }
