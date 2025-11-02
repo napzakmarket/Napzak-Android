@@ -100,6 +100,7 @@ class ChatRoomViewModel @Inject constructor(
             if (roomId == null) flowOf(UiState.Empty)
             else chatRoomRepository.getChatRoomInformationAsFlow(roomId).map { UiState.Success(it) }
         }.collect { chatRoomState ->
+            _chatRoomState.update { chatRoomState }
             (chatRoomState as? UiState.Success)?.let { state ->
                 val roomId = state.data.roomId ?: return@collect
                 val isOpponentOnline = state.data.isOpponentOnline
@@ -152,7 +153,6 @@ class ChatRoomViewModel @Inject constructor(
             sendMessage(SendMessage.Image(roomId, null, imageUrls))
         }.onSuccess {
             chatCondition = ChatCondition.PRODUCT_NOT_CHANGED
-            _sideEffect.trySend(ChatRoomSideEffect.OnSendChatMessage)
         }.onFailure {
             Timber.e(it)
             _sideEffect.trySend(ChatRoomSideEffect.ShowToast(CHAT_ERROR_MSG))
@@ -176,10 +176,9 @@ class ChatRoomViewModel @Inject constructor(
     }
 
     private suspend fun sendMessage(message: SendMessage<*>) {
-        sendChatMessageUseCase(message).onSuccess {
-            chat = ""
-            _sideEffect.trySend(ChatRoomSideEffect.OnSendChatMessage)
-        }
+        sendChatMessageUseCase(message).getOrThrow()
+        chat = ""
+        _sideEffect.trySend(ChatRoomSideEffect.OnSendChatMessage)
     }
 
     private suspend fun getUploadImageUrls(uri: String): List<String> {
@@ -215,7 +214,7 @@ class ChatRoomViewModel @Inject constructor(
             .onSuccess {
                 _productId.value?.let { productId ->
                     chatRoomRepository.getChatRoomInformation(productId, null)
-                    _sideEffect.send(
+                    _sideEffect.trySend(
                         ChatRoomSideEffect.OnChangeBlockState(targetState)
                     )
                 }
