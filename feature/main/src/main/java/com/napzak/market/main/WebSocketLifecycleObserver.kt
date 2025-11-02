@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 class WebSocketLifecycleObserver @Inject constructor(
@@ -90,7 +91,9 @@ class WebSocketLifecycleObserver @Inject constructor(
 
     private fun collectMessages(storeId: Long) {
         messageCollectJob = activityScope.launch {
-            handleChatMessageStreamUseCase(storeId)
+            handleChatMessageStreamUseCase(storeId).collect { result ->
+                result.onFailure(Timber::e)
+            }
         }
     }
 

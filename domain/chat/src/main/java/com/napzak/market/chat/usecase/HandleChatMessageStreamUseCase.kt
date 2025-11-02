@@ -3,14 +3,16 @@ package com.napzak.market.chat.usecase
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.chat.repository.ChatRoomRepository
 import com.napzak.market.chat.repository.ChatSocketRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class HandleChatMessageStreamUseCase @Inject constructor(
     private val chatSocketRepository: ChatSocketRepository,
     private val chatRoomRepository: ChatRoomRepository,
 ) {
-    suspend operator fun invoke(storeId: Long) {
-        chatSocketRepository.getChatMessageStream(storeId).collect { message ->
+    suspend operator fun invoke(storeId: Long): Flow<Result<Unit>> {
+        return chatSocketRepository.getChatMessageStream(storeId).map { message ->
             runCatching {
                 when (message) {
                     is ReceiveMessage.Join,
