@@ -24,7 +24,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.chat.chatroom.preview.mockProductBrief
 import com.napzak.market.chat.model.ProductBrief
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -211,7 +210,7 @@ private fun ChatProductPreview() {
     NapzakMarketTheme {
         Column(modifier = Modifier.fillMaxWidth()) {
             ChatProduct(
-                product = mockProductBrief,
+                product = ProductBrief.mock(),
                 onNavigateClick = {},
                 isMessageOwner = true
             )
@@ -219,7 +218,7 @@ private fun ChatProductPreview() {
             Spacer(modifier = Modifier.height(20.dp))
 
             ChatProduct(
-                product = mockProductBrief.copy(
+                product = ProductBrief.mock().copy(
                     tradeType = "BUY",
                     isProductDeleted = true
                 ),
