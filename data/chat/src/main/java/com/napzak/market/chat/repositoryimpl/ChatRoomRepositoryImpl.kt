@@ -173,7 +173,8 @@ class ChatRoomRepositoryImpl @Inject constructor(
         message: ReceiveMessage<*>, isRead: Boolean,
     ): Result<Unit> = suspendRunCatching {
         val messageEntity =
-            message.toEntity()?.copy(isRead = isRead) ?: throw NullPointerException()
+            message.toEntity()?.copy(isRead = isRead)
+                ?: throw NullPointerException("message entity 변환 실패")
         val productEntity =
             if (message is ReceiveMessage.Product) message.toProductEntity()
             else null
