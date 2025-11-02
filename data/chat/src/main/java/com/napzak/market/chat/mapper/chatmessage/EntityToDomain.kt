@@ -26,11 +26,11 @@ internal fun ChatMessageEntity.toDomain(
 
 private fun ChatMessageEntity.toText(roomId: Long): ReceiveMessage.Text =
     ReceiveMessage.Text(
-        messageId = requireNotNull(messageId),
+        messageId = messageId,
         roomId = roomId,
         senderId = requireNotNull(senderId),
         text = message ?: "",
-        timeStamp = requireNotNull(createdAt),
+        timeStamp = createdAt,
         isRead = isRead,
         isMessageOwner = isMessageOwner,
         isProfileNeeded = isProfileNeeded,
@@ -40,11 +40,11 @@ private fun ChatMessageEntity.toImage(
     roomId: Long,
 ): ReceiveMessage.Image =
     ReceiveMessage.Image(
-        messageId = requireNotNull(messageId),
+        messageId = messageId,
         roomId = roomId,
         senderId = requireNotNull(senderId),
         imageUrl = message ?: "",
-        timeStamp = requireNotNull(createdAt),
+        timeStamp = createdAt,
         isRead = isRead,
         isMessageOwner = isMessageOwner,
         isProfileNeeded = isProfileNeeded,
@@ -69,19 +69,19 @@ private fun ChatMessageEntity.toNotice(
     roomId: Long,
 ): ReceiveMessage.Notice =
     ReceiveMessage.Notice(
-        messageId = requireNotNull(messageId),
+        messageId = messageId,
         roomId = roomId,
         senderId = senderId,
         notice = message ?: "",
-        timeStamp = requireNotNull(createdAt),
+        timeStamp = createdAt,
     )
 
 private fun ChatMessageEntity.toDate(
     roomId: Long,
 ): ReceiveMessage.Date =
     ReceiveMessage.Date(
-        messageId = requireNotNull(messageId),
+        messageId = messageId,
         roomId = roomId,
         date = message ?: "",
-        timeStamp = requireNotNull(createdAt),
+        timeStamp = createdAt,
     )
