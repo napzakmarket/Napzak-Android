@@ -29,13 +29,12 @@ import com.napzak.market.common.type.MarketTab
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.component.GenreFilterChip
+import com.napzak.market.designsystem.component.FilterChip
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.component.tabbar.MarketTabBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.store.R.drawable.ic_down_chevron_7
 import com.napzak.market.feature.store.R.string.store_count
-import com.napzak.market.feature.store.R.string.store_empty_text
 import com.napzak.market.feature.store.R.string.store_filter_buying
 import com.napzak.market.feature.store.R.string.store_filter_selling
 import com.napzak.market.feature.store.R.string.store_product
@@ -111,8 +110,8 @@ internal fun StoreScrollSection(
                     .padding(top = 15.dp, bottom = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                GenreFilterChip(
-                    genreList = filteredGenres,
+                FilterChip(
+                    items = filteredGenres.map { it.genreName },
                     onChipClick = onGenreFilterClick,
                 )
 

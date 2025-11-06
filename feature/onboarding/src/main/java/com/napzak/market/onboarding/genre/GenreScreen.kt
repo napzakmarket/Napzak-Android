@@ -31,7 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.designsystem.R.drawable.ic_third_step_indicator
 import com.napzak.market.designsystem.R.string.warning_snackbar_genre_limit_message
-import com.napzak.market.designsystem.component.GenreChipButtonGroup
+import com.napzak.market.designsystem.component.ChipButtonGroup
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.component.toast.WarningSnackBar
@@ -161,7 +161,7 @@ fun GenreScreen(
             )
 
             if (uiState.selectedGenres.isNotEmpty()) {
-                GenreChipButtonGroup(
+                ChipButtonGroup(
                     genreNames = uiState.selectedGenres.map { it.name },
                     onResetClick = onAllGenresReset,
                     onGenreClick = { name ->

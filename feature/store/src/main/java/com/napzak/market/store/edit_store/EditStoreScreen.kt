@@ -165,7 +165,7 @@ private fun EditStoreScreen(
                         )
                     }
                     GenreSearchBottomSheet(
-                        initialSelectedGenreList = selectedGenres,
+                        initiallySelectedGenres = selectedGenres,
                         genreItems = uiState.searchedGenres,
                         sheetState = bottomSheetState,
                         onDismissRequest = {

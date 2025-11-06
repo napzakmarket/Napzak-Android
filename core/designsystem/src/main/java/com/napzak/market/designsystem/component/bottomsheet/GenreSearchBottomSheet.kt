@@ -41,18 +41,18 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_dark_gray_cancel
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.view.WindowInsetsControllerCompat
+import com.napzak.market.designsystem.R.drawable.ic_dark_gray_cancel
 import com.napzak.market.designsystem.R.string.genre_apply_button
 import com.napzak.market.designsystem.R.string.genre_search_genre_limit_notice
 import com.napzak.market.designsystem.R.string.genre_search_hint
 import com.napzak.market.designsystem.R.string.genre_search_select_genre
 import com.napzak.market.designsystem.R.string.warning_snackbar_genre_limit_message
-import com.napzak.market.designsystem.component.GenreChipButtonGroup
-import com.napzak.market.designsystem.component.GenreListItem
+import com.napzak.market.designsystem.component.ChipButtonGroup
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.loading.NapzakLoadingSpinnerOverlay
 import com.napzak.market.designsystem.component.textfield.SearchTextField
@@ -67,7 +67,7 @@ import kotlinx.coroutines.launch
 /**
  * 장르 검색 BottomSheet
  *
- * @param initialSelectedGenreList 선택한 장르 리스트
+ * @param initiallySelectedGenres 선택한 장르 리스트
  * @param genreItems 하단에 보여지는 장르 리스트
  * @param onDismissRequest x 버튼 또는 BottomSheet 외의 영역 클릭 시 실행됨
  * @param onTextChange 검색어 입력 시 실행됨
@@ -78,7 +78,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GenreSearchBottomSheet(
-    initialSelectedGenreList: List<Genre>,
+    initiallySelectedGenres: List<Genre>,
     genreItems: List<Genre>,
     onDismissRequest: () -> Unit,
     onTextChange: (String) -> Unit,
@@ -89,9 +89,7 @@ fun GenreSearchBottomSheet(
     val focusManager = LocalFocusManager.current
     var searchText by remember { mutableStateOf("") }
     var selectedGenreList by remember {
-        mutableStateOf<List<Genre>>(
-            initialSelectedGenreList
-        )
+        mutableStateOf(initiallySelectedGenres)
     }
     var isShownSnackBar by remember { mutableStateOf(false) }
     var isLoadingOn by remember { mutableStateOf(true) }
@@ -176,7 +174,7 @@ fun GenreSearchBottomSheet(
                     )
 
                     if (selectedGenreList.isNotEmpty()) {
-                        GenreChipButtonGroup(
+                        ChipButtonGroup(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 23.dp),
@@ -340,13 +338,40 @@ private fun ButtonSection(
     }
 }
 
+@Composable
+private fun GenreListItem(
+    isSelected: Boolean,
+    genreName: String,
+    onGenreItemClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val textStyle =
+        if (isSelected) NapzakMarketTheme.typography.body14sb
+        else NapzakMarketTheme.typography.body14r
+    val textColor =
+        if (isSelected) NapzakMarketTheme.colors.purple500
+        else NapzakMarketTheme.colors.gray400
+
+    Text(
+        text = genreName,
+        style = textStyle,
+        color = textColor,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 15.dp)
+            .noRippleClickable(onGenreItemClick),
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 private fun GenreSearchBottomSheetPreview() {
     NapzakMarketTheme {
         GenreSearchBottomSheet(
-            initialSelectedGenreList = listOf(
+            initiallySelectedGenres = listOf(
                 Genre(0, "산리오"),
                 Genre(1, "주술회전"),
                 Genre(2, "진격의 거인"),

@@ -5,7 +5,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.LocalOverscrollConfiguration
+import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -62,7 +62,7 @@ private const val ELLIPSIS = "..."
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun GenreChipButtonGroup(
+fun ChipButtonGroup(
     genreNames: List<String>,
     onResetClick: () -> Unit,
     onGenreClick: (String) -> Unit,
@@ -71,7 +71,7 @@ fun GenreChipButtonGroup(
     contentPaddingValues: PaddingValues = PaddingValues(),
 ) {
     CompositionLocalProvider(
-        value = LocalOverscrollConfiguration provides null,
+        value = LocalOverscrollFactory provides null,
         content = {
             AnimatedContent(
                 targetState = genreNames.isNotEmpty(),
@@ -180,7 +180,7 @@ private fun RemovableGenreChip(
 
 @Preview(showBackground = true, widthDp = 360)
 @Composable
-private fun GenreChipButtonGroupPreview() {
+private fun ChipButtonGroupPreview() {
     NapzakMarketTheme {
         val genreNames: MutableList<String> = remember {
             mutableStateListOf("나루토", "원피스", "사카모토데이즈", "진격의 거인", "조조의 기묘한 모험")
@@ -192,7 +192,7 @@ private fun GenreChipButtonGroupPreview() {
                 .padding(vertical = 30.dp)
         ) {
 
-            GenreChipButtonGroup(
+            ChipButtonGroup(
                 modifier = Modifier.fillMaxWidth(),
                 genreNames = genreNames.toList(),
                 contentPaddingValues = PaddingValues(end = 20.dp),

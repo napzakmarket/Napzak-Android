@@ -28,7 +28,7 @@ internal fun ExploreBottomSheetScreen(
     with(exploreBottomSheetState) {
         if (isGenreSearchingBottomSheetVisible) {
             GenreSearchBottomSheet(
-                initialSelectedGenreList = selectedGenres,
+                initiallySelectedGenres = selectedGenres,
                 sheetState = sheetState,
                 genreItems = genreItems,
                 onDismissRequest = { onDismissRequest(BottomSheetType.GENRE_SEARCHING) },
