@@ -4,7 +4,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
 import com.napzak.market.common.type.BottomSheetType
 import com.napzak.market.common.type.SortType
 import com.napzak.market.designsystem.component.bottomsheet.BottomSheetGenre
@@ -26,7 +25,6 @@ internal fun ExploreBottomSheetScreen(
     onSortItemClick: (SortType) -> Unit,
     onTextChange: (String) -> Unit,
     onGenreSelectButtonClick: (List<Genre>) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     with(exploreBottomSheetState) {
         if (isGenreSearchingBottomSheetVisible) {
