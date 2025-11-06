@@ -3,11 +3,14 @@ package com.napzak.market.explore.component
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.napzak.market.common.type.BottomSheetType
 import com.napzak.market.common.type.SortType
+import com.napzak.market.designsystem.component.bottomsheet.BottomSheetGenre
 import com.napzak.market.designsystem.component.bottomsheet.GenreSearchBottomSheet
 import com.napzak.market.designsystem.component.bottomsheet.SortBottomSheet
+import com.napzak.market.designsystem.component.bottomsheet.rememberGenreBottomSheetState
 import com.napzak.market.explore.state.ExploreBottomSheetState
 import com.napzak.market.genre.model.Genre
 
@@ -27,14 +30,20 @@ internal fun ExploreBottomSheetScreen(
 ) {
     with(exploreBottomSheetState) {
         if (isGenreSearchingBottomSheetVisible) {
+            val genreBottomSheetState = rememberGenreBottomSheetState(
+                initiallySelectedGenres = selectedGenres.mapToBottomSheetGenre(),
+            )
+
+            LaunchedEffect(genreItems) {
+                genreBottomSheetState.genreItems = genreItems.mapToBottomSheetGenre()
+            }
+
             GenreSearchBottomSheet(
-                initiallySelectedGenres = selectedGenres,
-                sheetState = sheetState,
-                genreItems = genreItems,
+                genreBottomSheetState = genreBottomSheetState,
                 onDismissRequest = { onDismissRequest(BottomSheetType.GENRE_SEARCHING) },
                 onTextChange = onTextChange,
                 onButtonClick = { newGenres ->
-                    onGenreSelectButtonClick(newGenres)
+                    onGenreSelectButtonClick(newGenres.mapToGenre())
                 },
             )
         }
@@ -50,4 +59,18 @@ internal fun ExploreBottomSheetScreen(
             )
         }
     }
+}
+
+private fun List<Genre>.mapToBottomSheetGenre() = map {
+    BottomSheetGenre(
+        id = it.genreId,
+        name = it.genreName,
+    )
+}
+
+private fun List<BottomSheetGenre>.mapToGenre() = map {
+    Genre(
+        genreId = it.id,
+        genreName = it.name,
+    )
 }
