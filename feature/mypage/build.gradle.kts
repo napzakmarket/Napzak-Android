@@ -23,7 +23,6 @@ dependencies {
     implementation(projects.core.mixpanel)
     implementation(projects.domain.store)
     implementation(projects.domain.notification)
-    implementation(projects.feature.detail)
     implementation(projects.domain.product)
     implementation(projects.domain.interest)
 
