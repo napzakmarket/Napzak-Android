@@ -26,27 +26,26 @@ import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_down
 import com.napzak.market.designsystem.R.string.genre_filter_genre
 import com.napzak.market.designsystem.R.string.genre_filter_genre_extra_count
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.genre.model.Genre
 import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
-fun GenreFilterChip(
-    genreList: List<Genre>,
+fun FilterChip(
+    items: List<String>,
     onChipClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val genreText =
-        if (genreList.isEmpty()) stringResource(genre_filter_genre)
-        else genreList.first().genreName
-    val extraCount = genreList.size - 1
+        if (items.isEmpty()) stringResource(genre_filter_genre)
+        else items.first()
+    val extraCount = items.size - 1
     val textColor =
-        if (genreList.isEmpty()) NapzakMarketTheme.colors.gray400
+        if (items.isEmpty()) NapzakMarketTheme.colors.gray400
         else NapzakMarketTheme.colors.white
     val borderColor =
-        if (genreList.isEmpty()) NapzakMarketTheme.colors.gray100
+        if (items.isEmpty()) NapzakMarketTheme.colors.gray100
         else NapzakMarketTheme.colors.gray500
     val contentColor =
-        if (genreList.isEmpty()) Color.Transparent
+        if (items.isEmpty()) Color.Transparent
         else NapzakMarketTheme.colors.gray500
     val textStyle = NapzakMarketTheme.typography.caption12sb
 
@@ -58,7 +57,7 @@ fun GenreFilterChip(
             .padding(horizontal = 14.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (genreList.isEmpty()) {
+        if (items.isEmpty()) {
             Text(
                 text = stringResource(genre_filter_genre),
                 style = textStyle,
@@ -98,26 +97,19 @@ fun GenreFilterChip(
 
 @Preview
 @Composable
-private fun GenreFilterChipPreview() {
+private fun FilterChipPreview() {
     NapzakMarketTheme {
         Column {
-            GenreFilterChip(
-                genreList = emptyList(),
+            FilterChip(
+                items = emptyList(),
                 onChipClick = { },
             )
-            GenreFilterChip(
-                genreList = listOf(
-                    Genre(0, "산리오"),
-                ),
+            FilterChip(
+                items = listOf("산리오"),
                 onChipClick = { },
             )
-            GenreFilterChip(
-                genreList = listOf(
-                    Genre(0, "산리오"),
-                    Genre(1, "산리오1"),
-                    Genre(2, "산리오2"),
-                    Genre(3, "산리오3")
-                ),
+            FilterChip(
+                items = listOf("산리오", "산리오1", "산리오2", "산리오3"),
                 onChipClick = { },
             )
         }

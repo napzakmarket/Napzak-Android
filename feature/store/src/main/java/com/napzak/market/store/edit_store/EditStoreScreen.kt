@@ -19,7 +19,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,15 +36,14 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.common.state.UiState
-import com.napzak.market.designsystem.component.bottomsheet.GenreSearchBottomSheet
 import com.napzak.market.designsystem.component.button.NapzakThrottleButton
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.topbar.NavigateUpTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.store.R.string.store_edit_button_proceed
 import com.napzak.market.feature.store.R.string.store_edit_profile
-import com.napzak.market.genre.model.Genre
 import com.napzak.market.presigned_url.type.PhotoType
+import com.napzak.market.store.edit_store.component.EditStoreBottomSheetSection
 import com.napzak.market.store.edit_store.component.EditStoreDescriptionSection
 import com.napzak.market.store.edit_store.component.EditStoreNickNameSection
 import com.napzak.market.store.edit_store.component.EditStorePhotoSection
@@ -132,7 +130,6 @@ private fun EditStoreScreen(
     ) { innerPadding ->
         when (uiState.loadState) {
             is UiState.Success -> {
-                val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
                 val bottomSheetVisibility = remember { mutableStateOf(false) }
 
                 with(uiState.storeDetail) {
@@ -158,29 +155,15 @@ private fun EditStoreScreen(
                 }
 
                 if (bottomSheetVisibility.value) {
-                    val selectedGenres = uiState.storeDetail.preferredGenres.map {
-                        Genre(
-                            genreId = it.genreId,
-                            genreName = it.genreName,
-                        )
-                    }
-                    GenreSearchBottomSheet(
-                        initialSelectedGenreList = selectedGenres,
-                        genreItems = uiState.searchedGenres,
-                        sheetState = bottomSheetState,
-                        onDismissRequest = {
-                            bottomSheetVisibility.value = false
-                        },
+                    EditStoreBottomSheetSection(
+                        initiallySelectedGenre = uiState.storeDetail.preferredGenres,
+                        searchedGenres = uiState.searchedGenres,
+                        onDismissRequest = { bottomSheetVisibility.value = false },
                         onTextChange = onGenreSearchTextChange,
-                        onButtonClick = { genres ->
-                            onStoreGenreChange(genres.map { genre ->
-                                StoreEditGenre(
-                                    genreId = genre.genreId,
-                                    genreName = genre.genreName,
-                                )
-                            })
+                        onStoreGenreChange = { newGenres ->
+                            onStoreGenreChange(newGenres)
                             bottomSheetVisibility.value = false
-                        },
+                        }
                     )
                 }
             }

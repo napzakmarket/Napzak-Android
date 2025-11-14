@@ -20,10 +20,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -41,24 +39,23 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.napzak.market.designsystem.R.drawable.ic_dark_gray_cancel
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.view.WindowInsetsControllerCompat
+import com.napzak.market.designsystem.R.drawable.ic_dark_gray_cancel
 import com.napzak.market.designsystem.R.string.genre_apply_button
 import com.napzak.market.designsystem.R.string.genre_search_genre_limit_notice
 import com.napzak.market.designsystem.R.string.genre_search_hint
 import com.napzak.market.designsystem.R.string.genre_search_select_genre
 import com.napzak.market.designsystem.R.string.warning_snackbar_genre_limit_message
-import com.napzak.market.designsystem.component.GenreChipButtonGroup
-import com.napzak.market.designsystem.component.GenreListItem
+import com.napzak.market.designsystem.component.ChipButtonGroup
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.loading.NapzakLoadingSpinnerOverlay
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.component.toast.WarningSnackBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
-import com.napzak.market.genre.model.Genre
 import com.napzak.market.ui_util.disableContrastEnforcement
 import com.napzak.market.ui_util.noRippleClickable
 import kotlinx.coroutines.delay
@@ -67,52 +64,40 @@ import kotlinx.coroutines.launch
 /**
  * 장르 검색 BottomSheet
  *
- * @param initialSelectedGenreList 선택한 장르 리스트
- * @param genreItems 하단에 보여지는 장르 리스트
+ * @param genreBottomSheetState 장르 바텀시트의 상태홀더
  * @param onDismissRequest x 버튼 또는 BottomSheet 외의 영역 클릭 시 실행됨
  * @param onTextChange 검색어 입력 시 실행됨
  * @param onButtonClick 적용하기 버튼 클릭 시 실행됨
- * @param sheetState 바텀시트 상태 값 (default값 사용 권장)
  */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GenreSearchBottomSheet(
-    initialSelectedGenreList: List<Genre>,
-    genreItems: List<Genre>,
+    genreBottomSheetState: GenreBottomSheetState,
     onDismissRequest: () -> Unit,
     onTextChange: (String) -> Unit,
-    onButtonClick: (List<Genre>) -> Unit,
-    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+    onButtonClick: (List<BottomSheetGenre>) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
-    var searchText by remember { mutableStateOf("") }
-    var selectedGenreList by remember {
-        mutableStateOf<List<Genre>>(
-            initialSelectedGenreList
-        )
-    }
     var isShownSnackBar by remember { mutableStateOf(false) }
     var isLoadingOn by remember { mutableStateOf(true) }
 
-    val scope = rememberCoroutineScope()
-
-    LaunchedEffect(sheetState.currentValue) {
-        if (sheetState.currentValue == SheetValue.Expanded) {
+    LaunchedEffect(genreBottomSheetState.sheetState.currentValue) {
+        if (genreBottomSheetState.sheetState.currentValue == SheetValue.Expanded) {
             delay(500)
             isLoadingOn = false
         }
     }
 
-    LaunchedEffect(searchText) { onTextChange(searchText) }
+    LaunchedEffect(genreBottomSheetState.searchText) { onTextChange(genreBottomSheetState.searchText) }
 
     ModalBottomSheet(
         onDismissRequest = {
             focusManager.clearFocus()
             onDismissRequest()
         },
-        sheetState = sheetState,
+        sheetState = genreBottomSheetState.sheetState,
         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
         containerColor = NapzakMarketTheme.colors.white,
         scrimColor = NapzakMarketTheme.colors.transBlack,
@@ -151,7 +136,7 @@ fun GenreSearchBottomSheet(
                         modifier = Modifier
                             .noRippleClickable {
                                 coroutineScope
-                                    .launch { sheetState.hide() }
+                                    .launch { genreBottomSheetState.hide() }
                                     .invokeOnCompletion {
                                         focusManager.clearFocus()
                                         onDismissRequest()
@@ -163,30 +148,27 @@ fun GenreSearchBottomSheet(
                     GenreSearchNoticeSection()
 
                     SearchTextField(
-                        text = searchText,
+                        text = genreBottomSheetState.searchText,
                         onTextChange = { newSearchText ->
-                            searchText = newSearchText
+                            genreBottomSheetState.searchText = newSearchText
                         },
                         hint = stringResource(genre_search_hint),
-                        onResetClick = { searchText = "" },
+                        onResetClick = { genreBottomSheetState.searchText = "" },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(end = 20.dp),
-                        onSearchClick = { onTextChange(searchText) },
+                        onSearchClick = { onTextChange(genreBottomSheetState.searchText) },
                     )
 
-                    if (selectedGenreList.isNotEmpty()) {
-                        GenreChipButtonGroup(
+                    if (genreBottomSheetState.selectedGenres.isNotEmpty()) {
+                        ChipButtonGroup(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 23.dp),
-                            genreNames = selectedGenreList.map(Genre::genreName),
+                            items = genreBottomSheetState.selectedGenres.map(BottomSheetGenre::name),
                             contentPaddingValues = PaddingValues(end = 20.dp),
-                            onResetClick = { selectedGenreList = emptyList() },
-                            onGenreClick = { genreName ->
-                                selectedGenreList =
-                                    selectedGenreList.filterNot { it.genreName == genreName }
-                            },
+                            onResetClick = genreBottomSheetState::resetSelectedGenres,
+                            onChipClick = genreBottomSheetState::removeSelectedGenre,
                         )
                     } else {
                         Spacer(Modifier.height(25.dp))
@@ -203,24 +185,9 @@ fun GenreSearchBottomSheet(
                             .padding(horizontal = 20.dp),
                     ) {
                         GenreList(
-                            genreItems = genreItems,
-                            selectedGenreList = selectedGenreList,
-                            onGenreItemClick = { genreItem, isSelected ->
-                                if (isSelected) {
-                                    selectedGenreList =
-                                        selectedGenreList.filterNot { it.genreName == genreItem.genreName }
-                                } else {
-                                    if (selectedGenreList.size < 7) {
-                                        selectedGenreList += genreItem
-                                    } else {
-                                        isShownSnackBar = true
-                                        scope.launch {
-                                            delay(2000)
-                                            isShownSnackBar = false
-                                        }
-                                    }
-                                }
-                            },
+                            genreItems = genreBottomSheetState.genreItems,
+                            selectedGenreList = genreBottomSheetState.selectedGenres,
+                            onGenreItemClick = genreBottomSheetState::handleGenreClick
                         )
                     }
                 }
@@ -259,10 +226,10 @@ fun GenreSearchBottomSheet(
                 ButtonSection(
                     onButtonClick = {
                         coroutineScope
-                            .launch { sheetState.hide() }
+                            .launch { genreBottomSheetState.hide() }
                             .invokeOnCompletion {
                                 focusManager.clearFocus()
-                                onButtonClick(selectedGenreList)
+                                onButtonClick(genreBottomSheetState.selectedGenres)
                             }
                     }
                 )
@@ -296,9 +263,9 @@ private fun GenreSearchNoticeSection() {
 
 @Composable
 private fun GenreList(
-    genreItems: List<Genre>,
-    selectedGenreList: List<Genre>,
-    onGenreItemClick: (Genre, Boolean) -> Unit,
+    genreItems: List<BottomSheetGenre>,
+    selectedGenreList: List<BottomSheetGenre>,
+    onGenreItemClick: (BottomSheetGenre, Boolean) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
@@ -310,7 +277,7 @@ private fun GenreList(
 
             GenreListItem(
                 isSelected = isSelected,
-                genreName = genreItem.genreName,
+                genreName = genreItem.name,
                 onGenreItemClick = { onGenreItemClick(genreItem, isSelected) }
             )
         }
@@ -340,30 +307,61 @@ private fun ButtonSection(
     }
 }
 
+@Composable
+private fun GenreListItem(
+    isSelected: Boolean,
+    genreName: String,
+    onGenreItemClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val textStyle =
+        if (isSelected) NapzakMarketTheme.typography.body14sb
+        else NapzakMarketTheme.typography.body14r
+    val textColor =
+        if (isSelected) NapzakMarketTheme.colors.purple500
+        else NapzakMarketTheme.colors.gray400
+
+    Text(
+        text = genreName,
+        style = textStyle,
+        color = textColor,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 15.dp)
+            .noRippleClickable(onGenreItemClick),
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 private fun GenreSearchBottomSheetPreview() {
     NapzakMarketTheme {
+        val sheetState = rememberGenreBottomSheetState(
+            initiallySelectedGenres = listOf(
+                BottomSheetGenre(0, "산리오"),
+                BottomSheetGenre(1, "주술회전"),
+                BottomSheetGenre(2, "진격의 거인"),
+            ),
+            genres = listOf(
+                BottomSheetGenre(0, "산리오"),
+                BottomSheetGenre(1, "주술회전"),
+                BottomSheetGenre(2, "진격의 거인"),
+                BottomSheetGenre(3, "산리오1"),
+                BottomSheetGenre(4, "주술회전1"),
+                BottomSheetGenre(5, "진격의 거인1"),
+                BottomSheetGenre(6, "산리오2"),
+                BottomSheetGenre(7, "주술회전2"),
+                BottomSheetGenre(8, "진격의 거인2"),
+                BottomSheetGenre(9, "산리오3"),
+                BottomSheetGenre(10, "주술회전3"),
+            ),
+        )
+
         GenreSearchBottomSheet(
-            initialSelectedGenreList = listOf(
-                Genre(0, "산리오"),
-                Genre(1, "주술회전"),
-                Genre(2, "진격의 거인"),
-            ),
-            genreItems = listOf(
-                Genre(0, "산리오"),
-                Genre(1, "주술회전"),
-                Genre(2, "진격의 거인"),
-                Genre(3, "산리오1"),
-                Genre(4, "주술회전1"),
-                Genre(5, "진격의 거인1"),
-                Genre(6, "산리오2"),
-                Genre(7, "주술회전2"),
-                Genre(8, "진격의 거인2"),
-                Genre(9, "산리오3"),
-                Genre(10, "주술회전3"),
-            ),
+            genreBottomSheetState = sheetState,
             onDismissRequest = { },
             onTextChange = { },
             onButtonClick = { },

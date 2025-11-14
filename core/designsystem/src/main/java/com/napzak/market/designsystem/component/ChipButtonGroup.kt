@@ -5,7 +5,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.LocalOverscrollConfiguration
+import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -46,15 +46,15 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
 private const val MAX_TEXT_LENGTH = 5
 private const val CHIP_ANIMATION_DURATION = 200
-private const val ANIMATION_LABEL = "genre_chip_group"
+private const val ANIMATION_LABEL = "chip_group"
 private const val ELLIPSIS = "..."
 
 /**
- * 장르칩 목록을 관리하는 그룹 컴포넌트입니다. 장르를 클릭하여 삭제하거나 초기화 버튼을 누르는 기능을 제공합니다.
+ * 칩 목록을 관리하는 그룹 컴포넌트입니다. 를 클릭하여 삭제하거나 초기화 버튼을 누르는 기능을 제공합니다.
  *
- * @param genreNames 장르 이름 목록
+ * @param items 칩 이름 목록
  * @param onResetClick 초기화 버튼 클릭 콜백
- * @param onGenreClick 장르 클릭 콜백
+ * @param onChipClick  클릭 콜백
  * @param modifier 수정자
  * @param backgroundColor 배경색
  * @param contentPaddingValues 컨텐츠 패딩값
@@ -62,19 +62,19 @@ private const val ELLIPSIS = "..."
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun GenreChipButtonGroup(
-    genreNames: List<String>,
+fun ChipButtonGroup(
+    items: List<String>,
     onResetClick: () -> Unit,
-    onGenreClick: (String) -> Unit,
+    onChipClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     backgroundColor: Color = NapzakMarketTheme.colors.white,
     contentPaddingValues: PaddingValues = PaddingValues(),
 ) {
     CompositionLocalProvider(
-        value = LocalOverscrollConfiguration provides null,
+        value = LocalOverscrollFactory provides null,
         content = {
             AnimatedContent(
-                targetState = genreNames.isNotEmpty(),
+                targetState = items.isNotEmpty(),
                 label = ANIMATION_LABEL,
                 transitionSpec = {
                     slideIntoContainer(
@@ -108,14 +108,14 @@ fun GenreChipButtonGroup(
                         }
 
                         itemsIndexed(
-                            items = genreNames,
-                            key = { _, genre -> genre },
-                        ) { index, genre ->
+                            items = items,
+                            key = { _, item -> item },
+                        ) { index, item ->
                             val startPadding = if (index == 0) 0.dp else 5.dp
 
-                            RemovableGenreChip(
-                                text = genre,
-                                onClick = { onGenreClick(genre) },
+                            RemovableChip(
+                                text = item,
+                                onClick = { onChipClick(item) },
                                 modifier = Modifier
                                     .padding(start = startPadding)
                                     .animateItem(
@@ -132,7 +132,7 @@ fun GenreChipButtonGroup(
 }
 
 @Composable
-private fun RemovableGenreChip(
+private fun RemovableChip(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -180,7 +180,7 @@ private fun RemovableGenreChip(
 
 @Preview(showBackground = true, widthDp = 360)
 @Composable
-private fun GenreChipButtonGroupPreview() {
+private fun ChipButtonGroupPreview() {
     NapzakMarketTheme {
         val genreNames: MutableList<String> = remember {
             mutableStateListOf("나루토", "원피스", "사카모토데이즈", "진격의 거인", "조조의 기묘한 모험")
@@ -192,12 +192,12 @@ private fun GenreChipButtonGroupPreview() {
                 .padding(vertical = 30.dp)
         ) {
 
-            GenreChipButtonGroup(
+            ChipButtonGroup(
                 modifier = Modifier.fillMaxWidth(),
-                genreNames = genreNames.toList(),
+                items = genreNames.toList(),
                 contentPaddingValues = PaddingValues(end = 20.dp),
                 onResetClick = { genreNames.clear() },
-                onGenreClick = {
+                onChipClick = {
                     genreNames.remove(it)
                 }
             )

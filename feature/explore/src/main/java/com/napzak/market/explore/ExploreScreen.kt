@@ -50,7 +50,7 @@ import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_down
 import com.napzak.market.designsystem.R.drawable.ic_no_searching_result
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
-import com.napzak.market.designsystem.component.GenreFilterChip
+import com.napzak.market.designsystem.component.FilterChip
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
 import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
@@ -294,8 +294,8 @@ private fun ExploreSuccessScreen(
                 .padding(top = 15.dp, bottom = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            GenreFilterChip(
-                genreList = filteredGenres,
+            FilterChip(
+                items = filteredGenres.map { it.genreName },
                 onChipClick = onGenreFilterClick,
             )
 

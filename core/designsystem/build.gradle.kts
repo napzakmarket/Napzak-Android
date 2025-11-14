@@ -14,7 +14,6 @@ dependencies {
     implementation(projects.core.util)
     implementation(projects.core.uiUtil)
     implementation(projects.core.common)
-    implementation(projects.domain.genre)
 
     // Miscellaneous libraries
     implementation(libs.coil.compose)

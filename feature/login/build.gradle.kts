@@ -18,8 +18,6 @@ dependencies {
     implementation(projects.core.uiUtil)
     implementation(projects.core.mixpanel)
     implementation(projects.domain.store)
-    implementation(projects.feature.onboarding)
-    implementation(projects.feature.home)
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
