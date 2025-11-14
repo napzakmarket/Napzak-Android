@@ -162,9 +162,9 @@ fun GenreScreen(
 
             if (uiState.selectedGenres.isNotEmpty()) {
                 ChipButtonGroup(
-                    genreNames = uiState.selectedGenres.map { it.name },
+                    items = uiState.selectedGenres.map { it.name },
                     onResetClick = onAllGenresReset,
-                    onGenreClick = { name ->
+                    onChipClick = { name ->
                         uiState.selectedGenres.find { it.name == name }?.let { onGenreRemove(it) }
                     },
                     modifier = Modifier

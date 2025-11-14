@@ -165,10 +165,10 @@ fun GenreSearchBottomSheet(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 23.dp),
-                            genreNames = genreBottomSheetState.selectedGenres.map(BottomSheetGenre::name),
+                            items = genreBottomSheetState.selectedGenres.map(BottomSheetGenre::name),
                             contentPaddingValues = PaddingValues(end = 20.dp),
                             onResetClick = genreBottomSheetState::resetSelectedGenres,
-                            onGenreClick = genreBottomSheetState::removeSelectedGenre,
+                            onChipClick = genreBottomSheetState::removeSelectedGenre,
                         )
                     } else {
                         Spacer(Modifier.height(25.dp))
