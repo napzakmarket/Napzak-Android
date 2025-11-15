@@ -15,7 +15,7 @@
 | <img width="200" alt="이석준" src="https://github.com/user-attachments/assets/d2cd6176-b0ac-499c-ad59-434893dbb13d" /> | <img width="200" alt="김채린" src="https://github.com/user-attachments/assets/2e123f58-f407-46fb-9cba-8ce9978c688a" /> | <img width="200" alt="김종명" src="https://github.com/user-attachments/assets/d475398d-3056-447f-bcec-fd043572a70d" /> | <img width="200" alt="이연진" src="https://github.com/user-attachments/assets/bc0b2b8c-e4ac-428e-b786-aa57b028a7be" /> | <img width="200" alt="장재원" src="https://github.com/user-attachments/assets/5d7035ac-cf7d-43b5-a906-f2e1c4eeae35" /> |
 |:-------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|
 |                      [이석준](https://github.com/boiledeggg)                      |                        [김채린](https://github.com/chrin05)                        |                       [김종명](https://github.com/jm991014)                        |                        [이연진](https://github.com/yeonjeen)                        |                       [장재원](https://github.com/jangsjw)                        |
-| `홈`, `상세보기`, `탈퇴` <br> `프로필 편집`, `신고` | `탐색`, `장르상세` <br> `내마켓` | `등록` <br> `물품 정보 수정` | `로그인` <br> `온보딩` | `마이페이지` <br> `설정` |
+| `홈`, `채팅`, `물품상세` <br> `프로필 편집`, `신고`, `탈퇴` | `탐색`, `장르상세` <br> `내마켓`, `푸시알림` | `등록` <br> `물품 정보 수정` | `로그인` <br> `온보딩` | `마이페이지` <br> `설정` |
 
 
 <br>
