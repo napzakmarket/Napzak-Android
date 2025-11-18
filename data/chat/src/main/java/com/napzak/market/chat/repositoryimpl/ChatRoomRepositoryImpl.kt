@@ -57,8 +57,9 @@ class ChatRoomRepositoryImpl @Inject constructor(
                 napzakDatabase.withTransaction {
                     val entity = listOf(response.toRoomEntity(response.roomId))
                     val product = response.toProductEntity()
-                    runOnChatRoomDao { safeUpsertChatRooms(entity, true) }
                     runOnChatProductDao { upsertProduct(product) }
+                    runOnChatRoomDao { safeUpsertChatRooms(entity, true) }
+
                 }
             }
             response.toDomain()

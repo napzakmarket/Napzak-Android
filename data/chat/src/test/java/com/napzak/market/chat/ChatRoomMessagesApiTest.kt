@@ -9,6 +9,7 @@ import com.napzak.market.chat.repository.ChatRoomRepository
 import com.napzak.market.chat.repositoryimpl.ChatRoomRepositoryImpl
 import com.napzak.market.chat.service.ChatRoomService
 import com.napzak.market.local.room.NapzakDatabase
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -52,6 +53,8 @@ class ChatRoomMessagesApiTest : ApiAbstract<ChatRoomService>() {
             chatMessageDao = database.chatMessageDao(),
             chatProductDao = database.chatProductDao(),
             chatRemoteKeyDao = database.chatRemoteKeyDao(),
+            chatRoomDao = database.chatRoomDao(),
+            ioDispatcher = StandardTestDispatcher()
         )
     }
 
@@ -90,6 +93,7 @@ class ChatRoomMessagesApiTest : ApiAbstract<ChatRoomService>() {
         mockWebServer.takeRequest()
 
         // then
+        assert(result != null) { "Repository 매핑 결과가 널 입니다." }
         if (result != null) {
             assertEquals(ReceiveMessage.Image::class, result[0]::class)
             assertEquals(ReceiveMessage.Product::class, result[1]::class)
