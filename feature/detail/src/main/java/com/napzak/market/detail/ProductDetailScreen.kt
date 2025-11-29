@@ -1,6 +1,5 @@
 package com.napzak.market.detail
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,7 +15,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -65,12 +63,6 @@ internal fun ProductDetailRoute(
     val toast = LocalNapzakToast.current
 
     val uiState by viewModel.productDetail.collectAsStateWithLifecycle()
-    val isInterested by viewModel.isInterested.collectAsStateWithLifecycle()
-
-    LifecycleResumeEffect(Unit) {
-        viewModel.getProductDetail()
-        onPauseOrDispose { /*No resource to clean up*/ }
-    }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
@@ -106,13 +98,12 @@ internal fun ProductDetailRoute(
 
     ProductDetailScreen(
         uiState = uiState,
-        isInterested = isInterested,
         onMarketClick = onMarketNavigate,
         onChatButtonClick = {
             viewModel.trackStartedChat(it)
             onChatNavigate(it)
         },
-        onLikeButtonClick = { viewModel.updateIsInterested(!isInterested) },
+        onLikeButtonClick = viewModel::updateIsInterested,
         onBackButtonClick = onNavigateUp,
         onModifyProductClick = onModifyNavigate,
         onDeleteProductClick = viewModel::deleteProduct,
@@ -128,10 +119,9 @@ internal fun ProductDetailRoute(
 @Composable
 private fun ProductDetailScreen(
     uiState: UiState<ProductDetail>,
-    isInterested: Boolean,
     onMarketClick: (userId: Long) -> Unit,
     onChatButtonClick: (productId: Long) -> Unit,
-    onLikeButtonClick: (productId: Long) -> Unit,
+    onLikeButtonClick: (Boolean) -> Unit,
     onBackButtonClick: () -> Unit,
     onModifyProductClick: (productId: Long, tradeType: TradeType) -> Unit,
     onDeleteProductClick: (productId: Long) -> Unit,
@@ -152,10 +142,11 @@ private fun ProductDetailScreen(
         bottomBar = {
             if (uiState is UiState.Success && !uiState.data.isOwnedByCurrentUser) {
                 val productId = uiState.data.productId
+                val isInterested = uiState.data.isInterested
                 ProductDetailBottomBar(
                     isLiked = isInterested,
                     onChatButtonClick = { onChatButtonClick(productId) },
-                    onLikeButtonClick = { onLikeButtonClick(productId) },
+                    onLikeButtonClick = { onLikeButtonClick(!isInterested) },
                 )
             }
         },
