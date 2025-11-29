@@ -2,7 +2,7 @@ package com.napzak.market.chat.model
 
 sealed class ReceiveMessage<T>(
     open val messageId: Long,
-    open val roomId: Long?,
+    open val roomId: Long,
     open val senderId: Long?,
     open val message: T,
     open val timeStamp: String,
@@ -105,7 +105,7 @@ sealed class ReceiveMessage<T>(
 
     // TODO: 중복되는 값 초기화 제거
     data class Join(
-        override val roomId: Long?,
+        override val roomId: Long,
         override val senderId: Long?,
         override val isMessageOwner: Boolean,
     ) : ReceiveMessage<Unit>(
@@ -117,7 +117,7 @@ sealed class ReceiveMessage<T>(
     )
 
     data class Leave(
-        override val roomId: Long?,
+        override val roomId: Long,
         override val senderId: Long?,
         override val isMessageOwner: Boolean,
     ) : ReceiveMessage<Unit>(

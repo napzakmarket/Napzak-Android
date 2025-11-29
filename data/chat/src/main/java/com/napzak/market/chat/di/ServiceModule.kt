@@ -9,6 +9,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.json.Json
 import retrofit2.Retrofit
 import retrofit2.create
 import javax.inject.Singleton
@@ -28,5 +29,6 @@ object ServiceModule {
     @Singleton
     fun provideChatSocketService(
         stompWebSocketClient: StompWebSocketClient,
-    ): ChatSocketService = ChatSocketServiceImpl(stompWebSocketClient)
+        json: Json,
+    ): ChatSocketService = ChatSocketServiceImpl(stompWebSocketClient, json)
 }

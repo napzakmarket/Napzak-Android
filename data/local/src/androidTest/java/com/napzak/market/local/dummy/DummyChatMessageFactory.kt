@@ -8,7 +8,7 @@ object DummyChatMessageEntityFactory {
     fun createEntity(
         id: Long,
         uuid: String = "uuid-dummy-$id",
-        messageId: Long? = id * 100,
+        messageId: Long = id * 100,
         roomId: Long = id,
         senderId: Long = id + 1,
         message: String = "hello world",
@@ -19,9 +19,8 @@ object DummyChatMessageEntityFactory {
         isRead: Boolean = false,
         status: ChatStatusType = ChatStatusType.PENDING
     ) = ChatMessageEntity(
-        id = id,
-        uuid = uuid,
         messageId = messageId,
+        uuid = uuid,
         roomId = roomId,
         senderId = senderId,
         message = message,

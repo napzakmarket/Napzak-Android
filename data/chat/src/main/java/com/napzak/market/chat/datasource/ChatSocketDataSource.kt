@@ -7,7 +7,8 @@ import javax.inject.Inject
 class ChatSocketDataSource @Inject constructor(
     private val chatSocketService: ChatSocketService,
 ) {
-    val messageFlow = chatSocketService.messageFlow
+    fun getMessageFlow() = chatSocketService.messageFlow
+    fun getNewChatRequestFlow() = chatSocketService.newChatRequestFlow
 
     val socketConnectionState = chatSocketService.connectionState
 

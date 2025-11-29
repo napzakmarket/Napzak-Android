@@ -7,6 +7,8 @@ import com.napzak.market.chat.repository.ChatRoomRepository
 import com.napzak.market.chat.repositoryimpl.ChatRoomRepositoryImpl
 import com.napzak.market.chat.service.ChatRoomService
 import com.napzak.market.local.room.NapzakDatabase
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -23,6 +25,9 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
     private lateinit var service: ChatRoomService
     private lateinit var database: NapzakDatabase
     private lateinit var repository: ChatRoomRepository
+
+    private val testScheduler = TestCoroutineScheduler()
+    private val testDispatcher = StandardTestDispatcher(testScheduler)
 
     @Before
     fun setUp() {
@@ -51,6 +56,8 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
             chatMessageDao = database.chatMessageDao(),
             chatProductDao = database.chatProductDao(),
             chatRemoteKeyDao = database.chatRemoteKeyDao(),
+            chatRoomDao = database.chatRoomDao(),
+            ioDispatcher = testDispatcher
         )
     }
 
@@ -100,19 +107,22 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
     }
 
     @Test
-    fun `fetch ChatRoomInformationResponse From Repository`() = runTest {
+    fun `fetch ChatRoomInformationResponse From Repository`() = runTest(testDispatcher) {
         // given
         enqueueResponse("ChatRoomInformation.json")
 
         // when
         val result = repository
             .getChatRoomInformation(productId = 3, roomId = 6L)
-            .getOrNull()
+            .getOrElse {
+                println(it)
+                null
+            }
         mockWebServer.takeRequest()
 
         // then
-        assert(result?.roomId != null) { "Repository 매핑 결과가 널 입니다." }
-        if (result?.roomId != null) {
+        assert(result != null) { "Repository 매핑 결과가 널 입니다." }
+        if (result != null) {
             with(result) {
                 assertEquals(6L, roomId)
 

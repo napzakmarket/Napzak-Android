@@ -1,4 +1,4 @@
-package com.napzak.market.chat.mapper
+package com.napzak.market.chat.mapper.chatmessage
 
 import com.napzak.market.chat.dto.ChatMessageMetadata
 import com.napzak.market.chat.dto.ChatMessageRequest

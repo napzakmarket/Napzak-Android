@@ -2,20 +2,115 @@ package com.napzak.market.local.room.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Upsert
 import com.napzak.market.local.room.entity.ChatRoomEntity
+import com.napzak.market.local.room.relation.ChatRoomWithProduct
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ChatRoomDao {
-    @Query("SELECT * FROM chat_room")
-    fun getAllChatRooms(): List<ChatRoomEntity>
-
     @Query("SELECT * FROM chat_room WHERE roomId = :roomId")
     fun getChatRoom(roomId: Long): ChatRoomEntity?
 
+    @Query(
+        """
+        SELECT r.*, p.* FROM chat_room AS r
+        LEFT JOIN chat_product AS p ON r.productId = p.productId
+        WHERE r.roomId = :roomId
+    """
+    )
+    fun getChatRoomFlow(roomId: Long): Flow<ChatRoomWithProduct?>
+
+    @Query("SELECT * FROM chat_room ORDER BY lastUpdated DESC")
+    fun getChatRoomsFlow(): Flow<List<ChatRoomEntity>>
+
+    @Transaction
+    suspend fun safeUpsertChatRooms(entities: List<ChatRoomEntity>, isInformation: Boolean) {
+        entities.forEach { chatRoom ->
+            val existingChatRoom = getChatRoom(chatRoom.roomId)
+            if (existingChatRoom == null) {
+                upsertChatRoom(chatRoom)
+            } else {
+                // 채팅탭과 채팅방에서 정보를 갱신하는 상황을 나눕니다.
+                // isInformation은 상세한 정보를 보여줘야 하는 채팅방을 의미합니다.
+                val updatedChatRoom = if (isInformation) {
+                    with(chatRoom) {
+                        existingChatRoom.copy(
+                            opponentNickName = opponentNickName,
+                            opponentStorePhoto = opponentStorePhoto,
+                            productId = productId,
+                            isWithdrawn = isWithdrawn,
+                            isReported = isReported,
+                            isOpponentStoreBlocked = isOpponentStoreBlocked,
+                            isChatBlocked = isChatBlocked,
+                        )
+                    }
+                } else {
+                    with(chatRoom) {
+                        existingChatRoom.copy(
+                            opponentNickName = opponentNickName,
+                            opponentStorePhoto = opponentStorePhoto,
+                            lastMessage = lastMessage,
+                            lastMessageAt = lastMessageAt,
+                            unreadCount = unreadCount,
+                            isWithdrawn = isWithdrawn,
+                            lastUpdated = lastUpdated,
+                        )
+                    }
+                }
+
+                upsertChatRoom(updatedChatRoom)
+            }
+        }
+    }
+
     @Upsert
-    fun upsertChatRoom(chatRoom: ChatRoomEntity)
+    suspend fun upsertChatRoom(chatRoom: ChatRoomEntity)
+
+    @Query(
+        """
+        UPDATE chat_room SET
+            lastMessage = :lastMessage, 
+            lastMessageAt = :lastMessageAt,
+            unreadCount = :unreadCount,
+            lastUpdated = :lastUpdated
+        WHERE roomId = :roomId
+        """
+    )
+    suspend fun updateLastMessage(
+        roomId: Long,
+        lastMessage: String,
+        lastMessageAt: String,
+        unreadCount: Int,
+        lastUpdated: String,
+    )
+
+    @Query("UPDATE chat_room SET productId = :productId WHERE roomId = :roomId")
+    suspend fun updateProductId(roomId: Long, productId: Long)
+
+
+    @Query("UPDATE chat_room SET isOnline = :isOnline WHERE roomId = :roomId")
+    suspend fun updateMyOnlineStatus(roomId: Long, isOnline: Boolean)
+
+    @Query("UPDATE chat_room SET isOpponentOnline = :isOpponentOnline WHERE roomId = :roomId")
+    suspend fun updateOpponentOnlineStatus(roomId: Long, isOpponentOnline: Boolean)
+
+    @Query("UPDATE chat_room SET isWithdrawn = :isWithdrawn WHERE roomId = :roomId")
+    suspend fun updateWithdrawnStatus(roomId: Long, isWithdrawn: Boolean)
+
+    @Query("UPDATE chat_room SET isReported = :isReported WHERE roomId = :roomId")
+    suspend fun updateStoreReportedStatus(roomId: Long, isReported: Boolean)
+
+    @Query("UPDATE chat_room SET isOpponentStoreBlocked = :isOpponentStoreBlocked WHERE roomId = :roomId")
+    suspend fun updateStoreBlockedStatus(roomId: Long, isOpponentStoreBlocked: Boolean)
+
+    @Query("UPDATE chat_room SET isChatBlocked = :isChatBlocked WHERE roomId = :roomId")
+    suspend fun updateChatBlockedStatus(roomId: Long, isChatBlocked: Boolean)
 
     @Query("DELETE FROM chat_room WHERE roomId = :roomId")
-    fun deleteChatRoom(roomId: Long)
+    suspend fun deleteChatRoom(roomId: Long)
+
+    @Query("DELETE FROM chat_room")
+    suspend fun deleteAllChatRooms()
 }

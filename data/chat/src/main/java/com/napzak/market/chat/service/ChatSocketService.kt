@@ -1,14 +1,18 @@
 package com.napzak.market.chat.service
 
 import com.napzak.market.chat.dto.ChatMessageRequest
+import com.napzak.market.chat.dto.ChatRealtimeMessage
 import com.napzak.market.remote.socket.StompWebSocketClient
 import com.napzak.market.remote.socket.type.SocketConnectionState
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 interface ChatSocketService {
-    val messageFlow: SharedFlow<String>
+    val messageFlow: Flow<ChatRealtimeMessage>
+    val newChatRequestFlow: Flow<Long>
     val connectionState: Flow<SocketConnectionState>
     suspend fun connect()
     suspend fun disconnect()
@@ -19,8 +23,19 @@ interface ChatSocketService {
 
 class ChatSocketServiceImpl @Inject constructor(
     private val webSocketClient: StompWebSocketClient,
+    private val json: Json,
 ) : ChatSocketService {
-    override val messageFlow: SharedFlow<String> = webSocketClient.messageFlow
+    override val messageFlow: Flow<ChatRealtimeMessage> = webSocketClient.messageFlow.mapNotNull {
+        runCatching {
+            json.decodeFromString(ChatRealtimeMessage.serializer(), it)
+        }.getOrNull()
+    }
+
+    override val newChatRequestFlow: Flow<Long> = webSocketClient.messageFlow.mapNotNull {
+        runCatching {
+            json.decodeFromString(Long.serializer(), it)
+        }.getOrNull()
+    }
 
     override val connectionState: Flow<SocketConnectionState> = webSocketClient.connectionState
 
