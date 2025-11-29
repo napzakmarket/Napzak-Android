@@ -75,17 +75,21 @@ internal class ProductDetailViewModel @Inject constructor(
         productDetailRepository.getProductDetail(productId)
             .onSuccess { response ->
                 _productDetail.update { UiState.Success(response) }
-
-                if (!isProductLoaded) {
-                    trackViewedProduct()
-                    isProductLoaded = true
-                }
+                triggerGetProductDetailSideEffect()
             }
             .onFailure {
                 Timber.e(it)
                 _productDetail.value = UiState.Failure(it.toString())
             }
     }
+
+    private fun triggerGetProductDetailSideEffect() {
+        if (!isProductLoaded) {
+            trackViewedProduct()
+            isProductLoaded = true
+        }
+    }
+
 
     private fun collectAndSetIsInterested(productId: Long) = viewModelScope.launch {
         _interestFlow
@@ -98,42 +102,61 @@ internal class ProductDetailViewModel @Inject constructor(
 
     fun updateIsInterested(isInterested: Boolean) = viewModelScope.launch {
         updateInterestAndCount(isInterested)
-        _interestFlow.emit(isInterested)
-
-        if (isInterested) _sideEffect.send(ShowToast(ProductDetailToastType.LIKE))
-        else _sideEffect.send(CancelToast)
+        triggerUpdateIsInterestedSideEffect(isInterested)
     }
 
     private fun updateInterestAndCount(isInterested: Boolean) {
         val increaseCount = if (isInterested) 1 else -1
-        _productDetail.update { uiState ->
-            UiState.Success(
-                (uiState as UiState.Success).data.copy(
+        _productDetail.update { currentState ->
+            if (currentState is UiState.Success) {
+                val updatedState = currentState.data.copy(
                     isInterested = isInterested,
-                    interestCount = uiState.data.interestCount + increaseCount
+                    interestCount = currentState.data.interestCount + increaseCount
                 )
-            )
+                UiState.Success(updatedState)
+            } else {
+                currentState
+            }
         }
     }
 
+    private suspend fun triggerUpdateIsInterestedSideEffect(isInterested: Boolean) {
+        _interestFlow.emit(isInterested)
+        if (isInterested) _sideEffect.send(ShowToast(ProductDetailToastType.LIKE))
+        else _sideEffect.send(CancelToast)
+    }
+
+
     fun updateTradeStatus(productId: Long, tradeStatus: String) = viewModelScope.launch {
         productDetailRepository.patchTradeStatus(productId, tradeStatus)
-            .onSuccess {
-                getProductDetail(productId)
-                runCatching {
-                    val tradeType = TradeType.fromName(
-                        (_productDetail.value as UiState.Success<ProductDetail>).data.tradeType
-                    )
-                    trackProductStatus(productId, TradeStatusType.get(tradeStatus, tradeType))
-                    _sideEffect.send(
-                        ShowToast(
-                            productDetailToastType = ProductDetailToastType.STATUS_CHANGE,
-                            message = TradeStatusType.get(tradeStatus, tradeType).label,
-                        )
-                    )
-                }
-            }
+            .onSuccess { updateStatusOnPatchSuccess(tradeStatus) }
             .onFailure(Timber::e)
+    }
+
+    private suspend fun updateStatusOnPatchSuccess(tradeStatus: String) {
+        _productDetail.update { currentState ->
+            if (currentState is UiState.Success) {
+                val updatedState = currentState.data.copy(tradeStatus = tradeStatus)
+                triggerUpdateTradeStatusChangeSideEffect(updatedState)
+                UiState.Success(updatedState)
+            } else {
+                currentState
+            }
+        }
+    }
+
+    private suspend fun triggerUpdateTradeStatusChangeSideEffect(productDetail: ProductDetail) {
+        val tradeType = TradeType.fromName(productDetail.tradeType)
+        val tradeStatusType = TradeStatusType.get(productDetail.tradeStatus, tradeType)
+
+        _sideEffect.send(
+            ShowToast(
+                productDetailToastType = ProductDetailToastType.STATUS_CHANGE,
+                message = tradeStatusType.label,
+            )
+        )
+
+        trackProductStatus(productDetail.productId, tradeStatusType)
     }
 
     fun deleteProduct(productId: Long) = viewModelScope.launch {
@@ -172,7 +195,7 @@ internal class ProductDetailViewModel @Inject constructor(
 
     internal fun trackReportProduct() = mixpanel?.track(OPENED_REPORT_PRODUCT)
 
-    private fun trackProductStatus(id: Long, status: TradeStatusType) {
+    private fun trackProductStatus(id: Long, status: TradeStatusType) = runCatching {
         val props = mapOf(
             POST_ID to id,
             PRODUCT_STATUS to when (status) {
@@ -183,7 +206,6 @@ internal class ProductDetailViewModel @Inject constructor(
                 TradeStatusType.RESERVED -> RESERVED
             },
         )
-
         mixpanel?.trackEvent(CHANGED_PRODUCT_STATUS, props)
     }
 
