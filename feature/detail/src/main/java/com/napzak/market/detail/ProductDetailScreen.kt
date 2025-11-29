@@ -2,6 +2,7 @@ package com.napzak.market.detail
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -130,7 +131,7 @@ private fun ProductDetailScreen(
     modifier: Modifier = Modifier,
 ) {
     var sheetVisibility by remember { mutableStateOf(false) }
-    val deleteDialogVisibility = remember { mutableStateOf(false) }
+    var deleteDialogVisibility by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -151,7 +152,7 @@ private fun ProductDetailScreen(
             }
         },
         containerColor = NapzakMarketTheme.colors.white,
-        modifier = modifier,
+        modifier = modifier.systemBarsPadding(),
     ) { innerPadding ->
         when (uiState) {
             is UiState.Success -> {
@@ -183,7 +184,7 @@ private fun ProductDetailScreen(
                             tradeType
                         )
                     },
-                    onDeleteProductClick = { deleteDialogVisibility.value = true },
+                    onDeleteProductClick = { deleteDialogVisibility = true },
                     onReportProductClick = { onReportProductClick(productDetail.productId) },
                     onTradeStatusChange = { newStatus ->
                         onTradeStatusChange(productDetail.productId, newStatus.typeName)
@@ -192,9 +193,9 @@ private fun ProductDetailScreen(
                 )
 
                 ProductDetailDeleteDialog(
-                    enabled = deleteDialogVisibility.value,
+                    enabled = deleteDialogVisibility,
                     onConfirmClick = { onDeleteProductClick(productDetail.productId) },
-                    onDismissClick = { deleteDialogVisibility.value = false },
+                    onDismissClick = { deleteDialogVisibility = false },
                 )
             }
 

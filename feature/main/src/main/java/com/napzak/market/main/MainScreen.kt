@@ -304,8 +304,7 @@ private fun MainNavHost(
             },
             onReportNavigate = navigator.navController::navigateToProductReport,
             onNavigateUp = navigator::navigateUp,
-            modifier = modifier
-                .padding(innerPadding),
+            modifier = modifier,
         )
 
         reportGraph(
