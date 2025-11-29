@@ -133,15 +133,16 @@ internal class ProductDetailViewModel @Inject constructor(
     }
 
     private suspend fun updateStatusOnPatchSuccess(tradeStatus: String) {
+        var updatedDetail: ProductDetail? = null
         _productDetail.update { currentState ->
             if (currentState is UiState.Success) {
-                val updatedState = currentState.data.copy(tradeStatus = tradeStatus)
-                triggerUpdateTradeStatusChangeSideEffect(updatedState)
-                UiState.Success(updatedState)
+                updatedDetail = currentState.data.copy(tradeStatus = tradeStatus)
+                UiState.Success(updatedDetail)
             } else {
                 currentState
             }
         }
+        updatedDetail?.let { triggerUpdateTradeStatusChangeSideEffect(it) }
     }
 
     private suspend fun triggerUpdateTradeStatusChangeSideEffect(productDetail: ProductDetail) {
