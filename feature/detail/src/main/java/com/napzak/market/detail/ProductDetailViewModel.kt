@@ -90,7 +90,6 @@ internal class ProductDetailViewModel @Inject constructor(
         }
     }
 
-
     private fun collectAndSetIsInterested(productId: Long) = viewModelScope.launch {
         _interestFlow
             .debounce(DEBOUNCE_DELAY)
