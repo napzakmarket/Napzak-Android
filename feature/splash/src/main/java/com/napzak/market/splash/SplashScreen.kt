@@ -64,8 +64,7 @@ internal fun SplashRoute(
 
     LaunchedEffect(Unit) {
         val appVersion = context.getVersionName()
-        if (appVersion != null) viewModel.checkAppVersion(appVersion) else { /* null인 경우 대기 */
-        }
+        if (appVersion != null) viewModel.checkAppVersion(appVersion) else { /* null인 경우 대기 */ }
         delay(2500)
     }
 
