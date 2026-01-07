@@ -35,32 +35,42 @@ internal class ReportViewModel @Inject constructor(
         detail: String,
         contact: String,
     ) = viewModelScope.launch {
+        if (id == null) return@launch
+
+        isUploading = true
+        val reportParameters = ReportParameters(
+            title = reason,
+            description = detail,
+            contact = contact,
+        )
+
         runCatching {
-            isUploading = true
-            val reportParameters = ReportParameters(
-                title = reason,
-                description = detail,
-                contact = contact,
+            sendReport(reportType, id, reportParameters)
+        }.onSuccess {
+            _sideEffect.send(ReportSideEffect.ReportCompleted)
+        }.onFailure { t ->
+            Timber.e(t)
+        }.also {
+            isUploading = false
+        }
+    }
+
+    private suspend fun sendReport(
+        reportType: ReportType,
+        id: Long,
+        reportParameters: ReportParameters,
+    ) {
+        when (reportType) {
+            ReportType.PRODUCT -> sendProductReport(
+                productId = id,
+                reportParameters = reportParameters,
             )
 
-            when (reportType) {
-                ReportType.PRODUCT -> sendProductReport(
-                    productId = id!!,
-                    reportParameters = reportParameters,
-                )
-
-                ReportType.USER -> sendUserReport(
-                    userId = id!!,
-                    reportParameters = reportParameters,
-                )
-            }
-        }.onSuccess {
-            _sideEffect.send(ReportSideEffect.NavigateUp)
-            _sideEffect.send(ReportSideEffect.ShowToast(REPORT_SNACK_BAR_MESSAGE))
-        }.onFailure(Timber::e)
-            .also {
-                isUploading = false
-            }
+            ReportType.USER -> sendUserReport(
+                userId = id,
+                reportParameters = reportParameters,
+            )
+        }
     }
 
     private suspend fun sendProductReport(
@@ -85,10 +95,5 @@ internal class ReportViewModel @Inject constructor(
 
     companion object {
         private const val ID = "id"
-        private const val REPORT_SNACK_BAR_MESSAGE =
-            "소중한 신고 감사합니다! \uD83D\uDE4F\n\n" +
-                    "신고 내용을 꼼꼼히 검토하여\n" +
-                    "입력하신 연락처로 결과를 안내해드릴게요.\n" +
-                    "추가 정보가 필요할 경우 동일한 연락처로 문의드릴 수 있어요."
     }
 }
