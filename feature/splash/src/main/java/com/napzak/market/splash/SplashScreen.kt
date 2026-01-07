@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -63,7 +64,8 @@ internal fun SplashRoute(
 
     LaunchedEffect(Unit) {
         val appVersion = context.getVersionName()
-        if (appVersion != null) viewModel.checkAppVersion(appVersion) else { /* null인 경우 대기 */}
+        if (appVersion != null) viewModel.checkAppVersion(appVersion) else { /* null인 경우 대기 */
+        }
         delay(2500)
     }
 
@@ -123,7 +125,7 @@ private fun UpdatePopup(
     ) {
         NapzakPopup(
             title = stringResource(update_popup_title),
-            subTitle = stringResource(update_popup_subtitle),
+            subTitle = AnnotatedString(stringResource(update_popup_subtitle)),
             icon = ImageVector.vectorResource(ic_purple_change),
             buttonColor = NapzakMarketTheme.colors.purple500,
             buttonText = stringResource(update_popup_button),

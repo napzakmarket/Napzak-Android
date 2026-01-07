@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -21,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,7 +33,7 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 @Composable
 fun NapzakPopup(
     title: String,
-    subTitle: String,
+    subTitle: AnnotatedString,
     icon: ImageVector,
     buttonColor: Color,
     buttonText: String,
@@ -142,7 +142,7 @@ private fun NapzakPopupPreview(modifier: Modifier = Modifier) {
     NapzakMarketTheme {
         NapzakPopup(
             title = "업데이트가 필요해요!",
-            subTitle = "원활한 서비스 이용을 위해\n" + "최신 버전으로 업데이트해주세요.",
+            subTitle = AnnotatedString("원활한 서비스 이용을 위해\n" + "최신 버전으로 업데이트해주세요."),
             icon = ImageVector.vectorResource(ic_purple_change),
             buttonColor = NapzakMarketTheme.colors.purple500,
             buttonText = "납작마켓 업데이트",
