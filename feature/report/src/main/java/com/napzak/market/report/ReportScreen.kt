@@ -75,11 +75,8 @@ internal fun ReportRoute(
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
-                    ReportSideEffect.NavigateUp -> {
-                        navigateUp()
-                    }
-
                     is ReportSideEffect.ReportCompleted -> {
+                        navigateUp()
                         napzakToast.makeText(
                             toastType = ToastType.COMMON,
                             message = context.getString(report_toast_success),

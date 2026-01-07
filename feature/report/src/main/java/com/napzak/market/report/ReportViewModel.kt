@@ -35,32 +35,42 @@ internal class ReportViewModel @Inject constructor(
         detail: String,
         contact: String,
     ) = viewModelScope.launch {
+        if (id == null) return@launch
+
+        isUploading = true
+        val reportParameters = ReportParameters(
+            title = reason,
+            description = detail,
+            contact = contact,
+        )
+
         runCatching {
-            isUploading = true
-            val reportParameters = ReportParameters(
-                title = reason,
-                description = detail,
-                contact = contact,
+            sendReport(reportType, id, reportParameters)
+        }.onSuccess {
+            _sideEffect.send(ReportSideEffect.ReportCompleted)
+        }.onFailure { t ->
+            Timber.e(t)
+        }.also {
+            isUploading = false
+        }
+    }
+
+    private suspend fun sendReport(
+        reportType: ReportType,
+        id: Long,
+        reportParameters: ReportParameters,
+    ) {
+        when (reportType) {
+            ReportType.PRODUCT -> sendProductReport(
+                productId = id,
+                reportParameters = reportParameters,
             )
 
-            when (reportType) {
-                ReportType.PRODUCT -> sendProductReport(
-                    productId = id!!,
-                    reportParameters = reportParameters,
-                )
-
-                ReportType.USER -> sendUserReport(
-                    userId = id!!,
-                    reportParameters = reportParameters,
-                )
-            }
-        }.onSuccess {
-            _sideEffect.send(ReportSideEffect.NavigateUp)
-            _sideEffect.send(ReportSideEffect.ReportCompleted)
-        }.onFailure(Timber::e)
-            .also {
-                isUploading = false
-            }
+            ReportType.USER -> sendUserReport(
+                userId = id,
+                reportParameters = reportParameters,
+            )
+        }
     }
 
     private suspend fun sendProductReport(
