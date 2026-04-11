@@ -68,7 +68,7 @@ internal fun SettingsRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.trackViewedMyPage()
+        viewModel.trackViewedSetting()
     }
 
     LifecycleResumeEffect(Unit) {

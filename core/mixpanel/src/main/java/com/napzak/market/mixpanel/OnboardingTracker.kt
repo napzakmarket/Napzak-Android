@@ -13,9 +13,8 @@ class OnboardingTracker @Inject constructor(
     /**
      * Event       : Signed Up
      * Description : 로그인 완료
-     * @param method 가입 수단
      */
-    fun trackSignedUp(method: String) {
+    fun trackSignedUp() {
         analytics.logEvent(MixpanelConstants.SIGNED_UP)
     }
 
@@ -33,7 +32,6 @@ class OnboardingTracker @Inject constructor(
      * @param method 가입 수단
      * @param genresCount 선택된 장르 개수
      * @param genresCategory 선택된 장르 리스트
-     * @param isSkipped 장르 선택 건너뛰기 여부
      */
     fun trackCompletedOnboarding(
         method: String,

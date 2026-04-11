@@ -7,7 +7,6 @@ import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mixpanel.android.mpmetrics.MixpanelAPI
 import com.napzak.market.chat.chatroom.type.ChatCondition
 import com.napzak.market.chat.model.ReceiveMessage
 import com.napzak.market.chat.model.SendMessage
@@ -16,7 +15,7 @@ import com.napzak.market.chat.usecase.GetChatFlowUseCase
 import com.napzak.market.chat.usecase.SendMessageUseCase
 import com.napzak.market.chat.usecase.UnsubscribeChatRoomUseCase
 import com.napzak.market.common.state.UiState
-import com.napzak.market.mixpanel.MixpanelConstants.OPENED_REPORT_MARKET
+import com.napzak.market.mixpanel.ReportTracker
 import com.napzak.market.presigned_url.model.UploadImage
 import com.napzak.market.presigned_url.usecase.UploadImagesUseCase
 import com.napzak.market.store.repository.StoreRepository
@@ -41,7 +40,7 @@ internal class ChatRoomViewModel @Inject constructor(
     private val unsubscribeChatRoomUseCase: UnsubscribeChatRoomUseCase,
     private val storeRepository: StoreRepository,
     private val uploadImagesUseCase: UploadImagesUseCase,
-    private val mixpanel: MixpanelAPI?,
+    private val reportTracker: ReportTracker,
 ) : ViewModel() {
     private val chatMessageIdSet = mutableSetOf<Long>()
     private val chatMessageList = mutableListOf<ReceiveMessage<*>>()
@@ -494,7 +493,7 @@ internal class ChatRoomViewModel @Inject constructor(
         }.onFailure(Timber::e)
     }
 
-    internal fun trackReportMarket() = mixpanel?.track(OPENED_REPORT_MARKET)
+    internal fun trackReportMarket() = reportTracker.trackOpenedReportMarket()
 
     companion object {
         private const val ROOM_ID_KEY = "chatRoomId"

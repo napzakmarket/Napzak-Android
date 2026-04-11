@@ -51,12 +51,7 @@ import com.napzak.market.feature.search.R.string.search_suggested_genre
 import com.napzak.market.feature.search.R.string.search_suggested_search_text
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.genre.model.RecommendedSearchWordGenre.SearchWord
-import com.napzak.market.mixpanel.MixpanelConstants.ENTER
-import com.napzak.market.mixpanel.MixpanelConstants.GENRE
-import com.napzak.market.mixpanel.MixpanelConstants.GENRE_PAGE
-import com.napzak.market.mixpanel.MixpanelConstants.ICON
-import com.napzak.market.mixpanel.MixpanelConstants.KEYWORD
-import com.napzak.market.mixpanel.MixpanelConstants.SEARCH_BAR
+import com.napzak.market.mixpanel.SearchTracker
 import com.napzak.market.search.component.GenreNavigationButton
 import com.napzak.market.search.component.SuggestedGenreCard
 import com.napzak.market.search.component.SuggestedKeywordChip
@@ -92,9 +87,9 @@ internal fun SearchRoute(
         onSearchClick = { onSearchResultNavigate(searchText) },
         onTrackSearchClick = { viewModel.trackExecutedSearch(it) },
         onRecommendedSearchWordClick = onSearchResultNavigate,
-        onTrackSearchWordClick = { viewModel.trackClickedSuggestion(KEYWORD, it) },
+        onTrackSearchWordClick = { viewModel.trackClickedSearchWord(it) },
         onRecommendedGenreClick = onGenreDetailNavigate,
-        onTrackGenreClick = { viewModel.trackClickedSuggestion(GENRE, it) },
+        onTrackGenreClick = { viewModel.trackClickedGenre(it) },
         modifier = modifier,
     )
 }
@@ -203,8 +198,8 @@ private fun SearchSuccessScreen(
                 onResetClick = { onTextChange(EMPTY_TEXT) },
                 onSearchClick = onSearchClick,
                 focusRequester = focusRequester,
-                onTrackIconClick = { onTrackSearchClick(ICON) },
-                onTrackKeyboardClick = { onTrackSearchClick(ENTER) },
+                onTrackIconClick = { onTrackSearchClick(SearchTracker.SOURCE_ICON) },
+                onTrackKeyboardClick = { onTrackSearchClick(SearchTracker.SOURCE_ENTER) },
             )
         }
 
@@ -243,7 +238,7 @@ private fun SearchSuccessScreen(
                         BasicResultNavigationButton(
                             searchText = searchText,
                             onButtonClick = {
-                                onTrackSearchClick(SEARCH_BAR)
+                                onTrackSearchClick(SearchTracker.SOURCE_SEARCH_BAR)
                                 onSearchClick()
                             },
                         )
@@ -261,7 +256,7 @@ private fun SearchSuccessScreen(
                     GenreNavigationButton(
                         genreName = genreItem.genreName,
                         onBlockClick = {
-                            onTrackSearchClick(GENRE_PAGE)
+                            onTrackSearchClick(SearchTracker.SOURCE_GENRE_PAGE)
                             onRecommendedGenreClick(genreItem.genreId)
                         },
                         modifier = Modifier.background(color = NapzakMarketTheme.colors.white),

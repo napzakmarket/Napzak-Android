@@ -152,7 +152,7 @@ internal fun ExploreRoute(
             viewModel.updateBottomSheetVisibility(BottomSheetType.SORT)
         },
         onProductDetailNavigate = { id, type ->
-            viewModel.trackViewedProduct(id, type)
+            viewModel.trackViewedProduct(id, TradeType.valueOf(type) == TradeType.SELL)
             onProductDetailNavigate(id)
         },
         onLikeButtonClick = { id, value ->

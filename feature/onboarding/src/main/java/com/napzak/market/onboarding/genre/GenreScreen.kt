@@ -99,7 +99,7 @@ fun GenreRoute(
             )
         },
         onSkipClick = {
-            viewModel.trackOnboarding()
+            viewModel.trackOnboarding(isSkipped = true)
             viewModel.trackGenreSkipped()
             onSkipClick()
         },
