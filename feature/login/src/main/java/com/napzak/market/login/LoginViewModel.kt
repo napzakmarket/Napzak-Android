@@ -48,7 +48,7 @@ class LoginViewModel @Inject constructor(
                         else -> null
                     }
 
-                    onboardingTracker.trackSignedUp(OnboardingTracker.METHOD_KAKAO)
+                    onboardingTracker.trackSignedUp()
 
                     _uiState.update { it.copy(loading = false, route = nextRoute) }
                 }
