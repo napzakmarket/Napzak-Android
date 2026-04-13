@@ -344,7 +344,7 @@ private fun SuggestedSearchTextSection(
             recommendedSearchWords.forEachIndexed { index, searchWord ->
                 SuggestedKeywordChip(
                     keyword = searchWord.searchWord,
-                    onKeywordChipClick = { onTextChipClick(searchWord.searchWord, index + 1) },
+                    onKeywordChipClick = { onTextChipClick(searchWord.searchWord, index) },
                 )
             }
         }
@@ -380,7 +380,7 @@ private fun SuggestedGenreSection(
                     SuggestedGenreCard(
                         genreName = genre.genreName,
                         imgUrl = genre.genrePhoto.toString(),
-                        onCardClick = { onGenreCardClick(genre.genreId, row * 3 + col + 1) },
+                        onCardClick = { onGenreCardClick(genre.genreId, row * 3 + col) },
                         modifier = Modifier.width(100.dp),
                     )
                 }
