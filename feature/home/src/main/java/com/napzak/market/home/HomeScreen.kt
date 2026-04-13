@@ -158,7 +158,7 @@ private fun HomeScreen(
     onMostInterestedSellNavigate: () -> Unit,
     onMostInterestedBuyNavigate: () -> Unit,
     onTrackBannerClick: (Long, HomeBannerType, Int) -> Unit,
-    onTrackRecommendProductClick: (Int) -> Unit,
+    onTrackRecommendProductClick: (Int, Long, String) -> Unit,
     onTrackPopularProductClick: (HomeProductType) -> Unit,
     onPhoneVerifyClick: () -> Unit,
     onPhoneVerifyDismissClick: () -> Unit,
@@ -212,7 +212,7 @@ private fun HomeSuccessScreen(
     termsLink: String,
     privacyPolicyLink: String,
     onTrackBannerClick: (Long, HomeBannerType, Int) -> Unit,
-    onTrackRecommendProductClick: (Int) -> Unit,
+    onTrackRecommendProductClick: (Int, Long, String) -> Unit,
     onTrackPopularProductClick: (HomeProductType) -> Unit,
     onPhoneVerifyClick: () -> Unit,
     onPhoneVerifyDismissClick: () -> Unit,
@@ -259,12 +259,12 @@ private fun HomeSuccessScreen(
                 products = productRecommends,
                 title = stringResource(home_list_customized_title, nickname),
                 subTitle = stringResource(home_list_customized_sub_title, nickname),
-                onProductClick = { productId, index ->
-                    onTrackRecommendProductClick(index)
+                onProductClick = { productId, index, genreName ->
+                    onTrackRecommendProductClick(index, productId, genreName)
                     onProductClick(productId)
                 },
-                onLikeClick = { productId, isInterest ->
-                    onLikeButtonClick(productId, isInterest, HomeProductType.RECOMMEND)
+                onLikeClick = { id, value ->
+                    onLikeButtonClick(id, value, HomeProductType.RECOMMEND)
                 },
                 modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 32.dp),
             )
@@ -424,7 +424,7 @@ private fun HomeRoutePreview() {
             onMostInterestedSellNavigate = { },
             onMostInterestedBuyNavigate = { },
             onTrackBannerClick = { _, _, _ -> },
-            onTrackRecommendProductClick = {},
+            onTrackRecommendProductClick = { _, _, _ -> },
             onTrackPopularProductClick = {},
             onPhoneVerifyClick = {},
             onPhoneVerifyDismissClick = {},

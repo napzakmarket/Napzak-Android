@@ -272,8 +272,8 @@ internal class HomeViewModel @Inject constructor(
         homeTracker.trackClickedBanner(bannerId, typeString, bannerIndex)
     }
 
-    internal fun trackClickedRecommendProduct(index: Int) {
-        homeTracker.trackClickedRecommendProduct(index)
+    internal fun trackClickedRecommendProduct(index: Int, postId: Long, genreName: String) {
+        homeTracker.trackClickedRecommendProduct(index, postId, genreName)
     }
 
     internal fun trackClickedPopularProduct(productType: HomeProductType) {
