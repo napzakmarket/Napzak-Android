@@ -5,6 +5,7 @@ import com.napzak.market.explore.ExploreRoute
 import com.napzak.market.explore.ExploreViewModel
 import com.napzak.market.explore.genredetail.GenreDetailRoute
 import com.napzak.market.explore.genredetail.GenreDetailViewModel
+import com.napzak.market.mixpanel.ExploreTracker
 import com.napzak.market.navigation.AppNavigator
 import com.napzak.market.navigation.EntryProviderBuilder
 import com.napzak.market.navigation.keys.ExploreScreenKey
@@ -33,7 +34,7 @@ class ExploreEntryProvider @Inject constructor(
             GenreDetailRoute(
                 onBackButtonClick = navigator::pop,
                 onHomeNavigate = ::popUpToHome,
-                onProductClick = ::navigateToProductDetail,
+                onProductClick = { productId -> navigateToProductDetail(productId, ExploreTracker.SOURCE_GENRE_PAGE) },
                 viewModel = viewModel,
             )
         }
@@ -47,8 +48,8 @@ class ExploreEntryProvider @Inject constructor(
         navigator.navigateTo(GenreDetailScreenKey(genreId = genreId))
     }
 
-    private fun navigateToProductDetail(productId: Long) {
-        navigator.navigateTo(ProductDetailScreenKey(productId = productId))
+    private fun navigateToProductDetail(productId: Long, source: String? = null) {
+        navigator.navigateTo(ProductDetailScreenKey(productId = productId, source = source))
     }
 
     private fun popUpToHome() {

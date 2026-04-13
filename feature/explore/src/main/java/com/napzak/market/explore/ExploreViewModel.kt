@@ -355,10 +355,6 @@ internal class ExploreViewModel @AssistedInject constructor(
         )
     }
 
-    internal fun trackViewedProduct(productId: Long, isForSale: Boolean) {
-        exploreTracker.trackViewedProduct(productId, isForSale)
-    }
-
     internal fun trackSearchOpened() = searchTracker.trackOpenedSearch()
 
     companion object {

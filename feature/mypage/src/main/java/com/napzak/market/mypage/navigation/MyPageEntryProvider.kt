@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation3.runtime.EntryProviderScope
+import com.napzak.market.mixpanel.ExploreTracker
 import com.napzak.market.mypage.mypage.MyPageRoute
 import com.napzak.market.mypage.setting.SettingsRoute
 import com.napzak.market.mypage.wishlist.WishlistRoute
@@ -76,7 +77,7 @@ class MyPageEntryProvider @Inject constructor(
     }
 
     private fun navigateToProductDetail(productId: Long) {
-        navigator.navigateTo(ProductDetailScreenKey(productId = productId))
+        navigator.navigateTo(ProductDetailScreenKey(productId = productId, source = ExploreTracker.SOURCE_WISH_LIST))
     }
 
     private fun restartApplication(context: Context) {

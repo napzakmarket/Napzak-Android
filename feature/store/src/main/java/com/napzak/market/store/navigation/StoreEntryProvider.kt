@@ -2,6 +2,7 @@ package com.napzak.market.store.navigation
 
 import androidx.navigation3.runtime.EntryProviderScope
 import com.napzak.market.common.type.ReportType
+import com.napzak.market.mixpanel.ExploreTracker
 import com.napzak.market.navigation.AppNavigator
 import com.napzak.market.navigation.EntryProviderBuilder
 import com.napzak.market.navigation.keys.EditStoreScreenKey
@@ -41,7 +42,7 @@ class StoreEntryProvider @Inject constructor(
     }
 
     private fun navigateToProductDetail(productId: Long) {
-        navigator.navigateTo(ProductDetailScreenKey(productId = productId))
+        navigator.navigateTo(ProductDetailScreenKey(productId = productId, source = ExploreTracker.SOURCE_MY_PAGE))
     }
 
     private fun navigateToStoreReport(userId: Long) {

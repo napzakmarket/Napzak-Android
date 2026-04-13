@@ -73,6 +73,7 @@ import com.napzak.market.feature.explore.R.string.explore_product
 import com.napzak.market.feature.explore.R.string.explore_search_hint
 import com.napzak.market.feature.explore.R.string.explore_unopened
 import com.napzak.market.genre.model.Genre
+import com.napzak.market.mixpanel.ExploreTracker
 import com.napzak.market.product.model.Product
 import com.napzak.market.ui_util.noRippleClickable
 
@@ -80,7 +81,7 @@ import com.napzak.market.ui_util.noRippleClickable
 internal fun ExploreRoute(
     onSearchNavigate: () -> Unit,
     onGenreDetailNavigate: (Long) -> Unit,
-    onProductDetailNavigate: (Long) -> Unit,
+    onProductDetailNavigate: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
@@ -152,9 +153,12 @@ internal fun ExploreRoute(
             viewModel.updateSortOption(newSortOption)
             viewModel.updateBottomSheetVisibility(BottomSheetType.SORT)
         },
-        onProductDetailNavigate = { id, type ->
-            viewModel.trackViewedProduct(id, TradeType.valueOf(type) == TradeType.SELL)
-            onProductDetailNavigate(id)
+        onProductDetailNavigate = { id ->
+            val source =
+                if (viewModel.searchTerm.isNullOrEmpty()) ExploreTracker.SOURCE_EXPLORE_FEED
+                else ExploreTracker.SOURCE_SEARCH_RESULT
+
+            onProductDetailNavigate(id, source)
         },
         onLikeButtonClick = { id, value ->
             viewModel.updateProductIsInterested(productId = id, isInterested = value)
@@ -180,7 +184,7 @@ private fun ExploreScreen(
     onSortOptionClick: (SortType) -> Unit,
     onSortItemClick: (SortType) -> Unit,
     onGenreDetailNavigate: (Long) -> Unit,
-    onProductDetailNavigate: (Long, String) -> Unit,
+    onProductDetailNavigate: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -250,7 +254,7 @@ private fun ExploreSuccessScreen(
     onSortOptionClick: (SortType) -> Unit,
     onSortItemClick: (SortType) -> Unit,
     onGenreDetailNavigate: (Long) -> Unit,
-    onProductDetailNavigate: (Long, String) -> Unit,
+    onProductDetailNavigate: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -261,7 +265,7 @@ private fun ExploreSuccessScreen(
     var lastSelectedTab by remember { mutableStateOf(selectedTab) }
 
     LaunchedEffect(selectedTab) {
-        if (lastSelectedTab!= selectedTab) {
+        if (lastSelectedTab != selectedTab) {
             lastSelectedTab = selectedTab
             listState.animateScrollToItem(0)
         }
@@ -329,7 +333,7 @@ private fun ExploreSuccessScreen(
             onLikeButtonClick = onLikeButtonClick,
         )
 
-        if (!searchTerm.isNullOrEmpty() && productCount==0) {
+        if (!searchTerm.isNullOrEmpty() && productCount == 0) {
             EmptySearchResultView()
         }
     }
@@ -411,7 +415,7 @@ private fun GenreAndProductList(
     sortType: SortType,
     onGenreButtonClick: (Long) -> Unit,
     onSortOptionClick: () -> Unit,
-    onProductClick: (Long, String) -> Unit,
+    onProductClick: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean) -> Unit,
 ) {
     LazyColumn(
@@ -510,7 +514,7 @@ private fun GenreAndProductList(
                                 onLikeClick = { onLikeButtonClick(productId, isInterested) },
                                 modifier = Modifier
                                     .weight(1f)
-                                    .noRippleClickable { onProductClick(productId, tradeType) },
+                                    .noRippleClickable { onProductClick(productId) },
                             )
                         }
                     }
@@ -545,7 +549,7 @@ private fun ExploreScreenPreview(modifier: Modifier = Modifier) {
             onSortOptionClick = { },
             onSortItemClick = { },
             onGenreDetailNavigate = { },
-            onProductDetailNavigate = { _, _ -> },
+            onProductDetailNavigate = { },
             onLikeButtonClick = { id, value -> },
             modifier = modifier
         )

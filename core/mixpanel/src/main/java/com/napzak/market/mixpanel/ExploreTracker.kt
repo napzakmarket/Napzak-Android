@@ -61,13 +61,15 @@ class ExploreTracker @Inject constructor(
      * Description : 탐색 화면에서 상품 상세 진입
      * @param postId 게시글 ID
      * @param isForSale 판매글 여부
+     * @param source 유입 경로
      */
-    fun trackViewedProduct(postId: Long, isForSale: Boolean) {
+    fun trackViewedProduct(postId: Long, isForSale: Boolean, source: String) {
         analytics.logEvent(
             MixpanelConstants.VIEWED_PRODUCT,
             mapOf(
                 POST_ID to postId,
                 POST_TYPE to if (isForSale) POST_TYPE_FOR_SALE else POST_TYPE_WANTED,
+                SOURCE to source,
             ),
         )
     }
@@ -95,6 +97,7 @@ class ExploreTracker @Inject constructor(
         private const val SORT = "sort"
         private const val POST_ID = "post_id"
         private const val POST_TYPE = "post_type"
+        private const val SOURCE = "source"
         private const val USER_ROLE = "user_role"
 
         private const val TAB_FOR_SALE = "for_sale"
@@ -110,5 +113,15 @@ class ExploreTracker @Inject constructor(
 
         private const val USER_ROLE_BUYER = "buyer"
         private const val USER_ROLE_SELLER = "seller"
+
+        // Viewed Product Sources
+        const val SOURCE_HOME_FEED = "home_feed"
+        const val SOURCE_EXPLORE_FEED = "explore_feed"
+        const val SOURCE_SEARCH_RESULT = "search_result"
+        const val SOURCE_GENRE_PAGE = "genre_page"
+        const val SOURCE_MY_POST = "my_post"
+        const val SOURCE_MY_PAGE = "my_page"
+        const val SOURCE_CHAT_ROOM = "chat_room"
+        const val SOURCE_WISH_LIST = "wish_list"
     }
 }

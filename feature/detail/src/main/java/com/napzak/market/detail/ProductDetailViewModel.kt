@@ -53,6 +53,7 @@ internal class ProductDetailViewModel @AssistedInject constructor(
     interface Factory : AssistedNavKeyFactory<ProductDetailViewModel, ProductDetailScreenKey>
 
     private val productId: Long = navKey.productId
+    private val source: String? = navKey.source
 
     private val _productDetail: MutableStateFlow<UiState<ProductDetail>> =
         MutableStateFlow(UiState.Loading)
@@ -73,12 +74,8 @@ internal class ProductDetailViewModel @AssistedInject constructor(
         )
 
     init {
-        if (productId != null) {
-            getProductDetail(productId)
-            collectAndSetIsInterested(productId)
-        } else {
-            _productDetail.value = UiState.Failure("상품 정보를 불러올 수 없습니다.")
-        }
+        getProductDetail(productId)
+        collectAndSetIsInterested(productId)
     }
 
     fun checkPhoneVerification() = viewModelScope.launch {
@@ -194,6 +191,7 @@ internal class ProductDetailViewModel @AssistedInject constructor(
             exploreTracker.trackViewedProduct(
                 postId = currentUiState.data.productId,
                 isForSale = isForSale,
+                source = source.orEmpty(),
             )
         }
     }
@@ -213,6 +211,5 @@ internal class ProductDetailViewModel @AssistedInject constructor(
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L
-        private const val PRODUCT_ID_KEY = "productId"
     }
 }
