@@ -23,5 +23,4 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.lottie.compose)
     implementation(libs.kakao.v2.user)
-    implementation(libs.mixpanel)
 }

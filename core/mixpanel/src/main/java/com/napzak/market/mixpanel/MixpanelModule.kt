@@ -17,13 +17,17 @@ object MixpanelModule {
     @Singleton
     fun provideMixpanelApi(
         @ApplicationContext context: Context,
-    ): MixpanelAPI? {
-        return if (!BuildConfig.DEBUG) {
-            MixpanelAPI.getInstance(
-                context,
-                BuildConfig.MIXPANEL_TOKEN,
-                false,
-            )
-        } else null
+    ): MixpanelAPI {
+        val instance = MixpanelAPI.getInstance(
+            context,
+            BuildConfig.MIXPANEL_TOKEN,
+            false,
+        )
+
+        if (BuildConfig.DEBUG) {
+            instance.optOutTracking()
+        }
+
+        return instance
     }
 }

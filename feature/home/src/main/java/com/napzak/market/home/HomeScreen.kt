@@ -54,8 +54,6 @@ import com.napzak.market.home.component.HorizontalScrollableProducts
 import com.napzak.market.home.component.VerticalGridProducts
 import com.napzak.market.home.state.HomeUiState
 import com.napzak.market.home.type.HomeProductType
-import com.napzak.market.mixpanel.MixpanelConstants.FOR_SALE
-import com.napzak.market.mixpanel.MixpanelConstants.WANTED
 import com.napzak.market.product.model.Product
 import com.napzak.market.type.HomeBannerType
 import com.napzak.market.ui_util.ScreenPreview
@@ -152,7 +150,7 @@ private fun HomeScreen(
     onMostInterestedBuyNavigate: () -> Unit,
     onTrackBannerClick: (Long, HomeBannerType, Int) -> Unit,
     onTrackRecommendProductClick: (Int) -> Unit,
-    onTrackPopularProductClick: (String) -> Unit,
+    onTrackPopularProductClick: (HomeProductType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -200,7 +198,7 @@ private fun HomeSuccessScreen(
     privacyPolicyLink: String,
     onTrackBannerClick: (Long, HomeBannerType, Int) -> Unit,
     onTrackRecommendProductClick: (Int) -> Unit,
-    onTrackPopularProductClick: (String) -> Unit,
+    onTrackPopularProductClick: (HomeProductType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -274,7 +272,7 @@ private fun HomeSuccessScreen(
                 subTitle = stringResource(home_list_interested_sell_sub_title),
                 onProductClick = { productId ->
                     onProductClick(productId)
-                    onTrackPopularProductClick(FOR_SALE)
+                    onTrackPopularProductClick(HomeProductType.POPULAR_SELL)
                 },
                 onLikeClick = { productId, isInterest ->
                     onLikeButtonClick(productId, isInterest, HomeProductType.POPULAR_SELL)
@@ -306,7 +304,7 @@ private fun HomeSuccessScreen(
                 subTitle = stringResource(home_list_interested_buy_sub_title),
                 onProductClick = { productId ->
                     onProductClick(productId)
-                    onTrackPopularProductClick(WANTED)
+                    onTrackPopularProductClick(HomeProductType.POPULAR_BUY)
                 },
                 onLikeClick = { productId, isInterest ->
                     onLikeButtonClick(productId, isInterest, HomeProductType.POPULAR_BUY)
