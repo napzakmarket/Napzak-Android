@@ -47,6 +47,7 @@ import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.component.topbar.NavigateUpTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.report.R.string.report_button_submit
+import com.napzak.market.feature.report.R.string.report_toast_success
 import com.napzak.market.report.component.ReportContactSection
 import com.napzak.market.report.component.ReportDetailSection
 import com.napzak.market.report.component.ReportReasonSection
@@ -74,14 +75,11 @@ internal fun ReportRoute(
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
-                    ReportSideEffect.NavigateUp -> {
+                    is ReportSideEffect.ReportCompleted -> {
                         navigateUp()
-                    }
-
-                    is ReportSideEffect.ShowToast -> {
                         napzakToast.makeText(
                             toastType = ToastType.COMMON,
-                            message = sideEffect.message,
+                            message = context.getString(report_toast_success),
                             fontType = ToastFontType.SMALL,
                             yOffset = 50,
                         )

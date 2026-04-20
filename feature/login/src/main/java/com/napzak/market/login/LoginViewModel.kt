@@ -2,10 +2,9 @@ package com.napzak.market.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mixpanel.android.mpmetrics.MixpanelAPI
 import com.napzak.market.login.model.LoginFlowRoute
 import com.napzak.market.login.model.LoginUiState
-import com.napzak.market.mixpanel.MixpanelConstants.SIGNED_UP
+import com.napzak.market.mixpanel.OnboardingTracker
 import com.napzak.market.store.usecase.SaveTokensUseCase
 import com.napzak.market.store.usecase.SetKakaoLoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +21,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val setKakaoLoginUseCase: SetKakaoLoginUseCase,
     private val saveTokensUseCase: SaveTokensUseCase,
-    private val mixpanel: MixpanelAPI?
+    private val onboardingTracker: OnboardingTracker,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -49,7 +48,7 @@ class LoginViewModel @Inject constructor(
                         else -> null
                     }
 
-                    mixpanel?.track(SIGNED_UP)
+                    onboardingTracker.trackSignedUp()
 
                     _uiState.update { it.copy(loading = false, route = nextRoute) }
                 }

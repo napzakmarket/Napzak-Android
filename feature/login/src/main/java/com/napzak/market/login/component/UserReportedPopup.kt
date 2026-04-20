@@ -9,9 +9,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.napzak.market.designsystem.R.drawable.ic_square_red_warning
 import com.napzak.market.designsystem.component.popup.NapzakPopup
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.feature.login.R.string.napzak_email
+import com.napzak.market.feature.login.R.string.reported_popup_confirm_button
 import com.napzak.market.feature.login.R.string.reported_popup_subtitle
 import com.napzak.market.feature.login.R.string.reported_popup_title
-import com.napzak.market.feature.login.R.string.reported_popup_confirm_button
+import com.napzak.market.ui_util.underline
 
 @Composable
 fun UserReportedPopup(
@@ -20,7 +22,7 @@ fun UserReportedPopup(
 ) {
     NapzakPopup(
         title = stringResource(reported_popup_title),
-        subTitle = stringResource(reported_popup_subtitle),
+        subTitle = stringResource(reported_popup_subtitle).underline(stringResource(napzak_email)),
         icon = ImageVector.vectorResource(ic_square_red_warning),
         buttonColor = NapzakMarketTheme.colors.red,
         buttonText = stringResource(reported_popup_confirm_button),

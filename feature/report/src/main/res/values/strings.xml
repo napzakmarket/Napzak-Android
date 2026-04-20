@@ -9,8 +9,8 @@
         \n안전한 거래 공간을 함께 만들어가요!
     </string>
     <string name="report_input_letter_num_detail">%d/%d</string>
-    <string name="report_input_title_contact">연락처 입력</string>
-    <string name="report_input_place_holder_contact">신고 검토 결과를 받아볼 이메일 또는 전화번호를 알려주세요</string>
+    <string name="report_input_title_contact">이메일 주소 입력</string>
+    <string name="report_input_place_holder_contact">신고 관련 안내 및 확인을 위해 이메일을 입력해주세요.</string>
 
     <string name="report_product_title">상품을 신고하는 이유를 알려주세요</string>
     <string name="report_product_banned_product">거래 금지 상품을 판매하고 있어요</string>
@@ -27,4 +27,11 @@
     <string name="report_user_slang_used">욕설/비속어 등 불쾌한 표현을 사용했어요</string>
     <string name="report_user_miscellaneous">기타 문제가 있어요</string>
     <string name="report_button_submit">제출하기</string>
+
+    <string name="report_toast_success">
+        소중한 신고 감사합니다! \uD83D\uDE4F\n\n
+        신고 내용을 꼼꼼히 검토하여\n
+        입력하신 이메일로 결과를 안내해드릴게요.\n
+        추가 정보가 필요할 경우 동일한 이메일로 문의드릴 수 있어요.
+    </string>
 </resources>

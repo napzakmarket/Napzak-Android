@@ -2,24 +2,13 @@ package com.napzak.market.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mixpanel.android.mpmetrics.MixpanelAPI
 import com.napzak.market.banner.Banner
 import com.napzak.market.common.state.UiState
 import com.napzak.market.home.state.HomeUiState
 import com.napzak.market.home.type.HomeProductType
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
-import com.napzak.market.mixpanel.MixpanelConstants.BANNER_ID
-import com.napzak.market.mixpanel.MixpanelConstants.BANNER_INDEX
-import com.napzak.market.mixpanel.MixpanelConstants.BANNER_MAIN
-import com.napzak.market.mixpanel.MixpanelConstants.BANNER_MINI
-import com.napzak.market.mixpanel.MixpanelConstants.BANNER_TYPE
-import com.napzak.market.mixpanel.MixpanelConstants.CLICKED_BANNER
-import com.napzak.market.mixpanel.MixpanelConstants.CLICKED_CUSTOM_GENRE
-import com.napzak.market.mixpanel.MixpanelConstants.FOR_SALE
-import com.napzak.market.mixpanel.MixpanelConstants.ITEM_INDEX
-import com.napzak.market.mixpanel.MixpanelConstants.VIEWED_POPULAR_SALE
-import com.napzak.market.mixpanel.MixpanelConstants.VIEWED_POPULAR_WANTED
-import com.napzak.market.mixpanel.trackEvent
+import com.napzak.market.mixpanel.HomeTracker
+import com.napzak.market.mixpanel.MixpanelConstants
 import com.napzak.market.notification.repository.NotificationRepository
 import com.napzak.market.notification.usecase.UpdatePushTokenUseCase
 import com.napzak.market.product.model.Product
@@ -54,7 +43,7 @@ internal class HomeViewModel @Inject constructor(
     private val interestProductUseCase: SetInterestProductUseCase,
     private val notificationRepository: NotificationRepository,
     private val updatePushTokenUseCase: UpdatePushTokenUseCase,
-    private val mixpanel: MixpanelAPI?,
+    private val homeTracker: HomeTracker,
 ) : ViewModel() {
     private val nickname = MutableStateFlow("")
     private val _bannerLoadState =
@@ -254,25 +243,20 @@ internal class HomeViewModel @Inject constructor(
     }
 
     internal fun trackClickedBanner(bannerId: Long, bannerType: HomeBannerType, bannerIndex: Int) {
-        val props = mapOf(
-            BANNER_ID to bannerId,
-            BANNER_TYPE to if (bannerType == HomeBannerType.TOP) BANNER_MAIN else BANNER_MINI,
-            BANNER_INDEX to bannerIndex,
-        )
-
-        mixpanel?.trackEvent(CLICKED_BANNER, props)
+        val typeString = if (bannerType == HomeBannerType.TOP) HomeTracker.BANNER_MAIN else HomeTracker.BANNER_MINI
+        homeTracker.trackClickedBanner(bannerId, typeString, bannerIndex)
     }
 
     internal fun trackClickedRecommendProduct(index: Int) {
-        val props = mapOf(
-            ITEM_INDEX to index,
-        )
-        mixpanel?.trackEvent(CLICKED_CUSTOM_GENRE, props)
+        homeTracker.trackClickedRecommendProduct(index)
     }
 
-    internal fun trackClickedPopularProduct(tradeType: String) {
-        val eventName = if (tradeType == FOR_SALE) VIEWED_POPULAR_SALE else VIEWED_POPULAR_WANTED
-        mixpanel?.track(eventName)
+    internal fun trackClickedPopularProduct(productType: HomeProductType) {
+        if (productType == HomeProductType.POPULAR_SELL) {
+            homeTracker.trackViewedPopularSale()
+        } else {
+            homeTracker.trackViewedPopularWanted()
+        }
     }
 
     companion object {

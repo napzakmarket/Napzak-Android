@@ -2,16 +2,8 @@ package com.napzak.market.mypage.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mixpanel.android.mpmetrics.MixpanelAPI
 import com.napzak.market.common.state.UiState
-import com.napzak.market.mixpanel.MixpanelConstants.LOGGED_OUT
-import com.napzak.market.mixpanel.MixpanelConstants.OFF
-import com.napzak.market.mixpanel.MixpanelConstants.ON
-import com.napzak.market.mixpanel.MixpanelConstants.STARTED_WITHDRAWAL
-import com.napzak.market.mixpanel.MixpanelConstants.STATUS
-import com.napzak.market.mixpanel.MixpanelConstants.TOGGLED_ALARM
-import com.napzak.market.mixpanel.MixpanelConstants.VIEWED_SETTING
-import com.napzak.market.mixpanel.trackEvent
+import com.napzak.market.mixpanel.SettingsTracker
 import com.napzak.market.mypage.setting.state.SettingUiState
 import com.napzak.market.notification.repository.NotificationRepository
 import com.napzak.market.notification.usecase.GetNotificationSettingsUseCase
@@ -38,7 +30,7 @@ internal class SettingViewModel @Inject constructor(
     private val getNotificationSettingsUseCase: GetNotificationSettingsUseCase,
     private val patchNotificationSettingsUseCase: PatchNotificationSettingsUseCase,
     private val notificationRepository: NotificationRepository,
-    private val mixpanel: MixpanelAPI?,
+    private val settingsTracker: SettingsTracker,
 ) : ViewModel() {
 
     private val _settingInfoState = MutableStateFlow<UiState<SettingInfo>>(UiState.Loading)
@@ -102,21 +94,17 @@ internal class SettingViewModel @Inject constructor(
     fun signOutUser() = viewModelScope.launch {
         logoutUseCase()
             .onSuccess {
-                mixpanel?.track(LOGGED_OUT)
+                settingsTracker.trackLoggedOut()
                 _sideEffect.send(SettingSideEffect.OnSignOutComplete)
             }
             .onFailure(Timber::e)
     }
 
-    internal fun trackViewedMyPage() = mixpanel?.track(VIEWED_SETTING)
+    internal fun trackViewedSetting() = settingsTracker.trackViewedSetting()
 
-    internal fun trackStartedWithdrawal() = mixpanel?.track(STARTED_WITHDRAWAL)
+    internal fun trackStartedWithdrawal() = settingsTracker.trackStartedWithdrawal()
 
     private fun trackToggledAlarm(status: Boolean) {
-        val props = mapOf(
-            STATUS to if (status) ON else OFF,
-        )
-
-        mixpanel?.trackEvent(TOGGLED_ALARM, props)
+        settingsTracker.trackToggledAlarm(if (status) SettingsTracker.STATE_ON else SettingsTracker.STATE_OFF)
     }
 }
