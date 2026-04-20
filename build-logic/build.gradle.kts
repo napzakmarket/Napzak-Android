@@ -47,6 +47,11 @@ gradlePlugin {
             implementationClass = "com.napzak.market.buildlogic.primitive.OkHttpPlugin"
         }
 
+        register("com.napzak.market.buildlogic.primitive.RoomPlugin") {
+            id = "com.napzak.market.buildlogic.primitive.room"
+            implementationClass = "com.napzak.market.buildlogic.primitive.RoomPlugin"
+        }
+
         register("com.napzak.market.buildlogic.primitive.TestPlugin") {
             id = "com.napzak.market.buildlogic.primitive.test"
             implementationClass = "com.napzak.market.buildlogic.primitive.TestPlugin"

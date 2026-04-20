@@ -1,27 +1,70 @@
 package com.napzak.market.chat
 
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.napzak.market.chat.datasource.ChatRoomDataSource
+import com.napzak.market.chat.repository.ChatRoomRepository
 import com.napzak.market.chat.repositoryimpl.ChatRoomRepositoryImpl
 import com.napzak.market.chat.service.ChatRoomService
+import com.napzak.market.local.room.NapzakDatabase
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertNotEquals
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [34])
 class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
     private lateinit var service: ChatRoomService
+    private lateinit var database: NapzakDatabase
+    private lateinit var repository: ChatRoomRepository
+
+    private val testScheduler = TestCoroutineScheduler()
+    private val testDispatcher = StandardTestDispatcher(testScheduler)
 
     @Before
+    fun setUp() {
+        initService()
+        initDatabase()
+        initRepository()
+    }
+
     fun initService() {
         super.createMockServer()
         service = createService(ChatRoomService::class.java)
     }
 
+    fun initDatabase() {
+        database = Room.inMemoryDatabaseBuilder(
+            getApplicationContext(),
+            NapzakDatabase::class.java
+        ).allowMainThreadQueries().build()
+    }
+
+    fun initRepository() {
+        val datasource = ChatRoomDataSource(service)
+        repository = ChatRoomRepositoryImpl(
+            chatRoomDataSource = datasource,
+            napzakDatabase = database,
+            chatMessageDao = database.chatMessageDao(),
+            chatProductDao = database.chatProductDao(),
+            chatRemoteKeyDao = database.chatRemoteKeyDao(),
+            chatRoomDao = database.chatRoomDao(),
+            ioDispatcher = testDispatcher
+        )
+    }
+
     @After
     fun tearDown() {
         super.stopServer()
+        database.close()
     }
 
     @Test
@@ -64,21 +107,22 @@ class ChatRoomInformationApiTest : ApiAbstract<ChatRoomService>() {
     }
 
     @Test
-    fun `fetch ChatRoomInformationResponse From Repository`() = runTest {
+    fun `fetch ChatRoomInformationResponse From Repository`() = runTest(testDispatcher) {
         // given
         enqueueResponse("ChatRoomInformation.json")
-        val dataSource = ChatRoomDataSource(service)
 
         // when
-        val result = ChatRoomRepositoryImpl(dataSource)
+        val result = repository
             .getChatRoomInformation(productId = 3, roomId = 6L)
-            .getOrNull()
+            .getOrElse {
+                println(it)
+                null
+            }
         mockWebServer.takeRequest()
 
-
         // then
-        assert(result?.roomId != null) { "Repository 매핑 결과가 널 입니다." }
-        if (result?.roomId != null) {
+        assert(result != null) { "Repository 매핑 결과가 널 입니다." }
+        if (result != null) {
             with(result) {
                 assertEquals(6L, roomId)
 

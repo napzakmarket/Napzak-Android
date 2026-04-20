@@ -24,6 +24,7 @@ dependencies {
     implementation(projects.domain.notification)
 
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.paging.compose)
     implementation(libs.coil.compose)
     implementation(libs.timber)
     implementation(libs.mixpanel)
