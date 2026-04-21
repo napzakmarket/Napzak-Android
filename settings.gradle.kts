@@ -33,6 +33,7 @@ include(
     ":core:util",
     ":core:ui_util",
     ":core:mixpanel",
+    ":core:navigation",
 )
 
 include(
