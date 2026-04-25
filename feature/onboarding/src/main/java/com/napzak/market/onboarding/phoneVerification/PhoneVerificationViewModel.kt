@@ -1,6 +1,5 @@
 package com.napzak.market.onboarding.phoneVerification
 
-import android.provider.SimPhonebookContract.ElementaryFiles.NAME_MAX_LENGTH
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.onboarding.phoneVerification.model.PhoneVerificationUiState
@@ -9,6 +8,7 @@ import com.napzak.market.store.usecase.ValidateCodeUseCase
 import com.napzak.market.store.usecase.ValidateNameUseCase
 import com.napzak.market.store.usecase.ValidatePhoneUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,6 +24,8 @@ class PhoneVerificationViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(PhoneVerificationUiState())
     val uiState = _uiState.asStateFlow()
+
+    private var timerJob: Job? = null
 
     fun onNameChanged(name: String) {
         val limitedName = name.replace(" ", "").take(NAME_MAX_LENGTH)
@@ -74,7 +76,8 @@ class PhoneVerificationViewModel @Inject constructor(
     }
 
     private fun startTimer() {
-        viewModelScope.launch {
+        timerJob?.cancel()
+        timerJob = viewModelScope.launch {
             while (_uiState.value.remainingTimeSec > 0) {
                 delay(1000)
                 _uiState.update { it.copy(remainingTimeSec = it.remainingTimeSec - 1) }
