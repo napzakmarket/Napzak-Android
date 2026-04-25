@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_right
-import com.napzak.market.designsystem.R.drawable.ic_first_step_indicator
+import com.napzak.market.designsystem.R.drawable.ic_indicator_first_step
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.button.NapzakCheckedButton
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -86,7 +86,7 @@ fun TermsAgreementScreen(
     ) {
         OnboardingTopBar(
             onBackClick = onBackClick,
-            indicatorIcon = ic_first_step_indicator,
+            indicatorIcon = ic_indicator_first_step,
             modifier = Modifier.fillMaxWidth()
         )
 

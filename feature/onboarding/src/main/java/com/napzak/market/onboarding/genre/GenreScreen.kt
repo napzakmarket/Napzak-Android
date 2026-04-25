@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.napzak.market.designsystem.R.drawable.ic_third_step_indicator
+import com.napzak.market.designsystem.R.drawable.ic_indicator_fourth_step
 import com.napzak.market.designsystem.R.string.warning_snackbar_genre_limit_message
 import com.napzak.market.designsystem.component.ChipButtonGroup
 import com.napzak.market.designsystem.component.button.NapzakButton
@@ -240,7 +240,7 @@ private fun GenreTopBar(
 ) {
     OnboardingTopBar(
         onBackClick = onBackClick,
-        indicatorIcon = ic_third_step_indicator,
+        indicatorIcon = ic_indicator_fourth_step,
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)

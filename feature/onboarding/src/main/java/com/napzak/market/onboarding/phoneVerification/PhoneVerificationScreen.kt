@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.designsystem.R.drawable.ic_circle_check
-import com.napzak.market.designsystem.R.drawable.ic_second_step_indicator
+import com.napzak.market.designsystem.R.drawable.ic_indicator_second_step
 import com.napzak.market.designsystem.component.button.NapzakBorderButton
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.button.NapzakCheckedButton
@@ -120,7 +120,7 @@ fun PhoneVerificationScreen(
         if (isOnboarding) {
             OnboardingTopBar(
                 onBackClick = onBackClick,
-                indicatorIcon = ic_second_step_indicator,
+                indicatorIcon = ic_indicator_second_step,
                 modifier = Modifier.fillMaxWidth()
             )
         }
