@@ -13,12 +13,13 @@ data class PhoneVerificationUiState(
     val codeValidation: CodeValidationResult = CodeValidationResult.Uninitialized,
     val isSend: Boolean = false,
     val remainingTimeSec: Int = 0,
-    val verificationStatus: VerificationStatus = VerificationStatus.NONE,
     val isAgeChecked: Boolean = false,
+    val verificationStatus: VerificationStatus = VerificationStatus.NONE,
 ) {
     val isSendEnabled: Boolean
-        get() = nameValidation is NameValidationResult.Valid &&
-                phoneValidation is PhoneValidationResult.Valid
+        get() = phoneValidation is PhoneValidationResult.Valid &&
+                remainingTimeSec == 0 &&
+                !isVerificationSuccess
 
     val isVerifyEnabled: Boolean
         get() = codeValidation is CodeValidationResult.Valid &&
@@ -29,5 +30,7 @@ data class PhoneVerificationUiState(
         get() = verificationStatus == VerificationStatus.VERIFIED
 
     val isNextEnabled: Boolean
-        get() = verificationStatus == VerificationStatus.VERIFIED
+        get() = nameValidation is NameValidationResult.Valid &&
+                verificationStatus == VerificationStatus.VERIFIED &&
+                isAgeChecked
 }
