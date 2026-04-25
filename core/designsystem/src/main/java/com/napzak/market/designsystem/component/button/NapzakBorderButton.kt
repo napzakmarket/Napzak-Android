@@ -18,7 +18,7 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 
 /**
  * border가 있는 버튼 컴포넌트입니다.
- * 활성/비활성 상태** 두 가지 스타일을 기본 제공하며
+ * **활성/비활성 상태** 두 가지 스타일을 기본 제공하며
  * 버튼 내부에 **텍스트만** 사용할 수 있습니다.
  * 납작 primary color가 적용되는 모든 버튼에서 사용 가능합니다.
  *
