@@ -35,20 +35,21 @@ import com.napzak.market.designsystem.component.textfield.NapzakAffixTextField
 import com.napzak.market.designsystem.component.textfield.NapzakDefaultTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.onboarding.R.string.onboarding_next
-import com.napzak.market.feature.onboarding.R.string.onboarding_phone_verification_edit_hint
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_agreement_age_over_14
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_name_edit_hint
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_number_edit_hint
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_prefix_korean
+import com.napzak.market.feature.onboarding.R.string.onboarding_phone_resend
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_sub_title
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_title
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_verification_check_button
+import com.napzak.market.feature.onboarding.R.string.onboarding_phone_verification_edit_hint
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_verification_success
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_verify
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_verify_number
-import com.napzak.market.feature.onboarding.R.string.onboarding_phone_resend
 import com.napzak.market.onboarding.genre.component.OnboardingTopBar
 import com.napzak.market.onboarding.phoneVerification.model.PhoneVerificationUiState
+import com.napzak.market.onboarding.phoneVerification.util.toTimeFormat
 
 @Composable
 internal fun PhoneVerificationRoute(
@@ -234,7 +235,7 @@ fun PhoneVerificationScreen(
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
-                            text = remainingTimeSec.toString(),
+                            text = remainingTimeSec.toTimeFormat(),
                             style = NapzakMarketTheme.typography.caption12sb,
                             color =
                                 if (remainingTimeSec == 0) NapzakMarketTheme.colors.gray50
