@@ -67,7 +67,7 @@ fun NapzakModal(
                     imageVector = ImageVector.vectorResource(image),
                     contentDescription = null,
                     tint = Color.Unspecified,
-                    modifier = modifier.padding(top = 6.dp)
+                    modifier = Modifier.padding(top = 6.dp),
                 )
 
                 Spacer(Modifier.height(18.dp))
