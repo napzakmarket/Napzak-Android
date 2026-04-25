@@ -2,6 +2,7 @@ package com.napzak.market.onboarding.phoneVerification
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,14 +15,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -58,9 +65,11 @@ internal fun PhoneVerificationRoute(
     viewModel: PhoneVerificationViewModel = hiltViewModel(),
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
+    val isOnboarding = viewModel.isOnboarding.collectAsStateWithLifecycle().value
 
     PhoneVerificationScreen(
         uiState = uiState,
+        isOnboarding = isOnboarding,
         onNameChanged = viewModel::onNameChanged,
         onPhoneChanged = viewModel::onPhoneChanged,
         onCodeChanged = viewModel::onCodeChanged,
@@ -69,8 +78,8 @@ internal fun PhoneVerificationRoute(
         onAgeCheckedChange = viewModel::updateAgeChecked,
         onBackClick = onBackClick,
         onNextClick = {
-            // 회원가입에서 넘어왔을 경우 onNextClick()
-            // 일반 기능에서 넘어왔을 경우 onBackClick()
+            if (isOnboarding) onNextClick()
+            else onBackClick()
         },
     )
 }
@@ -78,6 +87,7 @@ internal fun PhoneVerificationRoute(
 @Composable
 fun PhoneVerificationScreen(
     uiState: PhoneVerificationUiState,
+    isOnboarding: Boolean,
     onNameChanged: (String) -> Unit,
     onPhoneChanged: (String) -> Unit,
     onCodeChanged: (String) -> Unit,
@@ -87,9 +97,18 @@ fun PhoneVerificationScreen(
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                })
+            }
             .background(NapzakMarketTheme.colors.white)
             .padding(horizontal = 20.dp, vertical = 60.dp)
             .padding(
@@ -98,7 +117,7 @@ fun PhoneVerificationScreen(
                     .calculateBottomPadding()
             ),
     ) {
-        if (true) { // TODO : 회원가입 단계에서만 보여주도록 수정 필요
+        if (isOnboarding) {
             OnboardingTopBar(
                 onBackClick = onBackClick,
                 indicatorIcon = ic_second_step_indicator,
@@ -131,6 +150,10 @@ fun PhoneVerificationScreen(
             textStyle = NapzakMarketTheme.typography.caption12sb,
             hintTextStyle = NapzakMarketTheme.typography.caption12m,
             textColor = NapzakMarketTheme.colors.gray500,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next,
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
@@ -149,6 +172,7 @@ fun PhoneVerificationScreen(
             textStyle = NapzakMarketTheme.typography.caption12sb,
             hintTextStyle = NapzakMarketTheme.typography.caption12m,
             textColor = NapzakMarketTheme.colors.gray500,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
@@ -180,6 +204,8 @@ fun PhoneVerificationScreen(
                             )
                             .clickable(enabled = isSendEnabled) {
                                 onSendButtonClick()
+                                focusManager.clearFocus()
+                                keyboardController?.hide()
                             }
                             .padding(horizontal = 12.dp, vertical = 8.dp),
                         contentAlignment = Alignment.Center,
@@ -194,70 +220,77 @@ fun PhoneVerificationScreen(
             },
         )
 
-        Spacer(Modifier.height(24.dp))
+        if (uiState.isSend) {
+            Spacer(Modifier.height(24.dp))
 
-        Text(
-            text = stringResource(onboarding_phone_verify_number),
-            style = NapzakMarketTheme.typography.caption12r,
-            color = NapzakMarketTheme.colors.gray300,
-        )
+            Text(
+                text = stringResource(onboarding_phone_verify_number),
+                style = NapzakMarketTheme.typography.caption12r,
+                color = NapzakMarketTheme.colors.gray300,
+            )
 
-        Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(12.dp))
 
-        NapzakAffixTextField(
-            text = uiState.code,
-            onTextChange = onCodeChanged,
-            hint = stringResource(onboarding_phone_verification_edit_hint),
-            textStyle = NapzakMarketTheme.typography.caption12sb,
-            hintTextStyle = NapzakMarketTheme.typography.caption12m,
-            textColor = NapzakMarketTheme.colors.gray500,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    NapzakMarketTheme.colors.gray50,
-                    RoundedCornerShape(14.dp)
-                )
-                .padding(PaddingValues(16.dp, 10.dp, 10.dp, 10.dp)),
-            prefix = {
-                if (uiState.isVerificationSuccess) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(ic_circle_check),
-                        contentDescription = null,
-                        tint = NapzakMarketTheme.colors.green,
-                        modifier = Modifier.padding(end = 4.dp),
+            NapzakAffixTextField(
+                text = uiState.code,
+                onTextChange = onCodeChanged,
+                hint = stringResource(onboarding_phone_verification_edit_hint),
+                textStyle = NapzakMarketTheme.typography.caption12sb,
+                hintTextStyle = NapzakMarketTheme.typography.caption12m,
+                textColor = NapzakMarketTheme.colors.gray500,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        NapzakMarketTheme.colors.gray50,
+                        RoundedCornerShape(14.dp)
                     )
-                }
-            },
-            suffix = {
-                with(uiState) {
-                    Box(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            text = remainingTimeSec.toTimeFormat(),
-                            style = NapzakMarketTheme.typography.caption12sb,
-                            color =
-                                if (remainingTimeSec == 0) NapzakMarketTheme.colors.gray50
-                                else NapzakMarketTheme.colors.purple500,
+                    .padding(PaddingValues(16.dp, 10.dp, 10.dp, 10.dp)),
+                prefix = {
+                    if (uiState.isVerificationSuccess) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(ic_circle_check),
+                            contentDescription = null,
+                            tint = NapzakMarketTheme.colors.green,
+                            modifier = Modifier.padding(end = 4.dp),
                         )
                     }
-                }
-            },
-        )
+                },
+                suffix = {
+                    with(uiState) {
+                        Box(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = remainingTimeSec.toTimeFormat(),
+                                style = NapzakMarketTheme.typography.caption12sb,
+                                color =
+                                    if (remainingTimeSec == 0) NapzakMarketTheme.colors.gray300
+                                    else NapzakMarketTheme.colors.purple500,
+                            )
+                        }
+                    }
+                },
+            )
 
-        Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(12.dp))
 
-        NapzakBorderButton(
-            text =
-                if (uiState.isVerificationSuccess)
-                    stringResource(onboarding_phone_verification_success)
-                else
-                    stringResource(onboarding_phone_verification_check_button),
-            enabled = uiState.isVerifyEnabled,
-            onClick = onCodeCheckClick,
-            modifier = Modifier.fillMaxWidth(),
-        )
+            NapzakBorderButton(
+                text =
+                    if (uiState.isVerificationSuccess)
+                        stringResource(onboarding_phone_verification_success)
+                    else
+                        stringResource(onboarding_phone_verification_check_button),
+                enabled = uiState.isVerifyEnabled,
+                onClick = {
+                    onCodeCheckClick()
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -282,6 +315,7 @@ private fun PhoneVerificationScreenPreview() {
     NapzakMarketTheme {
         PhoneVerificationScreen(
             uiState = PhoneVerificationUiState(),
+            isOnboarding = true,
             onNameChanged = {},
             onPhoneChanged = {},
             onCodeChanged = {},

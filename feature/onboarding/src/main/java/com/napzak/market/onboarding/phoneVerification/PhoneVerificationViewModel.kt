@@ -1,5 +1,6 @@
 package com.napzak.market.onboarding.phoneVerification
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.onboarding.phoneVerification.model.PhoneVerificationUiState
@@ -18,10 +19,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PhoneVerificationViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val validateNameUseCase: ValidateNameUseCase,
     private val validatePhoneUseCase: ValidatePhoneUseCase,
     private val validateCodeUseCase: ValidateCodeUseCase,
 ) : ViewModel() {
+    val isOnboarding = savedStateHandle.getStateFlow(ONBOARDING_KEY, true)
+
     private val _uiState = MutableStateFlow(PhoneVerificationUiState())
     val uiState = _uiState.asStateFlow()
 
@@ -66,11 +70,13 @@ class PhoneVerificationViewModel @Inject constructor(
 
         _uiState.update {
             it.copy(
+                code = "",
                 isSend = true,
                 verificationStatus = VerificationStatus.REQUESTED,
                 remainingTimeSec = 180,
             )
         }
+        // TODO: 인증 발송 토스트
 
         startTimer()
     }
@@ -92,12 +98,21 @@ class PhoneVerificationViewModel @Inject constructor(
 
         // TODO: 서버 API 호출
         if (true) {
+            timerJob?.cancel()
             _uiState.update {
-                it.copy(verificationStatus = VerificationStatus.VERIFIED)
+                it.copy(
+                    remainingTimeSec = 0,
+                    verificationStatus = VerificationStatus.VERIFIED,
+                )
             }
         } else {
             // 실패 시 상태 유지 (REQUESTED)
             // 필요하면 error state 따로 추가
+            _uiState.update {
+                it.copy(
+                    code = "",
+                )
+            }
         }
     }
 
@@ -106,6 +121,7 @@ class PhoneVerificationViewModel @Inject constructor(
     }
 
     companion object {
+        private const val ONBOARDING_KEY = "isOnboarding"
         private const val NAME_MAX_LENGTH = 20
         private const val PHONE_MAX_LENGTH = 11
         private const val CODE_MAX_LENGTH = 6
