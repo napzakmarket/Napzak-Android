@@ -44,6 +44,7 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.ic_dark_gray_search
 import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_left
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
+import com.napzak.market.designsystem.component.scaffold.LocalInnerPadding
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.search.R.string.search_hint
@@ -90,7 +91,8 @@ internal fun SearchRoute(
         onTrackSearchWordClick = { viewModel.trackClickedSearchWord(it) },
         onRecommendedGenreClick = onGenreDetailNavigate,
         onTrackGenreClick = { viewModel.trackClickedGenre(it) },
-        modifier = modifier,
+        modifier = modifier
+            .padding(top = LocalInnerPadding.current.calculateTopPadding()),
     )
 }
 
