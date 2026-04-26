@@ -17,7 +17,7 @@ class AppNavigatorImpl @Inject constructor(
     private val chatSessionManager: ChatSessionManager,
     private val deepLinkEventBus: DeepLinkEventBus,
 ) : AppNavigator {
-    private val currentScreen = backStack.lastOrNull()
+    override val currentScreen get() = backStack.lastOrNull()
 
     override fun navigateTo(
         key: ScreenKey,

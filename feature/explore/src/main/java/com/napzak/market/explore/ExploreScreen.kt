@@ -53,6 +53,7 @@ import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.FilterChip
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
+import com.napzak.market.designsystem.component.scaffold.LocalInnerPadding
 import com.napzak.market.designsystem.component.tabbar.TradeTypeTabBar
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
@@ -158,7 +159,8 @@ internal fun ExploreRoute(
         onLikeButtonClick = { id, value ->
             viewModel.updateProductIsInterested(productId = id, isInterested = value)
         },
-        modifier = modifier,
+        modifier = modifier
+            .padding(LocalInnerPadding.current),
     )
 }
 
