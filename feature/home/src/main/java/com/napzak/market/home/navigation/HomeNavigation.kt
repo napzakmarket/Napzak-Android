@@ -33,7 +33,6 @@ fun NavGraphBuilder.homeGraph(
             onMostInterestedSellNavigate = navigateToExploreSell,
             onMostInterestedBuyNavigate = navigateToExploreBuy,
             onPhoneVerificationNavigate = onPhoneVerificationNavigate,
-            checkSessionManager = checkSessionManager,
             modifier = modifier,
         )
     }

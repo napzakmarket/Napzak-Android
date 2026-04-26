@@ -36,6 +36,7 @@ import com.napzak.market.banner.Banner
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
+import com.napzak.market.designsystem.component.scaffold.LocalInnerPadding
 import com.napzak.market.designsystem.component.popup.NapzakPhoneVerifyModal
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
@@ -77,7 +78,6 @@ internal fun HomeRoute(
     onMostInterestedSellNavigate: () -> Unit,
     onMostInterestedBuyNavigate: () -> Unit,
     onPhoneVerificationNavigate: () -> Unit,
-    checkSessionManager: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -86,6 +86,7 @@ internal fun HomeRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val napzakToast = LocalNapzakToast.current
     val context = LocalContext.current
+    val innerPadding = LocalInnerPadding.current
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -95,7 +96,6 @@ internal fun HomeRoute(
 
     LaunchedEffect(Unit) {
         viewModel.fetchHomeData()
-        checkSessionManager()
         viewModel.checkPhoneVerificationIfNeeded()
 
         val isRequested = viewModel.getNotificationPermissionRequested()
@@ -142,6 +142,7 @@ internal fun HomeRoute(
         onPhoneVerifyClick = onPhoneVerificationNavigate,
         onPhoneVerifyDismissClick = viewModel::dismissPhoneVerifyModal,
         modifier = Modifier
+            .padding(bottom = innerPadding.calculateBottomPadding())
             .background(NapzakMarketTheme.colors.white)
             .then(modifier),
     )
