@@ -1,6 +1,7 @@
 package com.napzak.market.navigationimpl
 
 import android.content.Intent
+import android.util.Log
 import androidx.navigation3.runtime.NavBackStack
 import com.napzak.market.event.ChatSessionManager
 import com.napzak.market.event.DeepLinkEvent
@@ -19,10 +20,34 @@ class AppNavigatorImpl @Inject constructor(
 ) : AppNavigator {
     override val currentScreen get() = backStack.lastOrNull()
 
+    /**
+     * [ScreenKey]와 매핑된 화면으로 이동합니다.
+     *
+     * @param key 이동할 화면의 [ScreenKey]
+     * @param popUpTo 이동 시 스택에서 제거할 화면의 [ScreenKey]
+     * @param inclusive [popUpTo]가 스택에서 제거되는 방식을 결정합니다. true면 popUpTo까지 제거합니다.
+     * @param singleTop 화면의 중복 가능 여부를 결정합니다.
+     */
     override fun navigateTo(
         key: ScreenKey,
+        popUpTo: ScreenKey?,
+        inclusive: Boolean,
+        singleTop: Boolean,
     ) {
-        if (backStack.lastOrNull() == key) return
+        if (singleTop && currentScreen == key) return
+
+        var popUpToIndex = backStack.indexOf(popUpTo)
+
+        if (popUpToIndex >= 0) {
+            if (!inclusive) popUpToIndex++
+
+            Log.d("DeepLink", "popupto index: $popUpToIndex, currentStackSize: ${backStack.size}")
+
+            while (backStack.size > popUpToIndex) {
+                backStack.removeLastOrNull()
+            }
+        }
+
         backStack.add(key)
     }
 
