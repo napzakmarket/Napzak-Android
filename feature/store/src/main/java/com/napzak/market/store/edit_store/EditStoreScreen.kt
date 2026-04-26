@@ -38,6 +38,7 @@ import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.component.button.NapzakThrottleButton
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
+import com.napzak.market.designsystem.component.scaffold.LocalInnerPadding
 import com.napzak.market.designsystem.component.topbar.NavigateUpTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.store.R.string.store_edit_button_proceed
@@ -76,9 +77,7 @@ internal fun EditStoreRoute(
 
     EditStoreScreen(
         uiState = uiState,
-        onStoreNameChange = {
-            viewModel.updateNickname(value = it)
-        },
+        onStoreNameChange = { viewModel.updateNickname(value = it) },
         onStoreIntroductionChange = { viewModel.updateUiState(description = it) },
         onStoreGenreChange = { viewModel.updateUiState(genres = it) },
         onGenreSearchTextChange = viewModel::updateGenreSearchText,
@@ -86,7 +85,8 @@ internal fun EditStoreRoute(
         onPhotoChange = viewModel::updatePhoto,
         onNameValidityCheckClick = viewModel::checkNicknameDuplication,
         onProceedButtonClick = viewModel::saveEditedProfile,
-        modifier = modifier,
+        modifier = modifier
+            .padding(top = LocalInnerPadding.current.calculateTopPadding()),
     )
 }
 
