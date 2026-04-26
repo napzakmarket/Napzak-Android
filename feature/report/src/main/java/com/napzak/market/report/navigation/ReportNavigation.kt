@@ -7,8 +7,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.napzak.market.common.navigation.Route
+import com.napzak.market.common.type.ReportType
 import com.napzak.market.report.ReportRoute
-import com.napzak.market.report.type.ReportType
 import kotlinx.serialization.Serializable
 
 private const val REPORT_TYPE_KEY = "reportType"
@@ -30,11 +30,8 @@ fun NavGraphBuilder.reportGraph(
     modifier: Modifier = Modifier,
 ) {
     composable<Report> { backStackEntry ->
-        val reportType =
-            backStackEntry.arguments?.getString(REPORT_TYPE_KEY) ?: ReportType.PRODUCT.name
-
         ReportRoute(
-            reportType = reportType,
+            reportType = ReportType.PRODUCT,
             navigateUp = navigateUp,
             modifier = modifier.systemBarsPadding(),
         )

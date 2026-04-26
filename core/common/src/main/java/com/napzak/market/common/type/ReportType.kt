@@ -1,4 +1,4 @@
-package com.napzak.market.report.type
+package com.napzak.market.common.type
 
 enum class ReportType {
     PRODUCT,

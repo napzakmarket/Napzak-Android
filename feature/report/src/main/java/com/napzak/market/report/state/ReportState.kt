@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import com.napzak.market.common.type.ReportType
 import com.napzak.market.feature.report.R.string.report_product_banned_product
 import com.napzak.market.feature.report.R.string.report_product_exaggerated_advertisement
 import com.napzak.market.feature.report.R.string.report_product_mal_content
@@ -22,13 +23,12 @@ import com.napzak.market.feature.report.R.string.report_user_miscellaneous
 import com.napzak.market.feature.report.R.string.report_user_skirmish
 import com.napzak.market.feature.report.R.string.report_user_slang_used
 import com.napzak.market.feature.report.R.string.report_user_title
-import com.napzak.market.report.type.ReportType
 
 @Composable
 internal fun rememberReportState(
-    reportType: String
-) = rememberSaveable(saver = ReportState.Saver, key = reportType) {
-    ReportState(ReportType.valueOf(reportType))
+    reportType: ReportType
+) = rememberSaveable(saver = ReportState.Saver) {
+    ReportState(reportType)
 }
 
 @Stable

@@ -26,13 +26,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.napzak.market.common.type.ReportType
 import com.napzak.market.designsystem.component.textfield.NapzakDefaultTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.report.R.string.report_input_place_holder_contact
 import com.napzak.market.feature.report.R.string.report_input_title_contact
 import com.napzak.market.report.state.ReportState
 import com.napzak.market.report.state.rememberReportState
-import com.napzak.market.report.type.ReportType
 import com.napzak.market.ui_util.bringIntoView
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -89,7 +89,7 @@ internal fun ReportContactSection(
 @Composable
 private fun ReportDetailSectionPreview() {
     NapzakMarketTheme {
-        val reportState = rememberReportState(ReportType.PRODUCT.toString())
+        val reportState = rememberReportState(ReportType.PRODUCT)
         Column(Modifier.padding(horizontal = 20.dp)) {
             ReportContactSection(
                 reportState = reportState,
