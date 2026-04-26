@@ -1,6 +1,8 @@
 package com.napzak.market.detail
 
-import androidx.lifecycle.SavedStateHandle
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
@@ -13,8 +15,13 @@ import com.napzak.market.detail.type.ProductDetailToastType
 import com.napzak.market.interest.usecase.SetInterestUseCase
 import com.napzak.market.mixpanel.ExploreTracker
 import com.napzak.market.mixpanel.ReportTracker
+import com.napzak.market.navigation.keys.ProductDetailScreenKey
+import com.napzak.market.navigation.util.AssistedNavKeyFactory
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.repository.ProductDetailRepository
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import com.napzak.market.store.usecase.GetPhoneVerificationStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -31,20 +38,24 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
-@HiltViewModel
-internal class ProductDetailViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = ProductDetailViewModel.Factory::class)
+internal class ProductDetailViewModel @AssistedInject constructor(
+    @Assisted val navKey: ProductDetailScreenKey,
     private val productDetailRepository: ProductDetailRepository,
     private val setInterestUseCase: SetInterestUseCase,
     private val getPhoneVerificationStatus: GetPhoneVerificationStatusUseCase,
     private val exploreTracker: ExploreTracker,
     private val reportTracker: ReportTracker,
 ) : ViewModel() {
-    private val productId: Long? = savedStateHandle.get<Long>(PRODUCT_ID_KEY)
-    private val _productDetail = MutableStateFlow<UiState<ProductDetail>>(UiState.Loading)
+    @AssistedFactory
+    interface Factory : AssistedNavKeyFactory<ProductDetailViewModel, ProductDetailScreenKey>
+
+    private val productId: Long = navKey.productId
+
+    private val _productDetail: MutableStateFlow<UiState<ProductDetail>> =
+        MutableStateFlow(UiState.Loading)
     val productDetail = _productDetail.asStateFlow()
     private val _interestFlow = MutableSharedFlow<Boolean>()
     private val _sideEffect = Channel<ProductDetailSideEffect>()
