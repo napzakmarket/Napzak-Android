@@ -8,8 +8,10 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
+import com.napzak.market.designsystem.component.toast.NapzakToast
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.main.navigation.MainNavigator
+import com.napzak.market.navigation.EntryProviderBuilder
 import com.napzak.market.ui_util.disableContrastEnforcement
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -21,7 +23,12 @@ class MainActivity : ComponentActivity() {
     lateinit var webSocketLifecycleObserver: WebSocketLifecycleObserver
 
     @Inject
+    lateinit var entryBuilders: @JvmSuppressWildcards Set<EntryProviderBuilder>
+
+    @Inject
     lateinit var navigator: MainNavigator
+
+    lateinit var napzakToast: NapzakToast
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,24 +39,17 @@ class MainActivity : ComponentActivity() {
         )
         window.disableContrastEnforcement()
 
+        napzakToast = NapzakToast(this, this)
         setContent {
             NapzakMarketTheme {
                 MainScreen(
-                    restartApplication = ::restartApplication,
-                    connectSocket = { webSocketLifecycleObserver.socketEventBus.connect() },
+                    navigator = navigator,
+                    entryBuilders = entryBuilders,
+                    napzakToast = napzakToast,
                 )
             }
         }
-
         handleIntent(intent)
-    }
-
-    private fun restartApplication() {
-        Intent(this, MainActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(this)
-        }
     }
 
     override fun onNewIntent(intent: Intent) {
