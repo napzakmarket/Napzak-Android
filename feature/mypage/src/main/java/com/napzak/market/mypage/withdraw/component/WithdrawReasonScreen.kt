@@ -1,4 +1,4 @@
-package com.napzak.market.mypage.withdraw
+package com.napzak.market.mypage.withdraw.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,11 +12,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -37,7 +33,8 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 internal fun WithdrawReasonScreen(
-    onReasonSelect: (String, Int) -> Unit,
+    reason: WithdrawReasonType,
+    onReasonSelect: (WithdrawReasonType) -> Unit,
     onProceedClick: () -> Unit,
     onNavigateUpClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -45,10 +42,6 @@ internal fun WithdrawReasonScreen(
     val innerScreenScrollState = rememberScrollState()
     val withdrawReasons = remember { WithdrawReasonType.entries.map { it.reason } }
     val paddingModifier = Modifier.padding(horizontal = 20.dp)
-
-    LaunchedEffect(Unit) {
-        onReasonSelect(withdrawReasons.first(), 1)
-    }
 
     Scaffold(
         topBar = {
@@ -123,9 +116,9 @@ internal fun WithdrawReasonScreen(
 
             NapzakSpinner(
                 options = withdrawReasons.toImmutableList(),
-                initialOption = withdrawReasons.first(),
+                initialOption = reason.reason,
                 onOptionSelect = {
-                    onReasonSelect(it, withdrawReasons.indexOf(it) + 1)
+                    onReasonSelect(WithdrawReasonType.find(it))
                 },
                 modifier = paddingModifier,
             )
@@ -137,10 +130,9 @@ internal fun WithdrawReasonScreen(
 @Composable
 private fun WithdrawReasonScreenPreview() {
     NapzakMarketTheme {
-        var withdrawReason by remember { mutableStateOf("") }
-
         WithdrawReasonScreen(
-            onReasonSelect = { it, _ -> withdrawReason = it },
+            reason = WithdrawReasonType.HARD_TO_FIND,
+            onReasonSelect = {},
             onProceedClick = {},
             onNavigateUpClick = {},
         )

@@ -1,4 +1,4 @@
-package com.napzak.market.mypage.withdraw
+package com.napzak.market.mypage.withdraw.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,11 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,11 +35,12 @@ import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 internal fun WithdrawDetailScreen(
-    onProceedClick: (String) -> Unit,
+    description: String,
+    onDescriptionChange: (String) -> Unit,
+    onProceedClick: () -> Unit,
     onNavigateUpClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var inputText by rememberSaveable { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
     Scaffold(
@@ -55,9 +52,9 @@ internal fun WithdrawDetailScreen(
         },
         bottomBar = {
             WithdrawDetailBottomBar(
-                onProceedClick = { onProceedClick(inputText) },
-                onSkipClick = { onProceedClick("") },
-                isProceedEnabled = inputText.isNotBlank(),
+                onProceedClick = { onProceedClick() },
+                onSkipClick = { onProceedClick() },
+                isProceedEnabled = description.isNotBlank(),
             )
         },
         containerColor = NapzakMarketTheme.colors.white,
@@ -88,8 +85,8 @@ internal fun WithdrawDetailScreen(
                     .noRippleClickable(focusRequester::requestFocus),
             ) {
                 NapzakDefaultTextField(
-                    text = inputText,
-                    onTextChange = { inputText = it },
+                    text = description,
+                    onTextChange = onDescriptionChange,
                     hint = stringResource(sign_out_detail_hint),
                     textStyle = NapzakMarketTheme.typography.caption12r,
                     textColor = NapzakMarketTheme.colors.gray500,
@@ -139,6 +136,8 @@ private fun WithdrawDetailBottomBar(
 private fun WithdrawDetailScreenPreview() {
     NapzakMarketTheme {
         WithdrawDetailScreen(
+            description = "",
+            onDescriptionChange = {},
             onProceedClick = {},
             onNavigateUpClick = {},
         )

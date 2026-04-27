@@ -1,4 +1,4 @@
-package com.napzak.market.mypage.withdraw
+package com.napzak.market.mypage.withdraw.component
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
