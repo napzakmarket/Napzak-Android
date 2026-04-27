@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.napzak.market.designsystem.R.drawable.ic_gray_cancel
-import com.napzak.market.designsystem.R.drawable.img_phone_verification
+import com.napzak.market.designsystem.R.drawable.ic_phone_verification
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.ui_util.noRippleClickable
 
@@ -121,7 +121,7 @@ private fun NapzakModalPreview(modifier: Modifier = Modifier) {
         NapzakModal(
             title = "본인확인이 필요해요",
             content = "안전한 거래를 위해 휴대폰 인증 후\n서비스를 이용할 수 있어요",
-            image = img_phone_verification,
+            image = ic_phone_verification,
             buttonText = "인증하기",
             onDismissRequest = {},
             onButtonClick = {},
