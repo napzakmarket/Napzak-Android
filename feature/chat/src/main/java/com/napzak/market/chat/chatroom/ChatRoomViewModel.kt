@@ -16,10 +16,15 @@ import com.napzak.market.chat.usecase.SendMessageUseCase
 import com.napzak.market.chat.usecase.UnsubscribeChatRoomUseCase
 import com.napzak.market.common.state.UiState
 import com.napzak.market.mixpanel.ReportTracker
+import com.napzak.market.navigation.keys.ChatRoomScreenKey
+import com.napzak.market.navigation.util.AssistedNavKeyFactory
 import com.napzak.market.presigned_url.model.UploadImage
 import com.napzak.market.presigned_url.usecase.UploadImagesUseCase
 import com.napzak.market.store.repository.StoreRepository
 import com.napzak.market.store.usecase.GetPhoneVerificationStatusUseCase
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -30,11 +35,10 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-@HiltViewModel
-internal class ChatRoomViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = ChatRoomViewModel.Factory::class)
+internal class ChatRoomViewModel @AssistedInject constructor(
+    @Assisted val navKey: ChatRoomScreenKey,
     private val chatRepository: ChatRoomRepository,
     private val getChatFlowUseCase: GetChatFlowUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
@@ -44,6 +48,9 @@ internal class ChatRoomViewModel @Inject constructor(
     private val reportTracker: ReportTracker,
     private val getPhoneVerificationStatus: GetPhoneVerificationStatusUseCase,
 ) : ViewModel() {
+    @AssistedFactory
+    interface Factory : AssistedNavKeyFactory<ChatRoomViewModel, ChatRoomScreenKey>
+
     private val _isPhoneVerified = MutableStateFlow(true)
     val isPhoneVerified = _isPhoneVerified.asStateFlow()
 
@@ -65,10 +72,10 @@ internal class ChatRoomViewModel @Inject constructor(
     var chat by mutableStateOf("")
 
     private val _roomId
-        get() = requireNotNull(savedStateHandle.get<Long>(ROOM_ID_KEY))
+        get() = requireNotNull(navKey.chatRoomId)
 
     private val _productId
-        get() = requireNotNull(savedStateHandle.get<Long>(PRODUCT_ID_KEY))
+        get() = requireNotNull(navKey.productId)
 
     private val _chatRoomStateAsSuccess
         get() = (_chatRoomState.value.chatRoomState as UiState.Success).data

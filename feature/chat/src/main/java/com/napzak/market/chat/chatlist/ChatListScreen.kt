@@ -33,6 +33,7 @@ import com.napzak.market.chat.model.ChatRoom
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.ic_no_chatting_room
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
+import com.napzak.market.designsystem.component.scaffold.LocalInnerPadding
 import com.napzak.market.designsystem.component.topbar.TitleTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_list_empty_guide_1
@@ -73,7 +74,8 @@ internal fun ChatListRoute(
         onDismissRequest = viewModel::updateNotificationModelOpenState,
         onSystemSettingNavigate = context::openSystemNotificationSettings,
         onSettingsNavigate = onSettingsNavigate,
-        modifier = modifier,
+        modifier = modifier
+            .padding(LocalInnerPadding.current),
     )
 }
 

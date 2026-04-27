@@ -16,6 +16,7 @@ dependencies {
     implementation(projects.core.util)
     implementation(projects.core.uiUtil)
     implementation(projects.core.mixpanel)
+    implementation(projects.core.navigation)
 
     implementation(projects.domain.product)
     implementation(projects.domain.chat)
