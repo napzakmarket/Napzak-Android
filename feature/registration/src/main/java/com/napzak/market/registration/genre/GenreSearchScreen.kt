@@ -8,11 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,16 +45,11 @@ private const val GENRE_REQUEST_URL = "https://form.typeform.com/to/C0E09Ymd"
 fun GenreSearchRoute(
     navigateToUp: () -> Unit,
     onGenreSelect: (Genre) -> Unit,
-    selectedGenreId: Long?,
     modifier: Modifier = Modifier,
     viewModel: GenreSearchViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val searchTerm by viewModel.searchTerm.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        viewModel.updateSelectedGenre(selectedGenreId)
-    }
 
     GenreSearchScreen(
         onBackClick = navigateToUp,
@@ -62,7 +57,8 @@ fun GenreSearchRoute(
         searchTerm = searchTerm,
         onSearchTermChange = viewModel::updateSearchTerm,
         onGenreSelect = onGenreSelect,
-        modifier = modifier,
+        modifier = modifier
+            .systemBarsPadding(),
     )
 }
 
