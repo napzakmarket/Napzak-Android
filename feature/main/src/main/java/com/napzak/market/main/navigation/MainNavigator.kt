@@ -11,37 +11,27 @@ import com.napzak.market.navigation.keys.MainTabScreenKey
 import com.napzak.market.navigation.keys.MyPageScreenKey
 import com.napzak.market.navigation.keys.ScreenKey
 import com.napzak.market.navigation.keys.WishlistScreenKey
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import javax.inject.Inject
 
-interface MainNavigator {
-    val appNavigator: AppNavigator
-    val isRegister: Boolean
-    val currentTab: MainTab?
-    val currentScreen: ScreenKey?
-
-    fun navigateTab(tab: MainTab)
-    fun navigateUp()
-    fun setRegistrationTabSelected(value: Boolean)
-    fun showBottomBar(): Boolean
-}
-
-class MainNavigatorImpl @Inject constructor(
-    override val appNavigator: AppNavigator,
-) : MainNavigator {
-    override var isRegister: Boolean by mutableStateOf(false)
+@ActivityRetainedScoped
+class MainNavigator @Inject constructor(
+    val appNavigator: AppNavigator,
+) {
+    var isRegister: Boolean by mutableStateOf(false)
         private set
 
-    override val currentScreen: ScreenKey?
+    val currentScreen: ScreenKey?
         get() = appNavigator.backStack.lastOrNull()
 
-    override val currentTab: MainTab?
+    val currentTab: MainTab?
         get() = when {
             isRegister -> MainTab.REGISTER
             currentScreen == WishlistScreenKey -> MainTab.MY_PAGE
             else -> MainTab.find { tab -> currentScreen == tab }
         }
 
-    override fun navigateTab(tab: MainTab) {
+    fun navigateTab(tab: MainTab) {
         if (tab != MainTab.REGISTER && isRegister) setRegistrationTabSelected(false)
 
         when (tab) {
@@ -71,23 +61,21 @@ class MainNavigatorImpl @Inject constructor(
         val backStack = appNavigator.backStack
         val existingIndex = appNavigator.backStack.indexOfLast { it == key }
 
-        if (existingIndex != -1) {
-            val numToRemove = backStack.size - 1 - existingIndex
-            repeat(numToRemove) { appNavigator.pop() }
-        } else {
-            appNavigator.navigateTo(key)
-        }
+        appNavigator.navigateTo(
+            key = key,
+            popUpTo = HomeScreenKey,
+        )
     }
 
-    override fun navigateUp() {
+    fun navigateUp() {
         appNavigator.pop()
     }
 
-    override fun setRegistrationTabSelected(value: Boolean) {
+    fun setRegistrationTabSelected(value: Boolean) {
         isRegister = value
     }
 
-    override fun showBottomBar(): Boolean {
+    fun showBottomBar(): Boolean {
         return MainTab.contains { currentScreen == it }
     }
 }
