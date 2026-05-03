@@ -4,11 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.napzak.market.navigation.AppNavigator
-import com.napzak.market.navigation.keys.ChatListScreenKey
-import com.napzak.market.navigation.keys.ExploreScreenKey
 import com.napzak.market.navigation.keys.HomeScreenKey
 import com.napzak.market.navigation.keys.MainTabScreenKey
-import com.napzak.market.navigation.keys.MyPageScreenKey
 import com.napzak.market.navigation.keys.ScreenKey
 import com.napzak.market.navigation.keys.WishlistScreenKey
 import dagger.hilt.android.scopes.ActivityRetainedScoped
@@ -35,32 +32,12 @@ class MainNavigator @Inject constructor(
         if (tab != MainTab.REGISTER && isRegister) setRegistrationTabSelected(false)
 
         when (tab) {
-            MainTab.HOME -> {
-                navigateToWithPopUpToHome(HomeScreenKey)
-            }
-
-            MainTab.EXPLORE -> {
-                navigateToWithPopUpToHome(ExploreScreenKey())
-            }
-
-            MainTab.REGISTER -> {
-                setRegistrationTabSelected(!isRegister)
-            }
-
-            MainTab.CHAT -> {
-                navigateToWithPopUpToHome(ChatListScreenKey)
-            }
-
-            MainTab.MY_PAGE -> {
-                navigateToWithPopUpToHome(MyPageScreenKey)
-            }
+            MainTab.REGISTER -> setRegistrationTabSelected(!isRegister)
+            else -> navigateToWithPopUpToHome(tab.route)
         }
     }
 
     private fun navigateToWithPopUpToHome(key: MainTabScreenKey) {
-        val backStack = appNavigator.backStack
-        val existingIndex = appNavigator.backStack.indexOfLast { it == key }
-
         appNavigator.navigateTo(
             key = key,
             popUpTo = HomeScreenKey,
@@ -76,6 +53,8 @@ class MainNavigator @Inject constructor(
     }
 
     fun showBottomBar(): Boolean {
-        return MainTab.contains { currentScreen == it }
+        val isMainTab = MainTab.contains { currentScreen == it }
+        val isWishlistTab = currentScreen == WishlistScreenKey
+        return isMainTab || isWishlistTab
     }
 }

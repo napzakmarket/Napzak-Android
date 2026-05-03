@@ -1,7 +1,6 @@
 package com.napzak.market.navigationimpl
 
 import android.content.Intent
-import android.util.Log
 import androidx.navigation3.runtime.NavBackStack
 import com.napzak.market.event.ChatSessionManager
 import com.napzak.market.event.DeepLinkEvent
@@ -36,12 +35,10 @@ class AppNavigatorImpl @Inject constructor(
     ) {
         if (singleTop && currentScreen == key) return
 
-        var popUpToIndex = backStack.indexOf(popUpTo)
+        var popUpToIndex = backStack.lastIndexOf(popUpTo)
 
         if (popUpToIndex >= 0) {
             if (!inclusive) popUpToIndex++
-
-            Log.d("DeepLink", "popupto index: $popUpToIndex, currentStackSize: ${backStack.size}")
 
             while (backStack.size > popUpToIndex) {
                 backStack.removeLastOrNull()

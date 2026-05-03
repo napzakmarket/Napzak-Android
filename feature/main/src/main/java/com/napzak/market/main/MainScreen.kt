@@ -1,10 +1,6 @@
 package com.napzak.market.main
 
 import android.app.Activity
-import android.util.Log
-import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.zIndex
@@ -38,6 +33,7 @@ import com.napzak.market.navigation.EntryProviderBuilder
 import com.napzak.market.navigation.keys.HomeScreenKey
 import com.napzak.market.navigation.keys.PurchaseRegistrationScreenKey
 import com.napzak.market.navigation.keys.SaleRegistrationScreenKey
+import com.napzak.market.navigation.util.napzakDefaultTransitionSpec
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -105,27 +101,15 @@ private fun MainNavDisplay(
     val toast = LocalNapzakToast.current
     var backPressedTime by remember { mutableLongStateOf(0) }
 
-    LaunchedEffect(Unit) {
-        snapshotFlow { navigator.appNavigator.backStack.toList() }
-            .collect {
-                Log.d("DeepLink", "backStack: ${it}")
-            }
-    }
-
     NavDisplay(
         backStack = navigator.appNavigator.backStack,
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator(),
         ),
-        transitionSpec = { ContentTransform(EnterTransition.None, ExitTransition.None) },
-        popTransitionSpec = { ContentTransform(EnterTransition.None, ExitTransition.None) },
-        predictivePopTransitionSpec = {
-            ContentTransform(
-                EnterTransition.None,
-                ExitTransition.None
-            )
-        },
+        transitionSpec = { napzakDefaultTransitionSpec() },
+        popTransitionSpec = { napzakDefaultTransitionSpec() },
+        predictivePopTransitionSpec = { napzakDefaultTransitionSpec() },
         onBack = {
             when {
                 navigator.isRegister -> {
