@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -44,7 +45,6 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.R.drawable.ic_dark_gray_search
 import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_left
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
-import com.napzak.market.designsystem.component.scaffold.LocalInnerPadding
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.search.R.string.search_hint
@@ -92,7 +92,7 @@ internal fun SearchRoute(
         onRecommendedGenreClick = onGenreDetailNavigate,
         onTrackGenreClick = { viewModel.trackClickedGenre(it) },
         modifier = modifier
-            .padding(top = LocalInnerPadding.current.calculateTopPadding()),
+            .systemBarsPadding(),
     )
 }
 

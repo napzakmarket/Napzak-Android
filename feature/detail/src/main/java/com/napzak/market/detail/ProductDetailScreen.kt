@@ -135,7 +135,7 @@ internal fun ProductDetailRoute(
         onDismissClick = { isPhoneVerifyModalVisible = false },
         onPhoneVerifyClick = onPhoneVerificationNavigate,
         modifier = modifier
-            .padding(top = LocalInnerPadding.current.calculateTopPadding()),
+            .systemBarsPadding(),
     )
 }
 

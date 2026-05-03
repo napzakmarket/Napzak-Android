@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
@@ -42,7 +43,6 @@ import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.common.type.ReportType
 import com.napzak.market.designsystem.component.button.NapzakThrottleButton
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
-import com.napzak.market.designsystem.component.scaffold.LocalInnerPadding
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastFontType
 import com.napzak.market.designsystem.component.toast.ToastType
@@ -102,7 +102,7 @@ internal fun ReportRoute(
         },
         onNavigateUp = navigateUp,
         modifier = modifier
-            .padding(top = LocalInnerPadding.current.calculateTopPadding()),
+            .systemBarsPadding(),
     )
 }
 

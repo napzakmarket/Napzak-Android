@@ -3,7 +3,7 @@ package com.napzak.market.store.store
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -24,7 +24,6 @@ import com.napzak.market.designsystem.R.drawable.ic_white_block
 import com.napzak.market.designsystem.R.drawable.ic_white_unblock
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
-import com.napzak.market.designsystem.component.scaffold.LocalInnerPadding
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -143,7 +142,7 @@ internal fun StoreRoute(
             viewModel.updateStoreBlockDialogVisibility(false)
         },
         modifier = modifier
-            .padding(top = LocalInnerPadding.current.calculateTopPadding()),
+            .systemBarsPadding(),
     )
 }
 
