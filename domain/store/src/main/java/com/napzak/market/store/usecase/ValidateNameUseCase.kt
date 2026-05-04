@@ -6,29 +6,32 @@ import javax.inject.Inject
 class ValidateNameUseCase @Inject constructor() {
     operator fun invoke(input: String): NameValidationResult {
         val name = input.trim()
-
-        if (name.isEmpty()) {
-            return NameValidationResult.Invalid(NameValidationResult.Error.EMPTY)
-        }
-
-        if (name.length < MIN_LENGTH) {
-            return NameValidationResult.Invalid(NameValidationResult.Error.TOO_SHORT)
-        }
-
-        if (name.length > MAX_LENGTH) {
-            return NameValidationResult.Invalid(NameValidationResult.Error.TOO_LONG)
-        }
-
-        if (!name.matches(VALID_NAME_REGEX)) {
-            return NameValidationResult.Invalid(NameValidationResult.Error.INVALID_FORMAT)
-        }
+        validate(name)?.let { return it }
 
         return NameValidationResult.Valid
     }
 
+    private fun validate(input: String): NameValidationResult.Invalid? {
+        return when {
+            input.isEmpty() ->
+                NameValidationResult.Invalid(NameValidationResult.Error.EMPTY)
+
+            input.length < MIN_LENGTH ->
+                NameValidationResult.Invalid(NameValidationResult.Error.TOO_SHORT)
+
+            input.length > MAX_LENGTH ->
+                NameValidationResult.Invalid(NameValidationResult.Error.TOO_LONG)
+
+            !input.matches(VALID_NAME_REGEX) ->
+                NameValidationResult.Invalid(NameValidationResult.Error.INVALID_FORMAT)
+
+            else -> null
+        }
+    }
+
     companion object {
-        private const val MIN_LENGTH = 2
-        private const val MAX_LENGTH = 20
         private val VALID_NAME_REGEX = Regex("^[가-힣]+$")
+        private const val MIN_LENGTH = 2
+        const val MAX_LENGTH = 20
     }
 }
