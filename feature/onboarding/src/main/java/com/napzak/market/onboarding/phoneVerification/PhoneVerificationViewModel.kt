@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.onboarding.phoneVerification.model.PhoneVerificationUiState
 import com.napzak.market.onboarding.phoneVerification.model.VerificationStatus
+import com.napzak.market.store.usecase.CheckPhoneCodeUseCase
+import com.napzak.market.store.usecase.SendPhoneCodeUseCase
 import com.napzak.market.store.usecase.ValidateCodeUseCase
 import com.napzak.market.store.usecase.ValidateNameUseCase
 import com.napzak.market.store.usecase.ValidatePhoneUseCase
@@ -23,6 +25,8 @@ class PhoneVerificationViewModel @Inject constructor(
     private val validateName: ValidateNameUseCase,
     private val validatePhone: ValidatePhoneUseCase,
     private val validateCode: ValidateCodeUseCase,
+    private val sendCode: SendPhoneCodeUseCase,
+    private val checkCodeVerified: CheckPhoneCodeUseCase,
 ) : ViewModel() {
     val isOnboarding = savedStateHandle.getStateFlow(ONBOARDING_KEY, true)
 
@@ -61,28 +65,36 @@ class PhoneVerificationViewModel @Inject constructor(
         }
     }
 
-    fun requestVerification() {
+    fun requestVerification() = viewModelScope.launch {
         val current = _uiState.value
 
-        if (!current.isSendEnabled) return
+        if (!current.isVerifyEnabled) return@launch
 
-        // TODO: 서버 API 호출
+        val phone = current.phone
 
-        _uiState.update {
-            it.copy(
-                code = "",
-                isSend = true,
-                verificationStatus = VerificationStatus.REQUESTED,
-                remainingTimeSec = 180,
-            )
-        }
-        // TODO: 인증 발송 토스트
+        sendCode(phone)
+            .onSuccess {
+                _uiState.update {
+                    it.copy(
+                        code = "",
+                        checkingPhone = phone,
+                        isSend = true,
+                        remainingCountForCurrentNumber = 5,
+                        verificationStatus = VerificationStatus.REQUESTED,
+                        remainingTimeSec = 180,
+                    )
+                }
+                // TODO: 인증 발송 토스트
 
-        startTimer()
+                startTimer()
+            }
+            .onFailure {
+                // TODO: 실패
+            }
     }
 
     private fun startTimer() {
-        timerJob?.cancel()
+        stopTimer()
         timerJob = viewModelScope.launch {
             while (_uiState.value.remainingTimeSec > 0) {
                 delay(1000)
@@ -91,29 +103,43 @@ class PhoneVerificationViewModel @Inject constructor(
         }
     }
 
-    fun verifyCode() {
+    private fun stopTimer() {
+        timerJob?.cancel()
+    }
+
+    fun verifyCode() = viewModelScope.launch {
         val current = _uiState.value
+        val remainingCount = current.remainingCountForCurrentNumber
 
-        if (!current.isVerifyEnabled) return
-
-        // TODO: 서버 API 호출
-        if (true) {
-            timerJob?.cancel()
-            _uiState.update {
-                it.copy(
-                    remainingTimeSec = 0,
-                    verificationStatus = VerificationStatus.VERIFIED,
-                )
-            }
-        } else {
-            // 실패 시 상태 유지 (REQUESTED)
-            // 필요하면 error state 따로 추가
-            _uiState.update {
-                it.copy(
-                    code = "",
-                )
-            }
+        if (remainingCount == 0) {
+            // Todo: 인증 오입력 횟수제한 토스트
+            return@launch
         }
+
+        if (!current.isVerifyEnabled) return@launch
+
+        checkCodeVerified(phoneNumber = current.checkingPhone, code = current.code)
+            .onSuccess {
+                stopTimer()
+                _uiState.update {
+                    it.copy(
+                        remainingTimeSec = 0,
+                        checkingPhone = "",
+                        remainingCountForCurrentNumber = 5,
+                        verificationStatus = VerificationStatus.VERIFIED,
+                    )
+                }
+            }
+            .onFailure {
+                // 실패 시 상태 유지 (REQUESTED)
+                // 필요하면 error state 따로 추가
+                _uiState.update {
+                    it.copy(
+                        code = "",
+                        remainingCountForCurrentNumber = remainingCount - 1,
+                    )
+                }
+            }
     }
 
     fun updateAgeChecked(new: Boolean) {
