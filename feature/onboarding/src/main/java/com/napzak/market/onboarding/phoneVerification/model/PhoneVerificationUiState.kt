@@ -8,11 +8,13 @@ data class PhoneVerificationUiState(
     val name: String = "",
     val nameValidation: NameValidationResult = NameValidationResult.Uninitialized,
     val phone: String = "",
+    val checkingPhone: String = "",
     val phoneValidation: PhoneValidationResult = PhoneValidationResult.Uninitialized,
     val code: String = "",
     val codeValidation: CodeValidationResult = CodeValidationResult.Uninitialized,
     val isSend: Boolean = false,
     val remainingTimeSec: Int = 0,
+    val remainingCountForCurrentNumber: Int = 5,
     val isAgeChecked: Boolean = false,
     val verificationStatus: VerificationStatus = VerificationStatus.NONE,
 ) {
