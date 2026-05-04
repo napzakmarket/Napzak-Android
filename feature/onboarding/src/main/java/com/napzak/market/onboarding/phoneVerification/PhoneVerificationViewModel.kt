@@ -3,8 +3,10 @@ package com.napzak.market.onboarding.phoneVerification
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.napzak.market.onboarding.phoneVerification.model.PhoneVerificationError
 import com.napzak.market.onboarding.phoneVerification.model.PhoneVerificationUiState
 import com.napzak.market.onboarding.phoneVerification.model.VerificationStatus
+import com.napzak.market.onboarding.phoneVerification.util.resolveError
 import com.napzak.market.store.usecase.CheckPhoneCodeUseCase
 import com.napzak.market.store.usecase.SendPhoneCodeUseCase
 import com.napzak.market.store.usecase.ValidateCodeUseCase
@@ -46,18 +48,22 @@ class PhoneVerificationViewModel @Inject constructor(
             it.copy(
                 name = limitedName,
                 nameValidation = validateName(limitedName),
+                currentError = PhoneVerificationError.None,
             )
         }
+        checkError()
     }
 
     fun onPhoneChanged(phone: String) {
         val limitedPhone = phone.replace("-", "").take(ValidatePhoneUseCase.MAX_LENGTH)
         _uiState.update {
             it.copy(
-                phone = limitedPhone,
+                phone = phone,
                 phoneValidation = validatePhone(limitedPhone),
+                currentError = PhoneVerificationError.None,
             )
         }
+        checkError()
     }
 
     fun onCodeChanged(code: String) {
@@ -66,35 +72,53 @@ class PhoneVerificationViewModel @Inject constructor(
             it.copy(
                 code = limitedCode,
                 codeValidation = validateCode(limitedCode),
+                currentError = PhoneVerificationError.None,
             )
+        }
+        checkError()
+    }
+
+    private fun checkError() {
+        _uiState.update {
+            it.copy(currentError = resolveError(it))
         }
     }
 
     fun requestVerification() = viewModelScope.launch {
         val current = _uiState.value
 
-        if (!current.isVerifyEnabled) return@launch
+        if (!current.isSendEnabled) return@launch
 
-        val phone = current.phone
-
-        sendCode(phone)
+        val phoneNumber = current.phone.replace("-", "")
+        sendCode(phoneNumber)
             .onSuccess {
                 _uiState.update {
                     it.copy(
                         code = "",
-                        checkingPhone = phone,
+                        checkingPhone = phoneNumber,
                         isSend = true,
                         remainingCountForCurrentNumber = 5,
                         verificationStatus = VerificationStatus.REQUESTED,
                         remainingTimeSec = 180,
                     )
                 }
-                // TODO: 인증 발송 토스트
-
+                _sideEffect.send(PhoneVerificationSideEffect.OnCodeSend)
                 startTimer()
             }
-            .onFailure {
-                // TODO: 실패
+            .onFailure { e ->
+                if (e.message != null) {
+                    _uiState.update {
+                        it.copy(
+                            currentError =
+                                when {
+                                    e.message!!.contains("403") -> PhoneVerificationError.PhoneNotAllowed
+                                    e.message!!.contains("409") -> PhoneVerificationError.PhoneAlreadyRegistered
+                                    e.message!!.contains("429") -> PhoneVerificationError.VerificationCodeAttemptsExceeded
+                                    else -> PhoneVerificationError.NetworkError
+                                }
+                        )
+                    }
+                }
             }
     }
 
@@ -117,32 +141,55 @@ class PhoneVerificationViewModel @Inject constructor(
         val remainingCount = current.remainingCountForCurrentNumber
 
         if (remainingCount == 0) {
-            // Todo: 인증 오입력 횟수제한 토스트
+            _uiState.update { it.copy(currentError = PhoneVerificationError.VerificationRequestLimitExceeded) }
             return@launch
         }
 
         if (!current.isVerifyEnabled) return@launch
 
         checkCodeVerified(phoneNumber = current.checkingPhone, code = current.code)
-            .onSuccess {
-                stopTimer()
-                _uiState.update {
-                    it.copy(
-                        remainingTimeSec = 0,
-                        checkingPhone = "",
-                        remainingCountForCurrentNumber = 5,
-                        verificationStatus = VerificationStatus.VERIFIED,
-                    )
+            .onSuccess { response ->
+                if (response.isPhoneVerified) {
+                    stopTimer()
+                    _uiState.update {
+                        it.copy(
+                            remainingTimeSec = 0,
+                            checkingPhone = "",
+                            remainingCountForCurrentNumber = 5,
+                            verificationStatus = VerificationStatus.VERIFIED,
+                        )
+                    }
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            remainingTimeSec = 0,
+                            checkingPhone = "",
+                            remainingCountForCurrentNumber = remainingCount - 1,
+                            currentError = PhoneVerificationError.InvalidVerificationCode,
+                        )
+                    }
                 }
             }
-            .onFailure {
-                // 실패 시 상태 유지 (REQUESTED)
-                // 필요하면 error state 따로 추가
+            .onFailure { e ->
                 _uiState.update {
                     it.copy(
                         code = "",
                         remainingCountForCurrentNumber = remainingCount - 1,
                     )
+                }
+
+                if (e.message != null) {
+                    _uiState.update {
+                        it.copy(
+                            currentError =
+                                when {
+                                    e.message!!.contains("404") -> PhoneVerificationError.InvalidVerificationCode
+                                    e.message!!.contains("409") -> PhoneVerificationError.PhoneAlreadyRegistered
+                                    e.message!!.contains("429") -> PhoneVerificationError.VerificationRequestLimitExceeded
+                                    else -> PhoneVerificationError.NetworkError
+                                }
+                        )
+                    }
                 }
             }
     }
