@@ -1,5 +1,9 @@
 package com.napzak.market.onboarding.phoneVerification
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -17,12 +21,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
@@ -41,6 +49,7 @@ import com.napzak.market.designsystem.component.button.NapzakCheckedButton
 import com.napzak.market.designsystem.component.textfield.NapzakAffixTextField
 import com.napzak.market.designsystem.component.textfield.NapzakDefaultTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.feature.onboarding.R
 import com.napzak.market.feature.onboarding.R.string.onboarding_next
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_agreement_age_over_14
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_name_edit_hint
@@ -55,8 +64,11 @@ import com.napzak.market.feature.onboarding.R.string.onboarding_phone_verificati
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_verify
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_verify_number
 import com.napzak.market.onboarding.genre.component.OnboardingTopBar
+import com.napzak.market.onboarding.phoneVerification.component.ErrorSection
+import com.napzak.market.onboarding.phoneVerification.model.PhoneVerificationError
 import com.napzak.market.onboarding.phoneVerification.model.PhoneVerificationUiState
 import com.napzak.market.onboarding.phoneVerification.util.toTimeFormat
+import kotlinx.coroutines.delay
 
 @Composable
 internal fun PhoneVerificationRoute(
@@ -68,12 +80,16 @@ internal fun PhoneVerificationRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isOnboarding by viewModel.isOnboarding.collectAsStateWithLifecycle()
 
+    var showImage by remember { mutableStateOf(false) }
+
     LaunchedEffect(viewModel.sideEffect) {
         viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
                     is PhoneVerificationSideEffect.OnCodeSend -> {
-                        // Todo : toast 메시지 추가
+                        showImage = true
+                        delay(1500)
+                        showImage = false
                     }
                 }
             }
@@ -82,6 +98,7 @@ internal fun PhoneVerificationRoute(
     PhoneVerificationScreen(
         uiState = uiState,
         isOnboarding = isOnboarding,
+        showImage = showImage,
         onNameChanged = viewModel::onNameChanged,
         onPhoneChanged = viewModel::onPhoneChanged,
         onCodeChanged = viewModel::onCodeChanged,
@@ -100,6 +117,7 @@ internal fun PhoneVerificationRoute(
 fun PhoneVerificationScreen(
     uiState: PhoneVerificationUiState,
     isOnboarding: Boolean,
+    showImage: Boolean,
     onNameChanged: (String) -> Unit,
     onPhoneChanged: (String) -> Unit,
     onCodeChanged: (String) -> Unit,
@@ -301,6 +319,25 @@ fun PhoneVerificationScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
+        AnimatedVisibility(
+            visible = showImage,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            Image(
+                painter = painterResource(R.drawable.img_sended_code_popup),
+                contentDescription = "인증번호 전송 완료",
+                modifier = Modifier.padding(bottom = 20.dp),
+            )
+        }
+
+        if (uiState.currentError != PhoneVerificationError.None) {
+            ErrorSection(
+                error = uiState.currentError,
+                modifier = Modifier.padding(bottom = 20.dp),
+            )
+        }
+
         NapzakCheckedButton(
             checked = uiState.isAgeChecked,
             onCheckedChange = onAgeCheckedChange,
@@ -323,6 +360,7 @@ private fun PhoneVerificationScreenPreview() {
         PhoneVerificationScreen(
             uiState = PhoneVerificationUiState(),
             isOnboarding = true,
+            showImage = true,
             onNameChanged = {},
             onPhoneChanged = {},
             onCodeChanged = {},
