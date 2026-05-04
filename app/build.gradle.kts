@@ -90,7 +90,6 @@ dependencies {
     implementation(libs.kakao.v2.user)
     implementation(libs.kakao.v2.common)
     implementation(libs.androidx.room.compiler)
-    implementation(libs.androidx.multidex)
     implementation(libs.lottie.compose)
 
     implementation(platform(libs.firebase.bom))
