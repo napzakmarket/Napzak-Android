@@ -17,6 +17,7 @@ data class PhoneVerificationUiState(
     val remainingCountForCurrentNumber: Int = 5,
     val isAgeChecked: Boolean = false,
     val verificationStatus: VerificationStatus = VerificationStatus.NONE,
+    val currentError: PhoneVerificationError = PhoneVerificationError.None,
 ) {
     val isSendEnabled: Boolean
         get() = phoneValidation is PhoneValidationResult.Valid &&
