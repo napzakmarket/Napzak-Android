@@ -32,11 +32,11 @@ import com.napzak.market.ui_util.noRippleClickable
 
 @Composable
 fun NapzakModal(
+    modifier: Modifier = Modifier,
     title: String,
     content: String,
     image: Int,
     buttonText: String,
-    modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     onButtonClick: () -> Unit,
 ) {
