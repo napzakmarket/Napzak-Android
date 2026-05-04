@@ -113,7 +113,7 @@ class PhoneVerificationViewModel @Inject constructor(
                                 when {
                                     e.message!!.contains("403") -> PhoneVerificationError.PhoneNotAllowed
                                     e.message!!.contains("409") -> PhoneVerificationError.PhoneAlreadyRegistered
-                                    e.message!!.contains("429") -> PhoneVerificationError.VerificationCodeAttemptsExceeded
+                                    e.message!!.contains("429") -> PhoneVerificationError.VerificationRequestLimitExceeded
                                     else -> PhoneVerificationError.NetworkError
                                 }
                         )
@@ -185,7 +185,7 @@ class PhoneVerificationViewModel @Inject constructor(
                                 when {
                                     e.message!!.contains("404") -> PhoneVerificationError.InvalidVerificationCode
                                     e.message!!.contains("409") -> PhoneVerificationError.PhoneAlreadyRegistered
-                                    e.message!!.contains("429") -> PhoneVerificationError.VerificationRequestLimitExceeded
+                                    e.message!!.contains("429") -> PhoneVerificationError.VerificationCodeAttemptsExceeded
                                     else -> PhoneVerificationError.NetworkError
                                 }
                         )
