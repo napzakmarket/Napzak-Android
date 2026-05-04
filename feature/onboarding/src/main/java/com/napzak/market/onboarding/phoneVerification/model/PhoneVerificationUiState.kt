@@ -22,7 +22,8 @@ data class PhoneVerificationUiState(
     val isSendEnabled: Boolean
         get() = phoneValidation is PhoneValidationResult.Valid &&
                 remainingTimeSec == 0 &&
-                !isVerificationSuccess
+                !isVerificationSuccess &&
+                currentError != PhoneVerificationError.VerificationRequestLimitExceeded
 
     val isVerifyEnabled: Boolean
         get() = codeValidation is CodeValidationResult.Valid &&
