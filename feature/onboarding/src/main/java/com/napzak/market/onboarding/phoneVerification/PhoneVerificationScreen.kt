@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +30,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.napzak.market.designsystem.R.drawable.ic_circle_check
 import com.napzak.market.designsystem.R.drawable.ic_indicator_second_step
 import com.napzak.market.designsystem.component.button.NapzakBorderButton
@@ -61,8 +64,20 @@ internal fun PhoneVerificationRoute(
     onNextClick: () -> Unit,
     viewModel: PhoneVerificationViewModel = hiltViewModel(),
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isOnboarding by viewModel.isOnboarding.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel.sideEffect) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle)
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    is PhoneVerificationSideEffect.OnCodeSend -> {
+                        // Todo : toast 메시지 추가
+                    }
+                }
+            }
+    }
 
     PhoneVerificationScreen(
         uiState = uiState,

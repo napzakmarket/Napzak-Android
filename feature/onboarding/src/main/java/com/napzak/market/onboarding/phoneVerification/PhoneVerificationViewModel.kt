@@ -12,9 +12,11 @@ import com.napzak.market.store.usecase.ValidateNameUseCase
 import com.napzak.market.store.usecase.ValidatePhoneUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,6 +34,9 @@ class PhoneVerificationViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(PhoneVerificationUiState())
     val uiState = _uiState.asStateFlow()
+
+    private val _sideEffect = Channel<PhoneVerificationSideEffect>()
+    val sideEffect = _sideEffect.receiveAsFlow()
 
     private var timerJob: Job? = null
 
