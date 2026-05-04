@@ -2,11 +2,16 @@ package com.napzak.market.store.datasource
 
 import com.napzak.market.remote.model.BaseResponse
 import com.napzak.market.remote.model.EmptyDataResponse
+import com.napzak.market.store.dto.request.CodeVerificationRequest
 import com.napzak.market.store.dto.request.GenreRegistrationRequest
 import com.napzak.market.store.dto.request.NicknameRequest
+import com.napzak.market.store.dto.request.PhoneCodeRequest
 import com.napzak.market.store.dto.request.StoreEditProfileRequest
 import com.napzak.market.store.dto.request.WithdrawRequest
+import com.napzak.market.store.dto.response.CodeVerificationResponse
 import com.napzak.market.store.dto.response.GenreRegistrationResponse
+import com.napzak.market.store.dto.response.PhoneCodeResponse
+import com.napzak.market.store.dto.response.PhoneVerificationStatusResponse
 import com.napzak.market.store.dto.response.StoreDetailResponse
 import com.napzak.market.store.dto.response.StoreEditProfileResponse
 import com.napzak.market.store.dto.response.StoreResponse
@@ -68,5 +73,17 @@ class StoreDataSource @Inject constructor(
 
     suspend fun unblockStore(storeId: Long): EmptyDataResponse {
         return storeService.unblockStore(storeId)
+    }
+
+    suspend fun getPhoneVerificationStatus(): PhoneVerificationStatusResponse {
+        return storeService.getPhoneVerificationStatus().data
+    }
+
+    suspend fun postPhoneVerificationCode(request: PhoneCodeRequest): PhoneCodeResponse {
+        return storeService.postPhoneVerificationCode(request).data
+    }
+
+    suspend fun checkPhoneVerificationCode(request: CodeVerificationRequest): CodeVerificationResponse {
+        return storeService.checkPhoneVerificationCode(request).data
     }
 }
