@@ -5,20 +5,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -64,8 +61,8 @@ internal fun PhoneVerificationRoute(
     onNextClick: () -> Unit,
     viewModel: PhoneVerificationViewModel = hiltViewModel(),
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
-    val isOnboarding = viewModel.isOnboarding.collectAsStateWithLifecycle().value
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isOnboarding by viewModel.isOnboarding.collectAsStateWithLifecycle()
 
     PhoneVerificationScreen(
         uiState = uiState,
@@ -110,12 +107,7 @@ fun PhoneVerificationScreen(
                 })
             }
             .background(NapzakMarketTheme.colors.white)
-            .padding(horizontal = 20.dp, vertical = 60.dp)
-            .padding(
-                bottom = WindowInsets.navigationBars
-                    .asPaddingValues()
-                    .calculateBottomPadding()
-            ),
+            .padding(horizontal = 20.dp, vertical = 60.dp),
     ) {
         if (isOnboarding) {
             OnboardingTopBar(
@@ -160,7 +152,7 @@ fun PhoneVerificationScreen(
                     NapzakMarketTheme.colors.gray50,
                     RoundedCornerShape(14.dp)
                 )
-                .padding(PaddingValues(16.dp, 18.dp, 10.dp, 18.dp)),
+                .padding(16.dp, 18.dp, 10.dp, 18.dp),
         )
 
         Spacer(Modifier.height(12.dp))
@@ -179,7 +171,7 @@ fun PhoneVerificationScreen(
                     NapzakMarketTheme.colors.gray50,
                     RoundedCornerShape(14.dp)
                 )
-                .padding(PaddingValues(16.dp, 10.dp, 10.dp, 10.dp)),
+                .padding(16.dp, 10.dp, 10.dp, 10.dp),
             prefix = {
                 Text(
                     text = stringResource(onboarding_phone_prefix_korean),
@@ -245,7 +237,7 @@ fun PhoneVerificationScreen(
                         NapzakMarketTheme.colors.gray50,
                         RoundedCornerShape(14.dp)
                     )
-                    .padding(PaddingValues(16.dp, 10.dp, 10.dp, 10.dp)),
+                    .padding(16.dp, 10.dp, 10.dp, 10.dp),
                 prefix = {
                     if (uiState.isVerificationSuccess) {
                         Icon(

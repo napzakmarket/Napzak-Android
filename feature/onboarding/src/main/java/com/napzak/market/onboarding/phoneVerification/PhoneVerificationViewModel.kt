@@ -20,9 +20,9 @@ import javax.inject.Inject
 @HiltViewModel
 class PhoneVerificationViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val validateNameUseCase: ValidateNameUseCase,
-    private val validatePhoneUseCase: ValidatePhoneUseCase,
-    private val validateCodeUseCase: ValidateCodeUseCase,
+    private val validateName: ValidateNameUseCase,
+    private val validatePhone: ValidatePhoneUseCase,
+    private val validateCode: ValidateCodeUseCase,
 ) : ViewModel() {
     val isOnboarding = savedStateHandle.getStateFlow(ONBOARDING_KEY, true)
 
@@ -32,31 +32,31 @@ class PhoneVerificationViewModel @Inject constructor(
     private var timerJob: Job? = null
 
     fun onNameChanged(name: String) {
-        val limitedName = name.replace(" ", "").take(NAME_MAX_LENGTH)
+        val limitedName = name.replace(" ", "").take(ValidateNameUseCase.MAX_LENGTH)
         _uiState.update {
             it.copy(
                 name = limitedName,
-                nameValidation = validateNameUseCase(limitedName),
+                nameValidation = validateName(limitedName),
             )
         }
     }
 
     fun onPhoneChanged(phone: String) {
-        val limitedPhone = phone.replace("-", "").take(PHONE_MAX_LENGTH)
+        val limitedPhone = phone.replace("-", "").take(ValidatePhoneUseCase.MAX_LENGTH)
         _uiState.update {
             it.copy(
                 phone = limitedPhone,
-                phoneValidation = validatePhoneUseCase(limitedPhone),
+                phoneValidation = validatePhone(limitedPhone),
             )
         }
     }
 
     fun onCodeChanged(code: String) {
-        val limitedCode = code.take(CODE_MAX_LENGTH)
+        val limitedCode = code.take(ValidateCodeUseCase.MAX_LENGTH)
         _uiState.update {
             it.copy(
                 code = limitedCode,
-                codeValidation = validateCodeUseCase(limitedCode),
+                codeValidation = validateCode(limitedCode),
             )
         }
     }
@@ -122,8 +122,5 @@ class PhoneVerificationViewModel @Inject constructor(
 
     companion object {
         private const val ONBOARDING_KEY = "isOnboarding"
-        private const val NAME_MAX_LENGTH = 20
-        private const val PHONE_MAX_LENGTH = 11
-        private const val CODE_MAX_LENGTH = 6
     }
 }
