@@ -48,7 +48,7 @@ class PhoneVerificationViewModel @Inject constructor(
             it.copy(
                 name = limitedName,
                 nameValidation = validateName(limitedName),
-                currentError = PhoneVerificationError.None,
+                errorState = PhoneVerificationError.None,
             )
         }
         checkError()
@@ -59,7 +59,7 @@ class PhoneVerificationViewModel @Inject constructor(
             it.copy(
                 phone = phone,
                 phoneValidation = validatePhone(phone),
-                currentError = PhoneVerificationError.None,
+                errorState = PhoneVerificationError.None,
             )
         }
         checkError()
@@ -71,55 +71,14 @@ class PhoneVerificationViewModel @Inject constructor(
             it.copy(
                 code = limitedCode,
                 codeValidation = validateCode(limitedCode),
-                currentError = PhoneVerificationError.None,
+                errorState = PhoneVerificationError.None,
             )
         }
         checkError()
     }
 
     private fun checkError() {
-        _uiState.update {
-            it.copy(currentError = resolveError(it))
-        }
-    }
-
-    fun requestVerification() = viewModelScope.launch {
-        val current = _uiState.value
-
-        if (!current.isSendEnabled) return@launch
-
-        val phoneNumber = current.phone.replace("-", "")
-        sendCode(phoneNumber)
-            .onSuccess {
-                _uiState.update {
-                    it.copy(
-                        code = "",
-                        checkingPhone = phoneNumber,
-                        isSend = true,
-                        remainingCountForCurrentNumber = 5,
-                        verificationStatus = VerificationStatus.REQUESTED,
-                        remainingTimeSec = 180,
-                    )
-                }
-                _sideEffect.send(PhoneVerificationSideEffect.OnCodeSend)
-                startTimer()
-            }
-            .onFailure { e ->
-                val code = e.message
-                if (code != null) {
-                    _uiState.update {
-                        it.copy(
-                            currentError =
-                                when {
-                                    code.contains("403") -> PhoneVerificationError.PhoneNotAllowed
-                                    code.contains("409") -> PhoneVerificationError.PhoneAlreadyRegistered
-                                    code.contains("429") -> PhoneVerificationError.VerificationRequestLimitExceeded
-                                    else -> PhoneVerificationError.NetworkError
-                                }
-                        )
-                    }
-                }
-            }
+        _uiState.update { it.copy(errorState = resolveError(it)) }
     }
 
     private fun startTimer() {
@@ -136,15 +95,34 @@ class PhoneVerificationViewModel @Inject constructor(
         timerJob?.cancel()
     }
 
+    fun requestVerification() = viewModelScope.launch {
+        val current = _uiState.value
+
+        if (!current.isSendEnabled) return@launch
+
+        val phoneNumber = current.phone.replace("-", "")
+        sendCode(phoneNumber)
+            .onSuccess {
+                _uiState.update {
+                    it.copy(
+                        code = "",
+                        isSend = true,
+                        checkingPhone = phoneNumber,
+                        verificationStatus = VerificationStatus.REQUESTED,
+                        remainingTimeSec = 180,
+                        errorState = PhoneVerificationError.None,
+                    )
+                }
+                _sideEffect.send(PhoneVerificationSideEffect.OnCodeSend)
+                startTimer()
+            }
+            .onFailure { e ->
+                _uiState.update { it.copy(errorState = requestVerificationErrorHandler(e)) }
+            }
+    }
+
     fun verifyCode() = viewModelScope.launch {
         val current = _uiState.value
-        val remainingCount = current.remainingCountForCurrentNumber
-
-        if (remainingCount == 0) {
-            _uiState.update { it.copy(currentError = PhoneVerificationError.VerificationRequestLimitExceeded) }
-            return@launch
-        }
-
         if (!current.isVerifyEnabled) return@launch
 
         checkCodeVerified(phoneNumber = current.checkingPhone, code = current.code)
@@ -155,47 +133,42 @@ class PhoneVerificationViewModel @Inject constructor(
                         it.copy(
                             remainingTimeSec = 0,
                             checkingPhone = "",
-                            remainingCountForCurrentNumber = 5,
                             verificationStatus = VerificationStatus.VERIFIED,
                         )
                     }
                 } else {
                     _uiState.update {
-                        it.copy(
-                            checkingPhone = "",
-                            remainingCountForCurrentNumber = remainingCount - 1,
-                            currentError = PhoneVerificationError.InvalidVerificationCode,
-                        )
+                        it.copy(errorState = PhoneVerificationError.InvalidVerificationCode)
                     }
                 }
             }
             .onFailure { e ->
-                val code = e.message
-                _uiState.update {
-                    it.copy(
-                        code = "",
-                        remainingCountForCurrentNumber = remainingCount - 1,
-                    )
-                }
-
-                if (code != null) {
-                    _uiState.update {
-                        it.copy(
-                            currentError =
-                                when {
-                                    code.contains("404") -> PhoneVerificationError.InvalidVerificationCode
-                                    code.contains("409") -> PhoneVerificationError.PhoneAlreadyRegistered
-                                    code.contains("429") -> PhoneVerificationError.VerificationCodeAttemptsExceeded
-                                    else -> PhoneVerificationError.NetworkError
-                                }
-                        )
-                    }
-                }
+                _uiState.update { it.copy(errorState = verifyCodeErrorHandler(e)) }
             }
     }
 
     fun updateAgeChecked(new: Boolean) {
         _uiState.update { it.copy(isAgeChecked = new) }
+    }
+
+    private fun requestVerificationErrorHandler(e: Throwable): PhoneVerificationError {
+        val code = e.message ?: ""
+        return when {
+            code.contains("403") -> PhoneVerificationError.PhoneNotAllowed
+            code.contains("409") -> PhoneVerificationError.PhoneAlreadyRegistered
+            code.contains("429") -> PhoneVerificationError.VerificationRequestLimitExceeded
+            else -> PhoneVerificationError.NetworkError
+        }
+    }
+
+    private fun verifyCodeErrorHandler(e: Throwable): PhoneVerificationError {
+        val code = e.message ?: ""
+        return when {
+            code.contains("404") -> PhoneVerificationError.InvalidVerificationCode
+            code.contains("409") -> PhoneVerificationError.PhoneAlreadyRegistered
+            code.contains("429") -> PhoneVerificationError.VerificationCodeAttemptsExceeded
+            else -> PhoneVerificationError.NetworkError
+        }
     }
 
     companion object {

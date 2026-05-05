@@ -352,16 +352,21 @@ fun PhoneVerificationScreen(
             enter = fadeIn(),
             exit = fadeOut(),
         ) {
-            Image(
-                painter = painterResource(R.drawable.img_sended_code_popup),
-                contentDescription = "인증번호 전송 완료",
-                modifier = Modifier.padding(bottom = 20.dp),
-            )
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center,
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.img_sended_code_popup),
+                    contentDescription = "인증번호 전송 완료",
+                    modifier = Modifier.padding(bottom = 20.dp),
+                )
+            }
         }
 
-        if (uiState.currentError != PhoneVerificationError.None) {
+        if (uiState.errorState != PhoneVerificationError.None) {
             ErrorSection(
-                error = uiState.currentError,
+                error = uiState.errorState,
                 modifier = Modifier.padding(bottom = 20.dp),
             )
         }
