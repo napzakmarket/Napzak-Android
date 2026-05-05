@@ -304,6 +304,7 @@ private fun MainNavHost(
                 }
             },
             onReportNavigate = navigator.navController::navigateToProductReport,
+            onPhoneVerificationNavigate = { navigator.navController.navigateToPhoneVerification(isOnboarding = false) },
             onNavigateUp = navigator::navigateUp,
             modifier = modifier,
         )
