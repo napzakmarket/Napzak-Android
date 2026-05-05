@@ -14,11 +14,13 @@ import javax.inject.Singleton
 object DataStoreModule {
     private const val TOKEN_PREFERENCE_NAME = "token_preference"
     private const val NOTIFICATION_PREFERENCE_NAME = "notification_preference"
+    private const val FEATURE_PREFERENCE_NAME = "feature_preference"
 
     private val Context.provideDataStore by preferencesDataStore(TOKEN_PREFERENCE_NAME)
     private val Context.provideNotificationDataStore by preferencesDataStore(
         NOTIFICATION_PREFERENCE_NAME
     )
+    private val Context.provideFeatureDataStore by preferencesDataStore(FEATURE_PREFERENCE_NAME)
 
     @Provides
     @Singleton
@@ -31,4 +33,10 @@ object DataStoreModule {
     fun provideNotificationDataStore(
         @ApplicationContext context: Context,
     ) = NotificationDataStore(context.provideNotificationDataStore)
+
+    @Provides
+    @Singleton
+    fun provideFeatureDataStore(
+        @ApplicationContext context: Context,
+    ) = FeatureDataStore(context.provideFeatureDataStore)
 }
