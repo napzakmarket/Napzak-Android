@@ -9,11 +9,17 @@ import androidx.navigation.compose.composable
 import com.napzak.market.common.navigation.Route
 import com.napzak.market.onboarding.genre.GenreRoute
 import com.napzak.market.onboarding.nickname.NicknameRoute
+import com.napzak.market.onboarding.phoneVerification.PhoneVerificationRoute
 import com.napzak.market.onboarding.termsAgreement.TermsAgreementRoute
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToTerms(navOptions: NavOptions? = null) =
     navigate(Terms, navOptions)
+
+fun NavController.navigateToPhoneVerification(
+    isOnboarding: Boolean = true,
+    navOptions: NavOptions? = null,
+) = navigate(PhoneVerification(isOnboarding), navOptions)
 
 fun NavController.navigateToNickname(navOptions: NavOptions? = null) =
     navigate(Nickname, navOptions)
@@ -30,13 +36,20 @@ fun NavGraphBuilder.onboardingGraph(
     composable<Terms> {
         TermsAgreementRoute(
             onBackClick = onLogin,
+            onNextClick = navController::navigateToPhoneVerification,
+        )
+    }
+
+    composable<PhoneVerification> {
+        PhoneVerificationRoute(
+            onBackClick = navController::navigateToTerms,
             onNextClick = navController::navigateToNickname,
         )
     }
 
     composable<Nickname> {
         NicknameRoute(
-            onBackClick = navController::navigateToTerms,
+            onBackClick = navController::navigateUp,
             onNextClick = navController::navigateToGenre,
         )
     }
@@ -53,6 +66,11 @@ fun NavGraphBuilder.onboardingGraph(
 
 @Serializable
 object Terms : Route
+
+@Serializable
+data class PhoneVerification(
+    val isOnboarding: Boolean,
+) : Route
 
 @Serializable
 object Nickname : Route

@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.napzak.market.designsystem.R.drawable.ic_second_step_indicator
+import com.napzak.market.designsystem.R.drawable.ic_indicator_third_step
 import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.textfield.NapzakDefaultTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -85,7 +85,7 @@ fun NicknameScreen(
     ) {
         OnboardingTopBar(
             onBackClick = onBackClick,
-            indicatorIcon = ic_second_step_indicator,
+            indicatorIcon = ic_indicator_third_step,
             modifier = Modifier.fillMaxWidth()
         )
 
