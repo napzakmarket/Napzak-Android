@@ -18,6 +18,7 @@ fun NavGraphBuilder.homeGraph(
     navigateToProductDetail: (Long) -> Unit,
     navigateToExploreSell: () -> Unit,
     navigateToExploreBuy: () -> Unit,
+    onPhoneVerificationNavigate: () -> Unit,
     checkSessionManager: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -31,6 +32,7 @@ fun NavGraphBuilder.homeGraph(
             onProductDetailNavigate = navigateToProductDetail,
             onMostInterestedSellNavigate = navigateToExploreSell,
             onMostInterestedBuyNavigate = navigateToExploreBuy,
+            onPhoneVerificationNavigate = onPhoneVerificationNavigate,
             checkSessionManager = checkSessionManager,
             modifier = modifier,
         )

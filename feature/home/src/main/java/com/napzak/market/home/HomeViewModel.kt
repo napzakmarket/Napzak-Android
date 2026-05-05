@@ -3,18 +3,19 @@ package com.napzak.market.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.banner.Banner
+import com.napzak.market.common.SessionManager
 import com.napzak.market.common.state.UiState
 import com.napzak.market.home.state.HomeUiState
 import com.napzak.market.home.type.HomeProductType
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.mixpanel.HomeTracker
-import com.napzak.market.mixpanel.MixpanelConstants
 import com.napzak.market.notification.repository.NotificationRepository
 import com.napzak.market.notification.usecase.UpdatePushTokenUseCase
 import com.napzak.market.product.model.Product
 import com.napzak.market.product.repository.ProductRecommendationRepository
 import com.napzak.market.repository.BannerRepository
 import com.napzak.market.store.repository.SettingRepository
+import com.napzak.market.store.usecase.GetPhoneVerificationStatusUseCase
 import com.napzak.market.type.HomeBannerType
 import com.napzak.market.ui_util.groupBy
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapMerge
@@ -43,6 +45,7 @@ internal class HomeViewModel @Inject constructor(
     private val interestProductUseCase: SetInterestProductUseCase,
     private val notificationRepository: NotificationRepository,
     private val updatePushTokenUseCase: UpdatePushTokenUseCase,
+    private val getPhoneVerificationStatus: GetPhoneVerificationStatusUseCase,
     private val homeTracker: HomeTracker,
 ) : ViewModel() {
     private val nickname = MutableStateFlow("")
@@ -95,6 +98,9 @@ internal class HomeViewModel @Inject constructor(
     val sideEffect = _sideEffect.receiveAsFlow()
 
     private val interestDebounceFlow = MutableSharedFlow<Pair<Long, Boolean>>()
+
+    private val _showPhoneVerifyModal = MutableStateFlow(false)
+    val showPhoneVerifyModal = _showPhoneVerifyModal.asStateFlow()
 
     init {
         handleInterestDebounce()
@@ -213,6 +219,22 @@ internal class HomeViewModel @Inject constructor(
             }
     }
 
+    fun checkPhoneVerificationIfNeeded() {
+        if (SessionManager.isPhoneChecked) return
+        SessionManager.isPhoneChecked = true
+
+        viewModelScope.launch {
+            getPhoneVerificationStatus()
+                .onSuccess { response ->
+                    if (!response) _showPhoneVerifyModal.value = true
+                }
+        }
+    }
+
+    fun dismissPhoneVerifyModal() {
+        _showPhoneVerifyModal.value = false
+    }
+
     fun setNotificationSettings(isEnabled: Boolean) =
         viewModelScope.launch {
             val pushToken = notificationRepository.getPushToken()
@@ -243,7 +265,8 @@ internal class HomeViewModel @Inject constructor(
     }
 
     internal fun trackClickedBanner(bannerId: Long, bannerType: HomeBannerType, bannerIndex: Int) {
-        val typeString = if (bannerType == HomeBannerType.TOP) HomeTracker.BANNER_MAIN else HomeTracker.BANNER_MINI
+        val typeString =
+            if (bannerType == HomeBannerType.TOP) HomeTracker.BANNER_MAIN else HomeTracker.BANNER_MINI
         homeTracker.trackClickedBanner(bannerId, typeString, bannerIndex)
     }
 

@@ -27,6 +27,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.napzak.market.chat.navigation.chatGraph
 import com.napzak.market.chat.navigation.navigateToChatRoom
+import com.napzak.market.common.SessionManager
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
 import com.napzak.market.designsystem.R.drawable.ic_phone_verification
@@ -248,6 +249,7 @@ private fun MainNavHost(
             onNavigateToHome = {
                 connectSocket()
                 navigator.navController.navigate(Home)
+                SessionManager.isPhoneChecked = false
             },
             modifier = modifier
                 .padding(bottom = bottomPadding),
@@ -284,6 +286,7 @@ private fun MainNavHost(
                     sortType = SortType.POPULAR,
                 )
             },
+            onPhoneVerificationNavigate = { navigator.navController.navigateToPhoneVerification(isOnboarding = false) },
             checkSessionManager = {
                 if (SessionManager.chatRoomId != null) {
                     navigator.navigate(MainTab.CHAT)
