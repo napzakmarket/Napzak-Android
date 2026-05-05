@@ -12,7 +12,6 @@ import com.napzak.market.detail.ProductDetailSideEffect.ShowToast
 import com.napzak.market.detail.type.ProductDetailToastType
 import com.napzak.market.interest.usecase.SetInterestUseCase
 import com.napzak.market.mixpanel.ExploreTracker
-import com.napzak.market.mixpanel.MixpanelConstants
 import com.napzak.market.mixpanel.ReportTracker
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.repository.ProductDetailRepository
@@ -21,11 +20,13 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -47,6 +48,13 @@ internal class ProductDetailViewModel @Inject constructor(
     private val _sideEffect = Channel<ProductDetailSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
     private var isProductLoaded = false
+
+    val showProductStatusTooltip = productDetailRepository.getShowProductStatusTooltipFlow()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false,
+        )
 
     init {
         if (productId != null) {
@@ -150,6 +158,10 @@ internal class ProductDetailViewModel @Inject constructor(
                 _sideEffect.send(ShowToast(ProductDetailToastType.DELETE))
             }
             .onFailure(Timber::e)
+    }
+
+    fun setShowProductStatusToolTip(value: Boolean) = viewModelScope.launch {
+        productDetailRepository.setShowProductStatusTooltip(value)
     }
 
     private fun trackViewedProduct() {
