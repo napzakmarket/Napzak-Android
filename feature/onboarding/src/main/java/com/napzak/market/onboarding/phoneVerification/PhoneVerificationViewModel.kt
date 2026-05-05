@@ -86,6 +86,13 @@ class PhoneVerificationViewModel @Inject constructor(
         timerJob = viewModelScope.launch {
             while (_uiState.value.remainingTimeSec > 0) {
                 delay(1000)
+
+                if (uiState.value.errorState == PhoneVerificationError.VerificationCodeAttemptsExceeded) {
+                    stopTimer()
+                    _uiState.update { it.copy(remainingTimeSec = 0) }
+                    break
+                }
+
                 _uiState.update { it.copy(remainingTimeSec = it.remainingTimeSec - 1) }
             }
         }
