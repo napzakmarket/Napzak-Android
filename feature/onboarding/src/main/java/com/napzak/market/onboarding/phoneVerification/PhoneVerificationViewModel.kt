@@ -55,11 +55,10 @@ class PhoneVerificationViewModel @Inject constructor(
     }
 
     fun onPhoneChanged(phone: String) {
-        val limitedPhone = phone.replace("-", "").take(ValidatePhoneUseCase.MAX_LENGTH)
         _uiState.update {
             it.copy(
                 phone = phone,
-                phoneValidation = validatePhone(limitedPhone),
+                phoneValidation = validatePhone(phone),
                 currentError = PhoneVerificationError.None,
             )
         }
@@ -106,14 +105,15 @@ class PhoneVerificationViewModel @Inject constructor(
                 startTimer()
             }
             .onFailure { e ->
-                if (e.message != null) {
+                val code = e.message
+                if (code != null) {
                     _uiState.update {
                         it.copy(
                             currentError =
                                 when {
-                                    e.message!!.contains("403") -> PhoneVerificationError.PhoneNotAllowed
-                                    e.message!!.contains("409") -> PhoneVerificationError.PhoneAlreadyRegistered
-                                    e.message!!.contains("429") -> PhoneVerificationError.VerificationRequestLimitExceeded
+                                    code.contains("403") -> PhoneVerificationError.PhoneNotAllowed
+                                    code.contains("409") -> PhoneVerificationError.PhoneAlreadyRegistered
+                                    code.contains("429") -> PhoneVerificationError.VerificationRequestLimitExceeded
                                     else -> PhoneVerificationError.NetworkError
                                 }
                         )
@@ -162,7 +162,6 @@ class PhoneVerificationViewModel @Inject constructor(
                 } else {
                     _uiState.update {
                         it.copy(
-                            remainingTimeSec = 0,
                             checkingPhone = "",
                             remainingCountForCurrentNumber = remainingCount - 1,
                             currentError = PhoneVerificationError.InvalidVerificationCode,
@@ -171,6 +170,7 @@ class PhoneVerificationViewModel @Inject constructor(
                 }
             }
             .onFailure { e ->
+                val code = e.message
                 _uiState.update {
                     it.copy(
                         code = "",
@@ -178,14 +178,14 @@ class PhoneVerificationViewModel @Inject constructor(
                     )
                 }
 
-                if (e.message != null) {
+                if (code != null) {
                     _uiState.update {
                         it.copy(
                             currentError =
                                 when {
-                                    e.message!!.contains("404") -> PhoneVerificationError.InvalidVerificationCode
-                                    e.message!!.contains("409") -> PhoneVerificationError.PhoneAlreadyRegistered
-                                    e.message!!.contains("429") -> PhoneVerificationError.VerificationCodeAttemptsExceeded
+                                    code.contains("404") -> PhoneVerificationError.InvalidVerificationCode
+                                    code.contains("409") -> PhoneVerificationError.PhoneAlreadyRegistered
+                                    code.contains("429") -> PhoneVerificationError.VerificationCodeAttemptsExceeded
                                     else -> PhoneVerificationError.NetworkError
                                 }
                         )

@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -82,6 +83,80 @@ fun NapzakAffixTextField(
                     contentAlignment = contentAlignment,
                 ) {
                     if (text.isEmpty()) {
+                        Text(
+                            text = hint,
+                            style = hintTextStyle.copy(color = hintTextColor),
+                        )
+                    }
+                    innerTextField()
+                }
+
+                suffix?.invoke()
+            }
+        }
+    )
+}
+
+/**
+ * Affix text field: prefix, suffix가 있는 텍스트필드
+ *
+ * 일반 텍스트가 아닌 TextFieldValue를 값으로 사용합니다.
+ * 포맷이 필요한 텍스트필드에서 사용됩니다.
+ * ex) 전화번호 (숫자만 입력해도 형식에 맞춰 변경 000-0000-0000)
+ *
+ * @param value: 입력 값
+ * @param onTextChange: 입력 값 변경
+ * @param hint: 힌트
+ * @param isSingleLined: single / multi line
+ */
+@Composable
+fun NapzakAffixTextField(
+    value: TextFieldValue,
+    onTextChange: (TextFieldValue) -> Unit,
+    hint: String,
+    textStyle: TextStyle,
+    hintTextStyle: TextStyle,
+    modifier: Modifier = Modifier,
+    textColor: Color = NapzakMarketTheme.colors.gray500,
+    hintTextColor: Color = NapzakMarketTheme.colors.gray200,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    isSingleLined: Boolean = true,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    prefix: @Composable (() -> Unit)? = null,
+    suffix: @Composable (() -> Unit)? = null,
+    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
+    contentAlignment: Alignment = Alignment.CenterStart,
+    textAlign: TextAlign = TextAlign.Start,
+) {
+    BasicTextField(
+        value = value,
+        onValueChange = onTextChange,
+        textStyle = textStyle.copy(
+            color = textColor,
+            textAlign = textAlign,
+        ),
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        singleLine = isSingleLined,
+        visualTransformation = visualTransformation,
+        modifier = modifier,
+        enabled = enabled,
+        readOnly = readOnly,
+        decorationBox = { innerTextField ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = verticalAlignment,
+            ) {
+                prefix?.invoke()
+
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = contentAlignment,
+                ) {
+                    if (value.text.isEmpty()) {
                         Text(
                             text = hint,
                             style = hintTextStyle.copy(color = hintTextColor),
