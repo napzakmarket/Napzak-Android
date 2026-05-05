@@ -8,6 +8,7 @@ internal data class ChatRoomPopupState(
     val isWithdrawDialogVisible: Boolean = false,
     val isBlockDialogVisible: Boolean = false,
     val isPreviewVisible: Boolean = false,
+    val isPhoneVerifyModalVisible: Boolean = false,
 ) {
     fun handleEvent(event: ChatRoomPopupEvent): ChatRoomPopupState = when (event) {
         is ChatRoomPopupEvent.ShowBottomSheet -> copy(isBottomSheetVisible = true)
@@ -23,6 +24,7 @@ internal data class ChatRoomPopupState(
 
         is ChatRoomPopupEvent.ShowPreview -> copy(isPreviewVisible = true)
         is ChatRoomPopupEvent.DismissPreview -> copy(isPreviewVisible = false)
+        is ChatRoomPopupEvent.DismissPhoneVerifyModal -> copy(isPhoneVerifyModalVisible = false)
     }
 }
 
@@ -36,4 +38,5 @@ internal sealed class ChatRoomPopupEvent() {
     data object DismissOnBlockConfirmed : ChatRoomPopupEvent()
     data object ShowPreview : ChatRoomPopupEvent()
     data object DismissPreview : ChatRoomPopupEvent()
+    data object DismissPhoneVerifyModal : ChatRoomPopupEvent()
 }
