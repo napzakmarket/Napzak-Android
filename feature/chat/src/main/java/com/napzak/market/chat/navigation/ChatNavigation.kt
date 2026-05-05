@@ -36,6 +36,7 @@ fun NavGraphBuilder.chatGraph(
     onProductDetailNavigate: (Long) -> Unit,
     onStoreReportNavigate: (Long) -> Unit,
     onSettingsNavigate: () -> Unit,
+    onPhoneVerificationNavigate: () -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -52,6 +53,7 @@ fun NavGraphBuilder.chatGraph(
         ChatRoomRoute(
             onProductDetailNavigate = onProductDetailNavigate,
             onStoreReportNavigate = onStoreReportNavigate,
+            onPhoneVerificationNavigate = onPhoneVerificationNavigate,
             onNavigateUp = onNavigateUp,
         )
     }

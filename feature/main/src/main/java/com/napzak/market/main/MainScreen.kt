@@ -46,6 +46,7 @@ import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.mypage.navigation.mypageGraph
 import com.napzak.market.mypage.navigation.navigateToSettings
 import com.napzak.market.onboarding.navigation.Terms
+import com.napzak.market.onboarding.navigation.navigateToPhoneVerification
 import com.napzak.market.onboarding.navigation.onboardingGraph
 import com.napzak.market.registration.navigation.navigateToPurchaseRegistration
 import com.napzak.market.registration.navigation.navigateToSaleRegistration
@@ -346,6 +347,7 @@ private fun MainNavHost(
             onProductDetailNavigate = navigator.navController::navigateToProductDetail,
             onStoreReportNavigate = navigator.navController::navigateToUserReport,
             onSettingsNavigate = navigator.navController::navigateToSettings,
+            onPhoneVerificationNavigate = { navigator.navController.navigateToPhoneVerification(isOnboarding = false) },
             onNavigateUp = navigator::navigateUp,
             modifier = modifier
                 .padding(innerPadding),
