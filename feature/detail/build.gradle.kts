@@ -22,7 +22,9 @@ dependencies {
     implementation(projects.domain.genre)
     implementation(projects.domain.interest)
 
+
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
     implementation(libs.timber)
+    implementation(libs.balloon.compose)
 }
