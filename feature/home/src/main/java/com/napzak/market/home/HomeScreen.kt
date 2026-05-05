@@ -34,8 +34,10 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.banner.Banner
 import com.napzak.market.common.state.UiState
+import com.napzak.market.designsystem.R.drawable.ic_phone_verification
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
+import com.napzak.market.designsystem.component.popup.NapzakModal
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
@@ -48,6 +50,9 @@ import com.napzak.market.feature.home.R.string.home_list_interested_buy_title
 import com.napzak.market.feature.home.R.string.home_list_interested_sell_sub_title
 import com.napzak.market.feature.home.R.string.home_list_interested_sell_title
 import com.napzak.market.feature.home.R.string.home_search_text_field_hint
+import com.napzak.market.feature.home.R.string.phone_verification_modal_button
+import com.napzak.market.feature.home.R.string.phone_verification_modal_content
+import com.napzak.market.feature.home.R.string.phone_verification_modal_title
 import com.napzak.market.home.component.HomeFooter
 import com.napzak.market.home.component.HorizontalAutoScrolledImages
 import com.napzak.market.home.component.HorizontalScrollableProducts
@@ -75,11 +80,13 @@ internal fun HomeRoute(
     onProductDetailNavigate: (Long) -> Unit,
     onMostInterestedSellNavigate: () -> Unit,
     onMostInterestedBuyNavigate: () -> Unit,
+    onPhoneVerificationNavigate: () -> Unit,
     checkSessionManager: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.homeUiState.collectAsStateWithLifecycle()
+    val isPhoneVerifyModalVisible by viewModel.showPhoneVerifyModal.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val napzakToast = LocalNapzakToast.current
     val context = LocalContext.current
@@ -93,6 +100,7 @@ internal fun HomeRoute(
     LaunchedEffect(Unit) {
         viewModel.fetchHomeData()
         checkSessionManager()
+        viewModel.checkPhoneVerificationIfNeeded()
 
         val isRequested = viewModel.getNotificationPermissionRequested()
         checkNotificationPermission(
@@ -126,6 +134,7 @@ internal fun HomeRoute(
 
     HomeScreen(
         uiState = uiState,
+        isPhoneVerifyModalVisible = isPhoneVerifyModalVisible,
         onSearchTextFieldClick = onSearchNavigate,
         onProductClick = onProductDetailNavigate,
         onLikeButtonClick = viewModel::setInterest,
@@ -134,6 +143,8 @@ internal fun HomeRoute(
         onTrackBannerClick = viewModel::trackClickedBanner,
         onTrackRecommendProductClick = viewModel::trackClickedRecommendProduct,
         onTrackPopularProductClick = viewModel::trackClickedPopularProduct,
+        onPhoneVerifyClick = onPhoneVerificationNavigate,
+        onPhoneVerifyDismissClick = viewModel::dismissPhoneVerifyModal,
         modifier = Modifier
             .background(NapzakMarketTheme.colors.white)
             .then(modifier),
@@ -143,6 +154,7 @@ internal fun HomeRoute(
 @Composable
 private fun HomeScreen(
     uiState: HomeUiState,
+    isPhoneVerifyModalVisible: Boolean,
     onSearchTextFieldClick: () -> Unit,
     onProductClick: (Long) -> Unit,
     onLikeButtonClick: (Long, Boolean, HomeProductType) -> Unit,
@@ -151,6 +163,8 @@ private fun HomeScreen(
     onTrackBannerClick: (Long, HomeBannerType, Int) -> Unit,
     onTrackRecommendProductClick: (Int) -> Unit,
     onTrackPopularProductClick: (HomeProductType) -> Unit,
+    onPhoneVerifyClick: () -> Unit,
+    onPhoneVerifyDismissClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -158,6 +172,7 @@ private fun HomeScreen(
 
         when (uiState.isLoaded) {
             is UiState.Success -> HomeSuccessScreen(
+                isPhoneVerifyModalVisible = isPhoneVerifyModalVisible,
                 nickname = uiState.nickname.ellipsis(NICKNAME_MAX_LENGTH),
                 productRecommends = (uiState.recommendProductLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
                 sellProducts = (uiState.popularSellLoadState as UiState.Success<List<Product>>).data.toImmutableList(),
@@ -173,6 +188,8 @@ private fun HomeScreen(
                 onTrackBannerClick = onTrackBannerClick,
                 onTrackRecommendProductClick = onTrackRecommendProductClick,
                 onTrackPopularProductClick = onTrackPopularProductClick,
+                onPhoneVerifyClick = onPhoneVerifyClick,
+                onPhoneVerifyDismissClick = onPhoneVerifyDismissClick,
             )
 
             is UiState.Failure -> {}
@@ -184,6 +201,7 @@ private fun HomeScreen(
 
 @Composable
 private fun HomeSuccessScreen(
+    isPhoneVerifyModalVisible: Boolean,
     nickname: String,
     productRecommends: ImmutableList<Product>,
     sellProducts: ImmutableList<Product>,
@@ -199,6 +217,8 @@ private fun HomeSuccessScreen(
     onTrackBannerClick: (Long, HomeBannerType, Int) -> Unit,
     onTrackRecommendProductClick: (Int) -> Unit,
     onTrackPopularProductClick: (HomeProductType) -> Unit,
+    onPhoneVerifyClick: () -> Unit,
+    onPhoneVerifyDismissClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -326,6 +346,20 @@ private fun HomeSuccessScreen(
             )
         }
     }
+
+    if (isPhoneVerifyModalVisible) {
+        NapzakModal(
+            title = stringResource(phone_verification_modal_title),
+            content = stringResource(phone_verification_modal_content),
+            image = ic_phone_verification,
+            buttonText = stringResource(phone_verification_modal_button),
+            onDismissRequest = onPhoneVerifyDismissClick,
+            onButtonClick = {
+                onPhoneVerifyDismissClick()
+                onPhoneVerifyClick()
+            },
+        )
+    }
 }
 
 @Composable
@@ -381,6 +415,7 @@ private fun HomeRoutePreview() {
 
     NapzakMarketTheme {
         HomeScreen(
+            isPhoneVerifyModalVisible = true,
             uiState = HomeUiState(
                 nickname = "납자기장독대나무다리어카센터미널뛰기러기찻길동무",
                 bannerLoadState = UiState.Success(mapOf()),
@@ -398,6 +433,8 @@ private fun HomeRoutePreview() {
             onTrackBannerClick = { _, _, _ -> },
             onTrackRecommendProductClick = {},
             onTrackPopularProductClick = {},
+            onPhoneVerifyClick = {},
+            onPhoneVerifyDismissClick = {},
         )
     }
 }
