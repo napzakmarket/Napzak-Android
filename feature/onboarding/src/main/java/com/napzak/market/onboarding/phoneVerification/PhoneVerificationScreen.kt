@@ -33,8 +33,10 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -67,6 +69,7 @@ import com.napzak.market.onboarding.genre.component.OnboardingTopBar
 import com.napzak.market.onboarding.phoneVerification.component.ErrorSection
 import com.napzak.market.onboarding.phoneVerification.model.PhoneVerificationError
 import com.napzak.market.onboarding.phoneVerification.model.PhoneVerificationUiState
+import com.napzak.market.onboarding.phoneVerification.util.formatPhoneNumber
 import com.napzak.market.onboarding.phoneVerification.util.toTimeFormat
 import kotlinx.coroutines.delay
 
@@ -129,6 +132,7 @@ fun PhoneVerificationScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    var textState by remember { mutableStateOf(TextFieldValue(uiState.phone)) }
 
     Column(
         modifier = Modifier
@@ -191,8 +195,32 @@ fun PhoneVerificationScreen(
         Spacer(Modifier.height(12.dp))
 
         NapzakAffixTextField(
-            text = uiState.phone,
-            onTextChange = onPhoneChanged,
+            value = textState,
+            onTextChange = { newValue ->
+                val raw = newValue.text
+                val cursor = newValue.selection.start
+
+                val digitCountBeforeCursor = raw
+                    .take(cursor)
+                    .count { it.isDigit() }
+
+                val formatted = raw.formatPhoneNumber()
+
+                val newCursor = formatted
+                    .mapIndexedNotNull { index, c ->
+                        if (c.isDigit()) index else null
+                    }
+                    .getOrNull(digitCountBeforeCursor - 1)
+                    ?.plus(1) ?: formatted.length
+
+                val newTextFieldValue = TextFieldValue(
+                    text = formatted,
+                    selection = TextRange(newCursor),
+                )
+
+                textState = newTextFieldValue
+                onPhoneChanged(formatted)
+            },
             hint = stringResource(onboarding_phone_number_edit_hint),
             textStyle = NapzakMarketTheme.typography.caption12sb,
             hintTextStyle = NapzakMarketTheme.typography.caption12m,

@@ -7,7 +7,7 @@
     <string name="onboarding_phone_sub_title">휴대폰 번호 1개당 1개의 계정만 이용 가능합니다.\n휴대폰 번호 변경은 지원하지 않습니다.</string>
     <string name="onboarding_phone_name_edit_hint">이름</string>
     <string name="onboarding_phone_prefix_korean">+82</string>
-    <string name="onboarding_phone_number_edit_hint">01012345678</string>
+    <string name="onboarding_phone_number_edit_hint">010–1234-5678</string>
     <string name="onboarding_phone_verify">인증하기</string>
     <string name="onboarding_phone_send_done">인증번호를 보냈어요.</string>
     <string name="onboarding_phone_resend">재전송</string>
