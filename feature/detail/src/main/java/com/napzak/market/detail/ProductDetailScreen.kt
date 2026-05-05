@@ -141,7 +141,8 @@ private fun ProductDetailScreen(
     Scaffold(
         topBar = {
             DetailTopBar(
-                showToolTip = showProductStatusToolTip,
+                showToolTip = showProductStatusToolTip
+                        && (uiState is UiState.Success && uiState.data.isOwnedByCurrentUser),
                 onBackClick = onBackButtonClick,
                 onOptionClick = { sheetVisibility = true },
                 onTooltipDismiss = { onTooltipDismiss(false) },
