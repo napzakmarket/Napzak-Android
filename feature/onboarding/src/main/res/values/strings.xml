@@ -3,6 +3,7 @@
     <string name="onboarding_title">서비스 이용약관에 동의해주세요</string>
     <string name="onboarding_all_agreement_title">서비스 이용약관에 동의해주세요</string>
     <string name="onboarding_next">다음으로</string>
+    <string name="onboarding_done">완료</string>
     <string name="onboarding_phone_title">안전한 거래를 위해\n본인 확인을 진행해주세요</string>
     <string name="onboarding_phone_sub_title">휴대폰 번호 1개당 1개의 계정만 이용 가능합니다.\n휴대폰 번호 변경은 지원하지 않습니다.</string>
     <string name="onboarding_phone_name_edit_hint">이름</string>
