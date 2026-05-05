@@ -9,26 +9,13 @@ import com.napzak.market.store.model.PhoneValidationResult
 
 fun resolveError(state: PhoneVerificationUiState): PhoneVerificationError {
     return when {
-        state.currentError != PhoneVerificationError.None -> {
-            when (state.currentError) {
-                PhoneVerificationError.PhoneAlreadyRegistered,
-                PhoneVerificationError.PhoneNotAllowed -> {
-                    if (state.phone != state.checkingPhone) PhoneVerificationError.None
-                    else state.currentError
-                }
+        state.verificationStatus == VerificationStatus.REQUESTED
+                && state.remainingTimeSec <= 0
+                    -> PhoneVerificationError.VerificationTimeExpired
 
-                else -> state.currentError
-            }
-        }
-
-        state.verificationStatus == VerificationStatus.REQUESTED && state.remainingTimeSec <= 0 ->
-            PhoneVerificationError.VerificationTimeExpired
-
-        state.verificationStatus == VerificationStatus.REQUESTED && state.codeValidation is CodeValidationResult.Invalid ->
-            PhoneVerificationError.InvalidVerificationCode
-
-        state.remainingCountForCurrentNumber <= 0 ->
-            PhoneVerificationError.VerificationRequestLimitExceeded
+        state.verificationStatus == VerificationStatus.REQUESTED
+                && state.codeValidation is CodeValidationResult.Invalid
+                    -> PhoneVerificationError.InvalidVerificationCode
 
         state.nameValidation is NameValidationResult.Invalid ->
             PhoneVerificationError.InvalidName
