@@ -52,6 +52,7 @@ import com.napzak.market.designsystem.component.textfield.NapzakAffixTextField
 import com.napzak.market.designsystem.component.textfield.NapzakDefaultTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.onboarding.R
+import com.napzak.market.feature.onboarding.R.string.onboarding_done
 import com.napzak.market.feature.onboarding.R.string.onboarding_next
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_agreement_age_over_14
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_name_edit_hint
@@ -133,6 +134,9 @@ fun PhoneVerificationScreen(
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
     var textState by remember { mutableStateOf(TextFieldValue(uiState.phone)) }
+    val buttonText =
+        if (isOnboarding) stringResource(onboarding_next)
+        else stringResource(onboarding_done)
 
     Column(
         modifier = Modifier
@@ -146,13 +150,11 @@ fun PhoneVerificationScreen(
             .background(NapzakMarketTheme.colors.white)
             .padding(horizontal = 20.dp, vertical = 60.dp),
     ) {
-        if (isOnboarding) {
-            OnboardingTopBar(
-                onBackClick = onBackClick,
-                indicatorIcon = ic_indicator_second_step,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+        OnboardingTopBar(
+            onBackClick = onBackClick,
+            indicatorIcon = if (isOnboarding) ic_indicator_second_step else null,
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Spacer(Modifier.height(30.dp))
 
@@ -378,7 +380,7 @@ fun PhoneVerificationScreen(
         )
 
         NapzakButton(
-            text = stringResource(onboarding_next),
+            text = buttonText,
             onClick = onNextClick,
             enabled = uiState.isNextEnabled,
             modifier = Modifier.fillMaxWidth(),
