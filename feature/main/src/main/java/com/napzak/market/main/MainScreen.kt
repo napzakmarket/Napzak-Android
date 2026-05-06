@@ -18,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -30,8 +29,7 @@ import com.napzak.market.chat.navigation.navigateToChatRoom
 import com.napzak.market.common.SessionManager
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.R.drawable.ic_phone_verification
-import com.napzak.market.designsystem.component.popup.NapzakModal
+import com.napzak.market.designsystem.component.popup.NapzakPhoneVerifyModal
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.NapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
@@ -41,9 +39,6 @@ import com.napzak.market.detail.navigation.productDetailGraph
 import com.napzak.market.explore.navigation.exploreGraph
 import com.napzak.market.explore.navigation.navigateToExplore
 import com.napzak.market.explore.navigation.navigateToGenreDetail
-import com.napzak.market.feature.detail.R.string.phone_verification_modal_button
-import com.napzak.market.feature.detail.R.string.phone_verification_modal_content
-import com.napzak.market.feature.detail.R.string.phone_verification_modal_title
 import com.napzak.market.home.navigation.Home
 import com.napzak.market.home.navigation.homeGraph
 import com.napzak.market.home.navigation.navigateToHome
@@ -179,13 +174,9 @@ fun MainScreen(
             }
 
             if (isPhoneVerifyModalVisible) {
-                NapzakModal(
-                    title = stringResource(phone_verification_modal_title),
-                    content = stringResource(phone_verification_modal_content),
-                    image = ic_phone_verification,
-                    buttonText = stringResource(phone_verification_modal_button),
-                    onDismissRequest = { isPhoneVerifyModalVisible = false },
-                    onButtonClick = {
+                NapzakPhoneVerifyModal(
+                    onDismissClick = { isPhoneVerifyModalVisible = false },
+                    onPhoneVerifyClick = {
                         isPhoneVerifyModalVisible = false
                         navigator.dismissRegisterDialog()
                         navigator.navController.navigateToPhoneVerification(isOnboarding = false)
