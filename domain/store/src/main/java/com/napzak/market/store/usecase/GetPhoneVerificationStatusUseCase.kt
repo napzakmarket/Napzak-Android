@@ -6,7 +6,6 @@ import javax.inject.Inject
 class GetPhoneVerificationStatusUseCase @Inject constructor(
     private val storeRepository: StoreRepository,
 ){
-    suspend operator fun invoke(): Result<Boolean> = runCatching {
-        return storeRepository.getPhoneVerificationStatus()
-    }
+    suspend operator fun invoke(): Result<Boolean> =
+        storeRepository.getPhoneVerificationStatus()
 }

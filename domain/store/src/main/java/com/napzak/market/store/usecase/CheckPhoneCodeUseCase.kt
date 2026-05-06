@@ -10,7 +10,6 @@ class CheckPhoneCodeUseCase @Inject constructor(
     suspend operator fun invoke(
         phoneNumber: String,
         code: String
-    ): Result<PhoneCodeVerificationResult> = runCatching {
-        return storeRepository.checkPhoneVerificationCode(phoneNumber, code)
-    }
+    ): Result<PhoneCodeVerificationResult> =
+        storeRepository.checkPhoneVerificationCode(phoneNumber, code)
 }
