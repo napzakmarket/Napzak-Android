@@ -15,6 +15,7 @@ import com.napzak.market.mixpanel.ExploreTracker
 import com.napzak.market.mixpanel.ReportTracker
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.repository.ProductDetailRepository
+import com.napzak.market.store.usecase.GetPhoneVerificationStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
@@ -38,6 +39,7 @@ internal class ProductDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val productDetailRepository: ProductDetailRepository,
     private val setInterestUseCase: SetInterestUseCase,
+    private val getPhoneVerificationStatus: GetPhoneVerificationStatusUseCase,
     private val exploreTracker: ExploreTracker,
     private val reportTracker: ReportTracker,
 ) : ViewModel() {
@@ -48,6 +50,9 @@ internal class ProductDetailViewModel @Inject constructor(
     private val _sideEffect = Channel<ProductDetailSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
     private var isProductLoaded = false
+
+    private val _isPhoneVerified = MutableStateFlow(true)
+    val isPhoneVerified = _isPhoneVerified.asStateFlow()
 
     val showProductStatusTooltip = productDetailRepository.getShowProductStatusTooltipFlow()
         .stateIn(
@@ -63,6 +68,13 @@ internal class ProductDetailViewModel @Inject constructor(
         } else {
             _productDetail.value = UiState.Failure("상품 정보를 불러올 수 없습니다.")
         }
+    }
+
+    fun checkPhoneVerification() = viewModelScope.launch {
+        getPhoneVerificationStatus()
+            .onSuccess { isVerified ->
+                _isPhoneVerified.value = isVerified
+            }
     }
 
     private fun getProductDetail(productId: Long) = viewModelScope.launch {

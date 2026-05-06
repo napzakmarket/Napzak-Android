@@ -21,6 +21,7 @@ dependencies {
     implementation(projects.domain.product)
     implementation(projects.domain.genre)
     implementation(projects.domain.interest)
+    implementation(projects.domain.store)
 
 
     implementation(libs.androidx.navigation.compose)

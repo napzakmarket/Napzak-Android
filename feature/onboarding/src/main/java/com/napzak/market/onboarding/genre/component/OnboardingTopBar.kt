@@ -14,11 +14,13 @@ import com.napzak.market.designsystem.component.topbar.NapzakTopBarColor
 @Composable
 internal fun OnboardingTopBar(
     onBackClick: () -> Unit,
-    @DrawableRes indicatorIcon: Int,
+    @DrawableRes indicatorIcon: Int?,
     modifier: Modifier = Modifier,
 ) {
     val navigators = listOf(NapzakTopBarAction(ic_gray_arrow_left, onBackClick))
-    val actions = listOf(NapzakTopBarAction(indicatorIcon, onClick = {}))
+    val actions =
+        if (indicatorIcon != null) listOf(NapzakTopBarAction(indicatorIcon, onClick = {}))
+        else listOf()
     val topBarColor = NapzakTopBarColor(
         iconColor = Color.Unspecified,
         contentColor = Color.Unspecified,

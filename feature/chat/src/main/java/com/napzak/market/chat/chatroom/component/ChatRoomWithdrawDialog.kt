@@ -6,6 +6,7 @@ import androidx.compose.ui.res.stringResource
 import com.napzak.market.chat.chatroom.state.ChatRoomPopupEvent
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.component.dialog.NapzakDialogDefault
+import com.napzak.market.designsystem.component.popup.NapzakPhoneVerifyModal
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_room_block_dialog_cancel
 import com.napzak.market.feature.chat.R.string.chat_room_block_dialog_confirm
@@ -18,10 +19,12 @@ import com.napzak.market.feature.chat.R.string.chat_room_withdraw_dialog_title
 
 @Composable
 internal fun ChatRoomDialogSection(
+    isPhoneVerifyModalVisible: Boolean,
     isWithdrawDialogVisible: Boolean,
     isBlockDialogVisible: Boolean,
     onWithdrawConfirm: () -> Unit,
     onBlockConfirm: () -> Unit,
+    onPhoneVerifyClick: () -> Unit,
     onDismissClick: (ChatRoomPopupEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -51,6 +54,14 @@ internal fun ChatRoomDialogSection(
             dialogColor = NapzakDialogDefault.color.copy(
                 titleColor = NapzakMarketTheme.colors.black,
             ),
+            modifier = modifier,
+        )
+    }
+
+    if (isPhoneVerifyModalVisible) {
+        NapzakPhoneVerifyModal(
+            onDismissClick = { onDismissClick(ChatRoomPopupEvent.DismissPhoneVerifyModal) },
+            onPhoneVerifyClick = onPhoneVerifyClick,
             modifier = modifier,
         )
     }

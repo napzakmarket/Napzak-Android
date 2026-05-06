@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,10 +41,15 @@ internal fun MainRegisterDialog(
     onSellRegisterClick: () -> Unit,
     onBuyRegisterClick: () -> Unit,
     onDismissRequest: () -> Unit,
+    onDialogVisible: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val dialogShape = RoundedCornerShape(12.dp)
     val colorScheme = NapzakMarketTheme.colors
+
+    LaunchedEffect(visibility) {
+        if (visibility) onDialogVisible()
+    }
 
     AnimatedVisibility(
         visible = visibility,
@@ -125,6 +131,7 @@ private fun RegisterNavigationButtonGroupPreview() {
             onSellRegisterClick = {},
             onBuyRegisterClick = {},
             onDismissRequest = {},
+            onDialogVisible = {},
             visibility = true,
         )
     }

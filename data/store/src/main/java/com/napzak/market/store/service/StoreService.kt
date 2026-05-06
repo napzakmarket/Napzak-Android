@@ -2,11 +2,16 @@ package com.napzak.market.store.service
 
 import com.napzak.market.remote.model.BaseResponse
 import com.napzak.market.remote.model.EmptyDataResponse
+import com.napzak.market.store.dto.request.CodeVerificationRequest
 import com.napzak.market.store.dto.request.GenreRegistrationRequest
 import com.napzak.market.store.dto.request.NicknameRequest
+import com.napzak.market.store.dto.request.PhoneCodeRequest
 import com.napzak.market.store.dto.request.StoreEditProfileRequest
 import com.napzak.market.store.dto.request.WithdrawRequest
+import com.napzak.market.store.dto.response.CodeVerificationResponse
 import com.napzak.market.store.dto.response.GenreRegistrationResponse
+import com.napzak.market.store.dto.response.PhoneCodeResponse
+import com.napzak.market.store.dto.response.PhoneVerificationStatusResponse
 import com.napzak.market.store.dto.response.StoreDetailResponse
 import com.napzak.market.store.dto.response.StoreEditProfileResponse
 import com.napzak.market.store.dto.response.StoreResponse
@@ -76,4 +81,17 @@ interface StoreService {
     suspend fun unblockStore(
         @Path("storeId") storeId: Long
     ): EmptyDataResponse
+
+    @GET("stores/phone-verification-status")
+    suspend fun getPhoneVerificationStatus(): BaseResponse<PhoneVerificationStatusResponse>
+
+    @POST("stores/phone-verifications/send")
+    suspend fun postPhoneVerificationCode(
+        @Body request: PhoneCodeRequest,
+    ): BaseResponse<PhoneCodeResponse>
+
+    @POST("stores/phone-verifications/confirm")
+    suspend fun checkPhoneVerificationCode(
+        @Body request: CodeVerificationRequest,
+    ): BaseResponse<CodeVerificationResponse>
 }

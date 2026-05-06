@@ -73,6 +73,7 @@ import timber.log.Timber
 internal fun ChatRoomRoute(
     onProductDetailNavigate: (Long) -> Unit,
     onStoreReportNavigate: (Long) -> Unit,
+    onPhoneVerificationNavigate: () -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChatRoomViewModel = hiltViewModel(),
@@ -84,9 +85,10 @@ internal fun ChatRoomRoute(
 
     val chatRoomState by viewModel.chatRoomState.collectAsStateWithLifecycle()
     val chatItems by viewModel.chatItems.collectAsStateWithLifecycle()
+    val isPhoneVerified by viewModel.isPhoneVerified.collectAsStateWithLifecycle()
 
     LifecycleResumeEffect(Unit) {
-        viewModel.prepareChatRoom()
+        viewModel.init()
 
         onPauseOrDispose {
             viewModel.leaveChatRoom()
@@ -146,6 +148,7 @@ internal fun ChatRoomRoute(
     }
 
     ChatRoomScreen(
+        isPhoneVerified = isPhoneVerified,
         chat = { viewModel.chat },
         chatItems = chatItems.toImmutableList(),
         chatRoomState = chatRoomState,
@@ -162,12 +165,14 @@ internal fun ChatRoomRoute(
         onNavigateUp = onNavigateUp,
         onSendChatClick = viewModel::sendTextMessage,
         onPhotoSelect = viewModel::sendImageMessage,
+        onPhoneVerifyClick = onPhoneVerificationNavigate,
         modifier = modifier,
     )
 }
 
 @Composable
 internal fun ChatRoomScreen(
+    isPhoneVerified: Boolean,
     chat: () -> String,
     chatItems: ImmutableList<ReceiveMessage<*>>,
     chatRoomState: ChatRoomUiState,
@@ -181,6 +186,7 @@ internal fun ChatRoomScreen(
     onNavigateUp: () -> Unit,
     onSendChatClick: (String) -> Unit,
     onPhotoSelect: (String) -> Unit,
+    onPhoneVerifyClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (chatRoomState.chatRoomState) {
@@ -191,9 +197,13 @@ internal fun ChatRoomScreen(
         is UiState.Success -> {
             val chatRoom = chatRoomState.chatRoomState.data
             var selectedImageUrl by remember { mutableStateOf<String?>(null) }
-            var popupState by remember { mutableStateOf(ChatRoomPopupState()) }
+            var popupState by remember { mutableStateOf(ChatRoomPopupState(isPhoneVerifyModalVisible = !isPhoneVerified)) }
             fun updatePopupState(event: ChatRoomPopupEvent) {
                 popupState = popupState.handleEvent(event)
+            }
+
+            LaunchedEffect(isPhoneVerified) {
+                popupState = popupState.copy(isPhoneVerifyModalVisible = !isPhoneVerified)
             }
 
             Column(
@@ -272,7 +282,8 @@ internal fun ChatRoomScreen(
                         ChatRoomInputField(
                             text = chat,
                             enabled = !chatRoomState.isChatDisabled
-                                    && chatRoom.storeBrief?.isChatBlocked == false,
+                                    && chatRoom.storeBrief?.isChatBlocked == false
+                                    && isPhoneVerified,
                             onSendClick = onSendChatClick,
                             onTextChange = onChatChange,
                             onPhotoSelect = {
@@ -325,6 +336,7 @@ internal fun ChatRoomScreen(
             }
 
             ChatRoomDialogSection(
+                isPhoneVerifyModalVisible = popupState.isPhoneVerifyModalVisible,
                 isWithdrawDialogVisible = popupState.isWithdrawDialogVisible,
                 isBlockDialogVisible = popupState.isBlockDialogVisible,
                 onWithdrawConfirm = onWithdrawChatRoomClick,
@@ -332,6 +344,7 @@ internal fun ChatRoomScreen(
                     onBlockClick()
                     updatePopupState(ChatRoomPopupEvent.DismissOnBlockConfirmed)
                 },
+                onPhoneVerifyClick = onPhoneVerifyClick,
                 onDismissClick = ::updatePopupState,
             )
         }
@@ -384,6 +397,7 @@ private fun EmptyChatScreen(
 private fun ChatRoomScreenPreview() {
     NapzakMarketTheme {
         ChatRoomScreen(
+            isPhoneVerified = true,
             chat = { "" },
             chatItems = mockChats.toImmutableList(),
             onChatChange = {},
@@ -395,6 +409,7 @@ private fun ChatRoomScreenPreview() {
             onWithdrawChatRoomClick = {},
             onNavigateUp = {},
             onPhotoSelect = {},
+            onPhoneVerifyClick = {},
             chatRoomState = ChatRoomUiState(UiState.Success(mockChatRoom)),
             chatListState = rememberLazyListState(),
         )
@@ -406,6 +421,7 @@ private fun ChatRoomScreenPreview() {
 private fun ChatRoomScreenEmptyPreview() {
     NapzakMarketTheme {
         ChatRoomScreen(
+            isPhoneVerified = true,
             chat = { "" },
             chatItems = emptyList<ReceiveMessage<*>>().toImmutableList(),
             onChatChange = {},
@@ -417,6 +433,7 @@ private fun ChatRoomScreenEmptyPreview() {
             onWithdrawChatRoomClick = {},
             onNavigateUp = {},
             onPhotoSelect = {},
+            onPhoneVerifyClick = {},
             chatRoomState = ChatRoomUiState(UiState.Success(mockChatRoom)),
             chatListState = rememberLazyListState(),
         )

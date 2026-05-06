@@ -42,7 +42,7 @@ fun NavGraphBuilder.onboardingGraph(
 
     composable<PhoneVerification> {
         PhoneVerificationRoute(
-            onBackClick = navController::navigateToTerms,
+            onBackClick = navController::navigateUp,
             onNextClick = navController::navigateToNickname,
         )
     }
