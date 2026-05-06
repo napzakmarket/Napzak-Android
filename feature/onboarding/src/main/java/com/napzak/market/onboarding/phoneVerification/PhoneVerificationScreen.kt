@@ -209,12 +209,14 @@ fun PhoneVerificationScreen(
 
                 val formatted = raw.formatPhoneNumber()
 
-                val newCursor = formatted
-                    .mapIndexedNotNull { index, c ->
-                        if (c.isDigit()) index else null
+                val newCursor =
+                    if (digitCountBeforeCursor == 0) {
+                        0
+                    } else {
+                        formatted.mapIndexedNotNull { index, c -> if (c.isDigit()) index else null }
+                            .getOrNull(digitCountBeforeCursor - 1)
+                            ?.plus(1) ?: formatted.length
                     }
-                    .getOrNull(digitCountBeforeCursor - 1)
-                    ?.plus(1) ?: formatted.length
 
                 val newTextFieldValue = TextFieldValue(
                     text = formatted,
