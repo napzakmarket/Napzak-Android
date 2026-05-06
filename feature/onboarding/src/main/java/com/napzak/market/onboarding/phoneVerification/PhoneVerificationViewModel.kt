@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -159,21 +160,21 @@ class PhoneVerificationViewModel @Inject constructor(
     }
 
     private fun requestVerificationErrorHandler(e: Throwable): PhoneVerificationError {
-        val code = e.message ?: ""
-        return when {
-            code.contains("403") -> PhoneVerificationError.PhoneNotAllowed
-            code.contains("409") -> PhoneVerificationError.PhoneAlreadyRegistered
-            code.contains("429") -> PhoneVerificationError.VerificationRequestLimitExceeded
+        val code = (e as? HttpException)?.code()
+        return when (code) {
+            403 -> PhoneVerificationError.PhoneNotAllowed
+            409 -> PhoneVerificationError.PhoneAlreadyRegistered
+            429 -> PhoneVerificationError.VerificationRequestLimitExceeded
             else -> PhoneVerificationError.NetworkError
         }
     }
 
     private fun verifyCodeErrorHandler(e: Throwable): PhoneVerificationError {
-        val code = e.message ?: ""
-        return when {
-            code.contains("404") -> PhoneVerificationError.InvalidVerificationCode
-            code.contains("409") -> PhoneVerificationError.PhoneAlreadyRegistered
-            code.contains("429") -> PhoneVerificationError.VerificationCodeAttemptsExceeded
+        val code = (e as? HttpException)?.code()
+        return when (code) {
+            404 -> PhoneVerificationError.InvalidVerificationCode
+            409 -> PhoneVerificationError.PhoneAlreadyRegistered
+            429 -> PhoneVerificationError.VerificationCodeAttemptsExceeded
             else -> PhoneVerificationError.NetworkError
         }
     }
