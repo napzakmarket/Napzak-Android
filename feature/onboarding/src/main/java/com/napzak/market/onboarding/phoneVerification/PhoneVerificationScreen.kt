@@ -59,6 +59,7 @@ import com.napzak.market.feature.onboarding.R.string.onboarding_phone_name_edit_
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_number_edit_hint
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_prefix_korean
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_resend
+import com.napzak.market.feature.onboarding.R.string.onboarding_phone_send_complete
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_sub_title
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_title
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_verification_check_button
@@ -360,7 +361,7 @@ fun PhoneVerificationScreen(
             ) {
                 Image(
                     painter = painterResource(R.drawable.img_sended_code_popup),
-                    contentDescription = "인증번호 전송 완료",
+                    contentDescription = stringResource(onboarding_phone_send_complete),
                     modifier = Modifier.padding(bottom = 20.dp),
                 )
             }
