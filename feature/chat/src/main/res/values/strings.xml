@@ -51,7 +51,4 @@
     <string name="permission_modal_button_name">알림 켜기</string>
     <string name="permission_modal_empty" />
 
-    <string name="phone_verification_modal_title">본인확인이 필요해요</string>
-    <string name="phone_verification_modal_content">안전한 거래를 위해 휴대폰 인증 후\n서비스를 이용할 수 있어요</string>
-    <string name="phone_verification_modal_button">인증하기</string>
 </resources>

@@ -34,10 +34,9 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.napzak.market.banner.Banner
 import com.napzak.market.common.state.UiState
-import com.napzak.market.designsystem.R.drawable.ic_phone_verification
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
-import com.napzak.market.designsystem.component.popup.NapzakModal
+import com.napzak.market.designsystem.component.popup.NapzakPhoneVerifyModal
 import com.napzak.market.designsystem.component.textfield.SearchTextField
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
@@ -50,9 +49,6 @@ import com.napzak.market.feature.home.R.string.home_list_interested_buy_title
 import com.napzak.market.feature.home.R.string.home_list_interested_sell_sub_title
 import com.napzak.market.feature.home.R.string.home_list_interested_sell_title
 import com.napzak.market.feature.home.R.string.home_search_text_field_hint
-import com.napzak.market.feature.home.R.string.phone_verification_modal_button
-import com.napzak.market.feature.home.R.string.phone_verification_modal_content
-import com.napzak.market.feature.home.R.string.phone_verification_modal_title
 import com.napzak.market.home.component.HomeFooter
 import com.napzak.market.home.component.HorizontalAutoScrolledImages
 import com.napzak.market.home.component.HorizontalScrollableProducts
@@ -348,13 +344,9 @@ private fun HomeSuccessScreen(
     }
 
     if (isPhoneVerifyModalVisible) {
-        NapzakModal(
-            title = stringResource(phone_verification_modal_title),
-            content = stringResource(phone_verification_modal_content),
-            image = ic_phone_verification,
-            buttonText = stringResource(phone_verification_modal_button),
-            onDismissRequest = onPhoneVerifyDismissClick,
-            onButtonClick = {
+        NapzakPhoneVerifyModal(
+            onDismissClick = onPhoneVerifyDismissClick,
+            onPhoneVerifyClick = {
                 onPhoneVerifyDismissClick()
                 onPhoneVerifyClick()
             },

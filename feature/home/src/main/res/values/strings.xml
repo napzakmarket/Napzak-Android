@@ -19,9 +19,4 @@
     <string name="home_footer_leader">대표</string>
     <string name="home_footer_leader_name">이해인</string>
 
-    <!-- PhoneVerificationModal -->
-    <string name="phone_verification_modal_title">본인확인이 필요해요</string>
-    <string name="phone_verification_modal_content">안전한 거래를 위해 휴대폰 인증 후\n서비스를 이용할 수 있어요</string>
-    <string name="phone_verification_modal_button">인증하기</string>
-
 </resources>

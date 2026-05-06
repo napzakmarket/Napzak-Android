@@ -44,7 +44,4 @@
     <string name="detail_dialog_delete_title">상품을 정말 삭제할까요?</string>
     <string name="detail_dialog_delete_sub_title">한번 삭제한 상품은 다시 되돌릴 수 없어요.</string>
 
-    <string name="phone_verification_modal_title">본인확인이 필요해요</string>
-    <string name="phone_verification_modal_content">안전한 거래를 위해 휴대폰 인증 후\n서비스를 이용할 수 있어요</string>
-    <string name="phone_verification_modal_button">인증하기</string>
 </resources>

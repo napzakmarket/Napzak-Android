@@ -4,10 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.napzak.market.chat.chatroom.state.ChatRoomPopupEvent
-import com.napzak.market.designsystem.R.drawable.ic_phone_verification
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.component.dialog.NapzakDialogDefault
-import com.napzak.market.designsystem.component.popup.NapzakModal
+import com.napzak.market.designsystem.component.popup.NapzakPhoneVerifyModal
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.chat.R.string.chat_room_block_dialog_cancel
 import com.napzak.market.feature.chat.R.string.chat_room_block_dialog_confirm
@@ -17,9 +16,6 @@ import com.napzak.market.feature.chat.R.string.chat_room_withdraw_dialog_cancel
 import com.napzak.market.feature.chat.R.string.chat_room_withdraw_dialog_confirm
 import com.napzak.market.feature.chat.R.string.chat_room_withdraw_dialog_content
 import com.napzak.market.feature.chat.R.string.chat_room_withdraw_dialog_title
-import com.napzak.market.feature.chat.R.string.phone_verification_modal_button
-import com.napzak.market.feature.chat.R.string.phone_verification_modal_content
-import com.napzak.market.feature.chat.R.string.phone_verification_modal_title
 
 @Composable
 internal fun ChatRoomDialogSection(
@@ -63,13 +59,9 @@ internal fun ChatRoomDialogSection(
     }
 
     if (isPhoneVerifyModalVisible) {
-        NapzakModal(
-            title = stringResource(phone_verification_modal_title),
-            content = stringResource(phone_verification_modal_content),
-            image = ic_phone_verification,
-            buttonText = stringResource(phone_verification_modal_button),
-            onDismissRequest = { onDismissClick(ChatRoomPopupEvent.DismissPhoneVerifyModal) },
-            onButtonClick = onPhoneVerifyClick,
+        NapzakPhoneVerifyModal(
+            onDismissClick = { onDismissClick(ChatRoomPopupEvent.DismissPhoneVerifyModal) },
+            onPhoneVerifyClick = onPhoneVerifyClick,
             modifier = modifier,
         )
     }

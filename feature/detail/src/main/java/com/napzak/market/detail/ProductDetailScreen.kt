@@ -23,12 +23,11 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.ProductConditionType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
-import com.napzak.market.designsystem.R.drawable.ic_phone_verification
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.component.dialog.NapzakDialogDefault
 import com.napzak.market.designsystem.component.image.ZoomableImageScreen
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
-import com.napzak.market.designsystem.component.popup.NapzakModal
+import com.napzak.market.designsystem.component.popup.NapzakPhoneVerifyModal
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -44,9 +43,6 @@ import com.napzak.market.detail.component.group.ProductMarketGroup
 import com.napzak.market.detail.component.topbar.DetailTopBar
 import com.napzak.market.feature.detail.R.string.detail_dialog_delete_sub_title
 import com.napzak.market.feature.detail.R.string.detail_dialog_delete_title
-import com.napzak.market.feature.detail.R.string.phone_verification_modal_button
-import com.napzak.market.feature.detail.R.string.phone_verification_modal_content
-import com.napzak.market.feature.detail.R.string.phone_verification_modal_title
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.model.ProductDetail.ProductPhoto
 import com.napzak.market.product.model.ProductDetail.StoreInfo
@@ -222,13 +218,9 @@ private fun ProductDetailScreen(
                 )
 
                 if (isPhoneVerifyModalVisible) {
-                    NapzakModal(
-                        title = stringResource(phone_verification_modal_title),
-                        content = stringResource(phone_verification_modal_content),
-                        image = ic_phone_verification,
-                        buttonText = stringResource(phone_verification_modal_button),
-                        onDismissRequest = onDismissClick,
-                        onButtonClick = onPhoneVerifyClick,
+                    NapzakPhoneVerifyModal(
+                        onDismissClick = onDismissClick,
+                        onPhoneVerifyClick = onPhoneVerifyClick,
                         modifier = modifier,
                     )
                 }
