@@ -202,6 +202,10 @@ internal fun ChatRoomScreen(
                 popupState = popupState.handleEvent(event)
             }
 
+            LaunchedEffect(isPhoneVerified) {
+                popupState = popupState.copy(isPhoneVerifyModalVisible = !isPhoneVerified)
+            }
+
             Column(
                 modifier = modifier
                     .fillMaxSize()
