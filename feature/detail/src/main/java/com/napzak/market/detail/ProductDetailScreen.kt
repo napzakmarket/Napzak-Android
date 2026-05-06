@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -66,6 +66,7 @@ internal fun ProductDetailRoute(
     val toast = LocalNapzakToast.current
 
     val uiState by viewModel.productDetail.collectAsStateWithLifecycle()
+    val showProductStatusToolTip by viewModel.showProductStatusTooltip.collectAsStateWithLifecycle()
     val isPhoneVerified by viewModel.isPhoneVerified.collectAsStateWithLifecycle()
 
     var isPhoneVerifyModalVisible by remember { mutableStateOf(false) }
@@ -126,6 +127,8 @@ internal fun ProductDetailRoute(
             viewModel.trackReportProduct()
             onReportNavigate(productId)
         },
+        showProductStatusToolTip = showProductStatusToolTip,
+        onTooltipDismiss = viewModel::setShowProductStatusToolTip,
         onTradeStatusChange = viewModel::updateTradeStatus,
         onDismissClick = { isPhoneVerifyModalVisible = false },
         onPhoneVerifyClick = onPhoneVerificationNavigate,
@@ -136,6 +139,7 @@ internal fun ProductDetailRoute(
 @Composable
 private fun ProductDetailScreen(
     uiState: UiState<ProductDetail>,
+    showProductStatusToolTip: Boolean,
     isPhoneVerifyModalVisible: Boolean,
     onMarketClick: (userId: Long) -> Unit,
     onChatButtonClick: (productId: Long) -> Unit,
@@ -145,6 +149,7 @@ private fun ProductDetailScreen(
     onDeleteProductClick: (productId: Long) -> Unit,
     onReportProductClick: (productId: Long) -> Unit,
     onTradeStatusChange: (productId: Long, tradeStatus: String) -> Unit,
+    onTooltipDismiss: (Boolean) -> Unit,
     onDismissClick: () -> Unit,
     onPhoneVerifyClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -155,8 +160,11 @@ private fun ProductDetailScreen(
     Scaffold(
         topBar = {
             DetailTopBar(
+                showToolTip = showProductStatusToolTip
+                        && (uiState is UiState.Success && uiState.data.isOwnedByCurrentUser),
                 onBackClick = onBackButtonClick,
                 onOptionClick = { sheetVisibility = true },
+                onTooltipDismiss = { onTooltipDismiss(false) },
             )
         },
         bottomBar = {

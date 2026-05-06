@@ -50,6 +50,7 @@ lottie = "6.6.7"
 browser = "1.8.0"
 semver = "2.0.0"
 mixpanel = "8.2.2"
+balloon = "1.7.6"
 
 [libraries]
 ## androidx
@@ -125,6 +126,7 @@ timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "tim
 process-phoenix = { group = "com.jakewharton", name = "process-phoenix", version.ref = "phoenix" }
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
 mixpanel = { group = "com.mixpanel.android", name = "mixpanel-android", version.ref = "mixpanel" }
+balloon-compose = { group = "com.github.skydoves", name = "balloon-compose", version.ref = "balloon" }
 
 ## firebase
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
