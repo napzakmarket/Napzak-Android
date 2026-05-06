@@ -49,7 +49,7 @@ internal class ProductDetailViewModel @Inject constructor(
     val sideEffect = _sideEffect.receiveAsFlow()
     private var isProductLoaded = false
 
-    private val _isPhoneVerified = MutableStateFlow(false)
+    private val _isPhoneVerified = MutableStateFlow(true)
     val isPhoneVerified = _isPhoneVerified.asStateFlow()
 
     init {

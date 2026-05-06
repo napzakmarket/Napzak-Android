@@ -99,8 +99,8 @@ internal class HomeViewModel @Inject constructor(
 
     private val interestDebounceFlow = MutableSharedFlow<Pair<Long, Boolean>>()
 
-    private val _showPhoneVerifyModal = MutableStateFlow(false)
-    val showPhoneVerifyModal = _showPhoneVerifyModal.asStateFlow()
+    private val _isPhoneVerifyModalVisible = MutableStateFlow(false)
+    val isPhoneVerifyModalVisible = _isPhoneVerifyModalVisible.asStateFlow()
 
     init {
         handleInterestDebounce()
@@ -221,18 +221,18 @@ internal class HomeViewModel @Inject constructor(
 
     fun checkPhoneVerificationIfNeeded() {
         if (SessionManager.isPhoneChecked) return
-        SessionManager.isPhoneChecked = true
 
         viewModelScope.launch {
             getPhoneVerificationStatus()
                 .onSuccess { response ->
-                    if (!response) _showPhoneVerifyModal.value = true
+                    if (!response) _isPhoneVerifyModalVisible.value = true
+                    SessionManager.isPhoneChecked = true
                 }
         }
     }
 
     fun dismissPhoneVerifyModal() {
-        _showPhoneVerifyModal.value = false
+        _isPhoneVerifyModalVisible.value = false
     }
 
     fun setNotificationSettings(isEnabled: Boolean) =

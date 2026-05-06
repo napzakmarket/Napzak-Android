@@ -13,7 +13,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val getPhoneVerificationStatus: GetPhoneVerificationStatusUseCase,
 ) : ViewModel() {
-    private val _isPhoneVerified = MutableStateFlow(false)
+    private val _isPhoneVerified = MutableStateFlow(true)
     val isPhoneVerified = _isPhoneVerified.asStateFlow()
 
     fun checkPhoneVerification() = viewModelScope.launch {

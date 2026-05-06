@@ -47,8 +47,8 @@ internal fun MainRegisterDialog(
     val dialogShape = RoundedCornerShape(12.dp)
     val colorScheme = NapzakMarketTheme.colors
 
-    LaunchedEffect(Unit) {
-        onDialogVisible()
+    LaunchedEffect(visibility) {
+        if (visibility) onDialogVisible()
     }
 
     AnimatedVisibility(
