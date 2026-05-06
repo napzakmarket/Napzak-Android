@@ -19,6 +19,7 @@ import com.napzak.market.mixpanel.ReportTracker
 import com.napzak.market.presigned_url.model.UploadImage
 import com.napzak.market.presigned_url.usecase.UploadImagesUseCase
 import com.napzak.market.store.repository.StoreRepository
+import com.napzak.market.store.usecase.GetPhoneVerificationStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -41,7 +42,11 @@ internal class ChatRoomViewModel @Inject constructor(
     private val storeRepository: StoreRepository,
     private val uploadImagesUseCase: UploadImagesUseCase,
     private val reportTracker: ReportTracker,
+    private val getPhoneVerificationStatus: GetPhoneVerificationStatusUseCase,
 ) : ViewModel() {
+    private val _isPhoneVerified = MutableStateFlow(true)
+    val isPhoneVerified = _isPhoneVerified.asStateFlow()
+
     private val chatMessageIdSet = mutableSetOf<Long>()
     private val chatMessageList = mutableListOf<ReceiveMessage<*>>()
     private var collectJob: Job? = null
@@ -67,6 +72,21 @@ internal class ChatRoomViewModel @Inject constructor(
 
     private val _chatRoomStateAsSuccess
         get() = (_chatRoomState.value.chatRoomState as UiState.Success).data
+
+    fun init() {
+        checkPhoneVerification()
+        prepareChatRoom()
+    }
+
+    /**
+     * 사용자의 계정이 핸드폰 인증이 완료된 계정인지 정보를 불러옵니다.
+     */
+    fun checkPhoneVerification() = viewModelScope.launch {
+        getPhoneVerificationStatus()
+            .onSuccess { isVerified ->
+                _isPhoneVerified.value = isVerified
+            }
+    }
 
     /**
      * [SavedStateHandle]에 저장된 값들을 활용하여 채팅방 정보들을 준비합니다.

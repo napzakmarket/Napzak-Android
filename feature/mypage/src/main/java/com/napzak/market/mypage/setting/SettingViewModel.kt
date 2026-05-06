@@ -2,6 +2,7 @@ package com.napzak.market.mypage.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.napzak.market.common.SessionManager
 import com.napzak.market.common.state.UiState
 import com.napzak.market.mixpanel.SettingsTracker
 import com.napzak.market.mypage.setting.state.SettingUiState
@@ -96,6 +97,8 @@ internal class SettingViewModel @Inject constructor(
             .onSuccess {
                 settingsTracker.trackLoggedOut()
                 _sideEffect.send(SettingSideEffect.OnSignOutComplete)
+                SessionManager.isPhoneChecked = false
+                SessionManager.clearChatRoomId()
             }
             .onFailure(Timber::e)
     }

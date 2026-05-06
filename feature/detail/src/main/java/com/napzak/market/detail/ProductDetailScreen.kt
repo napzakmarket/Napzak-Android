@@ -27,6 +27,7 @@ import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.component.dialog.NapzakDialogDefault
 import com.napzak.market.designsystem.component.image.ZoomableImageScreen
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
+import com.napzak.market.designsystem.component.popup.NapzakPhoneVerifyModal
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -55,6 +56,7 @@ internal fun ProductDetailRoute(
     onChatNavigate: (productId: Long) -> Unit,
     onModifyNavigate: (productId: Long, tradeType: TradeType) -> Unit,
     onReportNavigate: (productId: Long) -> Unit,
+    onPhoneVerificationNavigate: () -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProductDetailViewModel = hiltViewModel(),
@@ -64,6 +66,13 @@ internal fun ProductDetailRoute(
     val toast = LocalNapzakToast.current
 
     val uiState by viewModel.productDetail.collectAsStateWithLifecycle()
+    val isPhoneVerified by viewModel.isPhoneVerified.collectAsStateWithLifecycle()
+
+    var isPhoneVerifyModalVisible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.checkPhoneVerification()
+    }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
@@ -99,10 +108,15 @@ internal fun ProductDetailRoute(
 
     ProductDetailScreen(
         uiState = uiState,
+        isPhoneVerifyModalVisible = isPhoneVerifyModalVisible,
         onMarketClick = onMarketNavigate,
         onChatButtonClick = {
-            viewModel.trackStartedChat(it)
-            onChatNavigate(it)
+            if (!isPhoneVerified) {
+                isPhoneVerifyModalVisible = true
+            } else {
+                viewModel.trackStartedChat(it)
+                onChatNavigate(it)
+            }
         },
         onLikeButtonClick = viewModel::updateIsInterested,
         onBackButtonClick = onNavigateUp,
@@ -113,6 +127,8 @@ internal fun ProductDetailRoute(
             onReportNavigate(productId)
         },
         onTradeStatusChange = viewModel::updateTradeStatus,
+        onDismissClick = { isPhoneVerifyModalVisible = false },
+        onPhoneVerifyClick = onPhoneVerificationNavigate,
         modifier = modifier,
     )
 }
@@ -120,6 +136,7 @@ internal fun ProductDetailRoute(
 @Composable
 private fun ProductDetailScreen(
     uiState: UiState<ProductDetail>,
+    isPhoneVerifyModalVisible: Boolean,
     onMarketClick: (userId: Long) -> Unit,
     onChatButtonClick: (productId: Long) -> Unit,
     onLikeButtonClick: (Boolean) -> Unit,
@@ -128,6 +145,8 @@ private fun ProductDetailScreen(
     onDeleteProductClick: (productId: Long) -> Unit,
     onReportProductClick: (productId: Long) -> Unit,
     onTradeStatusChange: (productId: Long, tradeStatus: String) -> Unit,
+    onDismissClick: () -> Unit,
+    onPhoneVerifyClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var sheetVisibility by remember { mutableStateOf(false) }
@@ -197,6 +216,14 @@ private fun ProductDetailScreen(
                     onConfirmClick = { onDeleteProductClick(productDetail.productId) },
                     onDismissClick = { deleteDialogVisibility = false },
                 )
+
+                if (isPhoneVerifyModalVisible) {
+                    NapzakPhoneVerifyModal(
+                        onDismissClick = onDismissClick,
+                        onPhoneVerifyClick = onPhoneVerifyClick,
+                        modifier = modifier,
+                    )
+                }
             }
 
             is UiState.Loading -> NapzakLoadingOverlay()

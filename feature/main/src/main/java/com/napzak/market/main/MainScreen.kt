@@ -13,18 +13,23 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.zIndex
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.napzak.market.chat.navigation.chatGraph
 import com.napzak.market.chat.navigation.navigateToChatRoom
+import com.napzak.market.common.SessionManager
 import com.napzak.market.common.type.SortType
 import com.napzak.market.common.type.TradeType
+import com.napzak.market.designsystem.component.popup.NapzakPhoneVerifyModal
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.NapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
@@ -46,6 +51,7 @@ import com.napzak.market.main.component.MainRegisterDialog
 import com.napzak.market.mypage.navigation.mypageGraph
 import com.napzak.market.mypage.navigation.navigateToSettings
 import com.napzak.market.onboarding.navigation.Terms
+import com.napzak.market.onboarding.navigation.navigateToPhoneVerification
 import com.napzak.market.onboarding.navigation.onboardingGraph
 import com.napzak.market.registration.navigation.navigateToPurchaseRegistration
 import com.napzak.market.registration.navigation.navigateToSaleRegistration
@@ -69,9 +75,13 @@ fun MainScreen(
     restartApplication: () -> Unit,
     connectSocket: () -> Unit,
     navigator: MainNavigator = rememberMainNavigator(),
+    viewModel: MainViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+
+    val isPhoneVerified by viewModel.isPhoneVerified.collectAsStateWithLifecycle()
+    var isPhoneVerifyModalVisible by remember { mutableStateOf(false) }
 
     val napzakToast = remember { NapzakToast(context, lifecycleOwner) }
     var backPressedTime by remember { mutableLongStateOf(0) }
@@ -129,14 +139,25 @@ fun MainScreen(
                 MainRegisterDialog(
                     visibility = navigator.isRegister,
                     onSellRegisterClick = {
-                        navigator.navController.navigateToSaleRegistration()
-                        navigator.dismissRegisterDialog()
+                        if (isPhoneVerified) {
+                            navigator.navController.navigateToSaleRegistration()
+                            navigator.dismissRegisterDialog()
+                            isPhoneVerifyModalVisible = false
+                        } else {
+                            isPhoneVerifyModalVisible = true
+                        }
                     },
                     onBuyRegisterClick = {
-                        navigator.navController.navigateToPurchaseRegistration()
-                        navigator.dismissRegisterDialog()
+                        if (isPhoneVerified) {
+                            navigator.navController.navigateToPurchaseRegistration()
+                            navigator.dismissRegisterDialog()
+                            isPhoneVerifyModalVisible = false
+                        } else {
+                            isPhoneVerifyModalVisible = true
+                        }
                     },
                     onDismissRequest = navigator::navigateUp,
+                    onDialogVisible = viewModel::checkPhoneVerification,
                     modifier = Modifier
                         .padding(innerPadding)
                         .zIndex(1f),
@@ -149,6 +170,17 @@ fun MainScreen(
                     connectSocket = connectSocket,
                     innerPadding = innerPadding,
                     modifier = Modifier,
+                )
+            }
+
+            if (isPhoneVerifyModalVisible) {
+                NapzakPhoneVerifyModal(
+                    onDismissClick = { isPhoneVerifyModalVisible = false },
+                    onPhoneVerifyClick = {
+                        isPhoneVerifyModalVisible = false
+                        navigator.dismissRegisterDialog()
+                        navigator.navController.navigateToPhoneVerification(isOnboarding = false)
+                    },
                 )
             }
         }
@@ -208,6 +240,7 @@ private fun MainNavHost(
             onNavigateToHome = {
                 connectSocket()
                 navigator.navController.navigate(Home)
+                SessionManager.isPhoneChecked = false
             },
             modifier = modifier
                 .padding(bottom = bottomPadding),
@@ -244,6 +277,7 @@ private fun MainNavHost(
                     sortType = SortType.POPULAR,
                 )
             },
+            onPhoneVerificationNavigate = { navigator.navController.navigateToPhoneVerification(isOnboarding = false) },
             checkSessionManager = {
                 if (SessionManager.chatRoomId != null) {
                     navigator.navigate(MainTab.CHAT)
@@ -303,6 +337,11 @@ private fun MainNavHost(
                 }
             },
             onReportNavigate = navigator.navController::navigateToProductReport,
+            onPhoneVerificationNavigate = {
+                navigator.navController.navigateToPhoneVerification(
+                    isOnboarding = false
+                )
+            },
             onNavigateUp = navigator::navigateUp,
             modifier = modifier,
         )
@@ -346,6 +385,11 @@ private fun MainNavHost(
             onProductDetailNavigate = navigator.navController::navigateToProductDetail,
             onStoreReportNavigate = navigator.navController::navigateToUserReport,
             onSettingsNavigate = navigator.navController::navigateToSettings,
+            onPhoneVerificationNavigate = {
+                navigator.navController.navigateToPhoneVerification(
+                    isOnboarding = false
+                )
+            },
             onNavigateUp = navigator::navigateUp,
             modifier = modifier
                 .padding(innerPadding),

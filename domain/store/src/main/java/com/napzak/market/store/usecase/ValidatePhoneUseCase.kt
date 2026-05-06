@@ -6,7 +6,8 @@ import javax.inject.Inject
 class ValidatePhoneUseCase @Inject constructor() {
 
     operator fun invoke(input: String): PhoneValidationResult {
-        validate(input)?.let { return it }
+        val phone = input.filter { it.isDigit() }
+        validate(input = phone)?.let { return it }
 
         return PhoneValidationResult.Valid
     }

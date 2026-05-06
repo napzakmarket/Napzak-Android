@@ -1,6 +1,7 @@
 package com.napzak.market.store.repository
 
 import com.napzak.market.store.model.Genre
+import com.napzak.market.store.model.PhoneCodeVerificationResult
 import com.napzak.market.store.model.StoreDetail
 import com.napzak.market.store.model.StoreEditProfile
 import com.napzak.market.store.model.StoreInfo
@@ -33,4 +34,10 @@ interface StoreRepository {
     suspend fun blockStore(storeId: Long): Result<Unit>
 
     suspend fun unblockStore(storeId: Long): Result<Unit>
+
+    suspend fun getPhoneVerificationStatus(): Result<Boolean>
+
+    suspend fun postPhoneVerificationCode(phoneNumber: String): Result<Int>
+
+    suspend fun checkPhoneVerificationCode(phoneNumber: String, code: String): Result<PhoneCodeVerificationResult>
 }
