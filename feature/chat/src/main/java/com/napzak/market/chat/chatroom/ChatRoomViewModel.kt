@@ -44,7 +44,7 @@ internal class ChatRoomViewModel @Inject constructor(
     private val reportTracker: ReportTracker,
     private val getPhoneVerificationStatus: GetPhoneVerificationStatusUseCase,
 ) : ViewModel() {
-    private val _isPhoneVerified = MutableStateFlow(false)
+    private val _isPhoneVerified = MutableStateFlow(true)
     val isPhoneVerified = _isPhoneVerified.asStateFlow()
 
     private val chatMessageIdSet = mutableSetOf<Long>()

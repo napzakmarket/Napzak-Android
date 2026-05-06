@@ -86,7 +86,7 @@ internal fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.homeUiState.collectAsStateWithLifecycle()
-    val isPhoneVerifyModalVisible by viewModel.showPhoneVerifyModal.collectAsStateWithLifecycle()
+    val isPhoneVerifyModalVisible by viewModel.isPhoneVerifyModalVisible.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val napzakToast = LocalNapzakToast.current
     val context = LocalContext.current
