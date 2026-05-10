@@ -6,6 +6,11 @@ import kotlinx.serialization.Serializable
 data object TermsScreenKey : ScreenKey
 
 @Serializable
+data class PhoneVerificationScreenKey(
+    val isOnboarding: Boolean,
+) : ScreenKey
+
+@Serializable
 data object NicknameScreenKey : ScreenKey
 
 @Serializable

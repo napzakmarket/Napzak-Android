@@ -8,10 +8,12 @@ import com.napzak.market.navigation.keys.GenreScreenKey
 import com.napzak.market.navigation.keys.HomeScreenKey
 import com.napzak.market.navigation.keys.LoginScreenKey
 import com.napzak.market.navigation.keys.NicknameScreenKey
+import com.napzak.market.navigation.keys.PhoneVerificationScreenKey
 import com.napzak.market.navigation.keys.ScreenKey
 import com.napzak.market.navigation.keys.TermsScreenKey
 import com.napzak.market.onboarding.genre.GenreRoute
 import com.napzak.market.onboarding.nickname.NicknameRoute
+import com.napzak.market.onboarding.phoneVerification.PhoneVerificationRoute
 import com.napzak.market.onboarding.termsAgreement.TermsAgreementRoute
 import javax.inject.Inject
 
@@ -22,6 +24,14 @@ class OnboardingEntryProvider @Inject constructor(
     override fun EntryProviderScope<ScreenKey>.provide() {
         entry<TermsScreenKey> {
             TermsAgreementRoute(
+                onBackClick = navigator::pop,
+                onNextClick = ::navigateToPhoneVerification,
+            )
+        }
+
+        entry<PhoneVerificationScreenKey> { key ->
+            PhoneVerificationRoute(
+                isOnboarding = key.isOnboarding,
                 onBackClick = navigator::pop,
                 onNextClick = ::navigateToNickname,
             )
@@ -41,6 +51,10 @@ class OnboardingEntryProvider @Inject constructor(
                 onSkipClick = ::navigateToHome,
             )
         }
+    }
+
+    private fun navigateToPhoneVerification() {
+        navigator.navigateTo(PhoneVerificationScreenKey(true))
     }
 
     private fun navigateToNickname() {
