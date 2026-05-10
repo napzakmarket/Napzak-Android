@@ -2,8 +2,9 @@ package com.napzak.market.mypage.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.napzak.market.common.SessionManager
 import com.napzak.market.common.state.UiState
+import com.napzak.market.event.ChatSessionManager
+import com.napzak.market.event.PhoneVerificationSessionManager
 import com.napzak.market.mixpanel.SettingsTracker
 import com.napzak.market.mypage.setting.state.SettingUiState
 import com.napzak.market.notification.repository.NotificationRepository
@@ -31,6 +32,8 @@ internal class SettingViewModel @Inject constructor(
     private val getNotificationSettingsUseCase: GetNotificationSettingsUseCase,
     private val patchNotificationSettingsUseCase: PatchNotificationSettingsUseCase,
     private val notificationRepository: NotificationRepository,
+    private val phoneVerificationSessionManager: PhoneVerificationSessionManager,
+    private val chatSessionManager: ChatSessionManager,
     private val settingsTracker: SettingsTracker,
 ) : ViewModel() {
 
@@ -97,8 +100,9 @@ internal class SettingViewModel @Inject constructor(
             .onSuccess {
                 settingsTracker.trackLoggedOut()
                 _sideEffect.send(SettingSideEffect.OnSignOutComplete)
-                SessionManager.isPhoneChecked = false
-                SessionManager.clearChatRoomId()
+
+                phoneVerificationSessionManager.setPhoneChecked(false)
+                chatSessionManager.setChatRoomId(null)
             }
             .onFailure(Timber::e)
     }

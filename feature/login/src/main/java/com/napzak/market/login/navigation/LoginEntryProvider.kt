@@ -1,6 +1,7 @@
 package com.napzak.market.login.navigation
 
 import androidx.navigation3.runtime.EntryProviderScope
+import com.napzak.market.event.PhoneVerificationSessionManager
 import com.napzak.market.event.SocketEventBus
 import com.napzak.market.login.LoginRoute
 import com.napzak.market.login.model.LoginFlowRoute
@@ -15,6 +16,7 @@ import javax.inject.Inject
 class LoginEntryProvider @Inject constructor(
     private val navigator: AppNavigator,
     private val socketEventBus: SocketEventBus,
+    private val phoneVerificationSessionManager: PhoneVerificationSessionManager,
 ) : EntryProviderBuilder {
     override fun EntryProviderScope<ScreenKey>.provide() {
         entry<LoginScreenKey> {
@@ -33,6 +35,7 @@ class LoginEntryProvider @Inject constructor(
     }
 
     private fun navigateToMain() {
+        phoneVerificationSessionManager.setPhoneChecked(false)
         socketEventBus.connect()
         navigator.navigateTo(
             key = HomeScreenKey,

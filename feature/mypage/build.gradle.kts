@@ -21,11 +21,13 @@ dependencies {
     implementation(projects.core.util)
     implementation(projects.core.uiUtil)
     implementation(projects.core.mixpanel)
+    implementation(projects.core.event)
     implementation(projects.core.navigation)
     implementation(projects.domain.store)
     implementation(projects.domain.notification)
     implementation(projects.domain.product)
     implementation(projects.domain.interest)
+
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)

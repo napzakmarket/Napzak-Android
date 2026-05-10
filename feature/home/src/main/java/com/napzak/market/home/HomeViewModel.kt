@@ -3,8 +3,8 @@ package com.napzak.market.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.banner.Banner
-import com.napzak.market.common.SessionManager
 import com.napzak.market.common.state.UiState
+import com.napzak.market.event.PhoneVerificationSessionManager
 import com.napzak.market.home.state.HomeUiState
 import com.napzak.market.home.type.HomeProductType
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
@@ -46,6 +46,7 @@ internal class HomeViewModel @Inject constructor(
     private val notificationRepository: NotificationRepository,
     private val updatePushTokenUseCase: UpdatePushTokenUseCase,
     private val getPhoneVerificationStatus: GetPhoneVerificationStatusUseCase,
+    private val phoneVerificationSessionManager: PhoneVerificationSessionManager,
     private val homeTracker: HomeTracker,
 ) : ViewModel() {
     private val nickname = MutableStateFlow("")
@@ -220,13 +221,14 @@ internal class HomeViewModel @Inject constructor(
     }
 
     fun checkPhoneVerificationIfNeeded() {
-        if (SessionManager.isPhoneChecked) return
+        val isPhoneVerified = phoneVerificationSessionManager.isPhoneChecked.value
+        if (isPhoneVerified) return
 
         viewModelScope.launch {
             getPhoneVerificationStatus()
-                .onSuccess { response ->
-                    if (!response) _isPhoneVerifyModalVisible.value = true
-                    SessionManager.isPhoneChecked = true
+                .onSuccess { isVerified ->
+                    _isPhoneVerifyModalVisible.update { !isVerified }
+                    phoneVerificationSessionManager.setPhoneChecked(true)
                 }
         }
     }
