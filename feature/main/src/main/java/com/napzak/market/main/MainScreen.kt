@@ -10,15 +10,19 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.napzak.market.designsystem.component.popup.NapzakPhoneVerifyModal
 import com.napzak.market.designsystem.component.scaffold.LocalInnerPadding
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.NapzakToast
@@ -31,8 +35,10 @@ import com.napzak.market.main.navigation.MainNavigator
 import com.napzak.market.main.navigation.MainTab
 import com.napzak.market.navigation.EntryProviderBuilder
 import com.napzak.market.navigation.keys.HomeScreenKey
+import com.napzak.market.navigation.keys.PhoneVerificationScreenKey
 import com.napzak.market.navigation.keys.PurchaseRegistrationScreenKey
 import com.napzak.market.navigation.keys.SaleRegistrationScreenKey
+import com.napzak.market.navigation.keys.ScreenKey
 import com.napzak.market.navigation.util.napzakDefaultTransitionSpec
 import kotlinx.collections.immutable.toImmutableList
 
@@ -41,7 +47,11 @@ fun MainScreen(
     navigator: MainNavigator,
     entryBuilders: Set<EntryProviderBuilder>,
     napzakToast: NapzakToast,
+    viewModel: MainViewModel = hiltViewModel()
 ) {
+    val isPhoneVerified by viewModel.isPhoneVerified.collectAsStateWithLifecycle()
+    var isPhoneVerifyModalVisible by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         navigator.appNavigator.handleDeepLinkEvent()
     }
@@ -63,20 +73,27 @@ fun MainScreen(
             LocalInnerPadding provides innerPadding,
         ) {
             Box {
+                fun navigateToRegistration(key: ScreenKey) {
+                    if (isPhoneVerified) {
+                        with(navigator) {
+                            setRegistrationTabSelected(false)
+                            this.appNavigator.navigateTo(key)
+                        }
+                        isPhoneVerifyModalVisible = false
+                    } else {
+                        isPhoneVerifyModalVisible = true
+                    }
+                }
+
                 MainRegisterDialog(
                     visibility = navigator.isRegister,
                     onSellRegisterClick = {
-                        with(navigator) {
-                            setRegistrationTabSelected(false)
-                            this.appNavigator.navigateTo(SaleRegistrationScreenKey())
-                        }
+                        navigateToRegistration(SaleRegistrationScreenKey())
                     },
                     onBuyRegisterClick = {
-                        with(navigator) {
-                            setRegistrationTabSelected(false)
-                            this.appNavigator.navigateTo(PurchaseRegistrationScreenKey())
-                        }
+                        navigateToRegistration(PurchaseRegistrationScreenKey())
                     },
+                    onDialogVisible = viewModel::checkPhoneVerification,
                     onDismissRequest = navigator::navigateUp,
                     modifier = Modifier
                         .padding(innerPadding)
@@ -86,6 +103,17 @@ fun MainScreen(
                 MainNavDisplay(
                     navigator = navigator,
                     entryBuilders = entryBuilders,
+                )
+            }
+
+            if (isPhoneVerifyModalVisible) {
+                NapzakPhoneVerifyModal(
+                    onDismissClick = { isPhoneVerifyModalVisible = false },
+                    onPhoneVerifyClick = {
+                        isPhoneVerifyModalVisible = false
+                        navigator.setRegistrationTabSelected(false)
+                        navigator.appNavigator.navigateTo(PhoneVerificationScreenKey(false))
+                    },
                 )
             }
         }
