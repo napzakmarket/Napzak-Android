@@ -8,6 +8,7 @@ import com.napzak.market.detail.ProductDetailViewModel
 import com.napzak.market.navigation.AppNavigator
 import com.napzak.market.navigation.EntryProviderBuilder
 import com.napzak.market.navigation.keys.ChatRoomScreenKey
+import com.napzak.market.navigation.keys.PhoneVerificationScreenKey
 import com.napzak.market.navigation.keys.ProductDetailScreenKey
 import com.napzak.market.navigation.keys.PurchaseRegistrationScreenKey
 import com.napzak.market.navigation.keys.ReportScreenKey
@@ -27,6 +28,7 @@ class ProductDetailEntryProvider @Inject constructor(
                 onChatNavigate = ::navigateToChatRoom,
                 onModifyNavigate = ::navigateToModify,
                 onReportNavigate = ::navigateToProductReport,
+                onPhoneVerificationNavigate = ::navigateToPhoneVerification,
                 onNavigateUp = navigator::pop,
                 viewModel = viewModel,
             )
@@ -51,5 +53,9 @@ class ProductDetailEntryProvider @Inject constructor(
 
     private fun navigateToProductReport(productId: Long) {
         navigator.navigateTo(ReportScreenKey(reportType = ReportType.PRODUCT, id = productId))
+    }
+
+    private fun navigateToPhoneVerification() {
+        navigator.navigateTo(PhoneVerificationScreenKey(false))
     }
 }

@@ -9,6 +9,7 @@ import com.napzak.market.navigation.AppNavigator
 import com.napzak.market.navigation.EntryProviderBuilder
 import com.napzak.market.navigation.keys.ChatListScreenKey
 import com.napzak.market.navigation.keys.ChatRoomScreenKey
+import com.napzak.market.navigation.keys.PhoneVerificationScreenKey
 import com.napzak.market.navigation.keys.ProductDetailScreenKey
 import com.napzak.market.navigation.keys.ReportScreenKey
 import com.napzak.market.navigation.keys.ScreenKey
@@ -31,6 +32,7 @@ class ChatEntryProvider @Inject constructor(
             ChatRoomRoute(
                 onProductDetailNavigate = ::navigateToProductDetail,
                 onStoreReportNavigate = ::navigateToStoreReport,
+                onPhoneVerificationNavigate = ::navigateToPhoneVerification,
                 onNavigateUp = navigator::pop,
                 viewModel = viewModel,
             )
@@ -53,5 +55,9 @@ class ChatEntryProvider @Inject constructor(
     private fun navigateToStoreReport(userId: Long) {
         val screenKey = ReportScreenKey(reportType = ReportType.USER, id = userId)
         navigator.navigateTo(screenKey)
+    }
+
+    private fun navigateToPhoneVerification() {
+        navigator.navigateTo(PhoneVerificationScreenKey(false))
     }
 }

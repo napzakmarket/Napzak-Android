@@ -13,6 +13,7 @@ import com.napzak.market.navigation.AppNavigator
 import com.napzak.market.navigation.EntryProviderBuilder
 import com.napzak.market.navigation.keys.ExploreScreenKey
 import com.napzak.market.navigation.keys.HomeScreenKey
+import com.napzak.market.navigation.keys.PhoneVerificationScreenKey
 import com.napzak.market.navigation.keys.ProductDetailScreenKey
 import com.napzak.market.navigation.keys.ScreenKey
 import com.napzak.market.navigation.keys.SearchScreenKey
@@ -35,6 +36,7 @@ class HomeEntryProvider @Inject constructor(
             HomeRoute(
                 onSearchNavigate = ::navigateToSearch,
                 onProductDetailNavigate = ::navigateToProductDetail,
+                onPhoneVerificationNavigate = ::navigateToPhoneVerification,
                 onMostInterestedSellNavigate = ::navigateToExploreSell,
                 onMostInterestedBuyNavigate = ::navigateToExploreBuy,
             )
@@ -57,5 +59,9 @@ class HomeEntryProvider @Inject constructor(
     private fun navigateToExploreSell() {
         val screen = ExploreScreenKey(tradeType = SELL, sortType = POPULAR)
         navigator.navigateTo(screen)
+    }
+
+    private fun navigateToPhoneVerification() {
+        navigator.navigateTo(PhoneVerificationScreenKey(false))
     }
 }
