@@ -46,6 +46,8 @@ internal class WithdrawViewModel @Inject constructor(
     }
 
     fun withdrawStore() {
+        if(_uiState.value.isWithdrawing) return
+
         viewModelScope.launch {
             setIsWithdrawing(true)
             val title = _uiState.value.reason.reason

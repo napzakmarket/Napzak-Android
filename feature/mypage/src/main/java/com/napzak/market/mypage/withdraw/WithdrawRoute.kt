@@ -32,7 +32,10 @@ internal fun WithdrawRoute(
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect {
-            if (it is WithdrawSideEffect.WithdrawComplete) onWithdrawComplete()
+            if (it is WithdrawSideEffect.WithdrawComplete) {
+                viewModel.deletePushToken()
+                onWithdrawComplete()
+            }
         }
     }
 
@@ -63,10 +66,7 @@ internal fun WithdrawRoute(
 
         WithdrawStep.CONFIRM -> WithdrawConfirmScreen(
             isWithdrawing = uiState.isWithdrawing,
-            onConfirmClick = {
-                viewModel.deletePushToken()
-                viewModel.withdrawStore()
-            },
+            onConfirmClick = viewModel::withdrawStore,
             onCancelClick = { step = WithdrawStep.REASON },
             onNavigateUpClick = { step = WithdrawStep.DETAIL },
             modifier = modifier.systemBarsPadding(),

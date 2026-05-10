@@ -27,7 +27,7 @@ import com.napzak.market.feature.report.R.string.report_user_title
 @Composable
 internal fun rememberReportState(
     reportType: ReportType
-) = rememberSaveable(saver = ReportState.Saver) {
+) = rememberSaveable(reportType, saver = ReportState.Saver) {
     ReportState(reportType)
 }
 
