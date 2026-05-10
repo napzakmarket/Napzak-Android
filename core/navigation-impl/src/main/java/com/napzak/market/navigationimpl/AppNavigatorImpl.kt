@@ -10,6 +10,7 @@ import com.napzak.market.navigation.keys.ChatListScreenKey
 import com.napzak.market.navigation.keys.ChatRoomScreenKey
 import com.napzak.market.navigation.keys.LoginScreenKey
 import com.napzak.market.navigation.keys.ScreenKey
+import com.napzak.market.navigation.keys.SplashScreenKey
 import javax.inject.Inject
 
 class AppNavigatorImpl @Inject constructor(
@@ -73,7 +74,7 @@ class AppNavigatorImpl @Inject constructor(
         deepLinkEventBus.events.collect { event ->
             when (event) {
                 is DeepLinkEvent.NavigateToChatRoom -> {
-                    if (currentScreen != LoginScreenKey) {
+                    if (currentScreen != LoginScreenKey && currentScreen != SplashScreenKey) {
                         backStack.addAll(
                             listOf(
                                 ChatListScreenKey,
