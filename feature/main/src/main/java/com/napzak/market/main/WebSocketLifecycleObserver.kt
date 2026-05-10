@@ -33,8 +33,10 @@ class WebSocketLifecycleObserver @Inject constructor(
         activityScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     }
 
-    override fun onResume(owner: LifecycleOwner) {
-        super.onResume(owner)
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
+        socketConnectJob?.cancel()
+
         socketConnectJob = activityScope.launch {
             socketEventBus.connectionState.collect { event ->
                 when (event) {
@@ -45,12 +47,6 @@ class WebSocketLifecycleObserver @Inject constructor(
         }
     }
 
-    override fun onStop(owner: LifecycleOwner) {
-        socketConnectJob?.cancel()
-        activityScope.launch { disconnectChatSocketUseCase() }
-        super.onPause(owner)
-    }
-
     private suspend fun performConnect() {
         // 토큰 존재 여부만 확인합니다.
         val token = tokenProvider.getAccessToken() ?: return
@@ -59,7 +55,15 @@ class WebSocketLifecycleObserver @Inject constructor(
         runCatching {
             connectChatSocket(storeId)
             subscribeChatRooms(storeId)
+        }.onFailure {
+            socketEventBus.disconnect()
         }
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        socketConnectJob?.cancel()
+        activityScope.launch { disconnectChatSocketUseCase() }
+        super.onStop(owner)
     }
 
     private suspend fun fetchStoreInfo(): StoreInfo? {
