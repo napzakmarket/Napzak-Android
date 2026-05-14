@@ -156,7 +156,10 @@ internal class ProductDetailViewModel @AssistedInject constructor(
                 currentState
             }
         }
-        updatedDetail?.let { triggerUpdateTradeStatusChangeSideEffect(it) }
+        updatedDetail?.let {
+            triggerUpdateTradeStatusChangeSideEffect(it)
+            trackItemStatusUpdated(it, tradeStatus)
+        }
     }
 
     private suspend fun triggerUpdateTradeStatusChangeSideEffect(productDetail: ProductDetail) {
@@ -205,6 +208,22 @@ internal class ProductDetailViewModel @AssistedInject constructor(
                 isForSale = isForSale,
             )
         }
+    }
+
+    private fun trackItemStatusUpdated(productDetail: ProductDetail, tradeStatus: String) {
+        val isForSale = TradeType.fromName(productDetail.tradeType) == TradeType.SELL
+        val statusLabel = when (tradeStatus.uppercase()) {
+            "BEFORE_TRADE" -> ReportTracker.STATUS_ON_SALE
+            "COMPLETED" -> ReportTracker.STATUS_COMPLETED
+            else -> ReportTracker.STATUS_RESERVED
+        }
+
+        reportTracker.trackItemStatusUpdated(
+            postId = productDetail.productId,
+            genreName = productDetail.genreName,
+            isForSale = isForSale,
+            statusLabel = statusLabel,
+        )
     }
 
     internal fun trackReportProduct() = reportTracker.trackOpenedReportProduct()

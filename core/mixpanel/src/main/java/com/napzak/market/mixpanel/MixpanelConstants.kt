@@ -25,4 +25,5 @@ object MixpanelConstants {
     const val COMPLETED_WITHDRAWAL = "Completed Withdrawal"
     const val OPENED_REPORT_PRODUCT = "Opened Report Overlay_product"
     const val OPENED_REPORT_MARKET = "Opened Report Overlay_market"
+    const val ITEM_STATUS_UPDATED = "Item Status Updated"
 }
