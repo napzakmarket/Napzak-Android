@@ -44,7 +44,6 @@ internal fun MyPageRoute(
 
     LaunchedEffect(Unit) {
         viewModel.fetchStoreInfo()
-        viewModel.trackViewedMyPage()
     }
 
     MyPageScreen(

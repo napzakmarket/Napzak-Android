@@ -10,6 +10,7 @@ import com.napzak.market.genre.model.Genre
 import com.napzak.market.genre.model.extractGenreIds
 import com.napzak.market.genre.repository.GenreNameRepository
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
+import com.napzak.market.mixpanel.MyPageTracker
 import com.napzak.market.navigation.keys.StoreScreenKey
 import com.napzak.market.navigation.util.AssistedNavKeyFactory
 import com.napzak.market.product.model.Product
@@ -49,6 +50,7 @@ class StoreViewModel @AssistedInject constructor(
     private val getProductStoreUseCase: GetStoreProductsUseCase,
     private val genreNameRepository: GenreNameRepository,
     private val setInterestProductUseCase: SetInterestProductUseCase,
+    private val myPageTracker: MyPageTracker,
 ) : ViewModel() {
     @AssistedFactory
     interface Factory : AssistedNavKeyFactory<StoreViewModel, StoreScreenKey>
@@ -124,7 +126,10 @@ class StoreViewModel @AssistedInject constructor(
 
     fun updateStoreDetail() = viewModelScope.launch {
         storeRepository.fetchStoreDetail(storeId)
-            .onSuccess { _storeDetailState.value = UiState.Success(it) }
+            .onSuccess {
+                _storeDetailState.value = UiState.Success(it)
+                if (it.isOwner) myPageTracker.trackViewedMyPage()
+            }
             .onFailure { _storeDetailState.value = UiState.Failure(it.message.toString()) }
     }
 
