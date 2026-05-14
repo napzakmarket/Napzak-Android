@@ -26,4 +26,5 @@ object MixpanelConstants {
     const val OPENED_REPORT_PRODUCT = "Opened Report Overlay_product"
     const val OPENED_REPORT_MARKET = "Opened Report Overlay_market"
     const val ITEM_STATUS_UPDATED = "Item Status Updated"
+    const val ITEM_LIKED = "Item Liked"
 }

@@ -14,6 +14,7 @@ import com.napzak.market.detail.ProductDetailSideEffect.ShowToast
 import com.napzak.market.detail.type.ProductDetailToastType
 import com.napzak.market.interest.usecase.SetInterestUseCase
 import com.napzak.market.mixpanel.ExploreTracker
+import com.napzak.market.mixpanel.GlobalTracker
 import com.napzak.market.mixpanel.ReportTracker
 import com.napzak.market.navigation.keys.ProductDetailScreenKey
 import com.napzak.market.navigation.util.AssistedNavKeyFactory
@@ -48,6 +49,7 @@ internal class ProductDetailViewModel @AssistedInject constructor(
     private val getPhoneVerificationStatus: GetPhoneVerificationStatusUseCase,
     private val exploreTracker: ExploreTracker,
     private val reportTracker: ReportTracker,
+    private val globalTracker: GlobalTracker,
 ) : ViewModel() {
     @AssistedFactory
     interface Factory : AssistedNavKeyFactory<ProductDetailViewModel, ProductDetailScreenKey>
@@ -115,6 +117,7 @@ internal class ProductDetailViewModel @AssistedInject constructor(
 
     fun updateIsInterested(isInterested: Boolean) = viewModelScope.launch {
         updateInterestAndCount(isInterested)
+        trackItemLiked(isInterested)
         triggerUpdateIsInterestedSideEffect(isInterested)
     }
 
@@ -185,6 +188,21 @@ internal class ProductDetailViewModel @AssistedInject constructor(
 
     fun setShowProductStatusToolTip(value: Boolean) = viewModelScope.launch {
         productDetailRepository.setShowProductStatusTooltip(value)
+    }
+
+    private fun trackItemLiked(isInterested: Boolean) {
+        val currentUiState = productDetail.value
+        if (currentUiState is UiState.Success) {
+            val isForSale = TradeType.fromName(currentUiState.data.tradeType) == TradeType.SELL
+            val actionType = if (isInterested) GlobalTracker.ACTION_ADD else GlobalTracker.ACTION_REMOVE
+            globalTracker.trackItemLiked(
+                postId = currentUiState.data.productId,
+                genreName = currentUiState.data.genreName,
+                isForSale = isForSale,
+                source = GlobalTracker.SOURCE_ITEM_DETAIL,
+                actionType = actionType,
+            )
+        }
     }
 
     private fun trackViewedProduct() {
