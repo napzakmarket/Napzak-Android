@@ -23,16 +23,19 @@ class SearchTracker @Inject constructor(
      * Description : 검색 실행
      * @param searchSource 검색 소스
      * @param keyword 검색어
+     * @param genreName 장르명 (search_source가 genre_page일 때만 값 있음)
      */
     fun trackExecutedSearch(
         searchSource: String,
         keyword: String? = null,
+        genreName: String? = null,
     ) {
         analytics.logEvent(
             MixpanelConstants.EXECUTED_SEARCH,
             mapOf(
                 SEARCH_SOURCE to searchSource,
                 SEARCH_TEXT to keyword,
+                GENRE_NAME to genreName,
             ),
         )
     }
@@ -56,12 +59,13 @@ class SearchTracker @Inject constructor(
     companion object {
         private const val SEARCH_SOURCE = "search_source"
         private const val SEARCH_TEXT = "keyword"
+        private const val GENRE_NAME = "genre_name"
         private const val SUGGESTION_TYPE = "suggestion_type"
         private const val SUGGESTION_INDEX = "suggestion_index"
 
         const val SOURCE_ICON = "icon"
         const val SOURCE_ENTER = "enter"
-        const val SOURCE_SEARCH_BAR = "search_bar"
+        const val SOURCE_SEARCH_BAR = "searchbar"
         const val SOURCE_GENRE_PAGE = "genre_page"
 
         const val SUGGESTION_TYPE_KEYWORD = "keyword"

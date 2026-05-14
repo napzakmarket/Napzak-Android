@@ -86,7 +86,7 @@ internal fun SearchRoute(
         onBackButtonClick = onBackButtonClick,
         onTextChange = viewModel::updateSearchTerm,
         onSearchClick = { onSearchResultNavigate(searchText) },
-        onTrackSearchClick = { viewModel.trackExecutedSearch(it) },
+        onTrackSearchClick = { source, genreName -> viewModel.trackExecutedSearch(source, genreName) },
         onRecommendedSearchWordClick = onSearchResultNavigate,
         onTrackSearchWordClick = { viewModel.trackClickedSearchWord(it) },
         onRecommendedGenreClick = onGenreDetailNavigate,
@@ -103,7 +103,7 @@ private fun SearchScreen(
     onBackButtonClick: () -> Unit,
     onTextChange: (String) -> Unit,
     onSearchClick: () -> Unit,
-    onTrackSearchClick: (String) -> Unit,
+    onTrackSearchClick: (String, String?) -> Unit,
     onRecommendedSearchWordClick: (String) -> Unit,
     onTrackSearchWordClick: (Int) -> Unit,
     onRecommendedGenreClick: (Long) -> Unit,
@@ -151,7 +151,7 @@ private fun SearchSuccessScreen(
     onBackButtonClick: () -> Unit,
     onTextChange: (String) -> Unit,
     onSearchClick: () -> Unit,
-    onTrackSearchClick: (String) -> Unit,
+    onTrackSearchClick: (String, String?) -> Unit,
     onRecommendedSearchWordClick: (String) -> Unit,
     onTrackSearchWordClick: (Int) -> Unit,
     onRecommendedGenreClick: (Long) -> Unit,
@@ -200,8 +200,8 @@ private fun SearchSuccessScreen(
                 onResetClick = { onTextChange(EMPTY_TEXT) },
                 onSearchClick = onSearchClick,
                 focusRequester = focusRequester,
-                onTrackIconClick = { onTrackSearchClick(SearchTracker.SOURCE_ICON) },
-                onTrackKeyboardClick = { onTrackSearchClick(SearchTracker.SOURCE_ENTER) },
+                onTrackIconClick = { onTrackSearchClick(SearchTracker.SOURCE_ICON, null) },
+                onTrackKeyboardClick = { onTrackSearchClick(SearchTracker.SOURCE_ENTER, null) },
             )
         }
 
@@ -240,7 +240,7 @@ private fun SearchSuccessScreen(
                         BasicResultNavigationButton(
                             searchText = searchText,
                             onButtonClick = {
-                                onTrackSearchClick(SearchTracker.SOURCE_SEARCH_BAR)
+                                onTrackSearchClick(SearchTracker.SOURCE_SEARCH_BAR, null)
                                 onSearchClick()
                             },
                         )
@@ -258,7 +258,7 @@ private fun SearchSuccessScreen(
                     GenreNavigationButton(
                         genreName = genreItem.genreName,
                         onBlockClick = {
-                            onTrackSearchClick(SearchTracker.SOURCE_GENRE_PAGE)
+                            onTrackSearchClick(SearchTracker.SOURCE_GENRE_PAGE, genreItem.genreName)
                             onRecommendedGenreClick(genreItem.genreId)
                         },
                         modifier = Modifier.background(color = NapzakMarketTheme.colors.white),
@@ -414,7 +414,7 @@ private fun SearchScreenPreview(modifier: Modifier = Modifier) {
             onBackButtonClick = { },
             onTextChange = { searchText = it },
             onSearchClick = { },
-            onTrackSearchClick = { },
+            onTrackSearchClick = { _, _ -> },
             onRecommendedSearchWordClick = { },
             onTrackSearchWordClick = { },
             onRecommendedGenreClick = { },
