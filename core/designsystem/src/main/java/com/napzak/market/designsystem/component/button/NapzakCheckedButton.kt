@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -45,7 +44,7 @@ import com.napzak.market.designsystem.theme.NapzakMarketTheme
 fun NapzakCheckedButton(
     checked: Boolean,
     text: String,
-    modifier: Modifier = Modifier.fillMaxWidth(),
+    modifier: Modifier = Modifier,
     backgroundColor: Color = NapzakMarketTheme.colors.white,
     onCheckedChange: (Boolean) -> Unit,
     icon: ImageVector? = null,
