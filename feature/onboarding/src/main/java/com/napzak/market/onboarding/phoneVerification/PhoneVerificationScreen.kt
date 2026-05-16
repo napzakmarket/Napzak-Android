@@ -383,7 +383,6 @@ fun PhoneVerificationScreen(
             checked = uiState.isAgeChecked,
             onCheckedChange = onAgeCheckedChange,
             text = stringResource(onboarding_phone_agreement_age_over_14),
-            modifier = Modifier,
         )
 
         NapzakButton(
