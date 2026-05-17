@@ -79,6 +79,10 @@ class StoreDataSource @Inject constructor(
         return storeService.getPhoneVerificationStatus().data
     }
 
+    suspend fun patchPhoneVerificationStatus(): EmptyDataResponse {
+        return storeService.patchPhoneVerificationStatus()
+    }
+
     suspend fun postPhoneVerificationCode(request: PhoneCodeRequest): PhoneCodeResponse {
         return storeService.postPhoneVerificationCode(request).data
     }

@@ -40,4 +40,6 @@ interface StoreRepository {
     suspend fun postPhoneVerificationCode(phoneNumber: String): Result<Int>
 
     suspend fun checkPhoneVerificationCode(phoneNumber: String, code: String): Result<PhoneCodeVerificationResult>
+
+    suspend fun patchPhoneVerificationStatus(): Result<Unit>
 }
