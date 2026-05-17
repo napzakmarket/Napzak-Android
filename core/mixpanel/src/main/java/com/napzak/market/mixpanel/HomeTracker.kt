@@ -41,7 +41,7 @@ class HomeTracker @Inject constructor(
             mapOf(
                 ITEM_INDEX to itemIndex,
                 POST_ID to postId,
-                GENRES_CATEGORY to genreName,
+                GENRE_NAME to genreName,
             ),
         )
     }
@@ -80,7 +80,7 @@ class HomeTracker @Inject constructor(
         private const val BANNER_INDEX = "banner_index"
         private const val ITEM_INDEX = "item_index"
         private const val POST_ID = "post_id"
-        private const val GENRES_CATEGORY = "genres_category"
+        private const val GENRE_NAME = "genre_name"
         private const val SORT = "sort"
         private const val FROM = "from"
         private const val HOME = "home"
