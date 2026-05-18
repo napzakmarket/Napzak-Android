@@ -72,7 +72,7 @@ fun PhoneCodeResponse.toDomain(): Int {
 
 fun CodeVerificationResponse.toDomain(): PhoneCodeVerificationResult {
     return PhoneCodeVerificationResult(
-        isPhoneVerified = isPhoneVerified,
+        isCodeVerified = isCodeMatched,
         remainingRequestCount = remainingRequestCount,
     )
 }

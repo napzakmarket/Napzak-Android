@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CodeVerificationResponse(
-    @SerialName("isPhoneVerified")
-    val isPhoneVerified: Boolean,
+    @SerialName("isCodeMatched")
+    val isCodeMatched: Boolean,
     @SerialName("remainingRequestCount")
     val remainingRequestCount: Int,
 )
