@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.onboarding.nickname.model.NicknameUiState
 import com.napzak.market.store.usecase.CheckNicknameDuplicationUseCase
-import com.napzak.market.store.usecase.SetNicknameUseCase
+import com.napzak.market.store.usecase.UpdateUserProfileUseCase
 import com.napzak.market.store.usecase.ValidateNicknameUseCase
 import com.napzak.market.ui_util.getHttpExceptionMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class NicknameViewModel @Inject constructor(
     private val checkNicknameDuplicationUseCase: CheckNicknameDuplicationUseCase,
-    private val setNicknameUseCase: SetNicknameUseCase,
+    private val updateUserProfile: UpdateUserProfileUseCase,
     private val validateNicknameUseCase: ValidateNicknameUseCase,
 ) : ViewModel() {
 
@@ -73,7 +73,7 @@ class NicknameViewModel @Inject constructor(
         if (nickname.isBlank()) return
 
         viewModelScope.launch {
-            val result = setNicknameUseCase(nickname)
+            val result = updateUserProfile(nickname)
             result
                 .onSuccess { onSuccess() }
                 .onFailure { onError() }

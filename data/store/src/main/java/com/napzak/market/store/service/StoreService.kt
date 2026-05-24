@@ -19,6 +19,7 @@ import com.napzak.market.store.dto.response.TermsResponse
 import com.napzak.market.store.dto.response.WithdrawResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -84,6 +85,9 @@ interface StoreService {
 
     @GET("stores/phone-verification-status")
     suspend fun getPhoneVerificationStatus(): BaseResponse<PhoneVerificationStatusResponse>
+
+    @PATCH("stores/phone-verifications")
+    suspend fun patchPhoneVerificationStatus(): EmptyDataResponse
 
     @POST("stores/phone-verifications/send")
     suspend fun postPhoneVerificationCode(

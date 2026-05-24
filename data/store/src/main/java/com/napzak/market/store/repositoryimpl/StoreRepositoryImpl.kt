@@ -98,4 +98,8 @@ class StoreRepositoryImpl @Inject constructor(
             request = CodeVerificationRequest(phoneNumber, code)
         ).toDomain()
     }
+
+    override suspend fun patchPhoneVerificationStatus(): Result<Unit> = runCatching {
+        storeDataSource.patchPhoneVerificationStatus()
+    }
 }

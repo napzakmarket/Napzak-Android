@@ -150,6 +150,7 @@ fun PhoneVerificationScreen(
             }
             .background(NapzakMarketTheme.colors.white)
             .padding(horizontal = 20.dp, vertical = 60.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         OnboardingTopBar(
             onBackClick = onBackClick,
@@ -163,6 +164,7 @@ fun PhoneVerificationScreen(
             text = stringResource(onboarding_phone_title),
             style = NapzakMarketTheme.typography.title20b,
             color = NapzakMarketTheme.colors.gray400,
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Spacer(Modifier.height(10.dp))
@@ -171,6 +173,7 @@ fun PhoneVerificationScreen(
             text = stringResource(onboarding_phone_sub_title),
             style = NapzakMarketTheme.typography.caption12r,
             color = NapzakMarketTheme.colors.gray300,
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Spacer(Modifier.height(30.dp))

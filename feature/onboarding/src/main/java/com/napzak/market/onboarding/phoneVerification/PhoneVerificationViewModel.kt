@@ -135,7 +135,7 @@ class PhoneVerificationViewModel @Inject constructor(
 
         checkCodeVerified(phoneNumber = current.checkingPhone, code = current.code)
             .onSuccess { response ->
-                if (response.isPhoneVerified) {
+                if (response.isCodeVerified) {
                     stopTimer()
                     _uiState.update {
                         it.copy(

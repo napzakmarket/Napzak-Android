@@ -1,6 +1,6 @@
 package com.napzak.market.store.model
 
 data class PhoneCodeVerificationResult(
-    val isPhoneVerified: Boolean,
+    val isCodeVerified: Boolean,
     val remainingRequestCount: Int,
 )
