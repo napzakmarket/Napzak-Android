@@ -18,4 +18,5 @@ data class PurchaseRegistrationScreenKey(
 @Serializable
 data class GenreSearchScreenKey(
     val from: String,
+    val selectedGenreId: Long? = null,
 ) : ScreenKey

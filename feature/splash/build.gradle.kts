@@ -15,6 +15,8 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.util)
     implementation(projects.core.uiUtil)
+    implementation(projects.core.navigation)
+    implementation(projects.core.event)
     implementation(projects.domain.store)
     implementation(projects.domain.update)
 

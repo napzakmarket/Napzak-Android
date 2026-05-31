@@ -6,7 +6,15 @@ import com.napzak.market.navigation.keys.ScreenKey
 
 interface AppNavigator {
     val backStack: NavBackStack<ScreenKey>
-    fun navigateTo(key: ScreenKey)
+    val currentScreen: ScreenKey?
+
+    fun navigateTo(
+        key: ScreenKey,
+        popUpTo: ScreenKey? = null,
+        inclusive: Boolean = false,
+        singleTop: Boolean = true,
+    )
+
     fun pop()
     suspend fun handleIntent(intent: Intent)
     suspend fun handleDeepLinkEvent()

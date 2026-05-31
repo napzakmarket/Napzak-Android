@@ -7,12 +7,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.napzak.market.common.SessionManager
+import androidx.lifecycle.lifecycleScope
+import com.napzak.market.designsystem.component.toast.NapzakToast
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
+import com.napzak.market.main.navigation.MainNavigator
+import com.napzak.market.navigation.EntryProviderBuilder
 import com.napzak.market.ui_util.disableContrastEnforcement
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,6 +21,14 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var webSocketLifecycleObserver: WebSocketLifecycleObserver
+
+    @Inject
+    lateinit var entryBuilders: @JvmSuppressWildcards Set<EntryProviderBuilder>
+
+    @Inject
+    lateinit var navigator: MainNavigator
+
+    lateinit var napzakToast: NapzakToast
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,24 +39,17 @@ class MainActivity : ComponentActivity() {
         )
         window.disableContrastEnforcement()
 
+        napzakToast = NapzakToast(this, this)
         setContent {
             NapzakMarketTheme {
                 MainScreen(
-                    restartApplication = ::restartApplication,
-                    connectSocket = { webSocketLifecycleObserver.updateLoggedInState(true) },
+                    navigator = navigator,
+                    entryBuilders = entryBuilders,
+                    napzakToast = napzakToast,
                 )
             }
         }
-
         handleIntent(intent)
-    }
-
-    private fun restartApplication() {
-        Intent(this, MainActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(this)
-        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -57,18 +59,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleIntent(intent: Intent) {
-        val notifyType = intent.getStringExtra("type")
-        val chatRoomId = intent.getStringExtra("roomId")
-
-        CoroutineScope(Dispatchers.Main).launch {
-            if (notifyType == NOTIFY_CHAT && chatRoomId != null) {
-                ChatDeepLinkEventBus.send(ChatDeepLinkEvent.ChatRoom(chatRoomId))
-                SessionManager.chatRoomId = chatRoomId.toLong()
-            }
+        lifecycleScope.launch {
+            navigator.appNavigator.handleIntent(intent)
         }
-    }
-
-    companion object {
-        const val NOTIFY_CHAT = "chat"
     }
 }

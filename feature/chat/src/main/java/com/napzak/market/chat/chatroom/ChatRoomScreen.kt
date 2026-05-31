@@ -166,7 +166,8 @@ internal fun ChatRoomRoute(
         onSendChatClick = viewModel::sendTextMessage,
         onPhotoSelect = viewModel::sendImageMessage,
         onPhoneVerifyClick = onPhoneVerificationNavigate,
-        modifier = modifier,
+        modifier = modifier
+            .systemBarsPadding(),
     )
 }
 
@@ -208,8 +209,7 @@ internal fun ChatRoomScreen(
 
             Column(
                 modifier = modifier
-                    .fillMaxSize()
-                    .systemBarsPadding(),
+                    .fillMaxSize(),
             ) {
                 ChatRoomTopBar(
                     storeName = chatRoom.storeBrief?.nickname ?: "",

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -76,9 +77,7 @@ internal fun EditStoreRoute(
 
     EditStoreScreen(
         uiState = uiState,
-        onStoreNameChange = {
-            viewModel.updateNickname(value = it)
-        },
+        onStoreNameChange = { viewModel.updateNickname(value = it) },
         onStoreIntroductionChange = { viewModel.updateUiState(description = it) },
         onStoreGenreChange = { viewModel.updateUiState(genres = it) },
         onGenreSearchTextChange = viewModel::updateGenreSearchText,
@@ -86,7 +85,8 @@ internal fun EditStoreRoute(
         onPhotoChange = viewModel::updatePhoto,
         onNameValidityCheckClick = viewModel::checkNicknameDuplication,
         onProceedButtonClick = viewModel::saveEditedProfile,
-        modifier = modifier,
+        modifier = modifier
+            .systemBarsPadding(),
     )
 }
 

@@ -1,6 +1,5 @@
 package com.napzak.market.explore
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
@@ -16,11 +15,16 @@ import com.napzak.market.genre.repository.GenreNameRepository
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.mixpanel.ExploreTracker
 import com.napzak.market.mixpanel.SearchTracker
+import com.napzak.market.navigation.keys.ExploreScreenKey
+import com.napzak.market.navigation.util.AssistedNavKeyFactory
 import com.napzak.market.product.model.ExploreParameters
 import com.napzak.market.product.model.Product
 import com.napzak.market.product.model.SearchParameters
 import com.napzak.market.product.repository.ProductExploreRepository
 import com.napzak.market.ui_util.groupBy
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -36,20 +40,20 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-@HiltViewModel
-internal class ExploreViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = ExploreViewModel.Factory::class)
+internal class ExploreViewModel @AssistedInject constructor(
+    @Assisted val navKey: ExploreScreenKey,
     private val productExploreRepository: ProductExploreRepository,
     private val genreNameRepository: GenreNameRepository,
     private val setInterestProductUseCase: SetInterestProductUseCase,
     private val exploreTracker: ExploreTracker,
     private val searchTracker: SearchTracker,
 ) : ViewModel() {
-    val searchTerm = savedStateHandle.get<String>(SEARCH_TERM_KEY)
-    val sortType = savedStateHandle.get<SortType>(SORT_TYPE_KEY)
-    val tradeType = savedStateHandle.get<TradeType>(TRADE_TYPE_KEY)
+    @AssistedFactory
+    interface Factory : AssistedNavKeyFactory<ExploreViewModel, ExploreScreenKey>
+
+    val searchTerm: String? = navKey.searchTerm.takeIf { it.isNotEmpty() }
 
     private val _uiState = MutableStateFlow(ExploreUiState())
     val uiState = _uiState.asStateFlow()
@@ -67,8 +71,8 @@ internal class ExploreViewModel @Inject constructor(
     private val interestDebounceFlow = MutableSharedFlow<Pair<Long, Boolean>>()
 
     init {
-        if (sortType != null) updateSortOption(sortType)
-        if (tradeType != null) updateTradeType(tradeType)
+        updateSortOption(navKey.sortType)
+        updateTradeType(navKey.tradeType)
         updateGenreItemsInBottomSheet()
         handleInterestDebounce()
     }
@@ -360,8 +364,5 @@ internal class ExploreViewModel @Inject constructor(
     companion object {
         private const val DEBOUNCE_DELAY = 500L
         private const val INIT_GENRE_LIST_SIZE = 39
-        private const val SEARCH_TERM_KEY = "searchTerm"
-        private const val SORT_TYPE_KEY = "sortType"
-        private const val TRADE_TYPE_KEY = "tradeType"
     }
 }

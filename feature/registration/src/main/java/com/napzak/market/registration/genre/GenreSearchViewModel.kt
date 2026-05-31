@@ -5,7 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.genre.usecase.GetGenreNamesUseCase
+import com.napzak.market.navigation.keys.GenreSearchScreenKey
+import com.napzak.market.navigation.util.AssistedNavKeyFactory
 import com.napzak.market.registration.genre.state.GenreContract.GenreSearchUiState
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -15,13 +20,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
-@HiltViewModel
-class GenreSearchViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = GenreSearchViewModel.Factory::class)
+class GenreSearchViewModel @AssistedInject constructor(
+    @Assisted val navKey: GenreSearchScreenKey,
     private val getGenreNamesUseCase: GetGenreNamesUseCase,
 ) : ViewModel() {
+    @AssistedFactory
+    interface Factory : AssistedNavKeyFactory<GenreSearchViewModel, GenreSearchScreenKey>
+
     private val _uiState = MutableStateFlow(GenreSearchUiState())
     val uiState = _uiState.asStateFlow()
 
@@ -29,6 +37,7 @@ class GenreSearchViewModel @Inject constructor(
     val searchTerm = _searchTerm.asStateFlow()
 
     init {
+        updateSelectedGenre(navKey.selectedGenreId)
         viewModelScope.launch {
             searchTerm.debounce(DEBOUNCE_DELAY).collect {
                 updateGenreSearchResult()
@@ -42,9 +51,10 @@ class GenreSearchViewModel @Inject constructor(
 
     fun updateSearchTerm(searchTerm: String) = _searchTerm.update { searchTerm }
 
-    private fun updateUiState(loadState: UiState<ImmutableList<Genre>>) = _uiState.update { currentState ->
-        currentState.copy(loadState = loadState)
-    }
+    private fun updateUiState(loadState: UiState<ImmutableList<Genre>>) =
+        _uiState.update { currentState ->
+            currentState.copy(loadState = loadState)
+        }
 
     private fun updateGenreSearchResult() = viewModelScope.launch {
         getGenreNamesUseCase(searchTerm.value)

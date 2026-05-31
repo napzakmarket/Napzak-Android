@@ -1,6 +1,6 @@
 package com.napzak.market.mypage.withdraw.type
 
-internal enum class WithdrawReasonType(
+enum class WithdrawReasonType(
     val reason: String,
 ) {
     HARD_TO_FIND("원하는 굿즈를 찾기 어려워요"),
@@ -11,4 +11,9 @@ internal enum class WithdrawReasonType(
     PRIVACY("개인정보 보호가 걱정돼요"),
     NO_LONGER_ACTIVE("더 이상 덕질 활동을 하지 않아요"),
     OTHER("다른 이유가 있어요");
+
+    companion object {
+        fun find(reason: String): WithdrawReasonType =
+            entries.find { it.reason == reason } ?: OTHER
+    }
 }

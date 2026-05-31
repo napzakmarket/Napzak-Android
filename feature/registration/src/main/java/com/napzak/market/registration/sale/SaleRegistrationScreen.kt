@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
@@ -119,7 +120,8 @@ fun SaleRegistrationRoute(
         onHalfShippingFeeChange = viewModel::updateHalfShippingFee,
         checkButtonEnabled = viewModel::updateButtonState,
         onRegisterClick = viewModel::getPresignedUrl,
-        modifier = modifier,
+        modifier = modifier
+            .systemBarsPadding(),
     )
 }
 

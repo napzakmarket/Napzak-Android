@@ -16,6 +16,7 @@ dependencies {
     implementation(projects.core.util)
     implementation(projects.core.uiUtil)
     implementation(projects.core.mixpanel)
+    implementation(projects.core.navigation)
 
     implementation(projects.domain.registration)
     implementation(projects.domain.presignedUrl)

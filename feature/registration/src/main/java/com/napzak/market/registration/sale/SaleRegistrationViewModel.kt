@@ -1,13 +1,14 @@
 package com.napzak.market.registration.sale
 
 import androidx.core.net.toUri
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.ProductConditionType
 import com.napzak.market.common.type.ProductConditionType.Companion.fromConditionByName
 import com.napzak.market.genre.model.Genre
 import com.napzak.market.mixpanel.PostingTracker
+import com.napzak.market.navigation.keys.SaleRegistrationScreenKey
+import com.napzak.market.navigation.util.AssistedNavKeyFactory
 import com.napzak.market.presigned_url.model.PresignedUrl
 import com.napzak.market.presigned_url.usecase.ClearCacheUseCase
 import com.napzak.market.presigned_url.usecase.CompressImageUseCase
@@ -23,20 +24,20 @@ import com.napzak.market.registration.usecase.EditRegisteredProductUseCase
 import com.napzak.market.registration.usecase.GetRegisteredSaleProductUseCase
 import com.napzak.market.registration.usecase.RegisterProductUseCase
 import com.napzak.market.ui_util.priceToNumericTransformation
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class SaleRegistrationViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = SaleRegistrationViewModel.Factory::class)
+class SaleRegistrationViewModel @AssistedInject constructor(
+    @Assisted val navKey: SaleRegistrationScreenKey,
     getProductPresignedUrlUseCase: GetProductPresignedUrlUseCase,
     uploadImageUseCase: UploadImageUseCase,
-    savedStateHandle: SavedStateHandle,
     compressImageUseCase: CompressImageUseCase,
     clearCacheUseCase: ClearCacheUseCase,
     private val registerProductUseCase: RegisterProductUseCase,
@@ -51,18 +52,16 @@ class SaleRegistrationViewModel @Inject constructor(
 ) {
     private var productId: Long? = null
 
+    @AssistedFactory
+    interface Factory : AssistedNavKeyFactory<SaleRegistrationViewModel, SaleRegistrationScreenKey>
+
     private val _uiState = MutableStateFlow(SaleUiState())
     val saleUiState = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            savedStateHandle.getStateFlow<Long?>(PRODUCT_ID_KEY, null)
-                .filterNotNull()
-                .take(1)
-                .collect { id ->
-                    productId = id
-                    getRegisteredSaleProduct(id)
-                }
+        navKey.productId?.let { id ->
+            productId = id
+            getRegisteredSaleProduct(id)
         }
     }
 

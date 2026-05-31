@@ -34,6 +34,8 @@ include(
     ":core:ui_util",
     ":core:mixpanel",
     ":core:navigation",
+    ":core:navigation-impl",
+    ":core:event"
 )
 
 include(

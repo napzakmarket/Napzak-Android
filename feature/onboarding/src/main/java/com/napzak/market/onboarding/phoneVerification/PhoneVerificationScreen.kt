@@ -77,13 +77,13 @@ import kotlinx.coroutines.delay
 
 @Composable
 internal fun PhoneVerificationRoute(
+    isOnboarding: Boolean,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
     viewModel: PhoneVerificationViewModel = hiltViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val isOnboarding by viewModel.isOnboarding.collectAsStateWithLifecycle()
 
     var showImage by remember { mutableStateOf(false) }
 

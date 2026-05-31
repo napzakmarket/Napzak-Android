@@ -85,6 +85,8 @@ dependencies {
     implementation(projects.domain.notification)
     implementation(projects.domain.update)
 
+    implementation(projects.core.navigationImpl)
+
     implementation(libs.androidx.appcompat)
     implementation(libs.timber)
     implementation(libs.kakao.v2.user)

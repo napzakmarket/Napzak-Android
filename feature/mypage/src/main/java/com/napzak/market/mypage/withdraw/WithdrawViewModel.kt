@@ -1,18 +1,20 @@
 package com.napzak.market.mypage.withdraw
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.mixpanel.SettingsTracker
+import com.napzak.market.mypage.withdraw.contract.WithdrawUiState
+import com.napzak.market.mypage.withdraw.type.WithdrawReasonType
 import com.napzak.market.notification.repository.FirebaseRepository
 import com.napzak.market.notification.repository.NotificationRepository
 import com.napzak.market.notification.usecase.DeletePushTokenUseCase
 import com.napzak.market.store.usecase.WithdrawUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -28,11 +30,8 @@ internal class WithdrawViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<WithdrawSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
-    var withdrawReason by mutableStateOf("")
-    var withdrawReasonIndex by mutableStateOf(1)
-    var withdrawDescription by mutableStateOf("")
-    var isWithdrawing by mutableStateOf(false)
-        private set
+    private val _uiState = MutableStateFlow(WithdrawUiState.default)
+    val uiState = _uiState.asStateFlow()
 
     fun deletePushToken() {
         viewModelScope.launch {
@@ -47,17 +46,39 @@ internal class WithdrawViewModel @Inject constructor(
     }
 
     fun withdrawStore() {
+        if(_uiState.value.isWithdrawing) return
+
         viewModelScope.launch {
-            isWithdrawing = true
-            withdrawUseCase(withdrawReason, withdrawDescription)
+            setIsWithdrawing(true)
+            val title = _uiState.value.reason.reason
+            val description = _uiState.value.description
+            withdrawUseCase(title, description)
                 .onSuccess {
                     settingsTracker.trackCompletedWithdrawal()
                     _sideEffect.emit(WithdrawSideEffect.WithdrawComplete)
                 }
                 .onFailure {
                     Timber.e("Withdraw failed: $it")
-                    isWithdrawing = false
+                    setIsWithdrawing(false)
                 }
+        }
+    }
+
+    fun setReason(reason: WithdrawReasonType) {
+        _uiState.update {
+            it.copy(reason = reason)
+        }
+    }
+
+    fun setDescription(description: String) {
+        _uiState.update {
+            it.copy(description = description)
+        }
+    }
+
+    fun setIsWithdrawing(isWithdrawing: Boolean) {
+        _uiState.update {
+            it.copy(isWithdrawing = isWithdrawing)
         }
     }
 }

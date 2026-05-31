@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.core.util)
     implementation(projects.core.uiUtil)
     implementation(projects.core.mixpanel)
+    implementation(projects.core.navigation)
     implementation(projects.domain.genre)
 
     implementation(libs.androidx.navigation.compose)

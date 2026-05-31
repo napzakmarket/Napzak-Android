@@ -18,6 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.napzak.market.common.state.UiState
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
+import com.napzak.market.designsystem.component.scaffold.LocalInnerPadding
 import com.napzak.market.designsystem.component.topbar.NapzakLogoTopBar
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.mypage.mypage.component.MyPageMenuCard
@@ -39,6 +40,7 @@ internal fun MyPageRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val innerPadding = LocalInnerPadding.current
 
     LaunchedEffect(Unit) {
         viewModel.fetchStoreInfo()
@@ -58,7 +60,7 @@ internal fun MyPageRoute(
                 context.openUrl(uiState.serviceLink)
             }
         },
-        modifier = modifier,
+        modifier = modifier.padding(bottom = innerPadding.calculateBottomPadding()),
     )
 }
 

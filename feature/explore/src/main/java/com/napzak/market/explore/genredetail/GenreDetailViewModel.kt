@@ -1,6 +1,5 @@
 package com.napzak.market.explore.genredetail
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
@@ -10,24 +9,31 @@ import com.napzak.market.explore.genredetail.state.GenreDetailProducts
 import com.napzak.market.explore.genredetail.state.GenreDetailUiState
 import com.napzak.market.genre.repository.GenreInfoRepository
 import com.napzak.market.interest.repository.InterestProductRepository
+import com.napzak.market.navigation.keys.GenreDetailScreenKey
+import com.napzak.market.navigation.util.AssistedNavKeyFactory
 import com.napzak.market.product.model.ExploreParameters
 import com.napzak.market.product.repository.ProductExploreRepository
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-@HiltViewModel
-class GenreDetailViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = GenreDetailViewModel.Factory::class)
+class GenreDetailViewModel @AssistedInject constructor(
+    @Assisted val navKey: GenreDetailScreenKey,
     private val genreInfoRepository: GenreInfoRepository,
     private val productExploreRepository: ProductExploreRepository,
     private val interestProductRepository: InterestProductRepository,
 ) : ViewModel() {
-    val genreId = savedStateHandle.get<Long>(GENRE_ID_KEY) ?: 0
+    @AssistedFactory
+    interface Factory : AssistedNavKeyFactory<GenreDetailViewModel, GenreDetailScreenKey>
+
+    val genreId = navKey.genreId
 
     private val _uiState = MutableStateFlow(GenreDetailUiState())
     val uiState = _uiState.asStateFlow()
@@ -152,7 +158,4 @@ class GenreDetailViewModel @Inject constructor(
             )
         }
 
-    companion object {
-        private const val GENRE_ID_KEY = "genreId"
-    }
 }

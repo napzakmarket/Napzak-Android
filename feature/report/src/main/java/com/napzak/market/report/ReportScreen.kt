@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
+import com.napzak.market.common.type.ReportType
 import com.napzak.market.designsystem.component.button.NapzakThrottleButton
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
@@ -53,12 +55,11 @@ import com.napzak.market.report.component.ReportDetailSection
 import com.napzak.market.report.component.ReportReasonSection
 import com.napzak.market.report.state.ReportState
 import com.napzak.market.report.state.rememberReportState
-import com.napzak.market.report.type.ReportType
 import com.napzak.market.ui_util.clearFocusOnScrollConnection
 
 @Composable
 internal fun ReportRoute(
-    reportType: String,
+    reportType: ReportType,
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ReportViewModel = hiltViewModel(),
@@ -100,7 +101,8 @@ internal fun ReportRoute(
             )
         },
         onNavigateUp = navigateUp,
-        modifier = modifier,
+        modifier = modifier
+            .systemBarsPadding(),
     )
 }
 
@@ -267,8 +269,7 @@ private fun FocusSideEffectsHandler(
 @Composable
 private fun ReportScreenPreview() {
     NapzakMarketTheme {
-        val reportType = ReportType.USER
-        val reportState = rememberReportState(reportType.toString())
+        val reportState = rememberReportState(ReportType.USER)
 
         ReportScreen(
             reportState = reportState,

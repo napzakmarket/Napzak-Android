@@ -1,6 +1,5 @@
 package com.napzak.market.onboarding.phoneVerification
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.onboarding.phoneVerification.model.PhoneVerificationError
@@ -26,15 +25,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PhoneVerificationViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
     private val validateName: ValidateNameUseCase,
     private val validatePhone: ValidatePhoneUseCase,
     private val validateCode: ValidateCodeUseCase,
     private val sendCode: SendPhoneCodeUseCase,
     private val checkCodeVerified: CheckPhoneCodeUseCase,
 ) : ViewModel() {
-    val isOnboarding = savedStateHandle.getStateFlow(ONBOARDING_KEY, true)
-
     private val _uiState = MutableStateFlow(PhoneVerificationUiState())
     val uiState = _uiState.asStateFlow()
 
