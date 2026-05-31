@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.napzak.market.common.type.ReportType
 import com.napzak.market.designsystem.component.textfield.InputTextField
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.report.R.string.report_input_letter_num_detail
@@ -32,7 +33,6 @@ import com.napzak.market.feature.report.R.string.report_input_place_holder_detai
 import com.napzak.market.feature.report.R.string.report_input_title_detail
 import com.napzak.market.report.state.ReportState
 import com.napzak.market.report.state.rememberReportState
-import com.napzak.market.report.type.ReportType
 import com.napzak.market.ui_util.bringIntoView
 
 private const val DETAIL_LENGTH_MAX = 200
@@ -108,7 +108,7 @@ internal fun ReportDetailSection(
 @Composable
 private fun ReportDetailSectionPreview() {
     NapzakMarketTheme {
-        val reportState = rememberReportState(ReportType.USER.toString())
+        val reportState = rememberReportState(ReportType.USER)
 
         Column {
             ReportDetailSection(

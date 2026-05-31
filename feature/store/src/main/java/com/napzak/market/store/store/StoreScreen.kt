@@ -141,7 +141,8 @@ internal fun StoreRoute(
         onStoreBlockDismiss = {
             viewModel.updateStoreBlockDialogVisibility(false)
         },
-        modifier = modifier,
+        modifier = modifier
+            .systemBarsPadding(),
     )
 }
 
@@ -249,7 +250,6 @@ private fun StoreSuccessScreen(
 
     Column(
         modifier = modifier
-            .systemBarsPadding()
             .fillMaxSize()
             .background(color = NapzakMarketTheme.colors.white),
     ) {

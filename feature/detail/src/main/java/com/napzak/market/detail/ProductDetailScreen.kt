@@ -15,7 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -28,6 +29,7 @@ import com.napzak.market.designsystem.component.dialog.NapzakDialogDefault
 import com.napzak.market.designsystem.component.image.ZoomableImageScreen
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.popup.NapzakPhoneVerifyModal
+import com.napzak.market.designsystem.component.scaffold.LocalInnerPadding
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -132,7 +134,8 @@ internal fun ProductDetailRoute(
         onTradeStatusChange = viewModel::updateTradeStatus,
         onDismissClick = { isPhoneVerifyModalVisible = false },
         onPhoneVerifyClick = onPhoneVerificationNavigate,
-        modifier = modifier,
+        modifier = modifier
+            .systemBarsPadding(),
     )
 }
 
@@ -179,7 +182,7 @@ private fun ProductDetailScreen(
             }
         },
         containerColor = NapzakMarketTheme.colors.white,
-        modifier = modifier.systemBarsPadding(),
+        modifier = modifier,
     ) { innerPadding ->
         when (uiState) {
             is UiState.Success -> {

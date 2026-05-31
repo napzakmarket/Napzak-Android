@@ -1,6 +1,5 @@
 package com.napzak.market.store.store
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
@@ -11,6 +10,8 @@ import com.napzak.market.genre.model.Genre
 import com.napzak.market.genre.model.extractGenreIds
 import com.napzak.market.genre.repository.GenreNameRepository
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
+import com.napzak.market.navigation.keys.StoreScreenKey
+import com.napzak.market.navigation.util.AssistedNavKeyFactory
 import com.napzak.market.product.model.Product
 import com.napzak.market.product.usecase.GetStoreProductsUseCase
 import com.napzak.market.store.model.StoreDetail
@@ -19,6 +20,9 @@ import com.napzak.market.store.store.state.StoreBottomSheetState
 import com.napzak.market.store.store.state.StoreOptionState
 import com.napzak.market.store.store.state.StoreUiState
 import com.napzak.market.ui_util.groupBy
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -37,17 +41,19 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-@HiltViewModel
-class StoreViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = StoreViewModel.Factory::class)
+class StoreViewModel @AssistedInject constructor(
+    @Assisted val navKey: StoreScreenKey,
     private val storeRepository: StoreRepository,
     private val getProductStoreUseCase: GetStoreProductsUseCase,
     private val genreNameRepository: GenreNameRepository,
     private val setInterestProductUseCase: SetInterestProductUseCase,
 ) : ViewModel() {
-    val storeId: Long = savedStateHandle.get<Long>(STORE_ID_KEY) ?: 0
+    @AssistedFactory
+    interface Factory : AssistedNavKeyFactory<StoreViewModel, StoreScreenKey>
+
+    val storeId: Long = navKey.storeId
 
     private val _genreSearchTerm = MutableStateFlow("")
     private val _storeOptionState: MutableStateFlow<StoreOptionState> =
@@ -287,6 +293,5 @@ class StoreViewModel @Inject constructor(
     companion object {
         private const val DEBOUNCE_DELAY = 500L
         private const val INIT_GENRE_LIST_SIZE = 39
-        private const val STORE_ID_KEY = "storeId"
     }
 }

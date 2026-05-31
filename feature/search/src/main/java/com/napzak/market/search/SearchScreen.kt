@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -90,7 +91,8 @@ internal fun SearchRoute(
         onTrackSearchWordClick = { viewModel.trackClickedSearchWord(it) },
         onRecommendedGenreClick = onGenreDetailNavigate,
         onTrackGenreClick = { viewModel.trackClickedGenre(it) },
-        modifier = modifier,
+        modifier = modifier
+            .systemBarsPadding(),
     )
 }
 

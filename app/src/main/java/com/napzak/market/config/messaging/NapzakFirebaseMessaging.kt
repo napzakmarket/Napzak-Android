@@ -16,6 +16,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
 import com.napzak.market.R.drawable.ic_push_notification
 import com.napzak.market.local.datastore.NotificationDataStore
+import com.napzak.market.main.MainActivity
 import com.napzak.market.notification.usecase.UpdatePushTokenUseCase
 import com.skydoves.firebase.messaging.lifecycle.ktx.LifecycleAwareFirebaseMessagingService
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,15 +47,14 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
         val notifyType = messageData["type"] ?: ""
         val chatRoomId = messageData["roomId"]
 
-        val uri = "napzak://$notifyType/$chatRoomId"
         chatRoomId?.toIntOrNull()?.let { notifyId ->
-            val intent = Intent(this, NotificationClickReceiver::class.java).apply {
-                putExtra("deep_link", uri)
-                action = OPEN_DEEPLINK_ACTION
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            val intent = Intent(this, MainActivity::class.java).apply {
+                putExtra("type", notifyType)
+                putExtra("roomId", chatRoomId)
+                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
             }
 
-            val pendingIntent = PendingIntent.getBroadcast(
+            val pendingIntent = PendingIntent.getActivity(
                 this, notifyId, intent,
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
@@ -127,6 +127,5 @@ class NapzakFirebaseMessaging : LifecycleAwareFirebaseMessagingService() {
         private const val TAG = "FCM - okhttp"
         const val NOTIFICATION_CHANNEL_ID = "NAPZAK"
         const val CHANNEL_NAME = "납작 푸시 알림 채널"
-        const val OPEN_DEEPLINK_ACTION = "com.napzak.OPEN_DEEP_LINK"
     }
 }

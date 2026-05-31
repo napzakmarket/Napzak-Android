@@ -28,12 +28,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.napzak.market.common.type.ReportType
 import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_down
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.report.R.string.report_input_title_reason
 import com.napzak.market.report.state.ReportState
 import com.napzak.market.report.state.rememberReportState
-import com.napzak.market.report.type.ReportType
 import com.napzak.market.ui_util.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -163,7 +163,7 @@ private fun dropDownMenuColor(): TextFieldColors = TextFieldDefaults.colors(
 @Composable
 private fun ReportReasonSectionPreview() {
     NapzakMarketTheme {
-        val reportState = rememberReportState(ReportType.PRODUCT.toString())
+        val reportState = rememberReportState(ReportType.PRODUCT)
 
         Column(modifier = Modifier.padding(20.dp)) {
             ReportReasonSection(

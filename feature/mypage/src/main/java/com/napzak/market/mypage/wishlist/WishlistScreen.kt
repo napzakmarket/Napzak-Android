@@ -37,6 +37,7 @@ import com.napzak.market.designsystem.R.drawable.ic_no_dips
 import com.napzak.market.designsystem.R.string.heart_click_snackbar_message
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.productItem.NapzakLargeProductItem
+import com.napzak.market.designsystem.component.scaffold.LocalInnerPadding
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -46,7 +47,6 @@ import com.napzak.market.mypage.wishlist.component.WishlistTopSection
 import com.napzak.market.mypage.wishlist.state.WishlistUiState
 import com.napzak.market.product.model.Product
 import com.napzak.market.ui_util.noRippleClickable
-import kotlin.collections.chunked
 
 @Composable
 internal fun WishlistRoute(
@@ -84,6 +84,8 @@ internal fun WishlistRoute(
             }
     }
 
+    val innerPadding = LocalInnerPadding.current
+
     WishlistScreen(
         uiState = uiState,
         onBackButtonClick = onNavigateUp,
@@ -92,7 +94,7 @@ internal fun WishlistRoute(
         onLikeButtonClick = { id, value ->
             viewModel.updateProductIsInterested(productId = id, isInterested = value)
         },
-        modifier = modifier,
+        modifier = modifier.padding(bottom = innerPadding.calculateBottomPadding()),
     )
 }
 
