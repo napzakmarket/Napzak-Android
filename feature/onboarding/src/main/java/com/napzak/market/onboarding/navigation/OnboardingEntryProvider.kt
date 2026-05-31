@@ -6,10 +6,10 @@ import com.napzak.market.navigation.AppNavigator
 import com.napzak.market.navigation.EntryProviderBuilder
 import com.napzak.market.navigation.keys.GenreScreenKey
 import com.napzak.market.navigation.keys.HomeScreenKey
-import com.napzak.market.navigation.keys.LoginScreenKey
 import com.napzak.market.navigation.keys.NicknameScreenKey
 import com.napzak.market.navigation.keys.PhoneVerificationScreenKey
 import com.napzak.market.navigation.keys.ScreenKey
+import com.napzak.market.navigation.keys.SplashScreenKey
 import com.napzak.market.navigation.keys.TermsScreenKey
 import com.napzak.market.onboarding.genre.GenreRoute
 import com.napzak.market.onboarding.nickname.NicknameRoute
@@ -69,8 +69,7 @@ class OnboardingEntryProvider @Inject constructor(
         socketEventBus.connect()
         navigator.navigateTo(
             key = HomeScreenKey,
-            popUpTo = LoginScreenKey,
-            inclusive = true,
+            popUpTo = SplashScreenKey,
         )
     }
 }

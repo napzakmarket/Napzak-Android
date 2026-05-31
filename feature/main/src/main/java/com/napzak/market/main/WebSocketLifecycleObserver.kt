@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -68,5 +69,10 @@ class WebSocketLifecycleObserver @Inject constructor(
 
     private suspend fun fetchStoreInfo(): StoreInfo? {
         return storeRepository.fetchStoreInfo().getOrNull()
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        activityScope.cancel()
+        super.onDestroy(owner)
     }
 }
