@@ -91,6 +91,7 @@ internal fun HorizontalAutoScrolledImages(
                     .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxWidth()
             )
         }
 
