@@ -96,6 +96,9 @@ internal fun PhoneVerificationRoute(
                         delay(1500)
                         showImage = false
                     }
+                    is PhoneVerificationSideEffect.OnUserVerify -> {
+                        onBackClick()
+                    }
                 }
             }
     }
@@ -113,7 +116,7 @@ internal fun PhoneVerificationRoute(
         onBackClick = onBackClick,
         onNextClick = {
             if (isOnboarding) onNextClick()
-            else onBackClick()
+            else viewModel.setVerificationStatusAsTrue()
         },
     )
 }
