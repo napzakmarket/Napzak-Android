@@ -8,6 +8,7 @@ import com.napzak.market.onboarding.phoneVerification.model.VerificationStatus
 import com.napzak.market.onboarding.phoneVerification.util.resolveError
 import com.napzak.market.store.usecase.CheckPhoneCodeUseCase
 import com.napzak.market.store.usecase.SendPhoneCodeUseCase
+import com.napzak.market.store.usecase.UpdateUserVerificationStatusUseCase
 import com.napzak.market.store.usecase.ValidateCodeUseCase
 import com.napzak.market.store.usecase.ValidateNameUseCase
 import com.napzak.market.store.usecase.ValidatePhoneUseCase
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,6 +32,7 @@ class PhoneVerificationViewModel @Inject constructor(
     private val validateCode: ValidateCodeUseCase,
     private val sendCode: SendPhoneCodeUseCase,
     private val checkCodeVerified: CheckPhoneCodeUseCase,
+    private val updateUserVerificationStatus: UpdateUserVerificationStatusUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(PhoneVerificationUiState())
     val uiState = _uiState.asStateFlow()
@@ -173,6 +176,17 @@ class PhoneVerificationViewModel @Inject constructor(
             429 -> PhoneVerificationError.VerificationCodeAttemptsExceeded
             else -> PhoneVerificationError.NetworkError
         }
+    }
+
+    fun setVerificationStatusAsTrue() = viewModelScope.launch {
+        updateUserVerificationStatus()
+            .onSuccess {
+                _sideEffect.send(PhoneVerificationSideEffect.OnUserVerify)
+            }
+            .onFailure {
+                Timber.e(it)
+                _sideEffect.send(PhoneVerificationSideEffect.OnUserVerifyError)
+            }
     }
 
     companion object {
