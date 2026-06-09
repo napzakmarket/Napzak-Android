@@ -187,7 +187,10 @@ class PhoneVerificationViewModel @Inject constructor(
             .onSuccess {
                 _sideEffect.send(PhoneVerificationSideEffect.OnUserVerify)
             }
-            .onFailure (Timber::e)
+            .onFailure {
+                Timber.e(it)
+                _sideEffect.send(PhoneVerificationSideEffect.OnUserVerifyError)
+            }
     }
 
     companion object {
