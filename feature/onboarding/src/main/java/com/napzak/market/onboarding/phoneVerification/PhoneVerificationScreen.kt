@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -50,9 +51,13 @@ import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.button.NapzakCheckedButton
 import com.napzak.market.designsystem.component.textfield.NapzakAffixTextField
 import com.napzak.market.designsystem.component.textfield.NapzakDefaultTextField
+import com.napzak.market.designsystem.component.toast.LocalNapzakToast
+import com.napzak.market.designsystem.component.toast.ToastFontType
+import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.onboarding.R
 import com.napzak.market.feature.onboarding.R.string.onboarding_done
+import com.napzak.market.feature.onboarding.R.string.onboarding_error_verification_error
 import com.napzak.market.feature.onboarding.R.string.onboarding_next
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_agreement_age_over_14
 import com.napzak.market.feature.onboarding.R.string.onboarding_phone_name_edit_hint
@@ -81,6 +86,8 @@ internal fun PhoneVerificationRoute(
     onNextClick: () -> Unit,
     viewModel: PhoneVerificationViewModel = hiltViewModel(),
 ) {
+    val toast = LocalNapzakToast.current
+    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isOnboarding by viewModel.isOnboarding.collectAsStateWithLifecycle()
@@ -95,6 +102,19 @@ internal fun PhoneVerificationRoute(
                         showImage = true
                         delay(1500)
                         showImage = false
+                    }
+
+                    is PhoneVerificationSideEffect.OnUserVerify -> {
+                        onBackClick()
+                    }
+
+                    is PhoneVerificationSideEffect.OnUserVerifyError -> {
+                        toast.makeText(
+                            toastType = ToastType.COMMON,
+                            message = context.getString(onboarding_error_verification_error),
+                            fontType = ToastFontType.SMALL,
+                            yOffset = 50,
+                        )
                     }
                 }
             }
@@ -113,7 +133,7 @@ internal fun PhoneVerificationRoute(
         onBackClick = onBackClick,
         onNextClick = {
             if (isOnboarding) onNextClick()
-            else onBackClick()
+            else viewModel.setVerificationStatusAsTrue()
         },
     )
 }

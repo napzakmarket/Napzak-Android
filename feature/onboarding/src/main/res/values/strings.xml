@@ -39,4 +39,5 @@
     <string name="onboarding_error_signup_unavailable">가입을 진행할 수 없습니다.\n문의사항은 고객센터로 연락해주세요.</string>
     <string name="onboarding_error_verification_limit_exceeded">오늘 인증 요청 가능 횟수를 초과했습니다.\n내일 다시 시도해주세요.</string>
     <string name="onboarding_error_verification_expired">인증 시간이 만료되었습니다.\n인증 번호를 다시 요청해주세요.</string>
+    <string name="onboarding_error_verification_error">오류가 발생했습니다.\n다시 시도해주세요</string>
 </resources>
