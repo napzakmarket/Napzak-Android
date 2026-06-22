@@ -8,7 +8,9 @@ import com.napzak.market.common.type.TradeType
 import com.napzak.market.explore.genredetail.state.GenreDetailProducts
 import com.napzak.market.explore.genredetail.state.GenreDetailUiState
 import com.napzak.market.genre.repository.GenreInfoRepository
+import com.napzak.market.product.model.Product
 import com.napzak.market.interest.repository.InterestProductRepository
+import com.napzak.market.mixpanel.GlobalTracker
 import com.napzak.market.navigation.keys.GenreDetailScreenKey
 import com.napzak.market.navigation.util.AssistedNavKeyFactory
 import com.napzak.market.product.model.ExploreParameters
@@ -29,6 +31,7 @@ class GenreDetailViewModel @AssistedInject constructor(
     private val genreInfoRepository: GenreInfoRepository,
     private val productExploreRepository: ProductExploreRepository,
     private val interestProductRepository: InterestProductRepository,
+    private val globalTracker: GlobalTracker,
 ) : ViewModel() {
     @AssistedFactory
     interface Factory : AssistedNavKeyFactory<GenreDetailViewModel, GenreDetailScreenKey>
@@ -126,8 +129,10 @@ class GenreDetailViewModel @AssistedInject constructor(
         val state = uiState.value.loadState
         when (state) {
             is UiState.Success -> {
+                var trackedProduct: Product? = null
                 val updatedProducts = state.data.productList.map { product ->
                     if (product.productId == productId) {
+                        trackedProduct = product
                         product.copy(isInterested = !product.isInterested)
                     } else {
                         product
@@ -139,6 +144,18 @@ class GenreDetailViewModel @AssistedInject constructor(
                         GenreDetailProducts(state.data.productCount, updatedProducts)
                     )
                 )
+
+                trackedProduct?.let { product ->
+                    val isForSale = TradeType.fromName(product.tradeType) == TradeType.SELL
+                    val actionType = if (isLiked) GlobalTracker.ACTION_REMOVE else GlobalTracker.ACTION_ADD
+                    globalTracker.trackItemLiked(
+                        postId = productId,
+                        genreName = product.genreName,
+                        isForSale = isForSale,
+                        source = GlobalTracker.SOURCE_GENRE_PAGE,
+                        actionType = actionType,
+                    )
+                }
             }
 
             else -> {}

@@ -14,6 +14,7 @@ import com.napzak.market.genre.model.extractGenreIds
 import com.napzak.market.genre.repository.GenreNameRepository
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
 import com.napzak.market.mixpanel.ExploreTracker
+import com.napzak.market.mixpanel.GlobalTracker
 import com.napzak.market.mixpanel.SearchTracker
 import com.napzak.market.navigation.keys.ExploreScreenKey
 import com.napzak.market.navigation.util.AssistedNavKeyFactory
@@ -49,6 +50,7 @@ internal class ExploreViewModel @AssistedInject constructor(
     private val setInterestProductUseCase: SetInterestProductUseCase,
     private val exploreTracker: ExploreTracker,
     private val searchTracker: SearchTracker,
+    private val globalTracker: GlobalTracker,
 ) : ViewModel() {
     @AssistedFactory
     interface Factory : AssistedNavKeyFactory<ExploreViewModel, ExploreScreenKey>
@@ -301,8 +303,10 @@ internal class ExploreViewModel @AssistedInject constructor(
     fun updateProductIsInterested(productId: Long, isInterested: Boolean) = viewModelScope.launch {
         when (val state = uiState.value.loadState) {
             is UiState.Success -> {
+                var trackedProduct: Product? = null
                 val updatedProducts = state.data.productList.map { product ->
                     if (product.productId == productId) {
+                        trackedProduct = product
                         interestDebounceFlow.emit(productId to isInterested)
                         product.copy(isInterested = !product.isInterested)
                     } else {
@@ -312,6 +316,19 @@ internal class ExploreViewModel @AssistedInject constructor(
 
                 val newState = ExploreProducts(state.data.productCount, updatedProducts)
                 updateLoadState(UiState.Success(newState))
+
+                trackedProduct?.let { product ->
+                    val isForSale = TradeType.fromName(product.tradeType) == TradeType.SELL
+                    val source = if (searchTerm.isNullOrEmpty()) GlobalTracker.SOURCE_EXPLORE_FEED else GlobalTracker.SOURCE_SEARCH_RESULT
+                    val actionType = if (isInterested) GlobalTracker.ACTION_REMOVE else GlobalTracker.ACTION_ADD
+                    globalTracker.trackItemLiked(
+                        postId = productId,
+                        genreName = product.genreName,
+                        isForSale = isForSale,
+                        source = source,
+                        actionType = actionType,
+                    )
+                }
 
                 when (isInterested) {
                     true -> _sideEffect.send(ExploreSideEffect.CancelToast)
@@ -353,10 +370,6 @@ internal class ExploreViewModel @AssistedInject constructor(
             sort = sortString,
             isForSale = uiState.value.selectedTab == TradeType.SELL
         )
-    }
-
-    internal fun trackViewedProduct(productId: Long, isForSale: Boolean) {
-        exploreTracker.trackViewedProduct(productId, isForSale)
     }
 
     internal fun trackSearchOpened() = searchTracker.trackOpenedSearch()

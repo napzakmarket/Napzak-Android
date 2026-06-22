@@ -10,6 +10,7 @@ import com.napzak.market.navigation.EntryProviderBuilder
 import com.napzak.market.navigation.keys.ChatListScreenKey
 import com.napzak.market.navigation.keys.ChatRoomScreenKey
 import com.napzak.market.navigation.keys.PhoneVerificationScreenKey
+import com.napzak.market.mixpanel.ExploreTracker
 import com.napzak.market.navigation.keys.ProductDetailScreenKey
 import com.napzak.market.navigation.keys.ReportScreenKey
 import com.napzak.market.navigation.keys.ScreenKey
@@ -48,7 +49,7 @@ class ChatEntryProvider @Inject constructor(
     }
 
     private fun navigateToProductDetail(productId: Long) {
-        val screenKey = ProductDetailScreenKey(productId = productId)
+        val screenKey = ProductDetailScreenKey(productId = productId, source = ExploreTracker.SOURCE_CHAT_ROOM)
         navigator.navigateTo(screenKey)
     }
 

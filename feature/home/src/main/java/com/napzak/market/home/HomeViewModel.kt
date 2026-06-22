@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.banner.Banner
 import com.napzak.market.common.state.UiState
+import com.napzak.market.common.type.TradeType
 import com.napzak.market.event.PhoneVerificationSessionManager
 import com.napzak.market.home.state.HomeUiState
 import com.napzak.market.home.type.HomeProductType
 import com.napzak.market.interest.usecase.SetInterestProductUseCase
+import com.napzak.market.mixpanel.GlobalTracker
 import com.napzak.market.mixpanel.HomeTracker
 import com.napzak.market.notification.repository.NotificationRepository
 import com.napzak.market.notification.usecase.UpdatePushTokenUseCase
@@ -48,6 +50,7 @@ internal class HomeViewModel @Inject constructor(
     private val getPhoneVerificationStatus: GetPhoneVerificationStatusUseCase,
     private val phoneVerificationSessionManager: PhoneVerificationSessionManager,
     private val homeTracker: HomeTracker,
+    private val globalTracker: GlobalTracker,
 ) : ViewModel() {
     private val nickname = MutableStateFlow("")
     private val _bannerLoadState =
@@ -188,16 +191,30 @@ internal class HomeViewModel @Inject constructor(
             HomeProductType.POPULAR_BUY -> _popularBuyLoadState
         }
 
+        var trackedProduct: Product? = null
         flow.update { currentState ->
             (currentState as UiState.Success<List<Product>>).copy(
                 data = currentState.data.map {
                     if (it.productId == productId) {
+                        trackedProduct = it
                         interestDebounceFlow.emit(productId to isInterested)
                         it.copy(isInterested = !isInterested)
                     } else {
                         it
                     }
                 }
+            )
+        }
+
+        trackedProduct?.let { product ->
+            val isForSale = TradeType.fromName(product.tradeType) == TradeType.SELL
+            val actionType = if (isInterested) GlobalTracker.ACTION_REMOVE else GlobalTracker.ACTION_ADD
+            globalTracker.trackItemLiked(
+                postId = productId,
+                genreName = product.genreName,
+                isForSale = isForSale,
+                source = GlobalTracker.SOURCE_HOME_FEED,
+                actionType = actionType,
             )
         }
 
@@ -272,8 +289,8 @@ internal class HomeViewModel @Inject constructor(
         homeTracker.trackClickedBanner(bannerId, typeString, bannerIndex)
     }
 
-    internal fun trackClickedRecommendProduct(index: Int) {
-        homeTracker.trackClickedRecommendProduct(index)
+    internal fun trackClickedRecommendProduct(index: Int, postId: Long, genreName: String) {
+        homeTracker.trackClickedRecommendProduct(index, postId, genreName)
     }
 
     internal fun trackClickedPopularProduct(productType: HomeProductType) {

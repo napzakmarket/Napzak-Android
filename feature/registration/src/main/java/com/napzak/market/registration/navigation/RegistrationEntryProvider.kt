@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.EntryProviderScope
 import com.napzak.market.genre.model.Genre
+import com.napzak.market.mixpanel.ExploreTracker
 import com.napzak.market.navigation.AppNavigator
 import com.napzak.market.navigation.EntryProviderBuilder
 import com.napzak.market.navigation.keys.GenreSearchScreenKey
@@ -91,7 +92,7 @@ class RegistrationEntryProvider @Inject constructor(
 
     private fun navigateToProductDetail(productId: Long) {
         navigator.navigateTo(
-            key = ProductDetailScreenKey(productId = productId),
+            key = ProductDetailScreenKey(productId = productId, source = ExploreTracker.SOURCE_MY_POST),
             popUpTo = navigator.currentScreen,
             inclusive = true,
             singleTop = true,

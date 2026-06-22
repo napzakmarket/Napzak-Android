@@ -32,12 +32,16 @@ class HomeTracker @Inject constructor(
      * Event       : Clicked custom genre
      * Description : 홈 화면 추천 상품 섹션 클릭 (기존 상수명 유지)
      * @param itemIndex 아이템 위치 순서
+     * @param postId 상품 ID
+     * @param genreName 장르 이름
      */
-    fun trackClickedRecommendProduct(itemIndex: Int) {
+    fun trackClickedRecommendProduct(itemIndex: Int, postId: Long, genreName: String) {
         analytics.logEvent(
             MixpanelConstants.CLICKED_CUSTOM_GENRE,
             mapOf(
                 ITEM_INDEX to itemIndex,
+                POST_ID to postId,
+                GENRE_NAME to genreName,
             ),
         )
     }
@@ -75,6 +79,8 @@ class HomeTracker @Inject constructor(
         private const val BANNER_TYPE = "banner_type"
         private const val BANNER_INDEX = "banner_index"
         private const val ITEM_INDEX = "item_index"
+        private const val POST_ID = "post_id"
+        private const val GENRE_NAME = "genre_name"
         private const val SORT = "sort"
         private const val FROM = "from"
         private const val HOME = "home"

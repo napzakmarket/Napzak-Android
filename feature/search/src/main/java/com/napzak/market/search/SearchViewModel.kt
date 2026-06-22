@@ -75,10 +75,11 @@ class SearchViewModel @Inject constructor(
             )
         }
 
-    internal fun trackExecutedSearch(source: String) {
+    internal fun trackExecutedSearch(source: String, genreName: String? = null) {
         searchTracker.trackExecutedSearch(
             searchSource = source,
             keyword = searchTerm.value,
+            genreName = genreName,
         )
     }
 

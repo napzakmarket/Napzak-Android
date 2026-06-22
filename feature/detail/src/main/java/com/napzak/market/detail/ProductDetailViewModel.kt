@@ -14,6 +14,7 @@ import com.napzak.market.detail.ProductDetailSideEffect.ShowToast
 import com.napzak.market.detail.type.ProductDetailToastType
 import com.napzak.market.interest.usecase.SetInterestUseCase
 import com.napzak.market.mixpanel.ExploreTracker
+import com.napzak.market.mixpanel.GlobalTracker
 import com.napzak.market.mixpanel.ReportTracker
 import com.napzak.market.navigation.keys.ProductDetailScreenKey
 import com.napzak.market.navigation.util.AssistedNavKeyFactory
@@ -48,11 +49,13 @@ internal class ProductDetailViewModel @AssistedInject constructor(
     private val getPhoneVerificationStatus: GetPhoneVerificationStatusUseCase,
     private val exploreTracker: ExploreTracker,
     private val reportTracker: ReportTracker,
+    private val globalTracker: GlobalTracker,
 ) : ViewModel() {
     @AssistedFactory
     interface Factory : AssistedNavKeyFactory<ProductDetailViewModel, ProductDetailScreenKey>
 
     private val productId: Long = navKey.productId
+    private val source: String? = navKey.source
 
     private val _productDetail: MutableStateFlow<UiState<ProductDetail>> =
         MutableStateFlow(UiState.Loading)
@@ -73,12 +76,8 @@ internal class ProductDetailViewModel @AssistedInject constructor(
         )
 
     init {
-        if (productId != null) {
-            getProductDetail(productId)
-            collectAndSetIsInterested(productId)
-        } else {
-            _productDetail.value = UiState.Failure("상품 정보를 불러올 수 없습니다.")
-        }
+        getProductDetail(productId)
+        collectAndSetIsInterested(productId)
     }
 
     fun checkPhoneVerification() = viewModelScope.launch {
@@ -118,6 +117,7 @@ internal class ProductDetailViewModel @AssistedInject constructor(
 
     fun updateIsInterested(isInterested: Boolean) = viewModelScope.launch {
         updateInterestAndCount(isInterested)
+        trackItemLiked(isInterested)
         triggerUpdateIsInterestedSideEffect(isInterested)
     }
 
@@ -159,7 +159,10 @@ internal class ProductDetailViewModel @AssistedInject constructor(
                 currentState
             }
         }
-        updatedDetail?.let { triggerUpdateTradeStatusChangeSideEffect(it) }
+        updatedDetail?.let {
+            triggerUpdateTradeStatusChangeSideEffect(it)
+            trackItemStatusUpdated(it, tradeStatus)
+        }
     }
 
     private suspend fun triggerUpdateTradeStatusChangeSideEffect(productDetail: ProductDetail) {
@@ -187,6 +190,21 @@ internal class ProductDetailViewModel @AssistedInject constructor(
         productDetailRepository.setShowProductStatusTooltip(value)
     }
 
+    private fun trackItemLiked(isInterested: Boolean) {
+        val currentUiState = productDetail.value
+        if (currentUiState is UiState.Success) {
+            val isForSale = TradeType.fromName(currentUiState.data.tradeType) == TradeType.SELL
+            val actionType = if (isInterested) GlobalTracker.ACTION_ADD else GlobalTracker.ACTION_REMOVE
+            globalTracker.trackItemLiked(
+                postId = currentUiState.data.productId,
+                genreName = currentUiState.data.genreName,
+                isForSale = isForSale,
+                source = GlobalTracker.SOURCE_ITEM_DETAIL,
+                actionType = actionType,
+            )
+        }
+    }
+
     private fun trackViewedProduct() {
         val currentUiState = productDetail.value
         if (currentUiState is UiState.Success) {
@@ -194,6 +212,7 @@ internal class ProductDetailViewModel @AssistedInject constructor(
             exploreTracker.trackViewedProduct(
                 postId = currentUiState.data.productId,
                 isForSale = isForSale,
+                source = source.orEmpty(),
             )
         }
     }
@@ -209,10 +228,25 @@ internal class ProductDetailViewModel @AssistedInject constructor(
         }
     }
 
+    private fun trackItemStatusUpdated(productDetail: ProductDetail, tradeStatus: String) {
+        val isForSale = TradeType.fromName(productDetail.tradeType) == TradeType.SELL
+        val statusLabel = when (tradeStatus.uppercase()) {
+            "BEFORE_TRADE" -> ReportTracker.STATUS_ON_SALE
+            "COMPLETED" -> ReportTracker.STATUS_COMPLETED
+            else -> ReportTracker.STATUS_RESERVED
+        }
+
+        reportTracker.trackItemStatusUpdated(
+            postId = productDetail.productId,
+            genreName = productDetail.genreName,
+            isForSale = isForSale,
+            statusLabel = statusLabel,
+        )
+    }
+
     internal fun trackReportProduct() = reportTracker.trackOpenedReportProduct()
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L
-        private const val PRODUCT_ID_KEY = "productId"
     }
 }

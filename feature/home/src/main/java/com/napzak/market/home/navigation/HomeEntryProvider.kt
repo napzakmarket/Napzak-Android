@@ -8,6 +8,7 @@ import com.napzak.market.common.type.TradeType.SELL
 import com.napzak.market.event.ChatSessionManager
 import com.napzak.market.event.DeepLinkEvent
 import com.napzak.market.event.DeepLinkEventBus
+import com.napzak.market.mixpanel.ExploreTracker
 import com.napzak.market.home.HomeRoute
 import com.napzak.market.navigation.AppNavigator
 import com.napzak.market.navigation.EntryProviderBuilder
@@ -48,7 +49,7 @@ class HomeEntryProvider @Inject constructor(
     }
 
     private fun navigateToProductDetail(productId: Long) {
-        navigator.navigateTo(ProductDetailScreenKey(productId))
+        navigator.navigateTo(ProductDetailScreenKey(productId, source = ExploreTracker.SOURCE_HOME_FEED))
     }
 
     private fun navigateToExploreBuy() {

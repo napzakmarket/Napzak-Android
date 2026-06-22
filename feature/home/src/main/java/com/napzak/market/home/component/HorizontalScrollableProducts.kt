@@ -34,7 +34,7 @@ internal fun HorizontalScrollableProducts(
     subTitle: String,
     products: ImmutableList<Product>,
     onLikeClick: (Long, Boolean) -> Unit,
-    onProductClick: (Long, Int) -> Unit,
+    onProductClick: (Long, Int, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -69,7 +69,7 @@ internal fun HorizontalScrollableProducts(
 private fun ProductsRow(
     products: ImmutableList<Product>,
     onLikeClick: (Long, Boolean) -> Unit,
-    onItemClick: (Long, Int) -> Unit,
+    onItemClick: (Long, Int, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val configuration = LocalConfiguration.current
@@ -104,7 +104,7 @@ private fun ProductsRow(
                         .width(productWidth.dp)
                         .aspectRatio(PRODUCT_HEIGHT_RATIO)
                         .noRippleClickable {
-                            onItemClick(productId, index)
+                            onItemClick(productId, index, genreName)
                         },
                 )
             }
@@ -122,7 +122,7 @@ private fun HorizontalScrollableProductsPreview() {
                 title = "납자기님을 위한 맞춤 PICK!",
                 subTitle = "납자기님의 취향에 딱 맞는 아이템들을 모아봤어요.",
                 onLikeClick = { _, _ -> },
-                onProductClick = { _, _ -> },
+                onProductClick = { _, _, _ -> },
             )
         }
     }
