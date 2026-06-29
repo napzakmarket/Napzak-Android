@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -102,9 +102,7 @@ internal fun ProductDetailRoute(
     if (uiState is UiState.Empty) {
         DeletedProductScreen(
             onHomeClick = onNavigateToHome,
-            modifier = modifier
-                .statusBarsPadding()
-                .navigationBarsPadding(),
+            modifier = modifier.systemBarsPadding(),
         )
         return
     }
