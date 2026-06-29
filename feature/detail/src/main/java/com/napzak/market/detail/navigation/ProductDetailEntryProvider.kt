@@ -8,6 +8,7 @@ import com.napzak.market.detail.ProductDetailViewModel
 import com.napzak.market.navigation.AppNavigator
 import com.napzak.market.navigation.EntryProviderBuilder
 import com.napzak.market.navigation.keys.ChatRoomScreenKey
+import com.napzak.market.navigation.keys.HomeScreenKey
 import com.napzak.market.navigation.keys.PhoneVerificationScreenKey
 import com.napzak.market.navigation.keys.ProductDetailScreenKey
 import com.napzak.market.navigation.keys.PurchaseRegistrationScreenKey
@@ -30,6 +31,7 @@ class ProductDetailEntryProvider @Inject constructor(
                 onReportNavigate = ::navigateToProductReport,
                 onPhoneVerificationNavigate = ::navigateToPhoneVerification,
                 onNavigateUp = navigator::pop,
+                onNavigateToHome = ::popUpToHome,
                 viewModel = viewModel,
             )
         }
@@ -49,6 +51,12 @@ class ProductDetailEntryProvider @Inject constructor(
             TradeType.BUY -> PurchaseRegistrationScreenKey(productId = productId)
         }
         navigator.navigateTo(screenKey)
+    }
+
+    private fun popUpToHome() {
+        if (navigator.backStack.contains(HomeScreenKey)) {
+            while (navigator.currentScreen != HomeScreenKey) navigator.pop()
+        }
     }
 
     private fun navigateToProductReport(productId: Long) {

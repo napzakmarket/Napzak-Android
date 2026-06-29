@@ -2,23 +2,37 @@ package com.napzak.market.detail
 
 import android.content.Intent
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -27,6 +41,9 @@ import com.napzak.market.common.state.UiState
 import com.napzak.market.common.type.ProductConditionType
 import com.napzak.market.common.type.TradeStatusType
 import com.napzak.market.common.type.TradeType
+import com.napzak.market.designsystem.R.drawable.ic_thick_arrow
+import com.napzak.market.designsystem.R.drawable.img_not_found
+import com.napzak.market.designsystem.component.button.NapzakButton
 import com.napzak.market.designsystem.component.dialog.NapzakDialog
 import com.napzak.market.designsystem.component.dialog.NapzakDialogDefault
 import com.napzak.market.designsystem.component.image.ZoomableImageScreen
@@ -45,6 +62,9 @@ import com.napzak.market.detail.component.group.ProductInformationGroup
 import com.napzak.market.detail.component.group.ProductInformationSellGroup
 import com.napzak.market.detail.component.group.ProductMarketGroup
 import com.napzak.market.detail.component.topbar.DetailTopBar
+import com.napzak.market.feature.detail.R.string.detail_deleted_product_button
+import com.napzak.market.feature.detail.R.string.detail_deleted_product_subtitle
+import com.napzak.market.feature.detail.R.string.detail_deleted_product_title
 import com.napzak.market.feature.detail.R.string.detail_dialog_delete_sub_title
 import com.napzak.market.feature.detail.R.string.detail_dialog_delete_title
 import com.napzak.market.product.model.ProductDetail
@@ -62,6 +82,7 @@ internal fun ProductDetailRoute(
     onReportNavigate: (productId: Long) -> Unit,
     onPhoneVerificationNavigate: () -> Unit,
     onNavigateUp: () -> Unit,
+    onNavigateToHome: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProductDetailViewModel = hiltViewModel(),
 ) {
@@ -77,6 +98,16 @@ internal fun ProductDetailRoute(
     val isPhoneVerified by viewModel.isPhoneVerified.collectAsStateWithLifecycle()
 
     var isPhoneVerifyModalVisible by remember { mutableStateOf(false) }
+
+    if (uiState is UiState.Empty) {
+        DeletedProductScreen(
+            onHomeClick = onNavigateToHome,
+            modifier = modifier
+                .statusBarsPadding()
+                .navigationBarsPadding(),
+        )
+        return
+    }
 
     LaunchedEffect(Unit) {
         viewModel.checkPhoneVerification()
@@ -399,6 +430,57 @@ private fun ProductDetailDeleteDialog(
             onConfirmClick = onConfirmClick,
             onDismissClick = onDismissClick,
         )
+    }
+}
+
+@Composable
+private fun DeletedProductScreen(
+    onHomeClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier.fillMaxSize(),
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.width(IntrinsicSize.Max),
+        ) {
+            Image(
+                imageVector = ImageVector.vectorResource(img_not_found),
+                contentDescription = null,
+                modifier = Modifier.fillMaxWidth(),
+            )
+
+            Text(
+                text = stringResource(detail_deleted_product_title),
+                style = NapzakMarketTheme.typography.title20sb,
+                color = NapzakMarketTheme.colors.black,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+            )
+
+            Text(
+                text = stringResource(detail_deleted_product_subtitle),
+                style = NapzakMarketTheme.typography.body16m,
+                color = NapzakMarketTheme.colors.gray300,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 6.dp),
+            )
+
+            NapzakButton(
+                text = stringResource(detail_deleted_product_button),
+                onClick = onHomeClick,
+                icon = ImageVector.vectorResource(ic_thick_arrow),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 15.dp),
+            )
+        }
     }
 }
 
