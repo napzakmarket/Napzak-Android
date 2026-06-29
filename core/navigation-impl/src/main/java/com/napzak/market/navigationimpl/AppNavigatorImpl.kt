@@ -1,14 +1,17 @@
 package com.napzak.market.navigationimpl
 
 import android.content.Intent
+import android.net.Uri
 import androidx.navigation3.runtime.NavBackStack
 import com.napzak.market.event.ChatSessionManager
 import com.napzak.market.event.DeepLinkEvent
 import com.napzak.market.event.DeepLinkEventBus
+import com.napzak.market.event.ProductDetailSessionManager
 import com.napzak.market.navigation.AppNavigator
 import com.napzak.market.navigation.keys.ChatListScreenKey
 import com.napzak.market.navigation.keys.ChatRoomScreenKey
 import com.napzak.market.navigation.keys.LoginScreenKey
+import com.napzak.market.navigation.keys.ProductDetailScreenKey
 import com.napzak.market.navigation.keys.ScreenKey
 import com.napzak.market.navigation.keys.SplashScreenKey
 import javax.inject.Inject
@@ -16,6 +19,7 @@ import javax.inject.Inject
 class AppNavigatorImpl @Inject constructor(
     override val backStack: NavBackStack<ScreenKey>,
     private val chatSessionManager: ChatSessionManager,
+    private val productDetailSessionManager: ProductDetailSessionManager,
     private val deepLinkEventBus: DeepLinkEventBus,
 ) : AppNavigator {
     override val currentScreen get() = backStack.lastOrNull()
@@ -59,6 +63,11 @@ class AppNavigatorImpl @Inject constructor(
         when (notifyType) {
             "chat" -> handleChatIntent(intent)
         }
+
+        // App Link 처리
+        if (intent.action == Intent.ACTION_VIEW) {
+            intent.data?.let { handleAppLink(it) }
+        }
     }
 
     private suspend fun handleChatIntent(intent: Intent) {
@@ -67,6 +76,15 @@ class AppNavigatorImpl @Inject constructor(
         if (chatRoomId != null) {
             chatSessionManager.setChatRoomId(chatRoomId)
             deepLinkEventBus.send(DeepLinkEvent.NavigateToChatRoom(chatRoomId))
+        }
+    }
+
+    private suspend fun handleAppLink(uri: Uri) {
+        val segments = uri.pathSegments
+        if (segments.getOrNull(0) == "product") {
+            val productId = segments.getOrNull(1)?.toLongOrNull() ?: return
+            productDetailSessionManager.setPendingProductId(productId)
+            deepLinkEventBus.send(DeepLinkEvent.NavigateToProductDetail(productId))
         }
     }
 
@@ -82,6 +100,13 @@ class AppNavigatorImpl @Inject constructor(
                             )
                         )
                         chatSessionManager.setChatRoomId(null)
+                    }
+                }
+
+                is DeepLinkEvent.NavigateToProductDetail -> {
+                    if (currentScreen != LoginScreenKey && currentScreen != SplashScreenKey) {
+                        navigateTo(ProductDetailScreenKey(productId = event.productId))
+                        productDetailSessionManager.setPendingProductId(null)
                     }
                 }
             }

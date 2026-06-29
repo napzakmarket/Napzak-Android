@@ -8,6 +8,7 @@ import com.napzak.market.common.type.TradeType.SELL
 import com.napzak.market.event.ChatSessionManager
 import com.napzak.market.event.DeepLinkEvent
 import com.napzak.market.event.DeepLinkEventBus
+import com.napzak.market.event.ProductDetailSessionManager
 import com.napzak.market.mixpanel.ExploreTracker
 import com.napzak.market.home.HomeRoute
 import com.napzak.market.navigation.AppNavigator
@@ -23,6 +24,7 @@ import javax.inject.Inject
 class HomeEntryProvider @Inject constructor(
     private val navigator: AppNavigator,
     private val chatSessionManager: ChatSessionManager,
+    private val productDetailSessionManager: ProductDetailSessionManager,
     private val deepLinkEventBus: DeepLinkEventBus,
 ) : EntryProviderBuilder {
     override fun EntryProviderScope<ScreenKey>.provide() {
@@ -31,6 +33,10 @@ class HomeEntryProvider @Inject constructor(
                 // HomeRoute 컴포지션 단계에서 채팅 알림 클릭 여부를 확인해 이벤트를 전달합니다.
                 chatSessionManager.chatRoomId.value?.let { chatRoomId ->
                     deepLinkEventBus.send(DeepLinkEvent.NavigateToChatRoom(chatRoomId))
+                }
+                // 로그인 전 딥링크 진입 시 저장된 productId로 이동합니다.
+                productDetailSessionManager.pendingProductId.value?.let { productId ->
+                    deepLinkEventBus.send(DeepLinkEvent.NavigateToProductDetail(productId))
                 }
             }
 
