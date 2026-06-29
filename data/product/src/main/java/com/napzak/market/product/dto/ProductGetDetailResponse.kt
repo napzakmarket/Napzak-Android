@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ProductGetDetailResponse(
     @SerialName("isInterested") val isInterested: Boolean,
+    @SerialName("shareUrl") val shareUrl: String,
     @SerialName("productDetail") val productDetail: ProductDetailResponse,
     @SerialName("productPhotoList") val productPhotoList: List<ProductPhotoResponse>,
     @SerialName("storeInfo") val storeInfo: StoreInfoResponse,

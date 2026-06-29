@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.napzak.market.designsystem.R.drawable.ic_gray_arrow_left
 import com.napzak.market.designsystem.R.drawable.ic_kebab
+import com.napzak.market.designsystem.R.drawable.ic_share
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
 import com.napzak.market.feature.detail.R.drawable.img_tooltip_product_state
 import com.napzak.market.ui_util.ShadowDirection
@@ -43,6 +44,7 @@ import com.skydoves.balloon.compose.setBackgroundColor
 internal fun DetailTopBar(
     showToolTip: Boolean,
     onBackClick: () -> Unit,
+    onShareClick: () -> Unit,
     onOptionClick: () -> Unit,
     onTooltipDismiss: () -> Unit,
     modifier: Modifier = Modifier,
@@ -71,21 +73,31 @@ internal fun DetailTopBar(
             onClick = onBackClick,
         )
 
-        ActionButton(
-            iconRes = ic_kebab,
-            onClick = onOptionClick,
-            modifier = Modifier.then(
-                balloonState?.let { state ->
-                    Modifier.balloon(state) {
-                        Image(
-                            painter = painterResource(img_tooltip_product_state),
-                            contentDescription = null,
-                            modifier = Modifier.size(width = 264.dp, height = 68.dp)
-                        )
-                    }
-                } ?: Modifier
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            ActionButton(
+                iconRes = ic_share,
+                onClick = onShareClick,
             )
-        )
+
+            ActionButton(
+                iconRes = ic_kebab,
+                onClick = onOptionClick,
+                modifier = Modifier.then(
+                    balloonState?.let { state ->
+                        Modifier.balloon(state) {
+                            Image(
+                                painter = painterResource(img_tooltip_product_state),
+                                contentDescription = null,
+                                modifier = Modifier.size(width = 264.dp, height = 68.dp)
+                            )
+                        }
+                    } ?: Modifier
+                )
+            )
+        }
     }
 }
 
@@ -150,6 +162,7 @@ private fun DetailTopBarPreview() {
         ) {
             DetailTopBar(
                 onBackClick = {},
+                onShareClick = {},
                 onOptionClick = {},
                 onTooltipDismiss = {},
                 showToolTip = true,

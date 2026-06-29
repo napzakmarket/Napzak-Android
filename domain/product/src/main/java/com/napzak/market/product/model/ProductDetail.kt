@@ -18,6 +18,7 @@ data class ProductDetail(
     val tradeStatus: String,
     val isOwnedByCurrentUser: Boolean,
     val isInterested: Boolean,
+    val shareUrl: String,
     val productPhotos: List<ProductPhoto>,
     val storeInfo: StoreInfo,
 ) {
