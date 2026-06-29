@@ -39,6 +39,7 @@ jobs:
       - name: Create keystore.properties
         run: |
           mkdir ./app/signing
+          echo '${{ secrets.DEBUG_KEYSTORE_JKS }}' | base64 -d > ./app/signing/napzak-debug.jks
           echo '${{ secrets.KEYSTORE_JKS }}' | base64 -d > ./app/signing/napzak-keystore.jks
           echo '${{ secrets.KEYSTORE_PROPERTIES }}' > ./app/signing/keystore.properties
 
