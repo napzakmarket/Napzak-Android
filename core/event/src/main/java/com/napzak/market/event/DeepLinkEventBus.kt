@@ -17,4 +17,5 @@ class DeepLinkEventBus @Inject constructor() {
 
 sealed interface DeepLinkEvent {
     data class NavigateToChatRoom(val chatRoomId: Long) : DeepLinkEvent
+    data class NavigateToProductDetail(val productId: Long) : DeepLinkEvent
 }
