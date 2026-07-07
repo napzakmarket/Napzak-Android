@@ -5,6 +5,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.navigation3.runtime.NavBackStack
 import com.napzak.market.event.ChatSessionManager
 import com.napzak.market.event.DeepLinkEventBus
+import com.napzak.market.event.ProductDetailSessionManager
 import com.napzak.market.navigation.AppNavigator
 import com.napzak.market.navigation.keys.ScreenKey
 import com.napzak.market.navigation.keys.SplashScreenKey
@@ -36,8 +37,9 @@ object AppNavigatorModule {
     fun provideAppNavigator(
         backStack: NavBackStack<ScreenKey>,
         chatSessionManager: ChatSessionManager,
+        productDetailSessionManager: ProductDetailSessionManager,
         deepLinkEventBus: DeepLinkEventBus,
     ): AppNavigator {
-        return AppNavigatorImpl(backStack, chatSessionManager, deepLinkEventBus)
+        return AppNavigatorImpl(backStack, chatSessionManager, productDetailSessionManager, deepLinkEventBus)
     }
 }

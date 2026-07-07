@@ -17,9 +17,7 @@ class ProductDetailRepositoryImpl @Inject constructor(
     override suspend fun getProductDetail(productId: Long): Result<ProductDetail> =
         runCatching {
             val responseData = productDetailDataSource.getProductDetail(productId).data
-            val isInterested = responseData.isInterested
-
-            responseData.toDomain(isInterested = isInterested)
+            responseData.toDomain(isInterested = responseData.isInterested)
         }
 
     override suspend fun patchTradeStatus(productId: Long, tradeStatus: String): Result<Unit> =
