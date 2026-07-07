@@ -16,6 +16,7 @@ val keystoreProperties = Properties().apply {
     if (f.exists()) f.inputStream().use { load(it) }
 }
 
+
 val kakaoNativeKey: String =
     providers.gradleProperty("KAKAO_APP_KEY").orNull
         ?: System.getenv("KAKAO_APP_KEY")
@@ -26,11 +27,17 @@ android {
     namespace = "com.napzak.market"
 
     signingConfigs {
+        getByName("debug") {
+            storeFile = rootProject.file(keystoreProperties.getProperty("debug.keystorePath"))
+            keyAlias = keystoreProperties.getProperty("debug.keyAlias")
+            keyPassword = keystoreProperties.getProperty("debug.keyPassword")
+            storePassword = keystoreProperties.getProperty("debug.storePassword")
+        }
         create("release") {
-            storeFile = rootProject.file(keystoreProperties.getProperty("keystorePath"))
-            keyAlias = keystoreProperties.getProperty("keyAlias")
-            keyPassword = keystoreProperties.getProperty("keyPassword")
-            storePassword = keystoreProperties.getProperty("storePassword")
+            storeFile = rootProject.file(keystoreProperties.getProperty("release.keystorePath"))
+            keyAlias = keystoreProperties.getProperty("release.keyAlias")
+            keyPassword = keystoreProperties.getProperty("release.keyPassword")
+            storePassword = keystoreProperties.getProperty("release.storePassword")
         }
     }
 
@@ -41,6 +48,7 @@ android {
 
     buildTypes {
         debug {
+            signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = false
             isDebuggable = true
             applicationIdSuffix = ".debug"

@@ -1,5 +1,4 @@
 /build
-/signing/napzak_keystore.jks
 /signing/keystore.properties
 /src/release/google-services.json
 /src/debug/google-services.json
