@@ -1,8 +1,5 @@
 package com.napzak.market.detail
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.napzak.market.common.state.UiState
@@ -188,6 +185,13 @@ internal class ProductDetailViewModel @AssistedInject constructor(
 
     fun setShowProductStatusToolTip(value: Boolean) = viewModelScope.launch {
         productDetailRepository.setShowProductStatusTooltip(value)
+    }
+
+    fun onShareClick() = viewModelScope.launch {
+        val currentState = _productDetail.value
+        if (currentState is UiState.Success) {
+            _sideEffect.send(ProductDetailSideEffect.ShareProduct(currentState.data.shareUrl))
+        }
     }
 
     private fun trackItemLiked(isInterested: Boolean) {

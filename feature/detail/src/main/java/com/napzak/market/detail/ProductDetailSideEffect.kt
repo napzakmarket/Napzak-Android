@@ -10,4 +10,5 @@ sealed interface ProductDetailSideEffect {
 
     data object CancelToast : ProductDetailSideEffect
     data object NavigateUp : ProductDetailSideEffect
+    data class ShareProduct(val url: String) : ProductDetailSideEffect
 }

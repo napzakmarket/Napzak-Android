@@ -1,8 +1,12 @@
 package com.napzak.market.detail
 
+import android.content.Intent
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -16,7 +20,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -29,7 +32,6 @@ import com.napzak.market.designsystem.component.dialog.NapzakDialogDefault
 import com.napzak.market.designsystem.component.image.ZoomableImageScreen
 import com.napzak.market.designsystem.component.loading.NapzakLoadingOverlay
 import com.napzak.market.designsystem.component.popup.NapzakPhoneVerifyModal
-import com.napzak.market.designsystem.component.scaffold.LocalInnerPadding
 import com.napzak.market.designsystem.component.toast.LocalNapzakToast
 import com.napzak.market.designsystem.component.toast.ToastType
 import com.napzak.market.designsystem.theme.NapzakMarketTheme
@@ -66,6 +68,9 @@ internal fun ProductDetailRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val toast = LocalNapzakToast.current
+    val density = LocalDensity.current
+    val statusBars = WindowInsets.statusBars
+    val lockedStatusBarTop = remember { statusBars.getTop(density) }
 
     val uiState by viewModel.productDetail.collectAsStateWithLifecycle()
     val showProductStatusToolTip by viewModel.showProductStatusTooltip.collectAsStateWithLifecycle()
@@ -105,6 +110,16 @@ internal fun ProductDetailRoute(
                     is ProductDetailSideEffect.CancelToast -> {
                         toast.cancel()
                     }
+
+                    is ProductDetailSideEffect.ShareProduct -> {
+                        val intent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, sideEffect.url)
+                        }
+                        context.startActivity(
+                            Intent.createChooser(intent, null)
+                        )
+                    }
                 }
             }
     }
@@ -112,6 +127,7 @@ internal fun ProductDetailRoute(
     ProductDetailScreen(
         uiState = uiState,
         isPhoneVerifyModalVisible = isPhoneVerifyModalVisible,
+        onShareClick = viewModel::onShareClick,
         onMarketClick = onMarketNavigate,
         onChatButtonClick = {
             if (!isPhoneVerified) {
@@ -135,7 +151,8 @@ internal fun ProductDetailRoute(
         onDismissClick = { isPhoneVerifyModalVisible = false },
         onPhoneVerifyClick = onPhoneVerificationNavigate,
         modifier = modifier
-            .systemBarsPadding(),
+            .padding(top = with(density) { lockedStatusBarTop.toDp() })
+            .navigationBarsPadding(),
     )
 }
 
@@ -144,6 +161,7 @@ private fun ProductDetailScreen(
     uiState: UiState<ProductDetail>,
     showProductStatusToolTip: Boolean,
     isPhoneVerifyModalVisible: Boolean,
+    onShareClick: () -> Unit,
     onMarketClick: (userId: Long) -> Unit,
     onChatButtonClick: (productId: Long) -> Unit,
     onLikeButtonClick: (Boolean) -> Unit,
@@ -166,6 +184,7 @@ private fun ProductDetailScreen(
                 showToolTip = showProductStatusToolTip
                         && (uiState is UiState.Success && uiState.data.isOwnedByCurrentUser),
                 onBackClick = onBackButtonClick,
+                onShareClick = onShareClick,
                 onOptionClick = { sheetVisibility = true },
                 onTooltipDismiss = { onTooltipDismiss(false) },
             )
@@ -404,6 +423,7 @@ private fun ProductDetailScreenPreview() {
         tradeStatus = "BEFORE_TRADE",
         isOwnedByCurrentUser = true,
         isInterested = false,
+        shareUrl = "",
         productPhotos = listOf(
             ProductPhoto(
                 photoId = 1,

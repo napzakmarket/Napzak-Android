@@ -27,6 +27,7 @@ fun ProductGetDetailResponse.toDomain(isInterested: Boolean): ProductDetail =
             tradeStatus = tradeStatus,
             isOwnedByCurrentUser = isOwnedByCurrentUser,
             isInterested = isInterested,
+            shareUrl = shareUrl,
             productPhotos = productPhotoList.toDomain(),
             storeInfo = storeInfo.toDomain(),
         )
