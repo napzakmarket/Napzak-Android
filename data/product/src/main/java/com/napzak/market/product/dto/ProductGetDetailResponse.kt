@@ -15,7 +15,7 @@ data class ProductGetDetailResponse(
     data class ProductDetailResponse(
         @SerialName("productId") val productId: Long,
         @SerialName("tradeType") val tradeType: String,
-        @SerialName("genreName") val genreName: String,
+        @SerialName("genreName") val genreName: String?,
         @SerialName("productName") val productName: String,
         @SerialName("price") val price: Int,
         @SerialName("uploadTime") val uploadTime: String,

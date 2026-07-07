@@ -21,6 +21,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import com.napzak.market.store.usecase.GetPhoneVerificationStatusUseCase
+import com.napzak.market.ui_util.getHttpExceptionMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
@@ -92,7 +93,11 @@ internal class ProductDetailViewModel @AssistedInject constructor(
             }
             .onFailure {
                 Timber.e(it)
-                _productDetail.value = UiState.Failure(it.toString())
+                _productDetail.value = if (it.getHttpExceptionMessage() == ERROR_PRODUCT_NOT_FOUND) {
+                    UiState.Empty
+                } else {
+                    UiState.Failure(it.toString())
+                }
             }
     }
 
@@ -252,5 +257,6 @@ internal class ProductDetailViewModel @AssistedInject constructor(
 
     companion object {
         private const val DEBOUNCE_DELAY = 500L
+        private const val ERROR_PRODUCT_NOT_FOUND = "상품을 찾을 수 없습니다."
     }
 }

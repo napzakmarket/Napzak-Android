@@ -44,4 +44,8 @@
     <string name="detail_dialog_delete_title">상품을 정말 삭제할까요?</string>
     <string name="detail_dialog_delete_sub_title">한번 삭제한 상품은 다시 되돌릴 수 없어요.</string>
 
+    <string name="detail_deleted_product_title">삭제된 상품이에요.</string>
+    <string name="detail_deleted_product_subtitle">비슷한 상품을\n납작에서 탐색해보세요.</string>
+    <string name="detail_deleted_product_button">홈으로 가기</string>
+
 </resources>

@@ -12,7 +12,7 @@ fun ProductGetDetailResponse.toDomain(isInterested: Boolean): ProductDetail =
         ProductDetail(
             productId = productId,
             tradeType = tradeType,
-            genreName = genreName,
+            genreName = genreName.orEmpty(),
             productName = productName,
             price = price,
             uploadTime = uploadTime,
