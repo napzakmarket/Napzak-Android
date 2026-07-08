@@ -1,6 +1,10 @@
 package com.napzak.market.detail
 
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -99,6 +104,15 @@ internal fun ProductDetailRoute(
 
     var isPhoneVerifyModalVisible by remember { mutableStateOf(false) }
 
+    val clipboard = remember(context) { context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager }
+    val clipListenerRef = remember { mutableStateOf<ClipboardManager.OnPrimaryClipChangedListener?>(null) }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            clipListenerRef.value?.let { clipboard.removePrimaryClipChangedListener(it) }
+        }
+    }
+
     if (uiState is UiState.Empty) {
         DeletedProductScreen(
             onHomeClick = onNavigateToHome,
@@ -141,13 +155,25 @@ internal fun ProductDetailRoute(
                     }
 
                     is ProductDetailSideEffect.ShareProduct -> {
+                        clipListenerRef.value?.let { clipboard.removePrimaryClipChangedListener(it) }
+
+                        var newListener: ClipboardManager.OnPrimaryClipChangedListener? = null
+                        newListener = ClipboardManager.OnPrimaryClipChangedListener {
+                            val copied = clipboard.primaryClip?.getItemAt(0)?.text?.toString()
+                            if (copied == sideEffect.url && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+                                Toast.makeText(context, "링크가 복사되었어요!", Toast.LENGTH_SHORT).show()
+                            }
+                            clipboard.removePrimaryClipChangedListener(newListener)
+                            clipListenerRef.value = null
+                        }
+                        clipListenerRef.value = newListener
+                        clipboard.addPrimaryClipChangedListener(newListener)
+
                         val intent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
                             putExtra(Intent.EXTRA_TEXT, sideEffect.url)
                         }
-                        context.startActivity(
-                            Intent.createChooser(intent, null)
-                        )
+                        context.startActivity(Intent.createChooser(intent, null))
                     }
                 }
             }
