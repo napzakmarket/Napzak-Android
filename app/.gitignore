@@ -1,4 +1,4 @@
 /build
-/signing/keystore.properties
+/signing
 /src/release/google-services.json
 /src/debug/google-services.json
