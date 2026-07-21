@@ -137,6 +137,7 @@ lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", versio
 mixpanel = { group = "com.mixpanel.android", name = "mixpanel-android", version.ref = "mixpanel" }
 balloon-compose = { group = "com.github.skydoves", name = "balloon-compose", version.ref = "balloon" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+facebook-sdk = { module = "com.facebook.android:facebook-android-sdk", version = "18.3.0" }
 
 ## firebase
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
