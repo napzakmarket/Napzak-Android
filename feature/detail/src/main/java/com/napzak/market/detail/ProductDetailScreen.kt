@@ -14,17 +14,17 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -72,6 +72,7 @@ import com.napzak.market.feature.detail.R.string.detail_deleted_product_subtitle
 import com.napzak.market.feature.detail.R.string.detail_deleted_product_title
 import com.napzak.market.feature.detail.R.string.detail_dialog_delete_sub_title
 import com.napzak.market.feature.detail.R.string.detail_dialog_delete_title
+import com.napzak.market.feature.detail.R.string.detail_toast_link_copied
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.model.ProductDetail.ProductPhoto
 import com.napzak.market.product.model.ProductDetail.StoreInfo
@@ -155,19 +156,26 @@ internal fun ProductDetailRoute(
                     }
 
                     is ProductDetailSideEffect.ShareProduct -> {
-                        clipListenerRef.value?.let { clipboard.removePrimaryClipChangedListener(it) }
+                        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+                            clipListenerRef.value?.let { clipboard.removePrimaryClipChangedListener(it) }
 
-                        var newListener: ClipboardManager.OnPrimaryClipChangedListener? = null
-                        newListener = ClipboardManager.OnPrimaryClipChangedListener {
-                            val copied = clipboard.primaryClip?.getItemAt(0)?.text?.toString()
-                            if (copied == sideEffect.url && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-                                Toast.makeText(context, "링크가 복사되었어요!", Toast.LENGTH_SHORT).show()
+                            var newListener: ClipboardManager.OnPrimaryClipChangedListener? = null
+                            newListener = ClipboardManager.OnPrimaryClipChangedListener {
+                                val clip = clipboard.primaryClip
+                                val copied = if (clip != null && clip.itemCount > 0) {
+                                    clip.getItemAt(0)?.text?.toString()
+                                } else {
+                                    null
+                                }
+                                if (copied == sideEffect.url) {
+                                    Toast.makeText(context, context.getString(detail_toast_link_copied), Toast.LENGTH_SHORT).show()
+                                }
+                                clipboard.removePrimaryClipChangedListener(newListener)
+                                clipListenerRef.value = null
                             }
-                            clipboard.removePrimaryClipChangedListener(newListener)
-                            clipListenerRef.value = null
+                            clipListenerRef.value = newListener
+                            clipboard.addPrimaryClipChangedListener(newListener)
                         }
-                        clipListenerRef.value = newListener
-                        clipboard.addPrimaryClipChangedListener(newListener)
 
                         val intent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
