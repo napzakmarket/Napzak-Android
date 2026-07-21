@@ -1,6 +1,10 @@
 package com.napzak.market.detail
 
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -10,14 +14,15 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,6 +72,7 @@ import com.napzak.market.feature.detail.R.string.detail_deleted_product_subtitle
 import com.napzak.market.feature.detail.R.string.detail_deleted_product_title
 import com.napzak.market.feature.detail.R.string.detail_dialog_delete_sub_title
 import com.napzak.market.feature.detail.R.string.detail_dialog_delete_title
+import com.napzak.market.feature.detail.R.string.detail_toast_link_copied
 import com.napzak.market.product.model.ProductDetail
 import com.napzak.market.product.model.ProductDetail.ProductPhoto
 import com.napzak.market.product.model.ProductDetail.StoreInfo
@@ -98,6 +104,15 @@ internal fun ProductDetailRoute(
     val isPhoneVerified by viewModel.isPhoneVerified.collectAsStateWithLifecycle()
 
     var isPhoneVerifyModalVisible by remember { mutableStateOf(false) }
+
+    val clipboard = remember(context) { context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager }
+    val clipListenerRef = remember { mutableStateOf<ClipboardManager.OnPrimaryClipChangedListener?>(null) }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            clipListenerRef.value?.let { clipboard.removePrimaryClipChangedListener(it) }
+        }
+    }
 
     if (uiState is UiState.Empty) {
         DeletedProductScreen(
@@ -141,13 +156,32 @@ internal fun ProductDetailRoute(
                     }
 
                     is ProductDetailSideEffect.ShareProduct -> {
+                        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+                            clipListenerRef.value?.let { clipboard.removePrimaryClipChangedListener(it) }
+
+                            var newListener: ClipboardManager.OnPrimaryClipChangedListener? = null
+                            newListener = ClipboardManager.OnPrimaryClipChangedListener {
+                                val clip = clipboard.primaryClip
+                                val copied = if (clip != null && clip.itemCount > 0) {
+                                    clip.getItemAt(0)?.text?.toString()
+                                } else {
+                                    null
+                                }
+                                if (copied == sideEffect.url) {
+                                    Toast.makeText(context, context.getString(detail_toast_link_copied), Toast.LENGTH_SHORT).show()
+                                }
+                                clipboard.removePrimaryClipChangedListener(newListener)
+                                clipListenerRef.value = null
+                            }
+                            clipListenerRef.value = newListener
+                            clipboard.addPrimaryClipChangedListener(newListener)
+                        }
+
                         val intent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
                             putExtra(Intent.EXTRA_TEXT, sideEffect.url)
                         }
-                        context.startActivity(
-                            Intent.createChooser(intent, null)
-                        )
+                        context.startActivity(Intent.createChooser(intent, null))
                     }
                 }
             }

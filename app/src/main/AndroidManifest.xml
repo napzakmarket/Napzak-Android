@@ -41,6 +41,17 @@
                     android:pathPattern="/[0-9]+"
                     android:scheme="napzak" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="product"
+                    android:pathPattern="/.*"
+                    android:scheme="napzak" />
+            </intent-filter>
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 

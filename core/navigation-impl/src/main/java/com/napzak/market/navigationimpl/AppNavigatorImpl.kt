@@ -81,10 +81,14 @@ class AppNavigatorImpl @Inject constructor(
 
     private suspend fun handleAppLink(uri: Uri) {
         val segments = uri.pathSegments
-        if (segments.getOrNull(0) == "product") {
-            val productId = segments.getOrNull(1)?.toLongOrNull() ?: return
-            productDetailSessionManager.setPendingProductId(productId)
-            deepLinkEventBus.send(DeepLinkEvent.NavigateToProductDetail(productId))
+        val productId: Long? = when {
+            uri.scheme == "napzak" && uri.host == "product" -> segments.getOrNull(0)?.toLongOrNull()
+            segments.getOrNull(0) == "product" -> segments.getOrNull(1)?.toLongOrNull()
+            else -> null
+        }
+        productId?.let {
+            productDetailSessionManager.setPendingProductId(it)
+            deepLinkEventBus.send(DeepLinkEvent.NavigateToProductDetail(it))
         }
     }
 
