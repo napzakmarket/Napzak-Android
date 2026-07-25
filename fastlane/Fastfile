@@ -5,8 +5,7 @@ platform :android do
   lane :deploy do
     gradle(
       task: "bundle",
-      build_type: "Release",
-      project_dir: "../"
+      build_type: "Release"
     )
 
     upload_to_play_store(
@@ -20,8 +19,7 @@ platform :android do
   lane :deploy_internal do
     gradle(
       task: "bundle",
-      build_type: "Release",
-      project_dir: "../"
+      build_type: "Release"
     )
 
     upload_to_play_store(

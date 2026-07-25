@@ -1,2 +1,2 @@
-json_key_file("../app/signing/play-store-key.json")
+json_key_file("app/signing/play-store-key.json")
 package_name("com.napzak.market")
