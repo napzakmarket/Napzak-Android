@@ -35,6 +35,7 @@ import com.napzak.market.main.navigation.MainNavigator
 import com.napzak.market.main.navigation.MainTab
 import com.napzak.market.navigation.EntryProviderBuilder
 import com.napzak.market.navigation.keys.HomeScreenKey
+import com.napzak.market.navigation.keys.LoginScreenKey
 import com.napzak.market.navigation.keys.PhoneVerificationScreenKey
 import com.napzak.market.navigation.keys.PurchaseRegistrationScreenKey
 import com.napzak.market.navigation.keys.SaleRegistrationScreenKey
@@ -156,6 +157,8 @@ private fun MainNavDisplay(
                     }
                     backPressedTime = System.currentTimeMillis()
                 }
+
+                navigator.currentScreen is LoginScreenKey -> (context as Activity).finish()
 
                 else -> {
                     navigator.navigateUp()
