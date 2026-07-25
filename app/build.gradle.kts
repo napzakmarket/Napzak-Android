@@ -108,4 +108,5 @@ dependencies {
     implementation(libs.firebase.messaging.lifecycle.ktx)
     implementation(libs.firebase.config.ktx)
     implementation(libs.androidx.browser)
+    implementation(libs.facebook.sdk)
 }

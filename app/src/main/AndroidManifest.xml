@@ -4,6 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <queries>
         <package android:name="com.kakao.talk" />
     </queries>
@@ -58,8 +59,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="https" android:host="napzak.kro.kr" android:pathPattern="/product/.*" />
-                <data android:scheme="https" android:host="napzakmarket.kro.kr" android:pathPattern="/product/.*" />
+                <data
+                    android:host="napzak.kro.kr"
+                    android:pathPattern="/product/.*"
+                    android:scheme="https" />
+                <data
+                    android:host="napzakmarket.kro.kr"
+                    android:pathPattern="/product/.*"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
 
@@ -69,11 +76,13 @@
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
-                    android:scheme="${kakaoScheme}"
-                    android:host="oauth" />
+                    android:host="oauth"
+                    android:scheme="${kakaoScheme}" />
             </intent-filter>
         </activity>
 
@@ -84,8 +93,12 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_push_notification" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
     </application>
 </manifest>
