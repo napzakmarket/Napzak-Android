@@ -1,0 +1,31 @@
+default_platform(:android)
+
+platform :android do
+  desc "Build release AAB and upload to Play Console (production track)"
+  lane :deploy do
+    gradle(
+      task: "bundle",
+      build_type: "Release"
+    )
+
+    upload_to_play_store(
+      track: "production",
+      aab: lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH],
+      release_status: "draft"
+    )
+  end
+
+  desc "Build release AAB and upload to Play Console internal test track"
+  lane :deploy_internal do
+    gradle(
+      task: "bundle",
+      build_type: "Release"
+    )
+
+    upload_to_play_store(
+      track: "internal",
+      aab: lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH],
+      release_status: "completed"
+    )
+  end
+end
