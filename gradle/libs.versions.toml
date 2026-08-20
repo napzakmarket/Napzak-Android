@@ -1,7 +1,7 @@
 [versions]
 agp = "9.0.0"
 minSdk = "28"
-targetSdk = "35"
+targetSdk = "36"
 compileSdk = "36"
 jvmTarget = "17"
 versionCode = "20101"
