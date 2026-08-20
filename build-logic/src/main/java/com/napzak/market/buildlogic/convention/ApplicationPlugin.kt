@@ -34,6 +34,7 @@ class ApplicationPlugin : Plugin<Project> {
                     applicationId = "com.napzak.market"
                     versionCode = libs.version("versionCode").toInt()
                     versionName = libs.version("versionName")
+                    targetSdk = libs.version("targetSdk").toInt()
                 }
             }
         }
