@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.WindowInsets
@@ -240,87 +241,107 @@ private fun ProductDetailScreen(
 ) {
     var sheetVisibility by remember { mutableStateOf(false) }
     var deleteDialogVisibility by remember { mutableStateOf(false) }
+    var selectedImageIndex: Int? by remember { mutableStateOf(null) }
 
-    Scaffold(
-        topBar = {
-            DetailTopBar(
-                showToolTip = showProductStatusToolTip
-                        && (uiState is UiState.Success && uiState.data.isOwnedByCurrentUser),
-                onBackClick = onBackButtonClick,
-                onShareClick = onShareClick,
-                onOptionClick = { sheetVisibility = true },
-                onTooltipDismiss = { onTooltipDismiss(false) },
-            )
-        },
-        bottomBar = {
-            if (uiState is UiState.Success && !uiState.data.isOwnedByCurrentUser) {
-                val productId = uiState.data.productId
-                val isInterested = uiState.data.isInterested
-                ProductDetailBottomBar(
-                    isLiked = isInterested,
-                    onChatButtonClick = { onChatButtonClick(productId) },
-                    onLikeButtonClick = { onLikeButtonClick(!isInterested) },
+    BackHandler(selectedImageIndex != null) {
+        selectedImageIndex = null
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                DetailTopBar(
+                    showToolTip = showProductStatusToolTip
+                            && (uiState is UiState.Success && uiState.data.isOwnedByCurrentUser),
+                    onBackClick = onBackButtonClick,
+                    onShareClick = onShareClick,
+                    onOptionClick = { sheetVisibility = true },
+                    onTooltipDismiss = { onTooltipDismiss(false) },
                 )
-            }
-        },
-        containerColor = NapzakMarketTheme.colors.white,
-        modifier = modifier,
-    ) { innerPadding ->
-        when (uiState) {
-            is UiState.Success -> {
-                val productDetail = uiState.data
-                val productPhotos = uiState.data.productPhotos
-                val storeInfo = uiState.data.storeInfo
-
-                val tradeType = TradeType.fromName(productDetail.tradeType)
-                val tradeStatus = TradeStatusType.get(productDetail.tradeStatus, tradeType)
-
-                SuccessScreen(
-                    productDetail = productDetail,
-                    productPhotos = productPhotos.toImmutableList(),
-                    marketInfo = storeInfo,
-                    tradeType = tradeType,
-                    tradeStatus = tradeStatus,
-                    onMarketClick = { onMarketClick(storeInfo.userId) },
-                    modifier = Modifier.padding(innerPadding),
-                )
-
-                ProductDetailBottomSheet(
-                    sheetVisibility = sheetVisibility,
-                    productDetail = productDetail,
-                    tradeType = tradeType,
-                    tradeStatus = tradeStatus,
-                    onModifyProductClick = {
-                        onModifyProductClick(
-                            productDetail.productId,
-                            tradeType
-                        )
-                    },
-                    onDeleteProductClick = { deleteDialogVisibility = true },
-                    onReportProductClick = { onReportProductClick(productDetail.productId) },
-                    onTradeStatusChange = { newStatus ->
-                        onTradeStatusChange(productDetail.productId, newStatus.typeName)
-                    },
-                    onBottomSheetDismiss = { sheetVisibility = false },
-                )
-
-                ProductDetailDeleteDialog(
-                    enabled = deleteDialogVisibility,
-                    onConfirmClick = { onDeleteProductClick(productDetail.productId) },
-                    onDismissClick = { deleteDialogVisibility = false },
-                )
-
-                if (isPhoneVerifyModalVisible) {
-                    NapzakPhoneVerifyModal(
-                        onDismissClick = onDismissClick,
-                        onPhoneVerifyClick = onPhoneVerifyClick,
-                        modifier = modifier,
+            },
+            bottomBar = {
+                if (uiState is UiState.Success && !uiState.data.isOwnedByCurrentUser) {
+                    val productId = uiState.data.productId
+                    val isInterested = uiState.data.isInterested
+                    ProductDetailBottomBar(
+                        isLiked = isInterested,
+                        onChatButtonClick = { onChatButtonClick(productId) },
+                        onLikeButtonClick = { onLikeButtonClick(!isInterested) },
                     )
                 }
-            }
+            },
+            containerColor = NapzakMarketTheme.colors.white,
+            modifier = modifier,
+        ) { innerPadding ->
+            when (uiState) {
+                is UiState.Success -> {
+                    val productDetail = uiState.data
+                    val productPhotos = uiState.data.productPhotos
+                    val storeInfo = uiState.data.storeInfo
 
-            is UiState.Loading -> NapzakLoadingOverlay()
-            else -> {} // TODO: Empty, Failure 처리
+                    val tradeType = TradeType.fromName(productDetail.tradeType)
+                    val tradeStatus = TradeStatusType.get(productDetail.tradeStatus, tradeType)
+
+                    SuccessScreen(
+                        productDetail = productDetail,
+                        productPhotos = productPhotos.toImmutableList(),
+                        marketInfo = storeInfo,
+                        tradeType = tradeType,
+                        tradeStatus = tradeStatus,
+                        onMarketClick = { onMarketClick(storeInfo.userId) },
+                        onImageClick = { selectedImageIndex = it },
+                        modifier = Modifier.padding(innerPadding),
+                    )
+
+                    ProductDetailBottomSheet(
+                        sheetVisibility = sheetVisibility,
+                        productDetail = productDetail,
+                        tradeType = tradeType,
+                        tradeStatus = tradeStatus,
+                        onModifyProductClick = {
+                            onModifyProductClick(
+                                productDetail.productId,
+                                tradeType
+                            )
+                        },
+                        onDeleteProductClick = { deleteDialogVisibility = true },
+                        onReportProductClick = { onReportProductClick(productDetail.productId) },
+                        onTradeStatusChange = { newStatus ->
+                            onTradeStatusChange(productDetail.productId, newStatus.typeName)
+                        },
+                        onBottomSheetDismiss = { sheetVisibility = false },
+                    )
+
+                    ProductDetailDeleteDialog(
+                        enabled = deleteDialogVisibility,
+                        onConfirmClick = { onDeleteProductClick(productDetail.productId) },
+                        onDismissClick = { deleteDialogVisibility = false },
+                    )
+
+                    if (isPhoneVerifyModalVisible) {
+                        NapzakPhoneVerifyModal(
+                            onDismissClick = onDismissClick,
+                            onPhoneVerifyClick = onPhoneVerifyClick,
+                            modifier = modifier,
+                        )
+                    }
+                }
+
+                is UiState.Loading -> NapzakLoadingOverlay()
+                else -> {} // TODO: Empty, Failure 처리
+            }
+        }
+
+        if (uiState is UiState.Success) {
+            selectedImageIndex?.let {
+                ZoomableImageScreen(
+                    imageUrls = uiState.data.productPhotos.map { photo -> photo.photoUrl }
+                        .toImmutableList(),
+                    initialPage = it,
+                    contentDescription = uiState.data.productName,
+                    onBackClick = { selectedImageIndex = null },
+                )
+            }
         }
     }
 }
@@ -333,24 +354,11 @@ private fun SuccessScreen(
     tradeStatus: TradeStatusType,
     marketInfo: StoreInfo,
     onMarketClick: () -> Unit,
+    onImageClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var selectedImageIndex: Int? by remember { mutableStateOf(null) }
     val imageUrls = remember(productPhotos) {
         productPhotos.map { it.photoUrl }.toImmutableList()
-    }
-
-    BackHandler(selectedImageIndex != null) {
-        selectedImageIndex = null
-    }
-
-    selectedImageIndex?.let {
-        ZoomableImageScreen(
-            imageUrls = imageUrls,
-            initialPage = it,
-            contentDescription = productDetail.productName,
-            onBackClick = { selectedImageIndex = null },
-        )
     }
 
     LazyColumn(modifier = modifier) {
@@ -359,7 +367,7 @@ private fun SuccessScreen(
                 imageUrls = imageUrls,
                 contentDescription = productDetail.productName,
                 tradeStatusType = tradeStatus,
-                onClick = { selectedImageIndex = it },
+                onClick = onImageClick,
             )
 
             with(productDetail) {
@@ -563,6 +571,7 @@ private fun ProductDetailScreenPreview() {
             productPhotos = mockProductDetail.productPhotos.toImmutableList(),
             marketInfo = mockProductDetail.storeInfo,
             onMarketClick = {},
+            onImageClick = {},
             modifier = Modifier,
             tradeType = tradeType,
             tradeStatus = tradeStatus,
